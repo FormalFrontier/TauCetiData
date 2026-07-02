@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.459809,
+   "returncode": 0,
+   "secs": 70.7,
+   "usage": {
+    "cached_input_tokens": 89088,
+    "input_tokens": 151123,
+    "output_tokens": 3503,
+    "reasoning_output_tokens": 1898
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e898e943b78f47ea7501d7dd6e9f9666ce5a3131",
+ "cost_estimated": true,
+ "cost_usd": 0.459809,
+ "dedupe_key": "TauCetiProject/TauCeti|660|8fe417459f26ca0c5f1b1dc446c1e6cdf983d565|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "a2e5d6c1765f1da773f6848d71a4c24a5abbdc06475eb9b7f6517093726b5e7a",
+ "diff_sha256": "a2e5d6c1765f1da773f6848d71a4c24a5abbdc06475eb9b7f6517093726b5e7a",
+ "duration_s": 70.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"\\[expose\\]|def ofFinsupp|def multiplicityFinsupp|def ofSym|def equivSym|def pushforward\"` hits lines 66, 83, 129, 146, and 170, while existing lemmas already characterize most coercions/applications.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegree.lean",
+   "fix": "Remove these `@[expose]` annotations; keep bodies opaque and add any missing characteristic `[simp]` lemmas, especially for `equivSym` and its inverse.",
+   "issue": "`ofFinsupp`, `multiplicityFinsupp`, `ofSym`, `equivSym`, and `pushforward` are all marked `@[expose]`, exporting their implementation bodies as API.",
+   "line": 66
+  },
+  {
+   "evidence": "`rg -n \"lemma pushforward|equivSym|Sym.map|coe_map\"` shows only `coe_pushforward` and `pushforward_id` in this file, while Mathlib provides `Sym.map_map` and `Sym.coe_map` for the parallel symmetric-power operation.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegree.lean",
+   "fix": "Add `@[simp]` functorial lemmas such as `pushforward_comp` and a compatibility lemma with `equivSym`/`Sym.map` where the symmetric-power bridge is in scope.",
+   "issue": "`pushforward` only has coercion and identity lemmas, so the new operation is missing its basic functorial/naturality API.",
+   "line": 171
+  }
+ ],
+ "head_sha": "8fe417459f26ca0c5f1b1dc446c1e6cdf983d565",
+ "merge_base_sha": "e898e943b78f47ea7501d7dd6e9f9666ce5a3131",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 660,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "653b29bd83236da456de8bca186eee4068af8cdc28144aad3cb366e7f448851c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260702T211435Z-660-api-design-b84b79",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-02T21:14:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The fixed-degree wrapper is extensional, but the public API currently exposes representation bodies and leaves the new equivalence/pushforward operations under-characterized. Downstream users would have to unfold implementation details instead of rewriting through stable lemmas.",
+ "transcript_blob": "a71cf09bbb412ae20953bcad01196fc7a383c9d945345bee064f3974da5b39a1",
+ "usage": {
+  "cached_input_tokens": 89088,
+  "input_tokens": 151123,
+  "output_tokens": 3503,
+  "reasoning_output_tokens": 1898
+ },
+ "verdict": "request_changes"
+}
