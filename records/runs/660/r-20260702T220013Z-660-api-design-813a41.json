@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.3644,
+   "returncode": 0,
+   "secs": 89.6,
+   "usage": {
+    "cached_input_tokens": 89600,
+    "input_tokens": 131674,
+    "output_tokens": 3641,
+    "reasoning_output_tokens": 2096
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e898e943b78f47ea7501d7dd6e9f9666ce5a3131",
+ "cost_estimated": true,
+ "cost_usd": 0.3644,
+ "dedupe_key": "TauCetiProject/TauCeti|660|7676eb21441b8298e5e3ecc819b4a33d8ffb4182|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "1f8085442856f251c4e60aaec5323fc38ff6e48148d6dca46fd4a5a27ab2721e",
+ "diff_sha256": "1f8085442856f251c4e60aaec5323fc38ff6e48148d6dca46fd4a5a27ab2721e",
+ "duration_s": 89.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"\\[expose\\]\" code/TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegree.lean` shows exposed bodies at lines 66, 83, 127, and 202; none is justified by a computation-only downstream use in this API.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegree.lean",
+   "fix": "Remove `@[expose]` from these definitions and rely on `coe_ofFinsupp`/`coeff_ofFinsupp`, `multiplicityFinsupp_apply`, `equivFinsupp_apply_coe`/`equivFinsupp_symm_apply`, and `coe_pushforward` plus functorial lemmas.",
+   "issue": "`ofFinsupp`, `multiplicityFinsupp`, `equivFinsupp`, and `pushforward` are all marked `@[expose]` even though their exported lemmas characterize them, unnecessarily making implementation bodies part of the public API.",
+   "line": 66
+  },
+  {
+   "evidence": "Lines 189, 195, and 248 state `ofSym_equivSym`, `equivSym_ofSym`, and `equivSym_pushforward` with LHS terms expanded to `(Sym.equivNatSum _ _).symm (equivFinsupp ...)` rather than `equivSym ...`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegree.lean",
+   "fix": "Add direct simp lemmas `ofSym (equivSym D) = D`, `equivSym (ofSym s) = s`, and `equivSym (D.pushforward f) = Sym.map f (equivSym D)`; make the expanded Finsupp restatements private or non-surface helper lemmas if still needed.",
+   "issue": "The characteristic Sym lemmas are stated through `Sym.equivNatSum` and `equivFinsupp`, so users cannot rewrite the intended surface statements without the implementation bridge.",
+   "line": 188
+  }
+ ],
+ "head_sha": "7676eb21441b8298e5e3ecc819b4a33d8ffb4182",
+ "merge_base_sha": "e898e943b78f47ea7501d7dd6e9f9666ce5a3131",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 660,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8300ab1ca83da4efeed8cf25c9863dccad6473d9fa5f728dbdf5ae9f3e16a8f4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260702T220013Z-660-api-design-813a41",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-02T22:00:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The fixed-degree subtype is extensional, but the PR exposes implementation bodies and makes the Sym API depend on the Finsupp bridge instead of the intended equivalence surface.",
+ "transcript_blob": "0265cd5b2ad8c26e2deab0294e2f3a0ebca47ee0242d2d5ed79efb211324537f",
+ "usage": {
+  "cached_input_tokens": 89600,
+  "input_tokens": 131674,
+  "output_tokens": 3641,
+  "reasoning_output_tokens": 2096
+ },
+ "verdict": "request_changes"
+}
