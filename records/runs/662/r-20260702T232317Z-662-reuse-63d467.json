@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.463632,
+   "returncode": 0,
+   "secs": 66.2,
+   "usage": {
+    "cached_input_tokens": 176384,
+    "input_tokens": 231816,
+    "output_tokens": 3276,
+    "reasoning_output_tokens": 1362
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "cost_estimated": true,
+ "cost_usd": 0.463632,
+ "dedupe_key": "TauCetiProject/TauCeti|662|f924f922f08d174cd593a57dad5fb06b33ef66dd|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "059dc6910cdfaa0d617abff47216d312f48fe4dc3c9d53a9d80b11b1ad2d557e",
+ "diff_sha256": "059dc6910cdfaa0d617abff47216d312f48fe4dc3c9d53a9d80b11b1ad2d557e",
+ "duration_s": 66.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`code/TauCeti/KnotTheory/Grid/Diagram.lean:317` has `theorem mem_columnSwapNeighbors ... \u2194 \u2203 c d : Fin n, c \u2260 d \u2227 y = x.swapColumns c d`; the new lemma at line 50 is exactly its forward constructor case.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "Remove this public wrapper and use `GridState.mem_columnSwapNeighbors.mpr \u27e8a, b, hab, rfl\u27e9` at the call site.",
+   "issue": "`swapColumns_mem_columnSwapNeighbors` duplicates the existing membership characterization `GridState.mem_columnSwapNeighbors`.",
+   "line": 50
+  },
+  {
+   "evidence": "`code/TauCeti/KnotTheory/Grid/DifferentialSquareSupport.lean:88`, `:97`, and `:103` prove `x.twoStepColumnSwapNeighbors = \u2205` for `n \u2264 1`, `0`, and `1`, which directly implies the new `x \u2209 x.twoStepColumnSwapNeighbors` results.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "Remove these wrappers; use `by rw [x.twoStepColumnSwapNeighbors_eq_empty_of_le_one hn]; simp` or the existing simp lemmas `twoStepColumnSwapNeighbors_eq_empty_of_zero/one`.",
+   "issue": "The small-grid negative self-membership lemmas at lines 120, 126, and 131 are special cases of the existing emptiness lemmas for all two-step targets.",
+   "line": 120
+  },
+  {
+   "evidence": "`code/TauCeti/KnotTheory/Grid/DifferentialSupportCardinality.lean:122` proves `G.fullyBlockedDifferential = 0` for `n \u2264 1`, which is stronger than `G.fullyBlockedDifferential (G.fullyBlockedDifferential (Finsupp.single x 1)) x = 0`.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "Remove these coefficient-level special cases; use `G.fullyBlockedDifferential_eq_zero_of_le_one hn` and then `simp` to obtain any coefficient of the square, including the diagonal.",
+   "issue": "The diagonal `\u2202\u00b2` zero lemmas at lines 145, 152, and 158 duplicate the broader existing theorem that the fully blocked differential itself is zero in grid size at most one.",
+   "line": 145
+  }
+ ],
+ "head_sha": "f924f922f08d174cd593a57dad5fb06b33ef66dd",
+ "merge_base_sha": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 662,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0862393f5d40e3dbfe63b2cadfa77685377fd626dfa5825042fabd3e7f562982",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260702T232317Z-662-reuse-63d467",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-02T23:23:17Z",
+ "submitted_by": "kim-em",
+ "summary": "Several new public lemmas are thin specializations of existing TauCeti API rather than new reusable material.",
+ "transcript_blob": "d440cb1be49c708ebbe7caefc5250777423a0bc51770272ba0a84548655831f3",
+ "usage": {
+  "cached_input_tokens": 176384,
+  "input_tokens": 231816,
+  "output_tokens": 3276,
+  "reasoning_output_tokens": 1362
+ },
+ "verdict": "request_changes"
+}
