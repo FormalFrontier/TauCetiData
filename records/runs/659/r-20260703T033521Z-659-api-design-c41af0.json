@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.303417,
+   "returncode": 0,
+   "secs": 51.4,
+   "usage": {
+    "cached_input_tokens": 88704,
+    "input_tokens": 126063,
+    "output_tokens": 2409,
+    "reasoning_output_tokens": 1450
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "cost_estimated": true,
+ "cost_usd": 0.303417,
+ "dedupe_key": "TauCetiProject/TauCeti|659|83c6cf0446683e09b42754afc039b5512cca9fb0|api-design|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "8d0c0952f9ce901a8091b4bdbe4a8067c72a398df81429d142f89d6327ab0c11",
+ "diff_sha256": "8d0c0952f9ce901a8091b4bdbe4a8067c72a398df81429d142f89d6327ab0c11",
+ "duration_s": 51.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Convergence.lean:11` has `public import TauCeti.Probability.Martingale.Crossings.AntitoneLimit`; `AntitoneLimit.lean:4` has `public import TauCeti.MeasureTheory.Function.AEStronglyMeasurable`; the helper declarations are public at `AEStronglyMeasurable.lean:40` and `AEStronglyMeasurable.lean:92`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/AntitoneLimit.lean",
+   "fix": "Make this a non-public `import` if the lemmas are only used in the proof, or otherwise avoid re-exporting the helper module from the `Convergence` entry point.",
+   "issue": "`AntitoneLimit` publicly imports `TauCeti.MeasureTheory.Function.AEStronglyMeasurable`, so downstream users importing `TauCeti.Probability.Martingale.Convergence` also get the proof-only lemmas `TauCeti.MeasureTheory.aestronglyMeasurable_iInf_antitone` and `aestronglyMeasurable_of_tendsto_ae'` as part of this martingale theorem surface.",
+   "line": 4
+  }
+ ],
+ "head_sha": "83c6cf0446683e09b42754afc039b5512cca9fb0",
+ "merge_base_sha": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "33eb431c1fd183f0b337436f15e66aba0e1f657c18e7c4af0acd328f98b61787",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T033521Z-659-api-design-c41af0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T03:35:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The main crossing/reversal helpers are no longer re-exported through the stated entry point, but `Martingale.Convergence` still leaks proof-only measurability helpers through a public import chain.",
+ "transcript_blob": "1cc800741f3551d3e837f5aa63353eebb81ed0e67dfb42a860ede41bb6efe01e",
+ "usage": {
+  "cached_input_tokens": 88704,
+  "input_tokens": 126063,
+  "output_tokens": 2409,
+  "reasoning_output_tokens": 1450
+ },
+ "verdict": "request_changes"
+}
