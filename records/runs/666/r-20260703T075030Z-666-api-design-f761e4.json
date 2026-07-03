@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.395432,
+   "returncode": 0,
+   "secs": 74.4,
+   "usage": {
+    "cached_input_tokens": 110464,
+    "input_tokens": 156910,
+    "output_tokens": 3599,
+    "reasoning_output_tokens": 1757
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "38e991173cd368655da4e0ba4af72e099f81feed",
+ "cost_estimated": true,
+ "cost_usd": 0.395432,
+ "dedupe_key": "TauCetiProject/TauCeti|666|f613d2751f98716aa1a59ef87921d705684c67ee|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "bd25530d2892aabf741073935c0e48bc6a420f1030cb41af4db7576f0602104a",
+ "diff_sha256": "bd25530d2892aabf741073935c0e48bc6a420f1030cb41af4db7576f0602104a",
+ "duration_s": 74.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`PermReindex.lean:4` has `public import TauCeti.Probability.Exchangeability.PathSpace.ExchangeableSigma`; roadmap lines 240-248 put Layer 0 in `Basic/Contractability/FullyExchangeable`, while lines 198-199 classify `PathSpace/*.lean` sigma-algebra material as Layer 2.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/PermReindex.lean",
+   "fix": "Split `permReindex`, `permReindex_apply`, composition, and ambient measurability into a small lower-level path-space reindex module imported by both `ExchangeableSigma` and this bridge.",
+   "issue": "The Layer 0 bridge publicly imports `PathSpace.ExchangeableSigma` just to name `permReindex`, so importing this bridge also exposes the Layer 2 `exchangeableSigma` API.",
+   "line": 4
+  },
+  {
+   "evidence": "`rg \"map_permReindex_pathLaw\"` finds only `FullyExchangeable.map_permReindex_pathLaw` at lines 47-51, whose conclusion is the invariant law, while `Basic.lean:205-208` has only the generic `map_reindex_pathLaw`.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/PermReindex.lean",
+   "fix": "Add a public theorem such as `map_permReindex_pathLaw : (pathLaw \u03bc X).map (permReindex \u03c0) = pathLaw \u03bc (fun i \u03c9 => X (\u03c0 i) \u03c9)` and use it in the iff/projection lemmas.",
+   "issue": "The unconditional characteristic equation for permutation reindexing of a path law is not exposed; users must fall back to the generic `map_reindex_pathLaw` and definitional equality of `permReindex`.",
+   "line": 31
+  },
+  {
+   "evidence": "`rg \"measurable_permReindex\"` finds only `measurable_permReindex_exchangeableSigma` in `ExchangeableSigma.lean:102`, while this file line 58 uses `measurable_reindex \u03c0` internally.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/PermReindex.lean",
+   "fix": "Expose `measurable_permReindex (\u03c0) : Measurable (permReindex (\u03b1 := \u03b1) \u03c0)` in the lower-level perm-reindex API and use it here.",
+   "issue": "There is no named ambient measurability theorem for `permReindex`; the public `MeasurePreserving` lemma hides it by constructing with `measurable_reindex \u03c0`.",
+   "line": 55
+  }
+ ],
+ "head_sha": "f613d2751f98716aa1a59ef87921d705684c67ee",
+ "merge_base_sha": "38e991173cd368655da4e0ba4af72e099f81feed",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 666,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a933d50c1564736446561c59833da01870d2530e2fe36bf119c9aef86ca3d3fb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T075030Z-666-api-design-f761e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T07:50:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The bridge exposes useful equivalences, but the public API is missing the basic perm-specific characteristic lemmas and leaks the exchangeable-sigma module into a Layer 0 path-law bridge.",
+ "transcript_blob": "8eb6a73008233fd42fc643f0e7315dce4576d6aba9d5e8427b3cf4f176b3e825",
+ "usage": {
+  "cached_input_tokens": 110464,
+  "input_tokens": 156910,
+  "output_tokens": 3599,
+  "reasoning_output_tokens": 1757
+ },
+ "verdict": "request_changes"
+}
