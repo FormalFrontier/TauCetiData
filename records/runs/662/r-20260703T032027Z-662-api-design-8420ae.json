@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.904385,
+   "returncode": 0,
+   "secs": 84.8,
+   "usage": {
+    "cached_input_tokens": 360320,
+    "input_tokens": 481321,
+    "output_tokens": 3974,
+    "reasoning_output_tokens": 1704
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "cost_estimated": true,
+ "cost_usd": 0.904385,
+ "dedupe_key": "TauCetiProject/TauCeti|662|8ee667cc5ae70d0de59b5a806562497f38fbaa53|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "1855c9ca711f5c92aa8087327f3da3d428a033d627f91e8726d94576106dc909",
+ "diff_sha256": "1855c9ca711f5c92aa8087327f3da3d428a033d627f91e8726d94576106dc909",
+ "duration_s": 84.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diff changes line 13 to `public import Mathlib.Data.Sym.Card`; the only public signature need is `s(a, b)` in `sym2_mk_eq_of_swapColumns_eq`, while `Sym2.card_image_offDiag` is used only inside `card_columnSwapNeighbors`.",
+   "file": "TauCeti/KnotTheory/Grid/Diagram.lean",
+   "fix": "Use a minimal public import such as `Mathlib.Data.Sym.Sym2` for the `s(a,b)` statements and keep `import Mathlib.Data.Sym.Card` private for `Sym2.card_image_offDiag`.",
+   "issue": "`Mathlib.Data.Sym.Card` is now a public import even though its cardinality lemmas are only used in proofs; downstream modules importing `Diagram` should only see the `Sym2` names needed by the public theorem signatures.",
+   "line": 13
+  },
+  {
+   "evidence": "Line 133 declares the expanded existential theorem, and its proof is only `simpa only [mem_twoStepColumnSwapNeighbors, mem_columnSwapNeighbors, ne_eq] using x.self_mem_twoStepColumnSwapNeighbors_iff_two_le`; `DifferentialSquareSupport.lean:60` already provides the expanded two-step membership API.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "Remove it from the public surface or make it private; consumers can use `self_mem_twoStepColumnSwapNeighbors_iff_two_le` together with `mem_twoStepColumnSwapNeighbors_iff_exists_swaps`/`mem_columnSwapNeighbors` when they need the expanded witness shape.",
+   "issue": "`exists_twoStepColumnSwap_backtracking_iff_two_le` publicly exposes an expanded ordered-witness form that is just the definitions of the existing neighbor predicates unfolded, rather than characteristic API for the backtracking result.",
+   "line": 133
+  }
+ ],
+ "head_sha": "8ee667cc5ae70d0de59b5a806562497f38fbaa53",
+ "merge_base_sha": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 662,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6641e66c0d65d6dc17e027cc5367c526598b2d92452f4137c111f62be7cc8215",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T032027Z-662-api-design-8420ae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T03:20:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The backtracking facts are mostly the right characteristic API, but the PR exposes proof/support details beyond the target surface.",
+ "transcript_blob": "3c3f155ff2fcfa80d28e18430bcdfe4a6f55853e25049c539e7fc70f64bd863b",
+ "usage": {
+  "cached_input_tokens": 360320,
+  "input_tokens": 481321,
+  "output_tokens": 3974,
+  "reasoning_output_tokens": 1704
+ },
+ "verdict": "request_changes"
+}

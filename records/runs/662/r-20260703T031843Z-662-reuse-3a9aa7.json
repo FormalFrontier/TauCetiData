@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.337156,
+   "returncode": 0,
+   "secs": 53.4,
+   "usage": {
+    "cached_input_tokens": 52352,
+    "input_tokens": 98840,
+    "output_tokens": 2618,
+    "reasoning_output_tokens": 1219
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "cost_estimated": true,
+ "cost_usd": 0.337156,
+ "dedupe_key": "TauCetiProject/TauCeti|662|8ee667cc5ae70d0de59b5a806562497f38fbaa53|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "1855c9ca711f5c92aa8087327f3da3d428a033d627f91e8726d94576106dc909",
+ "diff_sha256": "1855c9ca711f5c92aa8087327f3da3d428a033d627f91e8726d94576106dc909",
+ "duration_s": 53.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits show the reusable lemma at `TauCeti/KnotTheory/Grid/Diagram.lean:513: theorem swapColumns_swapColumns (a b : Fin n) (x : GridState n) : (x.swapColumns a b).swapColumns a b = x`, while the new proof is lines 333-346.",
+   "file": "TauCeti/KnotTheory/Grid/Diagram.lean",
+   "fix": "Use the existing `GridState.swapColumns_swapColumns` after unpacking `mem_columnSwapNeighbors`, e.g. provide the same `a b` witness and close with `by simpa [hxy] using (GridState.swapColumns_swapColumns a b x).symm` or the corresponding target state form.",
+   "issue": "`mem_columnSwapNeighbors_comm` reproves column-swap reversibility by extensional `simp [swapColumns]` in both directions.",
+   "line": 331
+  },
+  {
+   "evidence": "`rg` hits show `TauCeti/KnotTheory/Grid/Diagram.lean:359: theorem sym2_mk_eq_of_swapColumns_eq ... : s(a, b) = s(c, d)` and `Diagram.lean:513: theorem swapColumns_swapColumns`; lines 64-75 reproduce that plumbing manually.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "First derive `x.swapColumns a b = x.swapColumns c d` by rewriting with `h` and `GridState.swapColumns_swapColumns`, then call the existing `sym2_mk_eq_of_swapColumns_eq hab hcd`.",
+   "issue": "`sym2_mk_eq_of_swapColumns_swapColumns_eq_self` rederives that the two swap permutations agree from a diagonal two-step equality.",
+   "line": 61
+  },
+  {
+   "evidence": "`rg` hits show Mathlib has `Mathlib/Data/Sym/Sym2.lean:193: theorem eq_iff ...`, and TauCeti already has `Diagram.lean:513: theorem swapColumns_swapColumns`; the new proof is lines 84-92.",
+   "file": "TauCeti/KnotTheory/Grid/DifferentialSquareBacktracking.lean",
+   "fix": "After `Sym2.eq_iff`/case analysis, close the two cases with `GridState.swapColumns_swapColumns a b x` and the same lemma after swapping the names, rather than reproving the involution.",
+   "issue": "The reverse half of `swapColumns_swapColumns_eq_self_iff_sym2_mk_eq` again expands the unordered-pair equality and proves the double-swap identity by extensional `simp`.",
+   "line": 79
+  }
+ ],
+ "head_sha": "8ee667cc5ae70d0de59b5a806562497f38fbaa53",
+ "merge_base_sha": "c356fc4e47cc5bf49f23c39f6caad37b24216db2",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 662,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d68ab010af7dc16c00018c1c6e9eb41f748dc5ac227e8c789ba40a5029975fff",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T031843Z-662-reuse-3a9aa7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T03:18:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The new API is not duplicating an existing declaration, but several proofs rederive the already-named column-swap involution instead of reusing it.",
+ "transcript_blob": "d8d5a68d1228667593f16dafcd1138db9a2513e7fa573089aabd596854cd03c7",
+ "usage": {
+  "cached_input_tokens": 52352,
+  "input_tokens": 98840,
+  "output_tokens": 2618,
+  "reasoning_output_tokens": 1219
+ },
+ "verdict": "request_changes"
+}
