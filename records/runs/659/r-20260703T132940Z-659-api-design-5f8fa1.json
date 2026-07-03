@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.405927,
+   "returncode": 0,
+   "secs": 71.2,
+   "usage": {
+    "cached_input_tokens": 136704,
+    "input_tokens": 184533,
+    "output_tokens": 3281,
+    "reasoning_output_tokens": 2069
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ebd89489fd1313236315bc4e0b532d4cb5579f50",
+ "cost_estimated": true,
+ "cost_usd": 0.405927,
+ "dedupe_key": "TauCetiProject/TauCeti|659|475ae83e98a8e5a70b1ab9cd280bba765f6e0b6c|api-design|gpt-5.5|caeca2a4b1193aa2|production|4",
+ "diff_blob": "3ef7da0bfabb68f5c84a67782b0666879e1194d6ce7268cc17e0566cd5c6c589",
+ "diff_sha256": "3ef7da0bfabb68f5c84a67782b0666879e1194d6ce7268cc17e0566cd5c6c589",
+ "duration_s": 71.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Reverse.lean:54` defines `revCondExpFinite`, `Reverse.lean:71-74` proves only `Submartingale`, while `roadmap/TauCetiRoadmap/Exchangeability/README.md:473-474` lists `revCEFinite` and `revCEFinite_martingale`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Expose a `Martingale` theorem, preferably under the roadmap-facing spelling `revCEFinite_martingale` or `martingale_revCondExpFinite`, and derive the existing submartingale lemma from it.",
+   "issue": "`revCondExpFinite` is public, but the only characterization theorem exposed is `submartingale_revCondExpFinite`; downstream users needing the roadmap's finite-horizon reversal must recover a martingale theorem themselves.",
+   "line": 71
+  },
+  {
+   "evidence": "`rg` finds the untagged lemmas at `TimeReversal.lean:46,50`, `Reverse.lean:59,63`, and `Pathwise.lean:50`; the only matching simp lemma in this layer is private `negProcess_negProcess`.",
+   "file": "",
+   "fix": "Add `@[simp]` to the public normal-form lemmas `negProcess_apply`, `revProcess_apply`, `revCondExpFinite_apply`, `revFiltration_apply`, and `downcrossingsBefore_eq`; add and tag the analogous `downcrossings_eq` if `downcrossings` remains public.",
+   "issue": "The public wrapper definitions have defining/normal-form lemmas but they are not tagged `@[simp]`, so users cannot normalize the API with `simp` without unfolding or manually naming each lemma.",
+   "line": 0
+  }
+ ],
+ "head_sha": "475ae83e98a8e5a70b1ab9cd280bba765f6e0b6c",
+ "merge_base_sha": "ebd89489fd1313236315bc4e0b532d4cb5579f50",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "648fbe1a346d2c7b378076fee460502f3ae3d33826949417362e61b4f1316654",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T132940Z-659-api-design-5f8fa1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T13:29:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The flagship alias is now present, but the exposed reverse-martingale helper API is still missing a martingale characterization and normal-form automation for its public wrapper definitions.",
+ "transcript_blob": "6eeb8a5f6c6fc1ad72917cc29c73e4f80b6de6168ed18fd53847f4e7f5d510b1",
+ "usage": {
+  "cached_input_tokens": 136704,
+  "input_tokens": 184533,
+  "output_tokens": 3281,
+  "reasoning_output_tokens": 2069
+ },
+ "verdict": "request_changes"
+}
