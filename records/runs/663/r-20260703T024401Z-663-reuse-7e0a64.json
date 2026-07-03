@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.378262,
+   "returncode": 0,
+   "secs": 44.5,
+   "usage": {
+    "cached_input_tokens": 55424,
+    "input_tokens": 112706,
+    "output_tokens": 2138,
+    "reasoning_output_tokens": 899
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc96261fac9e4acedab7aa26653f129a554653ab",
+ "cost_estimated": true,
+ "cost_usd": 0.378262,
+ "dedupe_key": "TauCetiProject/TauCeti|663|b88eacdca231a658bafaf6b8fa5f3f525c19ce0b|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "48fd0d7f14b5bfe0d4b3bf3f5480461c3cdfb5a10569ea33aa4f0a059d441b82",
+ "diff_sha256": "48fd0d7f14b5bfe0d4b3bf3f5480461c3cdfb5a10569ea33aa4f0a059d441b82",
+ "duration_s": 44.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`ComplexLine.lean:51` defines `complexLineEquivRealProd := Complex.equivRealProdCLM.toLinearEquiv`; Mathlib has `Mathlib/Analysis/Complex/Basic.lean:131 def equivRealProdCLM` and `:135 theorem equivRealProdCLM_symm_apply`.",
+   "file": "TauCeti/Geometry/Symplectic/ComplexLine.lean",
+   "fix": "Use `Complex.equivRealProdCLM.toLinearEquiv`, `Complex.equivRealProdCLM.symm.toLinearEquiv`, and `Complex.equivRealProdCLM_symm_apply` directly; remove the wrapper abbrevs and wrapper simp lemmas.",
+   "issue": "`complexLineEquivRealProd`, `realProdEquivComplexLine`, and their apply lemmas are public wrappers around Mathlib's existing `Complex.equivRealProdCLM.toLinearEquiv` and `.symm`.",
+   "line": 51
+  },
+  {
+   "evidence": "`ComplexLine.lean:93` proves `stdComplexStructure = AlmostComplexStructure.ofComplexModule \u2102`; existing API is `ComplexModule.lean:125 def ofComplexModule` and `:134 lemma ofComplexModule_apply`.",
+   "file": "TauCeti/Geometry/Symplectic/ComplexLine.lean",
+   "fix": "State the complex-line lemmas using `AlmostComplexStructure.ofComplexModule \u2102` directly, with a private transport equality if needed for proofs; remove `stdComplexStructure` and its immediate restatements `stdComplexStructure_apply`, `_one`, `_I`, and `_eq_ofComplexModule`.",
+   "issue": "`stdComplexStructure` duplicates the existing generic complex-module almost complex structure specialized to `\u2102`; the PR proves this itself at `stdComplexStructure_eq_ofComplexModule`.",
+   "line": 60
+  }
+ ],
+ "head_sha": "b88eacdca231a658bafaf6b8fa5f3f525c19ce0b",
+ "merge_base_sha": "cc96261fac9e4acedab7aa26653f129a554653ab",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 663,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f01819c7f595bcf8652e14704ccc1c06c575a83f7bcfa1e23e5d328d2d51a495",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T024401Z-663-reuse-7e0a64",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T02:44:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes public declarations that are direct aliases/specializations of existing Mathlib and TauCeti API. These should be removed or replaced by the existing declarations in the new statements.",
+ "transcript_blob": "5f5c2baf065dabecf0c4e56330e18f7a92ec73af7f80bafd8200a49b83f91cf4",
+ "usage": {
+  "cached_input_tokens": 55424,
+  "input_tokens": 112706,
+  "output_tokens": 2138,
+  "reasoning_output_tokens": 899
+ },
+ "verdict": "block"
+}
