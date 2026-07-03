@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.363194,
+   "returncode": 0,
+   "secs": 36.1,
+   "usage": {
+    "cached_input_tokens": 33408,
+    "input_tokens": 92494,
+    "output_tokens": 1702,
+    "reasoning_output_tokens": 553
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ebd89489fd1313236315bc4e0b532d4cb5579f50",
+ "cost_estimated": true,
+ "cost_usd": 0.363194,
+ "dedupe_key": "TauCetiProject/TauCeti|666|97fc07f564f23a6e7d5d1a86b18e228867e532bb|reuse|gpt-5.5|caeca2a4b1193aa2|production|4",
+ "diff_blob": "e2a471090a1fe1317b6ec6f355775e270712f5641a3bcdb663be3e09dde29b24",
+ "diff_sha256": "e2a471090a1fe1317b6ec6f355775e270712f5641a3bcdb663be3e09dde29b24",
+ "duration_s": 36.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Basic.lean:219` has `theorem measurable_reindex (\u03c6 : \u2115 \u2192 \u2115) : Measurable (fun x : \u2115 \u2192 \u03b1 => fun k => x (\u03c6 k))`; the new proof at `Basic.lean:227` is exactly `measurable_reindex \u03c0`.",
+   "file": "TauCeti/Probability/Exchangeability/Basic.lean",
+   "fix": "Use `measurable_reindex \u03c0` at call sites, e.g. in `ExchangeableSigma.lean` and the `MeasurePreserving` constructor, instead of adding a public specialized lemma.",
+   "issue": "`measurable_permReindex` is only the `Equiv.Perm \u2115` specialization of the existing `measurable_reindex`.",
+   "line": 225
+  },
+  {
+   "evidence": "`Basic.lean:230` has `theorem map_reindex_pathLaw ... (\u03c6 : \u2115 \u2192 \u2115)`; the new declaration at `Basic.lean:240-244` is proved by the one-line replacement `map_reindex_pathLaw \u03bc hX \u03c0`.",
+   "file": "TauCeti/Probability/Exchangeability/Basic.lean",
+   "fix": "Use `map_reindex_pathLaw \u03bc hX \u03c0` directly in `FullyExchangeable.lean`, rewriting with `permReindex` by definitional reduction as needed, rather than exporting a second theorem.",
+   "issue": "`map_permReindex_pathLaw` duplicates the existing generic `map_reindex_pathLaw` specialized to a permutation.",
+   "line": 240
+  }
+ ],
+ "head_sha": "97fc07f564f23a6e7d5d1a86b18e228867e532bb",
+ "merge_base_sha": "ebd89489fd1313236315bc4e0b532d4cb5579f50",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 666,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "343fceaff1db6a731514c548a417f63a3ec0c2733f096c61deba43bb92f9b414",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T142930Z-666-reuse-182e0c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T14:29:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds permutation-specialized public path-space lemmas that are already covered by the existing generic reindexing API. The full-exchangeability iff bridge itself is not duplicated, but the reusable wrappers in `Basic.lean` should be removed or kept private if only needed locally.",
+ "transcript_blob": "f870f16c620d5f066caafe4cf8d7de1342ac2a2ee888c62eb4a936e27c3cc6cb",
+ "usage": {
+  "cached_input_tokens": 33408,
+  "input_tokens": 92494,
+  "output_tokens": 1702,
+  "reasoning_output_tokens": 553
+ },
+ "verdict": "request_changes"
+}
