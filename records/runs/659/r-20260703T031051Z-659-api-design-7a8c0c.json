@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.66811,
+   "returncode": 0,
+   "secs": 68.5,
+   "usage": {
+    "cached_input_tokens": 64000,
+    "input_tokens": 171158,
+    "output_tokens": 3344,
+    "reasoning_output_tokens": 1802
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "cost_estimated": true,
+ "cost_usd": 0.66811,
+ "dedupe_key": "TauCetiProject/TauCeti|659|b1a838385112e5059255d1a637b52e2be91e7d46|api-design|gpt-5.5|caeca2a4b1193aa2|production|4",
+ "diff_blob": "f82b720392d44db6c1e692c1f56f7f82678fa1fb0ad0f73dd2d55ec6255c09ae",
+ "diff_sha256": "f82b720392d44db6c1e692c1f56f7f82678fa1fb0ad0f73dd2d55ec6255c09ae",
+ "duration_s": 68.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Roadmap target theorem is `condExp_tendsto_iInf` at `roadmap/TauCetiRoadmap/Exchangeability/README.md:496`/`:502`; code exports `theorem tendsto_ae_condExp_iInf` at line 48 and `alias condExp_tendsto_iInf` at line 61.",
+   "file": "TauCeti/Probability/Martingale/Convergence.lean",
+   "fix": "Export only the roadmap target spelling, e.g. make `condExp_tendsto_iInf` the theorem name and avoid the extra public alias unless a real downstream consumer needs it.",
+   "issue": "The final theorem is public as `tendsto_ae_condExp_iInf` and then aliased publicly as `condExp_tendsto_iInf`, duplicating the Layer 4 API.",
+   "line": 48
+  },
+  {
+   "evidence": "Public helper hits include `revFiltration`/`revCondExpFinite` at `Reverse.lean:43,54`, `negProcess`/`revProcess`/`timeReversal_crossing_bound` at `Crossings/TimeReversal.lean:40,44,162`, `downcrossingsBefore`/`downcrossings` and pathwise lemmas at `Crossings/Pathwise.lean:41,46,55,122,152`, `upcrossings_bdd_uniform` at `Crossings/Bounds.lean:38`, and `tendsto_ae_condExp_iInf_aux` at `Crossings/AntitoneLimit.lean:349`; the roadmap\u2019s public theorem target is `condExp_tendsto_iInf`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Either keep the proof chain non-public by merging/scope-hiding the cross-file helpers, or deliberately promote these modules with complete supported APIs; in particular a public `revCondExpFinite` needs the advertised martingale characterization.",
+   "issue": "Proof-chain modules still expose implementation declarations on direct import, beyond the final convergence target; non-public import from `Convergence.lean` only hides them transitively from that one entry point.",
+   "line": 43
+  }
+ ],
+ "head_sha": "b1a838385112e5059255d1a637b52e2be91e7d46",
+ "merge_base_sha": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3728e077de1b51a7f90c4e16ee08a3c0170cd7d229c651a129d66a14dfe82674",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T031051Z-659-api-design-7a8c0c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T03:10:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface is still broader than the downstream Layer 4 target requires. Direct imports of the helper modules expose proof infrastructure, and the final theorem is exported under two public names.",
+ "transcript_blob": "f43ef797dfefbab0b09a49eca329e91eb89d89bb9cd490a730426128d7df7062",
+ "usage": {
+  "cached_input_tokens": 64000,
+  "input_tokens": 171158,
+  "output_tokens": 3344,
+  "reasoning_output_tokens": 1802
+ },
+ "verdict": "request_changes"
+}
