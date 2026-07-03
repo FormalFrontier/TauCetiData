@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.363395,
+   "returncode": 0,
+   "secs": 50.7,
+   "usage": {
+    "cached_input_tokens": 133120,
+    "input_tokens": 178285,
+    "output_tokens": 2367,
+    "reasoning_output_tokens": 815
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "cost_estimated": true,
+ "cost_usd": 0.363395,
+ "dedupe_key": "TauCetiProject/TauCeti|659|373dfcd61f341d2b3ae80c7bb631ddec5d93a31e|proof-quality|gpt-5.5|caeca2a4b1193aa2|production|3",
+ "diff_blob": "b352d03c717df0673568382f7e2e553d55fbd0787e331185404b5293a5c6a117",
+ "diff_sha256": "b352d03c717df0673568382f7e2e553d55fbd0787e331185404b5293a5c6a117",
+ "duration_s": 50.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"lemma upcrossings_bdd_uniform|have h_submart|have h_bound\"` hits `Bounds.lean:39`, `Bounds.lean:51`, and `Bounds.lean:60`; `h_submart` rebuilds the reverse-process martingale inside this proof.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Bounds.lean",
+   "fix": "Move these to named lemmas, e.g. `martingale_revCondExpFinite`/`submartingale_revCondExpFinite` in `Reverse.lean` and a separate `lintegral_pos_part_revCondExpFinite_le`, then invoke them here.",
+   "issue": "`upcrossings_bdd_uniform` is a long proof that reconstructs the reusable reversed conditional-expectation submartingale and positive-part L1 bound as local `have`s.",
+   "line": 39
+  },
+  {
+   "evidence": "`rg -n \"private lemma ae_upcrossings_condExp_lt_top|have h_N_bound|have h_exp_orig|lintegral_iSup\"` hits `AntitoneLimit.lean:89`, `:104`, `:123`, and `:137`; the local proof is the monotone-convergence upgrade from finite horizons to total crossings.",
+   "file": "TauCeti/Probability/Martingale/Crossings/AntitoneLimit.lean",
+   "fix": "Extract a lemma taking measurability, monotonicity of `upcrossingsBefore`, and `\u2200 N, \u222b\u207b upcrossingsBefore N \u2264 C` to conclude `\u222b\u207b upcrossings \u2264 C`, then use it in this proof.",
+   "issue": "`ae_upcrossings_condExp_lt_top` still hides the generic step from uniform finite-horizon bounds to the total upcrossing integral as local `h_exp_orig`.",
+   "line": 89
+  }
+ ],
+ "head_sha": "373dfcd61f341d2b3ae80c7bb631ddec5d93a31e",
+ "merge_base_sha": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "24f526bdafe77758b9cdc519464b6bbd2800c5348efb246bda362a8dc10bf250",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T044916Z-659-proof-quality-8fa137",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T04:49:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior pathwise/integral comparison issue was partly fixed, but two public-facing proof blocks still hide substantial reusable facts as local `have`s. Factor those steps into named lemmas so the reverse-martingale proof chain is auditable and less brittle.",
+ "transcript_blob": "3ed7940374d5ed64c09752d1fb0ba187b47bbf433afa7e436635fa9fe86a10e1",
+ "usage": {
+  "cached_input_tokens": 133120,
+  "input_tokens": 178285,
+  "output_tokens": 2367,
+  "reasoning_output_tokens": 815
+ },
+ "verdict": "request_changes"
+}
