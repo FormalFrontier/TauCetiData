@@ -1,0 +1,92 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.348427,
+   "returncode": 0,
+   "secs": 62.0,
+   "usage": {
+    "cached_input_tokens": 88064,
+    "input_tokens": 132779,
+    "output_tokens": 2694,
+    "reasoning_output_tokens": 1005
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2d10c234ac704c6c576942b44bf1d98c974b8cbb",
+ "cost_estimated": true,
+ "cost_usd": 0.348427,
+ "dedupe_key": "TauCetiProject/TauCeti|664|3f9dfe29d19a7f7cb87e0d55699f4081ecfccff0|reuse|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "506771c59d4f0e8bac5d2b159d13a4e04adabc900d8f335f03964b313999cf2e",
+ "diff_sha256": "506771c59d4f0e8bac5d2b159d13a4e04adabc900d8f335f03964b313999cf2e",
+ "duration_s": 62.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Group/Subgroup/Map.lean:157` has `Subgroup.mem_map_equiv`; the proof at lines 70-80 applies exactly that lemma in both directions.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroup/BasepointChange.lean",
+   "fix": "Remove it; at use sites unfold `basepointChangeSubgroup` and use `Subgroup.mem_map_equiv`, e.g. `rw [SetLike.le_def]; simp [basepointChangeSubgroup, Subgroup.mem_map_equiv]`.",
+   "issue": "`le_basepointChangeSubgroup_iff` is only the pointwise order form of `Subgroup.mem_map_equiv` for `FundamentalGroup.fundamentalGroupMulEquivOfPath \u03b3`.",
+   "line": 65
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Group/Subgroup/Map.lean:196` states `K.map f \u2264 H \u2194 K \u2264 H.comap f`; the new proof at lines 90-91 is precisely this.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroup/BasepointChange.lean",
+   "fix": "Remove it and use `rw [basepointChangeSubgroup]; exact Subgroup.map_le_iff_le_comap` where needed.",
+   "issue": "`basepointChangeSubgroup_le_iff` is exactly `Subgroup.map_le_iff_le_comap` after unfolding `basepointChangeSubgroup`.",
+   "line": 84
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Group/Subgroup/Map.lean:139` has `Subgroup.map_mono`; the new proof at line 97 is exactly `Subgroup.map_mono hHK`.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroup/BasepointChange.lean",
+   "fix": "Remove it and use `Subgroup.map_mono` with `basepointChangeSubgroup` unfolded, or `simpa [basepointChangeSubgroup] using Subgroup.map_mono hHK`.",
+   "issue": "`basepointChangeSubgroup_mono` is just `Subgroup.map_mono` specialized to the path-conjugation map.",
+   "line": 94
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Group/Subgroup/Basic.lean:744` has `Subgroup.Normal.map`; the new instance body at lines 103-105 is exactly that application.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroup/BasepointChange.lean",
+   "fix": "Remove the instance and use `Subgroup.Normal.map` with `(FundamentalGroup.fundamentalGroupMulEquivOfPath \u03b3).surjective` when the normality proof is needed.",
+   "issue": "`basepointChangeSubgroup.normal` duplicates Mathlib's normality transport for subgroup maps under a surjective homomorphism.",
+   "line": 100
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Group/Subgroup/Basic.lean:952` has `MulEquiv.normal_map_iff`; the new proof at lines 111-113 is exactly `simpa [basepointChangeSubgroup] using` that theorem.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroup/BasepointChange.lean",
+   "fix": "Remove it and use `MulEquiv.normal_map_iff` after `simp [basepointChangeSubgroup]`.",
+   "issue": "`basepointChangeSubgroup_normal_iff` directly restates `MulEquiv.normal_map_iff` for the fundamental-group path equivalence.",
+   "line": 108
+  }
+ ],
+ "head_sha": "3f9dfe29d19a7f7cb87e0d55699f4081ecfccff0",
+ "merge_base_sha": "2d10c234ac704c6c576942b44bf1d98c974b8cbb",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 664,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "904b7b0ab0220ead0a700af591a6e2d5440e6d0044f3c748524ba8a326d99384",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T053402Z-664-reuse-f225ae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T05:34:02Z",
+ "submitted_by": "kim-em",
+ "summary": "Several new public declarations are thin basepoint-specific restatements of existing Mathlib subgroup/equiv API. Remove these wrappers and use the generic lemmas after unfolding `basepointChangeSubgroup`.",
+ "transcript_blob": "983ceab10233b0d71754526f7e10f6ac4e107d95239692de995b5a6798492371",
+ "usage": {
+  "cached_input_tokens": 88064,
+  "input_tokens": 132779,
+  "output_tokens": 2694,
+  "reasoning_output_tokens": 1005
+ },
+ "verdict": "block"
+}
