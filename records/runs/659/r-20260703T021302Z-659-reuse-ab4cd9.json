@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.836402,
+   "returncode": 0,
+   "secs": 82.6,
+   "usage": {
+    "cached_input_tokens": 301824,
+    "input_tokens": 416038,
+    "output_tokens": 3814,
+    "reasoning_output_tokens": 1508
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "cost_estimated": true,
+ "cost_usd": 0.836402,
+ "dedupe_key": "TauCetiProject/TauCeti|659|8646e1b8bbf8d496dd8053c173f576ab482d9711|reuse|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "8d51df6d63cab730aee22d121b8be3616242ecc0eab19d2ca93a7935ce58f4f7",
+ "diff_sha256": "8d51df6d63cab730aee22d121b8be3616242ecc0eab19d2ca93a7935ce58f4f7",
+ "duration_s": 82.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: PR defines `martingale_revCondExpFinite` at `code/TauCeti/Probability/Martingale/Reverse.lean:66`; Mathlib provides `theorem martingale_condExp ... : Martingale (fun i => \u03bc[f | \u2131 i]) \u2131 \u03bc` at `mathlib/Mathlib/Probability/Martingale/Basic.lean:141`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Delete `martingale_revCondExpFinite`; at its use in `Crossings/Bounds.lean:52`, use `simpa [revCondExpFinite] using (martingale_condExp f (revFiltration \ud835\udd3d h_antitone h_le N) \u03bc).submartingale`.",
+   "issue": "`martingale_revCondExpFinite` is a public thin specialization of Mathlib's `martingale_condExp`; after unfolding `revCondExpFinite` and `revFiltration`, `martingale_condExp f (revFiltration \ud835\udd3d h_antitone h_le N) \u03bc` proves the same martingale statement.",
+   "line": 66
+  },
+  {
+   "evidence": "`rg` hits: PR lemma at `code/TauCeti/Probability/Martingale/Crossings/TimeReversal.lean:57`, used at lines 99 and 124; Mathlib provides `theorem lowerCrossingTime_lt_upperCrossingTime` at `mathlib/Mathlib/Probability/Martingale/Upcrossing.lean:244`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/TimeReversal.lean",
+   "fix": "Remove the private lemma and replace its uses with `lowerCrossingTime_lt_upperCrossingTime hab (Nat.ne_of_lt h_uct)` and `lowerCrossingTime_lt_upperCrossingTime hab (Nat.ne_of_lt h_uct_lt)`.",
+   "issue": "The private lemma `lowerCrossingTime_lt_upperCrossingTime_succ'` reproves Mathlib's `lowerCrossingTime_lt_upperCrossingTime` with the stronger hypothesis `upperCrossingTime ... < N`.",
+   "line": 57
+  }
+ ],
+ "head_sha": "8646e1b8bbf8d496dd8053c173f576ab482d9711",
+ "merge_base_sha": "b6f7e5e827e7d71317a820bd727d0945489b0006",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6221d775e4ee2fefb0a60fb72f77e5b4543e3f8e1a2e18c0ae02e95ebe96bd42",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260703T021302Z-659-reuse-ab4cd9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-03T02:13:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still adds useful reverse-martingale infrastructure, but it includes a public declaration directly replaced by Mathlib and a private crossing lemma that reproves Mathlib API.",
+ "transcript_blob": "42fb2b37e1727e923b92286df1d4979a359bd18e6778c70b5ea3247b5be78052",
+ "usage": {
+  "cached_input_tokens": 301824,
+  "input_tokens": 416038,
+  "output_tokens": 3814,
+  "reasoning_output_tokens": 1508
+ },
+ "verdict": "block"
+}
