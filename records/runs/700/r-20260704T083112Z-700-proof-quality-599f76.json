@@ -1,0 +1,90 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.249847,
+   "returncode": 0,
+   "secs": 54.8,
+   "usage": {
+    "cached_input_tokens": 65024,
+    "input_tokens": 92393,
+    "output_tokens": 2683,
+    "reasoning_output_tokens": 1197
+   }
+  },
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.505216,
+   "returncode": 0,
+   "secs": 40.1,
+   "usage": {
+    "cached_input_tokens": 51712,
+    "input_tokens": 136850,
+    "output_tokens": 1789,
+    "reasoning_output_tokens": 341
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.755063,
+ "dedupe_key": "TauCetiProject/TauCeti|700|e77d46ecb53f0d9fed30d1d46dbcf12bc0aaa08e|proof-quality|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "8b1397258fa87935cf3858fb1f3725d7d829a2d1e7a79cdefaaef0b2e075e81c",
+ "diff_sha256": "8b1397258fa87935cf3858fb1f3725d7d829a2d1e7a79cdefaaef0b2e075e81c",
+ "duration_s": 95.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`HopfKernelPoints.lean:80` has `change ... AlgHom.mapDomain ((kerLiftBialgEquiv f hf).symm ...)`; `HopfMap.lean:159` provides `AlgHom.mapDomainMulEquiv_symm_apply` and `HopfMap.lean:172` provides `AlgHom.mapValue_mapDomain`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Rewrite with `AlgHom.mapDomainMulEquiv_symm_apply` or factor a lemma for the `.toMonoidHom` coercion, then apply `AlgHom.mapValue_mapDomain` without exposing internals by `change`.",
+   "issue": "`kerQuotientPointsMulEquiv_mapValue` uses `change` to normalize the inverse `MulEquiv` coercion instead of rewriting through the public equivalence API.",
+   "line": 80
+  },
+  {
+   "evidence": "`HopfKernelPoints.lean:108` has `change (AlgHom.mapDomain (kerLiftBialgEquiv f hf ...) g).ofConv ...`; `HopfMap.lean:153` and `HopfMap.lean:83` give named rewrites for these reductions.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Use `AlgHom.mapDomainMulEquiv_apply`/`AlgHom.mapDomain_apply_apply` or add a dedicated pointwise lemma for `kerQuotientPointsMulEquiv.symm`, then continue with the quotient-point rewrite.",
+   "issue": "`quotientPointsHom_kerQuotientPointsMulEquiv_symm` uses `change` to expose the inverse equivalence as `AlgHom.mapDomain`, making the proof depend on wrapper definitional equality.",
+   "line": 108
+  },
+  {
+   "evidence": "`HopfKernelPoints.lean:113` has `change g.ofConv (kerLiftBialgEquiv f hf ...) = ...`; `Kernel.lean:179` and `Kernel.lean:143` are the explicit evaluation lemmas already being targeted.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Add a small simp/pointwise lemma for evaluating `AlgHom.mapDomain (kerLiftBialgEquiv f hf)` on quotient classes, using `kerLiftBialgEquiv_apply` and `kerLiftBialgHom_mk`, and rewrite by that lemma.",
+   "issue": "The same proof then uses another `change` just to coerce the bialgebra equivalence into function application before `kerLiftBialgEquiv_apply`; the comment says what is normalized but not why this defeq step is unavoidable.",
+   "line": 113
+  }
+ ],
+ "head_sha": "e77d46ecb53f0d9fed30d1d46dbcf12bc0aaa08e",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "92fc5e3a4ca089fe6d0d71cd70338de4b0609b1bfbe7c3c029d9f5c07ebb54bf",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T083112Z-700-proof-quality-599f76",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T08:31:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The new point-level proofs still rely on `change` to expose coercions across `MulEquiv`/`WithConv`/`mapDomain` wrappers where the local API has named rewrite lemmas. Replace the defeq-dependent steps with those lemmas, or add a real explanation if a `change` is unavoidable.",
+ "transcript_blob": "faa26ecbe892dcfff950adb0a23d18d3ad2e575c6f6d7fc06761d9c9dd1491a4",
+ "usage": {
+  "cached_input_tokens": 51712,
+  "input_tokens": 136850,
+  "output_tokens": 1789,
+  "reasoning_output_tokens": 341
+ },
+ "verdict": "request_changes"
+}
