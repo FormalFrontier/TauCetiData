@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.511507,
+   "returncode": 0,
+   "secs": 91.4,
+   "usage": {
+    "cached_input_tokens": 82944,
+    "input_tokens": 156413,
+    "output_tokens": 3423,
+    "reasoning_output_tokens": 1787
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.511507,
+ "dedupe_key": "TauCetiProject/TauCeti|686|3a38389ca95de3cf031528115403c50760340627|reuse|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "3b8aa9acd45811dc39f4e910106663265b3e4b4e1ff6afe0ef90d2a0193465a1",
+ "diff_sha256": "3b8aa9acd45811dc39f4e910106663265b3e4b4e1ff6afe0ef90d2a0193465a1",
+ "duration_s": 91.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR line 37 has `fun n \u03c9 => X (N - n) \u03c9`; grep found `mathlib/Mathlib/Algebra/Polynomial/Reverse.lean:48-66` defining `Polynomial.revAt` with `revAt_le : revAt N i = N - i` under `i \u2264 N`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/TimeReversal.lean",
+   "fix": "Define the process via `Polynomial.revAt`, e.g. `fun n \u03c9 => X (Polynomial.revAt N n) \u03c9`, and use `Polynomial.revAt_le` at the proof sites where `n \u2264 N` gives the current `N - n` simplification.",
+   "issue": "`revProcess` defines horizon reversal with raw `N - n`, duplicating Mathlib's existing bundled index reversal API and losing its involutive/out-of-horizon behavior.",
+   "line": 36
+  },
+  {
+   "evidence": "PR lines 47-50 prove the lemma by `simpa only [lowerCrossingTime] using hittingBtwn_le_of_mem`; Mathlib has `mathlib/Mathlib/Probability/Process/HittingTime.lean:213: theorem hittingBtwn_le_of_mem`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/TimeReversal.lean",
+   "fix": "Delete the helper and replace its sole use with `simpa only [lowerCrossingTime] using hittingBtwn_le_of_mem h_uct_le_N\u03c3 h_N\u03c3_le_N1 hY_N\u03c3_in_Iic`.",
+   "issue": "The private `lowerCrossingTime_le_of_mem` is only a defeq restatement of Mathlib's `hittingBtwn_le_of_mem` after unfolding `lowerCrossingTime`.",
+   "line": 47
+  }
+ ],
+ "head_sha": "3a38389ca95de3cf031528115403c50760340627",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 686,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "33c7544c1b8b99e8421016a1f391ba36b233582a9583c22afdd75ee987d9684b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T174352Z-686-reuse-32b085",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T17:43:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still reimplements existing reusable pieces: the public time-reversal definition hard-codes a raw index reversal instead of Mathlib's bundled horizon reversal, and a private helper just restates `hittingBtwn_le_of_mem`. These are fixable reuse issues, not a block.",
+ "transcript_blob": "d105bf41dc74866eebf864a1c513cb66113436a9a1083b69b82166b8bf2545eb",
+ "usage": {
+  "cached_input_tokens": 82944,
+  "input_tokens": 156413,
+  "output_tokens": 3423,
+  "reasoning_output_tokens": 1787
+ },
+ "verdict": "request_changes"
+}
