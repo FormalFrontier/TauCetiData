@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.275938,
+   "returncode": 0,
+   "secs": 47.9,
+   "usage": {
+    "cached_input_tokens": 55296,
+    "input_tokens": 90878,
+    "output_tokens": 2346,
+    "reasoning_output_tokens": 1022
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.275938,
+ "dedupe_key": "TauCetiProject/TauCeti|685|7305cfce2e9d9bd7fa40c13efa65758a9ce33d0b|generality|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "cd35e3002d3a1a94c60e858225178b7cfe6393109deca0077d5e9e8b014995a5",
+ "diff_sha256": "cd35e3002d3a1a94c60e858225178b7cfe6393109deca0077d5e9e8b014995a5",
+ "duration_s": 47.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR lines 56,61,74,87 use `\u03a9 \u2192 \u211d`; Mathlib/Probability/Martingale/Basic.lean:141 has `theorem martingale_condExp [CompleteSpace E] (f : \u03a9 \u2192 E) ...`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Parameterize the process and martingale theorem by `{E : Type*} [NormedAddCommGroup E] [NormedSpace \u211d E] [CompleteSpace E]` with `f : \u03a9 \u2192 E`; keep `submartingale_revCondExpFinite` only under the additional order assumptions needed for `Martingale.submartingale`.",
+   "issue": "`revCondExpFinite`, `revCondExpFinite_apply`, `martingale_revCondExpFinite`, and `submartingale_revCondExpFinite` are all specialized to `\u03a9 \u2192 \u211d`, but the nearby Mathlib theorem they transport is Banach-valued.",
+   "line": 56
+  },
+  {
+   "evidence": "PR lines 73 and 86 require `[IsFiniteMeasure \u03bc]`; Mathlib/Probability/Martingale/Basic.lean:141-142 states `martingale_condExp ... [SigmaFiniteFiltration \u03bc \u2131]`, and Mathlib/Probability/Process/Filtration.lean:201 defines that class.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Replace `[IsFiniteMeasure \u03bc]` with `[SigmaFiniteFiltration \u03bc (revFiltration \ud835\udd3d h_antitone h_le N)]` for the martingale theorem, and derive the submartingale from that generalized result.",
+   "issue": "`martingale_revCondExpFinite` and the derived submartingale require `[IsFiniteMeasure \u03bc]`, but the wrapped Mathlib API only needs the filtration to be sigma-finite.",
+   "line": 73
+  }
+ ],
+ "head_sha": "7305cfce2e9d9bd7fa40c13efa65758a9ce33d0b",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 685,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3b240fa8520b99f9a72f0b8e015241754336b7cc1acced241876aeebb4226bc9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T060124Z-685-generality-6033f2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T06:01:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The new API is more specialized than the Mathlib theorem it wraps: it fixes the value type to `\u211d` and requires a finite measure where the underlying martingale result is Banach-valued over sigma-finite filtrations.",
+ "transcript_blob": "ae2b434d21980b86881106ae8d43bb828ae7c12dd5479acb08dd9ae256620511",
+ "usage": {
+  "cached_input_tokens": 55296,
+  "input_tokens": 90878,
+  "output_tokens": 2346,
+  "reasoning_output_tokens": 1022
+ },
+ "verdict": "request_changes"
+}
