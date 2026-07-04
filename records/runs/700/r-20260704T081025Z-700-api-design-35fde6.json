@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.510517,
+   "returncode": 0,
+   "secs": 76.7,
+   "usage": {
+    "cached_input_tokens": 216704,
+    "input_tokens": 275921,
+    "output_tokens": 3536,
+    "reasoning_output_tokens": 1349
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.510517,
+ "dedupe_key": "TauCetiProject/TauCeti|700|b0853a146527d4ec6383d46b06026c611ccff970|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "38564d17b62a5aaf21e1ca3577b3e1c348e0414583fa9d41d4135a1aa7b2b2d9",
+ "diff_sha256": "38564d17b62a5aaf21e1ca3577b3e1c348e0414583fa9d41d4135a1aa7b2b2d9",
+ "duration_s": 76.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"pointsMulEquiv_mapValue|prodPointsMulEquiv_mapValue|baseChangePointsMulEquiv_mapValue\" code/TauCeti/Algebra/AlgebraicGroup` shows analogous point-equivalence APIs expose naturality, and `HopfMap.lean:172` provides `AlgHom.mapValue_mapDomain`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Add a `kerQuotientPointsMulEquiv_mapValue` theorem commuting the equivalence with `AlgHom.mapValue`, proved from `AlgHom.mapValue_mapDomain`; include the corresponding symm form if needed.",
+   "issue": "`kerQuotientPointsMulEquiv` is exported only pointwise in `A`; there is no naturality lemma with respect to `AlgHom.mapValue`, so consumers cannot use this as a functor-of-points equivalence without unfolding the definition.",
+   "line": 60
+  },
+  {
+   "evidence": "`nl -ba ...HopfKernelPoints.lean` lines 69-80 and 96-103 show the public theorem statements contain raw elaborator artifacts rather than the declared point types.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Make these helper lemmas private or restate them with clean `HopfAlgebra.points` types; keep the public API as the pointwise formulas and compatibility/naturality lemmas, with normal-form lemmas marked for automation.",
+   "issue": "`kerQuotientPointsMulEquiv_apply` and line 96 `kerQuotientPointsMulEquiv_symm_apply` are public with raw elaborated `@DFunLike.coe`/`@MulEquiv.symm` statements, exposing implementation noise instead of a stable characteristic interface.",
+   "line": 69
+  }
+ ],
+ "head_sha": "b0853a146527d4ec6383d46b06026c611ccff970",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0396adc77ee94f34cd18f517fbe8d591a72b443b00118ded888fde7461a25e86",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T081025Z-700-api-design-35fde6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T08:10:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The pointwise equivalence is useful, but the public API is not yet complete as a functor-of-points statement and exposes raw helper lemmas as user-facing declarations.",
+ "transcript_blob": "d46928090ad3f26a43d4fa00ad7d04d595494a59022179feee9d2d15ec0c8db9",
+ "usage": {
+  "cached_input_tokens": 216704,
+  "input_tokens": 275921,
+  "output_tokens": 3536,
+  "reasoning_output_tokens": 1349
+ },
+ "verdict": "request_changes"
+}
