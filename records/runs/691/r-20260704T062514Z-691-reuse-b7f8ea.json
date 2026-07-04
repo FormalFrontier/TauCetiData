@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.743609,
+   "returncode": 0,
+   "secs": 72.6,
+   "usage": {
+    "cached_input_tokens": 399488,
+    "input_tokens": 488437,
+    "output_tokens": 3304,
+    "reasoning_output_tokens": 1314
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.743609,
+ "dedupe_key": "TauCetiProject/TauCeti|691|a58869c5aa2aaf56b5c30695f95a2f8c21935b79|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "diff_sha256": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "duration_s": 72.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`EnergyFormContinuity.lean:99-101` constructs `{ toFun := massForm ... }`; `LowerOrder.lean:51-52` has `massForm c := c \u2022 ContinuousLinearMap.mul \u211d \u211d`; Mathlib grep hit `Analysis/Normed/Operator/Mul.lean:190-195` defines `ContinuousLinearMap.lsmul` with `[simp] theorem lsmul_apply (c) (x) : lsmul \ud835\udd5c R c x = c \u2022 x`.",
+   "file": "TauCeti/Analysis/PDE/EnergyFormContinuity.lean",
+   "fix": "Define it by reuse, e.g. `noncomputable def massFormLinear : \u211d \u2192L[\u211d] \u211d \u2192L[\u211d] \u211d \u2192L[\u211d] \u211d := (ContinuousLinearMap.lsmul \u211d \u211d).flip (ContinuousLinearMap.mul \u211d \u211d)`, or drop the wrapper if not needed.",
+   "issue": "`massFormLinear` redefines the map `c \u21a6 c \u2022 ContinuousLinearMap.mul \u211d \u211d`, which is exactly `ContinuousLinearMap.lsmul` flipped at the fixed multiplication form.",
+   "line": 99
+  }
+ ],
+ "head_sha": "a58869c5aa2aaf56b5c30695f95a2f8c21935b79",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 691,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f49a344cb98828c28afb9cb02b1994b934a3e20c28ef63d97a9b256c75dee707",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T062514Z-691-reuse-b7f8ea",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T06:25:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The new mass coefficient map duplicates Mathlib's scalar-multiplication continuous linear map instead of reusing it.",
+ "transcript_blob": "19b6b4e19ee9e42adf57abeedd76d8dc965d83bcebcf26819fb3b4f87cb16ba2",
+ "usage": {
+  "cached_input_tokens": 399488,
+  "input_tokens": 488437,
+  "output_tokens": 3304,
+  "reasoning_output_tokens": 1314
+ },
+ "verdict": "block"
+}
