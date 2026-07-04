@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.368998,
+   "returncode": 0,
+   "secs": 43.9,
+   "usage": {
+    "cached_input_tokens": 53376,
+    "input_tokens": 108956,
+    "output_tokens": 2147,
+    "reasoning_output_tokens": 1082
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "cost_estimated": true,
+ "cost_usd": 0.368998,
+ "dedupe_key": "TauCetiProject/TauCeti|717|d06d433a4fde0a31fab9d66ae808a2a877829407|naming|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "1b781a6027320b4c13958abd4a70562ae9aa35e841149bc3818469558bf48924",
+ "diff_sha256": "1b781a6027320b4c13958abd4a70562ae9aa35e841149bc3818469558bf48924",
+ "duration_s": 43.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"realOperator_continuousWithinAt|continuous.*realOperator_orbit\" code/TauCeti/Analysis/Semigroups/Basic.lean` shows existing `realOperator_continuousWithinAt` at lines 137 and 408, followed by the four new `continuous*_realOperator_orbit` names at lines 428, 447, 454, and 460.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Rename these to the local object-first pattern, e.g. `realOperator_continuous`, `realOperator_continuousOn_Ici`, `realOperator_continuousAt`, and `realOperator_continuousOn_uIcc`.",
+   "issue": "The new lemmas are named `continuous*_realOperator_orbit...`, but adjacent public API for the same applied map is `realOperator_continuousWithinAt`; Mathlib naming guidance says adjacent consistency beats a theoretically better name, and `orbit` is not a declared object here.",
+   "line": 428
+  },
+  {
+   "evidence": "Line 449 states `ContinuousOn ... (Set.Ici 0)`, while line 460 names the analogous interval result `..._uIcc`; the naming reference says theorem names describe conclusions outward and the set dictionary names `Ici`/`uIcc` explicitly.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Include the domain suffix, preferably as part of the object-first rename: `realOperator_continuousOn_Ici`.",
+   "issue": "`continuousOn_realOperator_orbit` proves continuity only on `Set.Ici 0` but the name omits the set, while the companion interval lemma includes `_uIcc`; set-specific `ContinuousOn` lemmas should name the set when the domain is part of the conclusion.",
+   "line": 447
+  }
+ ],
+ "head_sha": "d06d433a4fde0a31fab9d66ae808a2a877829407",
+ "merge_base_sha": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 717,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d18d0ad13cf41652b63a7544c75b5bcb8e40a4ed0f49d5589da58c8e999f599f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T230615Z-717-naming-950c28",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T23:06:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The new continuity wrappers use a naming pattern inconsistent with the existing public `realOperator` API in the same namespace, and one set-specific name omits its domain while another includes it.",
+ "transcript_blob": "5eb5596a30353141f168e42d7edc6a1069d4c5faefdaa72403364453f18ae4f0",
+ "usage": {
+  "cached_input_tokens": 53376,
+  "input_tokens": 108956,
+  "output_tokens": 2147,
+  "reasoning_output_tokens": 1082
+ },
+ "verdict": "request_changes"
+}
