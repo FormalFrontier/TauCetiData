@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.20409,
+   "returncode": 0,
+   "secs": 46.5,
+   "usage": {
+    "cached_input_tokens": 41600,
+    "input_tokens": 64590,
+    "output_tokens": 2278,
+    "reasoning_output_tokens": 1104
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6f895e414f813e65b7b85c12f0463f10271fe6c2",
+ "cost_estimated": true,
+ "cost_usd": 0.20409,
+ "dedupe_key": "TauCetiProject/TauCeti|705|dd62741f171d748ab72df590f9649dd5ac2227a9|api-design|gpt-5.5|caeca2a4b1193aa2|production|3",
+ "diff_blob": "457277a2582dd591766b035fefbf230fdeb069a5c9dad046a602e999d99d03d8",
+ "diff_sha256": "457277a2582dd591766b035fefbf230fdeb069a5c9dad046a602e999d99d03d8",
+ "duration_s": 46.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`roadmap/TauCetiRoadmap/ContourIntegration/Targets.lean:117` names `windingNumber_modelSector`; `rg -n \"windingNumber_modelSector_interval\" code/TauCeti` finds only the declaration at line 69 and its proof use at line 91.",
+   "file": "TauCeti/Analysis/Contour/ModelSectorWinding.lean",
+   "fix": "Make it `private` or otherwise non-public, and keep `windingNumber_modelSector` as the public characteristic theorem required by the roadmap.",
+   "issue": "`windingNumber_modelSector_interval` is a public arbitrary-interval generalization not named by the Layer 1 target and only used to prove the `[0, \u03b1]` API.",
+   "line": 69
+  },
+  {
+   "evidence": "`roadmap/TauCetiRoadmap/ContourIntegration/Targets.lean:126` names `windingNumber_at_i`; `code/TauCeti/Analysis/Contour/ModelSectorWinding.lean:99` declares `windingNumber_modelSector_pi` and line 139 aliases `windingNumber_at_i` to it.",
+   "file": "TauCeti/Analysis/Contour/ModelSectorWinding.lean",
+   "fix": "Do not expose the intermediate specialization; state/prove `windingNumber_at_i` directly or keep the specialization private.",
+   "issue": "`windingNumber_modelSector_pi` duplicates the roadmap-facing public theorem `windingNumber_at_i`, leaving two public names for the same semicircle coefficient.",
+   "line": 99
+  },
+  {
+   "evidence": "`roadmap/TauCetiRoadmap/ContourIntegration/Targets.lean:135` names `windingNumber_at_rho`; `code/TauCeti/Analysis/Contour/ModelSectorWinding.lean:112` declares `windingNumber_modelSector_pi_div_three` and line 145 aliases `windingNumber_at_rho` to it.",
+   "file": "TauCeti/Analysis/Contour/ModelSectorWinding.lean",
+   "fix": "Do not expose the intermediate specialization; state/prove `windingNumber_at_rho` directly or keep the specialization private.",
+   "issue": "`windingNumber_modelSector_pi_div_three` duplicates the roadmap-facing public theorem `windingNumber_at_rho`, leaving two public names for the same `\u03c0/3` coefficient.",
+   "line": 112
+  }
+ ],
+ "head_sha": "dd62741f171d748ab72df590f9649dd5ac2227a9",
+ "merge_base_sha": "e80669823fdb20e05a47101b37dbabd64cc486cd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 705,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "aaafffb3e6d91d2251f9e6d10604c949890a5f51dd82911ef1d4fad422e2c185",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T130609Z-705-api-design-f9296a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T13:06:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The roadmap names are now present, but the file still publishes helper/generalized and duplicate specialization declarations beyond the named downstream target. That over-exposes the public API and creates parallel names for the same facts.",
+ "transcript_blob": "5642042cf01a7cf387128034edb5cfb53b20a299c13f564e95b65faf7656fe27",
+ "usage": {
+  "cached_input_tokens": 41600,
+  "input_tokens": 64590,
+  "output_tokens": 2278,
+  "reasoning_output_tokens": 1104
+ },
+ "verdict": "request_changes"
+}
