@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.389574,
+   "returncode": 0,
+   "secs": 51.7,
+   "usage": {
+    "cached_input_tokens": 99328,
+    "input_tokens": 152610,
+    "output_tokens": 2450,
+    "reasoning_output_tokens": 972
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6f895e414f813e65b7b85c12f0463f10271fe6c2",
+ "cost_estimated": true,
+ "cost_usd": 0.389574,
+ "dedupe_key": "TauCetiProject/TauCeti|708|77dbe703b5caba1ae8affc78a0ddc7b27c764cb6|api-design|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "04a6d6452c66932e4436f2e3ba5717dcf0d4230c68c65e0f9b873e6fd4f1997a",
+ "diff_sha256": "04a6d6452c66932e4436f2e3ba5717dcf0d4230c68c65e0f9b873e6fd4f1997a",
+ "duration_s": 51.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only nonzero evaluation lemma is `residue_eq_meromorphicTrailingCoeffAt_of_order_eq_neg_one` at lines 93-95, while Mathlib's order API already exposes arbitrary local presentations via `meromorphicOrderAt_eq_int_iff` at `mathlib/Mathlib/Analysis/Meromorphic/Order.lean:94-95`.",
+   "file": "TauCeti/Analysis/Contour/Residue.lean",
+   "fix": "Add a lemma of the form: if `meromorphicOrderAt f z\u2080 = n < 0` and `f =\u1da0[\ud835\udcdd[\u2260] z\u2080] fun z => (z-z\u2080)^n \u2022 g z` with `g` analytic/nonzero, then `residue f z\u2080 = iteratedDeriv (-1-n).toNat g z\u2080 / ...`; use it to specialize the simple-pole theorem.",
+   "issue": "`residue` has no characteristic theorem for a finite negative order beyond the simple-pole case, so the public API does not actually expose the order-`(-1)` Laurent coefficient for higher-order poles.",
+   "line": 62
+  },
+  {
+   "evidence": "Roadmap lines 142-144 require residue as a Laurent coefficient with `\u2102`-linearity and simple-pole decomposition; Mathlib provides the needed model for germ invariance as `meromorphicOrderAt_congr` at `Order.lean:261` and `meromorphicTrailingCoeffAt_congr_nhdsNE` at `TrailingCoefficient.lean:184`.",
+   "file": "TauCeti/Analysis/Contour/Residue.lean",
+   "fix": "Expose at least `residue_congr_nhdsNE`, `residue_add`/`residue_sub` under meromorphic hypotheses, and `residue_const_smul`/`residue_smul`; prove them from the characteristic lemma rather than unfolding `residue`.",
+   "issue": "The API lacks congruence and linearity lemmas for `residue`, even though the roadmap explicitly needs residue sums, `\u2102`-linearity, and simple-pole decompositions.",
+   "line": 62
+  },
+  {
+   "evidence": "Only `residue_of_not_meromorphicAt` at lines 70-72 has `@[simp]`; the analytic zero normal form is exposed at lines 80-89 without an automation annotation.",
+   "file": "TauCeti/Analysis/Contour/Residue.lean",
+   "fix": "Add `@[simp]` to `residue_eq_zero_of_meromorphicOrderAt_nonneg` and `residue_eq_zero_of_analyticAt` unless this creates a demonstrated loop.",
+   "issue": "The normal-form zero lemmas for residues at nonnegative order/analytic points are not marked for simplification.",
+   "line": 80
+  }
+ ],
+ "head_sha": "77dbe703b5caba1ae8affc78a0ddc7b27c764cb6",
+ "merge_base_sha": "e80669823fdb20e05a47101b37dbabd64cc486cd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 708,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1e214176e79e8440ee5685e57dd0405fa1b4adac0114008082667434792835dc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T125910Z-708-api-design-09e9ea",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T12:59:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The public residue surface is too thin for the roadmap target: users cannot use the definition for higher-order poles or basic algebraic/germ reasoning without unfolding the choice-based body.",
+ "transcript_blob": "1c4b5783e0500ca5cd701fbe1d01f90e9490db8fd939dacca2400ebeef1922ab",
+ "usage": {
+  "cached_input_tokens": 99328,
+  "input_tokens": 152610,
+  "output_tokens": 2450,
+  "reasoning_output_tokens": 972
+ },
+ "verdict": "request_changes"
+}
