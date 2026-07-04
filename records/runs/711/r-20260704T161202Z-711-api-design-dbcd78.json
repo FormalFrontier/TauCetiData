@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.40298,
+   "returncode": 0,
+   "secs": 79.1,
+   "usage": {
+    "cached_input_tokens": 157440,
+    "input_tokens": 199882,
+    "output_tokens": 3735,
+    "reasoning_output_tokens": 1648
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2567b6cc4cc5e2048c149acf6c4c1a8388805797",
+ "cost_estimated": true,
+ "cost_usd": 0.40298,
+ "dedupe_key": "TauCetiProject/TauCeti|711|acfcf5f23914169c5cfeda2267718b870633b977|api-design|gpt-5.5|caeca2a4b1193aa2|production|3",
+ "diff_blob": "1f1cf6929e2539eb421048c3e9928f3bf4f2bad04dd9d71f46e8826adcefdf91",
+ "diff_sha256": "1f1cf6929e2539eb421048c3e9928f3bf4f2bad04dd9d71f46e8826adcefdf91",
+ "duration_s": 79.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Roadmap worked examples call for degree facts (`roadmap/TauCetiRoadmap/Multiquadratic/README.md:143-148`), and `rg` finds only `card_aut_adjoin_I_sqrt_neg_three_sqrt_neg_seven` in this PR, not a `finrank_adjoin_I_sqrt_neg_three_sqrt_neg_seven` theorem.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/MinusTwentyOneGalois.lean",
+   "fix": "Add the characteristic public finrank theorem for `IntermediateField.adjoin \u211a ({Complex.I, sqrtNegThree, sqrtNegSeven} : Set \u2102)` using `finrank_adjoin_roots_primeDiscriminantRadicands`; keep the Galois-cardinality theorem only if it is separately needed.",
+   "issue": "The only new worked-example theorem is `card_aut_adjoin_I_sqrt_neg_three_sqrt_neg_seven`, a Galois-group cardinality statement, not the stated Layer-0 degree API for `[\u211a(i, \u221a-3, \u221a-7) : \u211a] = 8`.",
+   "line": 38
+  },
+  {
+   "evidence": "`rg -n` shows these declarations are only consumed by `MinusTwentyOneGalois.lean:48-53`; the analogous `\u211a(i, \u221a5)` proof keeps `root_neg_four_five_sq`, `hD`, `hinj`, `heven`, and the range equality private/local in `PrimeDiscriminantGaloisGroup.lean:94-139`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/LegendrePrimeDiscriminantExamples.lean",
+   "fix": "Make these witnesses private/local to the degree/Galois example proof, or expose only a single characteristic worked-example theorem if downstream code actually needs it.",
+   "issue": "The PR exports application witnesses `root_neg_four_neg_three_neg_seven_sq`, `isPrimeDiscriminant_negFourNegThreeNegSevenPrimeDiscriminants`, `injective_negFourNegThreeNegSevenPrimeDiscriminants`, `not_all_even_negFourNegThreeNegSevenPrimeDiscriminants`, and `range_roots_neg_four_neg_three_neg_seven`; these are proof plumbing for the worked example, not public API for the Legendre-character file.",
+   "line": 78
+  }
+ ],
+ "head_sha": "acfcf5f23914169c5cfeda2267718b870633b977",
+ "merge_base_sha": "2567b6cc4cc5e2048c149acf6c4c1a8388805797",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 711,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "336a19534fe89b230a675e1de3b3f5fa454781e70a9d9754d8385fcaa8bc6464",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T161202Z-711-api-design-dbcd78",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T16:12:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface does not expose the degree theorem promised by the roadmap target, and it exports proof witnesses that should remain implementation details.",
+ "transcript_blob": "a3e04a2a7743e697a8ab04cfcb3308fa8f0dd61fa75ea5de16565843003746f0",
+ "usage": {
+  "cached_input_tokens": 157440,
+  "input_tokens": 199882,
+  "output_tokens": 3735,
+  "reasoning_output_tokens": 1648
+ },
+ "verdict": "request_changes"
+}
