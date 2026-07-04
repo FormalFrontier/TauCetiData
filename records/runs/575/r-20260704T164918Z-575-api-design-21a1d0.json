@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.300258,
+   "returncode": 0,
+   "secs": 63.9,
+   "usage": {
+    "cached_input_tokens": 102016,
+    "input_tokens": 143250,
+    "output_tokens": 1436,
+    "reasoning_output_tokens": 346
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e80669823fdb20e05a47101b37dbabd64cc486cd",
+ "cost_estimated": true,
+ "cost_usd": 0.300258,
+ "dedupe_key": "TauCetiProject/TauCeti|575|f35881641300942da1cf2f3fc0ae61b21bbda0d2|api-design|gpt-5.5|caeca2a4b1193aa2|production|4",
+ "diff_blob": "e887d89bef7df91d3682a99642fe867d6eb0f220868ef7137f380f3db225c50f",
+ "diff_sha256": "e887d89bef7df91d3682a99642fe867d6eb0f220868ef7137f380f3db225c50f",
+ "duration_s": 63.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `LaplaceRepresentation.lean:45:noncomputable abbrev laplaceTransform` and the characterization lemma at `LaplaceRepresentation.lean:50:lemma laplaceTransform_apply`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Make `laplaceTransform` an opaque `noncomputable def` and keep `laplaceTransform_apply` as the public formula lemma.",
+   "issue": "`laplaceTransform` is a public `abbrev`, so downstream code can unfold the integral implementation directly instead of using the advertised API.",
+   "line": 45
+  },
+  {
+   "evidence": "Roadmap lines 188-192 sketch `-- theorem bernstein`; `rg` finds only `hausdorff_bernstein_widder` at lines 759 and 768 and no `theorem bernstein` or `bernstein_unique` in the PR code.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/BernsteinTheorem.lean",
+   "fix": "Add public aliases with the expected names, or rename the exported headline theorems to `bernstein` and `bernstein_unique`.",
+   "issue": "The roadmap target names the downstream theorem `bernstein`, and the PR description also advertises `bernstein_unique`, but the file only exports `hausdorff_bernstein_widder` and `hausdorff_bernstein_widder_unique`.",
+   "line": 759
+  }
+ ],
+ "head_sha": "f35881641300942da1cf2f3fc0ae61b21bbda0d2",
+ "merge_base_sha": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 575,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6d592ac7770d84834bb59f7839be4ad581e3c1b59e0352948d43b4cd3e5bb69c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T164918Z-575-api-design-21a1d0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T16:49:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The theorem surface is close, but the public API still exposes an implementation body and misses the downstream headline theorem names.",
+ "transcript_blob": "22de38871d935a5d83c5c52baff9cadcaddb83a0e272f39fe94100c89dcc025f",
+ "usage": {
+  "cached_input_tokens": 102016,
+  "input_tokens": 143250,
+  "output_tokens": 1436,
+  "reasoning_output_tokens": 346
+ },
+ "verdict": "request_changes"
+}
