@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.287167,
+   "returncode": 0,
+   "secs": 49.8,
+   "usage": {
+    "cached_input_tokens": 72704,
+    "input_tokens": 110099,
+    "output_tokens": 2128,
+    "reasoning_output_tokens": 707
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.287167,
+ "dedupe_key": "TauCetiProject/TauCeti|689|8a8fb07eead9246d00b3ebe38b1a5466b0cd1cc0|api-design|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "0209c70707b7f15ce01727ada1676fb5973db7b674179899dec1f2f8eb93b483",
+ "diff_sha256": "0209c70707b7f15ce01727ada1676fb5973db7b674179899dec1f2f8eb93b483",
+ "duration_s": 49.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`ComplexLinearPart.lean:167` defines `IsComplexLinear (-J) (-J') F \u2194 IsComplexLinear J J' F` with no attribute; comparable raw normal-form transport API is `@[simp]` at `ComplexLinearPart.lean:110`, and the bundled wrapper is `@[simp]` at `AlmostComplex.lean:232`.",
+   "file": "TauCeti/LinearAlgebra/ComplexLinearPart.lean",
+   "fix": "Add `@[simp]` to `isComplexLinear_neg_neg_iff`.",
+   "issue": "`isComplexLinear_neg_neg_iff` is the raw complex-linearity normal-form equivalence removing simultaneous negated endomorphisms, but it lacks `@[simp]`.",
+   "line": 167
+  },
+  {
+   "evidence": "`ComplexLinearPart.lean:173`, `AlmostComplex.lean:240`, `JHolomorphicNeg.lean:70`, `JHolomorphicNeg.lean:93`, `JHolomorphicNeg.lean:115`, and `JHolomorphicNeg.lean:136` are all one-line `.symm` wrappers; `rg \"lemma .*_iff_neg_neg|theorem .*_iff_neg_neg\" code/TauCeti` finds only these new declarations.",
+   "file": "",
+   "fix": "Remove `isComplexLinear_iff_neg_neg`, `isComplexLinearMap_iff_neg_neg`, and the four `isJHolomorphic*_iff_neg_neg` aliases; users can write the normal-form lemma with `.symm` when needed.",
+   "issue": "The public reverse aliases `*_iff_neg_neg` over-expose duplicate API: each is exactly `.symm` of the normal-form `*_neg_neg_iff` lemma.",
+   "line": 0
+  }
+ ],
+ "head_sha": "8a8fb07eead9246d00b3ebe38b1a5466b0cd1cc0",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 689,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "64a24a58e46bc9b41791998bdc57d0280d93fef0f1bb22c76181e8335e821b83",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T071921Z-689-api-design-8f21aa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T07:19:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic sign-change API is mostly present, but the raw linear normal-form lemma is not registered for simplification and the PR exports redundant reverse iff aliases. Trim the duplicate surface and annotate the raw normal form.",
+ "transcript_blob": "7ef4f1c467d2dd258b7b446c1d0b3c26dde30a865d5d3316e62a3ea5f2ddb1a4",
+ "usage": {
+  "cached_input_tokens": 72704,
+  "input_tokens": 110099,
+  "output_tokens": 2128,
+  "reasoning_output_tokens": 707
+ },
+ "verdict": "request_changes"
+}
