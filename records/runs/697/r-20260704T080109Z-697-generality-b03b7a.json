@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.492348,
+   "returncode": 0,
+   "secs": 66.2,
+   "usage": {
+    "cached_input_tokens": 132096,
+    "input_tokens": 198582,
+    "output_tokens": 3129,
+    "reasoning_output_tokens": 1771
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.492348,
+ "dedupe_key": "TauCetiProject/TauCeti|697|4f42ed6ac1aa9db73ad73ca4597e1b93f62c4493|generality|gpt-5.5|caeca2a4b1193aa2|production|3",
+ "diff_blob": "1cf2d0948751634568faeb582b516c3f857e4802d49d064622272b0fec4982db",
+ "diff_sha256": "1cf2d0948751634568faeb582b516c3f857e4802d49d064622272b0fec4982db",
+ "duration_s": 66.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the current hypothesis at line 135; Mathlib provides the endpoint-free APIs `intervalIntegrable_congr_uIoo` in `IntervalIntegral/Basic.lean:97` and `intervalIntegral.integral_congr_uIoo` in `IntervalIntegral/Basic.lean:1245`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Weaken `h_eq` to equality on `Set.uIoo a b` (or a.e. on `Set.uIoc a b`) and prove the clauses with `intervalIntegrable_congr_uIoo` and `intervalIntegral.integral_congr_uIoo`.",
+   "issue": "`HasCauchyPVAt.congr_along_curve` requires equality on `Set.uIcc a b`, but PV interval integrals and interval integrability are insensitive to endpoint values.",
+   "line": 135
+  },
+  {
+   "evidence": "`HasCauchyPVAt` at lines 82-86 has no ordering hypothesis, while `of_avoidance` adds `hab` at line 178 and `Set.Icc` at line 179; Mathlib has `isCompact_uIcc` in `Topology/Order/Compact.lean:94`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "State the theorem with `ContinuousOn \u03b3 (Set.uIcc a b)` and `\u2200 t \u2208 Set.uIcc a b, \u03b3 t \u2260 z\u2080`, remove `hab`, and use compactness of `Set.uIcc`; update the existence wrapper similarly.",
+   "issue": "`HasCauchyPVAt.of_avoidance` and `cauchyPVExistsAt_of_avoidance` require `hab : a \u2264 b` and continuity/avoidance on `Set.Icc a b`, but `HasCauchyPVAt` and Mathlib interval integrals are stated for arbitrary endpoint order.",
+   "line": 178
+  }
+ ],
+ "head_sha": "4f42ed6ac1aa9db73ad73ca4597e1b93f62c4493",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "310802915e8b83d974dee7223ad312197db40fe0275ba7075470a47136878fa8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T080109Z-697-generality-b03b7a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T08:01:09Z",
+ "submitted_by": "kim-em",
+ "summary": "Two remaining APIs ask for stronger hypotheses than the interval-integral statements need: congruence includes endpoints, and avoidance is restricted to ordered intervals.",
+ "transcript_blob": "b058ee161b59c45416f46e880d36e1cb94c45bbbc538a443962f81873ae1da5f",
+ "usage": {
+  "cached_input_tokens": 132096,
+  "input_tokens": 198582,
+  "output_tokens": 3129,
+  "reasoning_output_tokens": 1771
+ },
+ "verdict": "request_changes"
+}
