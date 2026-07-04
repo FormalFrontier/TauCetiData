@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.354228,
+   "returncode": 0,
+   "secs": 59.4,
+   "usage": {
+    "cached_input_tokens": 78336,
+    "input_tokens": 125118,
+    "output_tokens": 2705,
+    "reasoning_output_tokens": 1287
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.354228,
+ "dedupe_key": "TauCetiProject/TauCeti|699|15f1be5a0e81be12b5a426f53da3f42a51ab1960|proof-quality|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "e07bb5332afc8a91533fd25573fc037f4b94c2b4a5558ba0632c8f80a9346d8e",
+ "diff_sha256": "e07bb5332afc8a91533fd25573fc037f4b94c2b4a5558ba0632c8f80a9346d8e",
+ "duration_s": 59.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 37 is `Subtype.ext <| by simp [Sym.map, Sym.append]`; Mathlib provides `Sym.coe_map` and `Sym.coe_append` in `Mathlib/Data/Sym/Basic.lean`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegreeAddition.lean",
+   "fix": "Prove it through the public coercion lemmas, e.g. ext/coerce to multisets and use `Sym.coe_map`, `Sym.coe_append`, and `Multiset.map_add`, avoiding direct `[Sym.map, Sym.append]` unfolding.",
+   "issue": "`Sym.map_append` proves a public compatibility lemma by unfolding `Sym.map` and `Sym.append`, tying the proof to the current subtype constructors.",
+   "line": 37
+  },
+  {
+   "evidence": "Line 91 rewrites `[coe_add, coe_ofFinsupp, coe_ofFinsupp, coe_ofFinsupp, WeilDivisor.coeff_add]` before `simp`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegreeAddition.lean",
+   "fix": "Use the local characterizing lemmas and automation, e.g. extensionality followed by `simp [coeff_add]` or a similarly small proof through `coeff_ofFinsupp`.",
+   "issue": "`add_ofFinsupp` uses a long named-lemma rewrite chain with repeated wrapper coercion lemmas, which is fragile under API renames and obscures the coefficient argument.",
+   "line": 91
+  },
+  {
+   "evidence": "Line 134 rewrites `[coe_pushforward, coe_add, coe_add, coe_pushforward, coe_pushforward, map_add]`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FixedDegreeAddition.lean",
+   "fix": "After extensionality, use `simp` with the public coercion lemmas or factor a Weil-divisor pushforward-add lemma, so the proof depends on the additive property rather than a six-item rewrite chain.",
+   "issue": "`pushforward_add` repeats the same brittle coercion-rewrite pattern instead of exposing the additive-map reason for the proof.",
+   "line": 134
+  }
+ ],
+ "head_sha": "15f1be5a0e81be12b5a426f53da3f42a51ab1960",
+ "merge_base_sha": "5f7e7eb9caad07eef4758e0cd79ce87f67a94a93",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 699,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c7cc07ff3762304a186bc6cd487df9cfa32bec5754f60e32057545f6c5439d9d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T081649Z-699-proof-quality-5c5380",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T08:16:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR compiles, but a few public lemmas are proved by unfolding wrapper definitions or by brittle coercion rewrite chains where existing public projection lemmas and simp-normal forms should be used.",
+ "transcript_blob": "77779b728def70ff264ac4f1a3a62348611ba3e580e5345c27c974a6d07aaf3d",
+ "usage": {
+  "cached_input_tokens": 78336,
+  "input_tokens": 125118,
+  "output_tokens": 2705,
+  "reasoning_output_tokens": 1287
+ },
+ "verdict": "request_changes"
+}
