@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.388243,
+   "returncode": 0,
+   "secs": 55.8,
+   "usage": {
+    "cached_input_tokens": 126336,
+    "input_tokens": 175415,
+    "output_tokens": 2656,
+    "reasoning_output_tokens": 1085
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.388243,
+ "dedupe_key": "TauCetiProject/TauCeti|690|9365c0f8871efeba04444094c5a72cd21e2dc088|api-design|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "534d8b03e1351f895af0250e51fc87ac51f51648d9a60c38cda02ee0f1c2be86",
+ "diff_sha256": "534d8b03e1351f895af0250e51fc87ac51f51648d9a60c38cda02ee0f1c2be86",
+ "duration_s": 55.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\].*mapQuotientPointsSubgroup|mapQuotientPointsSubgroup_apply|coe_mapQuotientPointsSubgroup_apply\"` hits line 51 for the exposed body and lines 61/71/81 for its characteristic API.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Remove `@[expose]`; keep clients on `mapQuotientPointsSubgroup_apply`, `coe_mapQuotientPointsSubgroup_apply`, and the pointwise lemma instead of unfolding the body.",
+   "issue": "`mapQuotientPointsSubgroup` is marked `@[expose]`, exposing the `restrict`/`codRestrict` implementation even though the file supplies public characterization lemmas for applying and coercing it.",
+   "line": 51
+  },
+  {
+   "evidence": "`rg -n \"quotientPointsHom.*mapPoints|mapPoints.*quotientPointsHom|quotientPointsHom.*natural\" code/TauCeti/Algebra/AlgebraicGroup -S` returns only an old lift construction line in `HopfIdealPoints.lean`, while the new file only adds `mapPoints_liftQuotientPoint` at line 108.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Add a named, preferably `@[simp]`, lemma such as `mapPoints_quotientPointsHom` stating `HopfAlgebra.mapPoints (H := H) \u03c7 (quotientPointsHom H I A f) = quotientPointsHom H I B (HopfAlgebra.mapPoints (H := quotient H I) \u03c7 f)`.",
+   "issue": "The API does not state the main naturality square for the quotient-points inclusion `quotientPointsHom`; users still need to reconstruct that `mapPoints` after inclusion equals inclusion after `mapPoints` from pointwise lemmas/extensionality.",
+   "line": 0
+  }
+ ],
+ "head_sha": "9365c0f8871efeba04444094c5a72cd21e2dc088",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 690,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ea2998ad92aea0dcaf306a4a6cf2df50d2abc808090e7625436a6726c18232d2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T061856Z-690-api-design-3ca43a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T06:18:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The restricted subgroup map is useful, but the public API still exposes an implementation body and omits the direct naturality square for the quotient-points inclusion.",
+ "transcript_blob": "4905e2ef9bea4a8cdaa9822893b2ea8dae27b990ccdc6120cc9f2b37dd048f46",
+ "usage": {
+  "cached_input_tokens": 126336,
+  "input_tokens": 175415,
+  "output_tokens": 2656,
+  "reasoning_output_tokens": 1085
+ },
+ "verdict": "request_changes"
+}
