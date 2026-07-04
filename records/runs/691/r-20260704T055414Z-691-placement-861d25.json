@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.320169,
+   "returncode": 0,
+   "secs": 40.8,
+   "usage": {
+    "cached_input_tokens": 43648,
+    "input_tokens": 92523,
+    "output_tokens": 1799,
+    "reasoning_output_tokens": 701
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.320169,
+ "dedupe_key": "TauCetiProject/TauCeti|691|a58869c5aa2aaf56b5c30695f95a2f8c21935b79|placement|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "diff_sha256": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "duration_s": 40.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`UniformEllipticity.lean:104` defines `matrixBilinearForm`, and `UniformEllipticity.lean:143`/`:150` already contain the add/smul lemmas used by `EnergyFormContinuity.lean:48` and `:153`.",
+   "file": "TauCeti/Analysis/PDE/EnergyFormContinuity.lean",
+   "fix": "Move `matrixBilinearFormLinear`, `matrixBilinearFormLinear_apply`, `continuous_matrixBilinearForm`, `Continuous.matrixBilinearForm`, and `ContinuousOn.matrixBilinearForm` to `UniformEllipticity.lean` near `matrixBilinearForm` and its add/smul lemmas, or to a principal-form continuity file imported from there.",
+   "issue": "`matrixBilinearFormLinear` and the `matrixBilinearForm` continuity lemmas are about the principal matrix bilinear form, not the assembled energy integrand, so placing them behind `EnergyFormLinearity` makes principal-form users import the later energy layer.",
+   "line": 48
+  },
+  {
+   "evidence": "`LowerOrder.lean:46` defines `driftForm` and `LowerOrder.lean:51` defines `massForm`; the misplaced lower-order declarations are at `EnergyFormContinuity.lean:69`, `:99`, `:159`, `:164`, `:186`, `:191`, `:215`, and `:221`.",
+   "file": "TauCeti/Analysis/PDE/EnergyFormContinuity.lean",
+   "fix": "Move the drift and mass linear/continuity declarations to `LowerOrder.lean` near `driftForm` and `massForm`, or to a lower-order continuity file that depends only on `LowerOrder`.",
+   "issue": "`driftFormLinear`, `massFormLinear`, and their continuity/composition lemmas are lower-order form API, but they are only available through the later energy-form continuity file.",
+   "line": 69
+  }
+ ],
+ "head_sha": "a58869c5aa2aaf56b5c30695f95a2f8c21935b79",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 691,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "96a1654a3e4606fb46438c781c5aa6cbfba6867dd547d3e5b01d1c87d28a9424",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T055414Z-691-placement-861d25",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T05:54:14Z",
+ "submitted_by": "kim-em",
+ "summary": "Some coefficient-continuity declarations are placed in the new energy-form layer even though they elaborate earlier standalone principal and lower-order APIs. Move those broadly useful pieces to their canonical earlier homes, leaving this file for the assembled energy integrand if desired.",
+ "transcript_blob": "281cde20f87b822d9489f079f8966a9f34c2bd5d2613ba52bec25c8e560f05f9",
+ "usage": {
+  "cached_input_tokens": 43648,
+  "input_tokens": 92523,
+  "output_tokens": 1799,
+  "reasoning_output_tokens": 701
+ },
+ "verdict": "request_changes"
+}

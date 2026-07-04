@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.810319,
+   "returncode": 0,
+   "secs": 81.5,
+   "usage": {
+    "cached_input_tokens": 295168,
+    "input_tokens": 404045,
+    "output_tokens": 3945,
+    "reasoning_output_tokens": 1843
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.810319,
+ "dedupe_key": "TauCetiProject/TauCeti|691|a58869c5aa2aaf56b5c30695f95a2f8c21935b79|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "diff_sha256": "b25c305debee7cedca04c3ccb4321cdfc64bf895bb2de9881e648d7d184fa9a6",
+ "duration_s": 81.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/Analysis/PDE/LowerOrder.lean:48` defines `driftForm` using `ContinuousLinearMap.smulRightL ... (innerSL \u211d b)`; `mathlib/Mathlib/Analysis/Normed/Operator/Bilinear.lean:418` defines `ContinuousLinearMap.smulRightL`; `mathlib/Mathlib/Analysis/InnerProductSpace/LinearMap.lean:164` defines `innerSL`.",
+   "file": "TauCeti/Analysis/PDE/EnergyFormContinuity.lean",
+   "fix": "Define it with Mathlib\u2019s combinators, e.g. `(ContinuousLinearMap.smulRightL \u211d (EuclideanSpace \u211d n) \u211d).comp (innerSL \u211d)` or the equivalent `InnerProductSpace.toDualMap` CLM, then keep the apply simp lemma.",
+   "issue": "`driftFormLinear` manually proves linearity of `b \u21a6 driftForm b`, but `driftForm` is already `ContinuousLinearMap.smulRightL ... (innerSL \u211d b)`.",
+   "line": 69
+  },
+  {
+   "evidence": "`TauCeti/Analysis/PDE/LowerOrder.lean:52` defines `massForm c` as `c \u2022 ContinuousLinearMap.mul \u211d \u211d`; `mathlib/Mathlib/Analysis/Normed/Operator/Mul.lean:189` provides `ContinuousLinearMap.lsmul`, with `lsmul_apply` at line 193 giving `c \u2022 x`.",
+   "file": "TauCeti/Analysis/PDE/EnergyFormContinuity.lean",
+   "fix": "Replace the raw `LinearMap.toContinuousLinearMap` proof with `(ContinuousLinearMap.lsmul \u211d \u211d).flip (ContinuousLinearMap.mul \u211d \u211d)` for the target operator space.",
+   "issue": "`massFormLinear` manually rebuilds the map `c \u21a6 c \u2022 ContinuousLinearMap.mul \u211d \u211d`, duplicating Mathlib\u2019s bundled scalar-multiplication CLM.",
+   "line": 99
+  }
+ ],
+ "head_sha": "a58869c5aa2aaf56b5c30695f95a2f8c21935b79",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 691,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f85e25aeb4a9d8978052e5e585f7a331f9e7b2e2d33a86dd9b7dbc75deac4d44",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T055016Z-691-reuse-f92439",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T05:50:16Z",
+ "submitted_by": "kim-em",
+ "summary": "Two lower-order coefficient maps manually rederive continuous-linear-map structure that Mathlib already provides. Reuse the existing CLM combinators instead of proving additivity and homogeneity by extensionality.",
+ "transcript_blob": "5d6b928f1d761ac34f5ea146ed1be8195a70a0ca013966b50b6ad32f8cde0fa1",
+ "usage": {
+  "cached_input_tokens": 295168,
+  "input_tokens": 404045,
+  "output_tokens": 3945,
+  "reasoning_output_tokens": 1843
+ },
+ "verdict": "request_changes"
+}
