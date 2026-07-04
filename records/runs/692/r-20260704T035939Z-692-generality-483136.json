@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.590976,
+   "returncode": 0,
+   "secs": 61.8,
+   "usage": {
+    "cached_input_tokens": 49152,
+    "input_tokens": 144210,
+    "output_tokens": 3037,
+    "reasoning_output_tokens": 1605
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "cost_estimated": true,
+ "cost_usd": 0.590976,
+ "dedupe_key": "TauCetiProject/TauCeti|692|410e6a696030a069ad4c0b7e86c2940710b74c2b|generality|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "c6ae3670118b1172d5f4535f1c1186e7970dfe5d57a4e62104abc9a22ce6219e",
+ "diff_sha256": "c6ae3670118b1172d5f4535f1c1186e7970dfe5d57a4e62104abc9a22ce6219e",
+ "duration_s": 61.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The proof already shows `\u2200 \u03b8, deriv (circleMap z\u2080 r) \u03b8 / (circleMap z\u2080 r \u03b8 - z\u2080) = Complex.I` at lines 56-61 and then uses `intervalIntegral.integral_const` at line 63, whose Mathlib form is `\u222b _ in a..b, c = (b - a) \u2022 c` (`mathlib/Mathlib/MeasureTheory/Integral/IntervalIntegral/Basic.lean:835`). The roadmap\u2019s general `windingNumber` also takes arbitrary endpoints `a b` (`roadmap/TauCetiRoadmap/ContourIntegration/Targets.lean:76`).",
+   "file": "TauCeti/Analysis/Contour/ModelSectorWinding.lean",
+   "fix": "Use the natural interval form, e.g. `theorem windingNumber_modelSector {z\u2080 : \u2102} {r : \u211d} (hr : r \u2260 0) (a b : \u211d) : (2 * (Real.pi : \u2102) * Complex.I)\u207b\u00b9 * \u222b \u03b8 in a..b, deriv (circleMap z\u2080 r) \u03b8 / (circleMap z\u2080 r \u03b8 - z\u2080) = ((b - a : \u211d) : \u2102) / (2 * (Real.pi : \u2102))`, then recover the current theorem and the `\u03c0`/`\u03c0/3` specializations by setting `a = 0`.",
+   "issue": "`windingNumber_modelSector` hard-codes `\u222b \u03b8 in 0..\u03b1`, so it only applies directly to arcs whose parameter interval starts at `0`, although the model-sector calculation is independent of the starting angle.",
+   "line": 52
+  }
+ ],
+ "head_sha": "410e6a696030a069ad4c0b7e86c2940710b74c2b",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 692,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5355d79532e6a25bbf029f5b21333a29028730b97d056250bde2f6d5d396fe6e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T035939Z-692-generality-483136",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T03:59:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The main computation is under-generalized: the proof establishes a start-angle-independent integrand but the public theorem only exposes arcs beginning at `0`. State the arbitrary-interval arc theorem first, then derive the roadmap special cases from it.",
+ "transcript_blob": "e9a482ef279cd637a6640fd2553a7083e47d6bf03be507c9be0069ff6d516cb1",
+ "usage": {
+  "cached_input_tokens": 49152,
+  "input_tokens": 144210,
+  "output_tokens": 3037,
+  "reasoning_output_tokens": 1605
+ },
+ "verdict": "request_changes"
+}
