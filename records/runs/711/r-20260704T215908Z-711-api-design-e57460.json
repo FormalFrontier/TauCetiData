@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.429202,
+   "returncode": 0,
+   "secs": 52.1,
+   "usage": {
+    "cached_input_tokens": 14464,
+    "input_tokens": 84824,
+    "output_tokens": 2339,
+    "reasoning_output_tokens": 1013
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2567b6cc4cc5e2048c149acf6c4c1a8388805797",
+ "cost_estimated": true,
+ "cost_usd": 0.429202,
+ "dedupe_key": "TauCetiProject/TauCeti|711|6bbe43cbfabaa1a684fef3c23203278b952de169|api-design|gpt-5.5|caeca2a4b1193aa2|production|8",
+ "diff_blob": "157de59e28fe6ac148e9ef6fdc3fe7dd5280289a30a598a7a8e72028e3506055",
+ "diff_sha256": "157de59e28fe6ac148e9ef6fdc3fe7dd5280289a30a598a7a8e72028e3506055",
+ "duration_s": 52.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"public import TauCeti.NumberTheory.Multiquadratic.MinusTwentyOneExamples|theorem (finrank|card)_adjoin_I_sqrt_neg_three_sqrt_neg_seven\" code/TauCeti/NumberTheory/Multiquadratic/MinusTwentyOne*.lean` shows the public import at `MinusTwentyOneDegree.lean:7` and both exported theorems in `MinusTwentyOneExamples.lean:100` and `:118`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/MinusTwentyOneDegree.lean",
+   "fix": "Put the degree theorem in this module and keep shared proof scaffolding private/duplicated or in a non-user-facing implementation module, so importing the degree file does not re-export the Galois-cardinality worked example.",
+   "issue": "The degree module publicly imports `MinusTwentyOneExamples`, which exports both the degree theorem and `card_aut_adjoin_I_sqrt_neg_three_sqrt_neg_seven`, although this file\u2019s public contract lists only the degree result.",
+   "line": 7
+  },
+  {
+   "evidence": "`MinusTwentyOneGalois.lean:7` is the same public re-export of `MinusTwentyOneExamples`, while `MinusTwentyOneExamples.lean:100` defines the degree theorem and `:118` defines the Galois theorem.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/MinusTwentyOneGalois.lean",
+   "fix": "Put the Galois theorem in this module, with only the minimal shared setup needed for its proof, so the Galois import path does not expose the separate degree API.",
+   "issue": "The Galois module publicly imports `MinusTwentyOneExamples`, so it also re-exports the degree theorem `finrank_adjoin_I_sqrt_neg_three_sqrt_neg_seven` despite documenting only the Galois-cardinality result.",
+   "line": 7
+  }
+ ],
+ "head_sha": "6bbe43cbfabaa1a684fef3c23203278b952de169",
+ "merge_base_sha": "2567b6cc4cc5e2048c149acf6c4c1a8388805797",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 711,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3c4e304e2f1fb73e096ba30a6e9951d2c33037109497a3acfa233b8a20d6c664",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 8,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T215908Z-711-api-design-e57460",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T21:59:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The helper-leak from the prior review is fixed, but the `-21` degree/Galois compatibility modules now re-export each other\u2019s public theorem through a shared examples module, making each import path expose more API than its stated result.",
+ "transcript_blob": "9bd667fa3f299a9230cca9346d8121faf1aac7701abe1ff9bfbe9aff4975773b",
+ "usage": {
+  "cached_input_tokens": 14464,
+  "input_tokens": 84824,
+  "output_tokens": 2339,
+  "reasoning_output_tokens": 1013
+ },
+ "verdict": "request_changes"
+}
