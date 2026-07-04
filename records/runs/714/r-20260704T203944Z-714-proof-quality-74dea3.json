@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.377688,
+   "returncode": 0,
+   "secs": 46.5,
+   "usage": {
+    "cached_input_tokens": 61056,
+    "input_tokens": 117090,
+    "output_tokens": 2233,
+    "reasoning_output_tokens": 1162
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b94b5f3c060026e9a0bdac3a0e938a0323cab591",
+ "cost_estimated": true,
+ "cost_usd": 0.377688,
+ "dedupe_key": "TauCetiProject/TauCeti|714|2bfa56a7693ea29ae8bbb436c980b4766490f3e4|proof-quality|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "6e2135425471d4857e1bf5a38d7cb45941fc8b1042d6a79151ebbac2697dcab5",
+ "diff_sha256": "6e2135425471d4857e1bf5a38d7cb45941fc8b1042d6a79151ebbac2697dcab5",
+ "duration_s": 46.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: lines 130/144/197 rewrite `MeasureTheory.integral_smul`; lines 131/145/198 close by `rfl`.",
+   "file": "TauCeti/Analysis/PDE/IntegratedEnergyForm.lean",
+   "fix": "Replace the final `rfl` steps at lines 130-131, 144-145, and 197-198 with an explicit `simpa [smul_eq_mul]` after `MeasureTheory.integral_smul`.",
+   "issue": "`energyFormIntegral_smul_left`, `energyFormIntegral_smul_right`, and `energyFormIntegral_smul` finish with `rfl` after `MeasureTheory.integral_smul`, relying on the definitional equality between `r \u2022 y : \u211d` and `r * y`.",
+   "line": 130
+  },
+  {
+   "evidence": "`TauCeti/Analysis/PDE/EnergyForm.lean:114` defines `energyIntegrand_one_zero_zero_apply`; the new proof at line 298 uses only `simp [energyFormIntegral_def]`.",
+   "file": "TauCeti/Analysis/PDE/IntegratedEnergyForm.lean",
+   "fix": "Prove it like the mass variants: unfold `energyFormIntegral_def`, apply `MeasureTheory.integral_congr_ae`, and use `energyIntegrand_one_zero_zero_apply`.",
+   "issue": "`energyFormIntegral_one_zero_zero` is proved by `simp [energyFormIntegral_def]`, hiding the shifted-Laplacian reduction through unfolding-heavy simplification even though a named pointwise lemma exists.",
+   "line": 298
+  }
+ ],
+ "head_sha": "2bfa56a7693ea29ae8bbb436c980b4766490f3e4",
+ "merge_base_sha": "b94b5f3c060026e9a0bdac3a0e938a0323cab591",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 714,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e2cbb7d8a846c632ce4c00aa5eb1e4641543bdc30878de33c42cd79fd1df331e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T203944Z-714-proof-quality-74dea3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T20:39:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs mostly follow the pointwise API, but a few integrated homogeneity/model proofs still rely on terse definitional simplification where explicit rewrites are available.",
+ "transcript_blob": "cae56f10d5bb65e869e4da3fda08fa89fad095d7d82cbc0c0179841a11215fc2",
+ "usage": {
+  "cached_input_tokens": 61056,
+  "input_tokens": 117090,
+  "output_tokens": 2233,
+  "reasoning_output_tokens": 1162
+ },
+ "verdict": "request_changes"
+}
