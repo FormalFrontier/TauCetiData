@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.553964,
+   "returncode": 0,
+   "secs": 49.3,
+   "usage": {
+    "cached_input_tokens": 153088,
+    "input_tokens": 235168,
+    "output_tokens": 2234,
+    "reasoning_output_tokens": 734
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "850c46740279bb33c45ae481f7f103ae59802f10",
+ "cost_estimated": true,
+ "cost_usd": 0.553964,
+ "dedupe_key": "TauCetiProject/TauCeti|697|115e32fb876410fe7ac251a8ccbb51ee222934b8|reuse|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "diff_sha256": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "duration_s": 49.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: line 120 defines `HasCauchyPVAt.const_mul`; line 141 defines `HasCauchyPVAt.mul_const`; lines 138 and 159 use the matching Mathlib lemmas `Filter.Tendsto.const_mul` and `Filter.Tendsto.mul_const`, showing parallel proofs for the same commutative scalar operation.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Drop `mul_const`; users can use `h.const_mul c` and rewrite `c * f z`/`c * L` to `f z * c`/`L * c` by `ring` or `simpa [mul_comm, mul_left_comm, mul_assoc]`.",
+   "issue": "`HasCauchyPVAt.mul_const` is a duplicated right-multiplication API over `\u2102`: since multiplication is commutative, it is derivable from `HasCauchyPVAt.const_mul` plus commutativity/congruence, and its proof repeats the same structure as lines 120-138.",
+   "line": 141
+  },
+  {
+   "evidence": "grep hits: line 109 defines `HasCauchyPVAt.congr_along_curve`; line 162 defines `HasCauchyPVAt.of_eventuallyEq_along_curve`; line 165 is exactly `h.congr_along_curve h_eq`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Remove this declaration and use `h.congr_along_curve h_eq` directly at call sites.",
+   "issue": "`HasCauchyPVAt.of_eventuallyEq_along_curve` is a public thin wrapper that restates `HasCauchyPVAt.congr_along_curve` with the arguments renamed/swapped.",
+   "line": 162
+  }
+ ],
+ "head_sha": "115e32fb876410fe7ac251a8ccbb51ee222934b8",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7dc6f181daa7ded2676a86d9fdf7bfb54ad8d0cfd3b3f7b1c02e94ed3bd19274",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T073755Z-697-reuse-1e58cc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T07:37:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The main PV definitions are not duplicated by Mathlib or existing TauCeti API, but the new file exposes avoidable parallel API inside the PR itself.",
+ "transcript_blob": "6b153cb7d8dd52e0d42a263fb3c8ac80b233484aedd8d0af060612a2e2e68619",
+ "usage": {
+  "cached_input_tokens": 153088,
+  "input_tokens": 235168,
+  "output_tokens": 2234,
+  "reasoning_output_tokens": 734
+ },
+ "verdict": "request_changes"
+}

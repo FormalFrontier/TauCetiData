@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.345603,
+   "returncode": 0,
+   "secs": 47.7,
+   "usage": {
+    "cached_input_tokens": 48256,
+    "input_tokens": 98619,
+    "output_tokens": 2322,
+    "reasoning_output_tokens": 1080
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "850c46740279bb33c45ae481f7f103ae59802f10",
+ "cost_estimated": true,
+ "cost_usd": 0.345603,
+ "dedupe_key": "TauCetiProject/TauCeti|697|115e32fb876410fe7ac251a8ccbb51ee222934b8|api-design|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "diff_sha256": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "duration_s": 47.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds scalar lemmas at lines 120 and 141, but no `HasCauchyPVAt.add`; the roadmap's `HasCauchyPV` is a contour integral primitive, so additivity is a characteristic operation.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Add `HasCauchyPVAt.add` (and preferably `zero`, `neg`, `sub`, plus `CauchyPVExistsAt`/value-level variants as needed) using eventual integrability under addition and `Filter.Tendsto.add`.",
+   "issue": "The linear API exposes `HasCauchyPVAt.const_mul` and `HasCauchyPVAt.mul_const` but no additive form, so users cannot combine principal values for `f + g` without unfolding the predicate and reproving the truncation/integral limit argument.",
+   "line": 119
+  },
+  {
+   "evidence": "Line 98 defines `theorem HasCauchyPVAt.cauchyPVAt_eq`; `rg \"\\[simp\\].*cauchyPVAt|cauchyPVAt_\"` finds no simp-normalizing value lemmas.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Annotate this theorem with `@[simp]` if the orientation remains `cauchyPVAt ... = L`; add any companion value-level simp lemmas for the linear/avoidance API that should normalize principal values.",
+   "issue": "`HasCauchyPVAt.cauchyPVAt_eq` is the normal-form bridge from the predicate to the value function, but it is not marked `[simp]`, leaving downstream value computations to manual rewrites.",
+   "line": 98
+  },
+  {
+   "evidence": "Lines 162-165 take `h_eq : \u2200 t, g (\u03b3 t) = f (\u03b3 t)` and prove the result by `h.congr_along_curve h_eq`, while `HasCauchyPVAt.congr_along_curve` is already public at lines 109-117.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Remove it, make it private, or replace it with a genuinely eventual/on-interval congruence lemma whose statement matches the name and intended use.",
+   "issue": "`HasCauchyPVAt.of_eventuallyEq_along_curve` is public but neither uses `EventuallyEq` nor weakens `congr_along_curve`; it is just the same lemma with arguments renamed, adding a misleading duplicate API point.",
+   "line": 161
+  }
+ ],
+ "head_sha": "115e32fb876410fe7ac251a8ccbb51ee222934b8",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5f79079cb206a469c7450c22f97f692c269f3daffc14bf00a414db7b28c5097d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T073920Z-697-api-design-e11912",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T07:39:20Z",
+ "submitted_by": "kim-em",
+ "summary": "The predicate/value surface is close, but the public API is incomplete for the linear principal-value primitive and has one redundant misleading public lemma. Add the missing characteristic/automation pieces before exposing this as the roadmap layer-0 API.",
+ "transcript_blob": "f4ccb30caa10d27fba87570c08fd610a3b07f57ceed76b0f9fd3023ad5a46751",
+ "usage": {
+  "cached_input_tokens": 48256,
+  "input_tokens": 98619,
+  "output_tokens": 2322,
+  "reasoning_output_tokens": 1080
+ },
+ "verdict": "request_changes"
+}

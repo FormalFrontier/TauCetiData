@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.357495,
+   "returncode": 0,
+   "secs": 50.8,
+   "usage": {
+    "cached_input_tokens": 97280,
+    "input_tokens": 145119,
+    "output_tokens": 2322,
+    "reasoning_output_tokens": 992
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "850c46740279bb33c45ae481f7f103ae59802f10",
+ "cost_estimated": true,
+ "cost_usd": 0.357495,
+ "dedupe_key": "TauCetiProject/TauCeti|697|115e32fb876410fe7ac251a8ccbb51ee222934b8|generality|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "diff_sha256": "a244047237f5173fc619e825c7614c8dbdb3ece2389c90298947e55aec471850",
+ "duration_s": 50.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows Mathlib interval congruence is local: `intervalIntegrable_congr` takes `EqOn f g (\u0399 a b)` and `intervalIntegral.integral_congr` takes `EqOn f g [[a, b]]`; the proof only uses the ignored interval argument at lines 114 and 116.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Replace the hypothesis by an interval-local one, e.g. `\u2200 t \u2208 [[a, b]], f (\u03b3 t) = g (\u03b3 t)` (and analogously for line 163), using Mathlib's interval congruence lemmas.",
+   "issue": "`HasCauchyPVAt.congr_along_curve` and the wrapper at line 163 require `\u2200 t`, but the PV over `a..b` only depends on the parameter interval.",
+   "line": 110
+  },
+  {
+   "evidence": "The definition at line 80 uses `\u2200\u1da0 \u03b5 in \ud835\udcdd[>] 0`; the concat proof immediately coerces the stronger assumption with `eventually_nhdsWithin_of_forall h_int` at line 199 and only needs `hII` under `filter_upwards` at lines 201-202.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Weaken `h_int` in both signatures to `\u2200\u1da0 \u03b5 in \ud835\udcdd[>] (0 : \u211d), IntervalIntegrable ... a c`, then use it directly for the conclusion and in the eventual congruence filter.",
+   "issue": "`HasCauchyPVAt.concat` and `CauchyPVExistsAt.concat` at line 222 assume whole-interval truncated integrability for all `\u03b5 > 0`, but `HasCauchyPVAt` only requires it eventually as `\u03b5 \u2192 0\u207a`.",
+   "line": 196
+  }
+ ],
+ "head_sha": "115e32fb876410fe7ac251a8ccbb51ee222934b8",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8171c55ab794be6c653125f87ccfeb9758e9f0e2a0ce8c6e009dbcdfa7b21635",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T074008Z-697-generality-20b6d2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T07:40:08Z",
+ "submitted_by": "kim-em",
+ "summary": "Two API hypotheses are stronger than the interval-integral statements need: congruence is global in the parameter, and concatenation asks integrability for every positive truncation instead of eventually near zero.",
+ "transcript_blob": "30ba64410298b8d40c994b48c92234cb47810b45d6c09e9d73275816c5cdd158",
+ "usage": {
+  "cached_input_tokens": 97280,
+  "input_tokens": 145119,
+  "output_tokens": 2322,
+  "reasoning_output_tokens": 992
+ },
+ "verdict": "request_changes"
+}
