@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.470741,
+   "returncode": 0,
+   "secs": 60.2,
+   "usage": {
+    "cached_input_tokens": 125952,
+    "input_tokens": 191749,
+    "output_tokens": 2626,
+    "reasoning_output_tokens": 1002
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.470741,
+ "dedupe_key": "TauCetiProject/TauCeti|697|e570c2a4c2280ab6ceca8a0afaa877c887d1a0dc|api-design|gpt-5.5|caeca2a4b1193aa2|production|2",
+ "diff_blob": "68a05192e5391ce6caa8fe7ee25ffc4b4bad275ce09cd6448f8fa1f70ff939d2",
+ "diff_sha256": "68a05192e5391ce6caa8fe7ee25ffc4b4bad275ce09cd6448f8fa1f70ff939d2",
+ "duration_s": 60.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `IntervalIntegrable`, interval notation, `integral_add`, `integral_const_mul`, and `integral_add_adjacent_intervals` in `Mathlib/MeasureTheory/Integral/IntervalIntegral/Basic.lean:72,660,665,773,816,1094`; `isCompact_uIcc` is used only at `CauchyPrincipalValue.lean:206`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Make proof-only imports non-public, and publicly import only the smaller modules whose names appear in declarations, e.g. interval-integral `Basic` plus the derivative API actually needed.",
+   "issue": "The module publicly reexports proof-heavy dependencies: lines 8-9 are `public import ...FundThmCalculus` and `public import ...Topology.Order.Compact`, although the exposed definitions only need interval-integral/derivative interface and `isCompact_uIcc` is used only in the proof at line 206.",
+   "line": 8
+  },
+  {
+   "evidence": "`rg 'HasCauchyPVAt\\.(zero|sum)|CauchyPVExistsAt\\.(zero|sum)' code/TauCeti/Analysis/Contour/CauchyPrincipalValue.lean` has no hits; the only linearity hits are `HasCauchyPVAt.const_mul` at line 169, `HasCauchyPVAt.add` at line 183, and existence forms at lines 242 and 250, while the roadmap target uses `\u2211 s \u2208 S, windingNumber \u03b3 a b s * residue f s` at `roadmap/TauCetiRoadmap/ContourIntegration/Targets.lean:223`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Add characteristic finite-linearity lemmas such as `HasCauchyPVAt.zero`, `HasCauchyPVAt.sum`, and the corresponding `CauchyPVExistsAt.zero`/`sum` forms, with appropriate normal-form simp annotations where they reduce zero values.",
+   "issue": "The file advertises `\u2102`-linearity but exposes only `const_mul` and binary `add`; there is no zero or finite-sum API, so consumers of the HW theorem\u2019s finite residue sum must unfold/induct through the predicate themselves, including the empty case.",
+   "line": 181
+  }
+ ],
+ "head_sha": "e570c2a4c2280ab6ceca8a0afaa877c887d1a0dc",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e619fc896ef1dc0901a23d5ef9daa2df69e5cbdcdc8bd19b065f0b3c522d6d72",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T084047Z-697-api-design-3bbadc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T08:40:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The public PV surface still leaks proof-only dependencies and is missing finite linearity API needed by the named HW residue target. These are public-interface gaps, not proof-elaboration issues.",
+ "transcript_blob": "7c1fd86a9f6387a2af81b9141722314152d835563d62e09de7a7bd01f02093de",
+ "usage": {
+  "cached_input_tokens": 125952,
+  "input_tokens": 191749,
+  "output_tokens": 2626,
+  "reasoning_output_tokens": 1002
+ },
+ "verdict": "request_changes"
+}
