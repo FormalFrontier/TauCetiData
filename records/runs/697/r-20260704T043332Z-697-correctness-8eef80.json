@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.449757,
+   "returncode": 0,
+   "secs": 52.1,
+   "usage": {
+    "cached_input_tokens": 111104,
+    "input_tokens": 174981,
+    "output_tokens": 2494,
+    "reasoning_output_tokens": 1113
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "cost_estimated": true,
+ "cost_usd": 0.449757,
+ "dedupe_key": "TauCetiProject/TauCeti|697|f6ee673f4b437349710847e99c4d4883069a45ab|correctness|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "b9fb17f0b5f25624dad9535a838662e25034c44cef032669b727a58ba27529e4",
+ "diff_sha256": "b9fb17f0b5f25624dad9535a838662e25034c44cef032669b727a58ba27529e4",
+ "duration_s": 52.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The definition at lines 69-71 has only `Tendsto`; Mathlib defines undefined interval integrals as zero: `mathlib/Mathlib/MeasureTheory/Integral/IntervalIntegral/Basic.lean:708: nonrec theorem integral_undef (h : \u00acIntervalIntegrable f \u03bc a b) : \u222b x in a..b, f x \u2202\u03bc = 0`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValue.lean",
+   "fix": "Add an eventual integrability condition, e.g. `\u2200\u1da0 \u03b5 in \ud835\udcdd[>] 0, IntervalIntegrable (fun t => if \u2016\u03b3 t - z\u2080\u2016 > \u03b5 then f (\u03b3 t) * deriv \u03b3 t else 0) volume a b`, and make `CauchyPVExistsAt`/API preserve it; `of_avoidance` should require or prove the ordinary integrand is interval integrable.",
+   "issue": "`HasCauchyPVAt` is only a `Tendsto` statement about `\u222b t in a..b, ...`; it does not require the \u03b5-truncated integrand to be `IntervalIntegrable`, so non-existent truncated integrals can still contribute the value `0`.",
+   "line": 69
+  }
+ ],
+ "head_sha": "f6ee673f4b437349710847e99c4d4883069a45ab",
+ "merge_base_sha": "f7a40645daad19d3e04c6ba6c5e028f226a01378",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 697,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4cfa376131ff3620f8d5a420633172783dff0ca9e35af69bed915b10298a552b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T043332Z-697-correctness-8eef80",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T04:33:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The PV predicate omits the integrability/existence condition for the truncated integrals, so it can certify principal values using Mathlib\u2019s junk value for undefined interval integrals.",
+ "transcript_blob": "1db93a13c2741106b81a1a0287cfe6f6f462c5f97520e1867e0e48b86282feb1",
+ "usage": {
+  "cached_input_tokens": 111104,
+  "input_tokens": 174981,
+  "output_tokens": 2494,
+  "reasoning_output_tokens": 1113
+ },
+ "verdict": "block"
+}
