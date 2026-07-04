@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.435513,
+   "returncode": 0,
+   "secs": 52.9,
+   "usage": {
+    "cached_input_tokens": 73216,
+    "input_tokens": 138027,
+    "output_tokens": 2495,
+    "reasoning_output_tokens": 1041
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "cost_estimated": true,
+ "cost_usd": 0.435513,
+ "dedupe_key": "TauCetiProject/TauCeti|704|742fafad1c87cf2df57a3c793dcc38f2a7745f17|generality|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "a095b870c3a119f43a7c08deb9e4c2210806fb2afb2a7cdbc24402a4218433f9",
+ "diff_sha256": "a095b870c3a119f43a7c08deb9e4c2210806fb2afb2a7cdbc24402a4218433f9",
+ "duration_s": 52.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 70, 75, 80, and 85 all prove `EqOn` by the same call to `schwarzReflection_of_im_nonneg`, using `hz`, `hz.le`, `hz.2`, or `hz.2.le` as the only difference.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Replace them with `schwarzReflection_eqOn_of_subset_im_nonneg {S : Set \u2102} (hS : \u2200 z \u2208 S, 0 \u2264 z.im) : EqOn (schwarzReflection f) f S`, and derive closed/open/inter aliases from it only if needed.",
+   "issue": "`schwarzReflection_eqOn_im_nonneg`, `_im_pos`, `_inter_im_nonneg`, and `_inter_im_pos` are four special cases of the same statement for any set contained in `{z | 0 \u2264 z.im}`.",
+   "line": 70
+  },
+  {
+   "evidence": "Lines 93, 102, 111, 120, 129, and 138 all use `hf.congr` with the same pointwise equality; Mathlib already provides the general congruence shape at `Mathlib/Topology/ContinuousOn.lean:361` (`ContinuousOn.congr_mono`) and `Mathlib/Analysis/Calculus/FDeriv/Congr.lean:198` (`DifferentiableOn.congr_mono`).",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Prove `ContinuousOn.schwarzReflection_of_subset_im_nonneg (hf : ContinuousOn f S) (hS : \u2200 z \u2208 S, 0 \u2264 z.im)` and `DifferentiableOn.schwarzReflection_of_subset_im_nonneg (hf : DifferentiableOn \u2102 f S) (hS : \u2200 z \u2208 S, 0 \u2264 z.im)`, then derive the current half-plane/intersection forms from those.",
+   "issue": "The continuity and differentiability transfer lemmas repeat closed/open/intersection special cases instead of exposing the natural arbitrary-upper-subset congruence API.",
+   "line": 93
+  }
+ ],
+ "head_sha": "742fafad1c87cf2df57a3c793dcc38f2a7745f17",
+ "merge_base_sha": "5765870beb50d490a4f7b960a6c214ae023ba90f",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 704,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7502a510d32667db875cedce768368284d566d1a171df7c3ae184b8451d0c14d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T103507Z-704-generality-440c68",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T10:35:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The new upper-branch API is proved only as closed/open/intersection special cases, duplicating a single natural set-subset statement. Generalize the EqOn and transfer lemmas first, then derive any roadmap-shaped intersection aliases if still useful.",
+ "transcript_blob": "89b79d90c75b5682a7054615e85dacf0fa2db5c67127de479a3afa17df2bed3e",
+ "usage": {
+  "cached_input_tokens": 73216,
+  "input_tokens": 138027,
+  "output_tokens": 2495,
+  "reasoning_output_tokens": 1041
+ },
+ "verdict": "request_changes"
+}

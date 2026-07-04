@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.248658,
+   "returncode": 0,
+   "secs": 36.4,
+   "usage": {
+    "cached_input_tokens": 40576,
+    "input_tokens": 76350,
+    "output_tokens": 1650,
+    "reasoning_output_tokens": 439
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "cost_estimated": true,
+ "cost_usd": 0.248658,
+ "dedupe_key": "TauCetiProject/TauCeti|704|742fafad1c87cf2df57a3c793dcc38f2a7745f17|reuse|gpt-5.5|caeca2a4b1193aa2|production|1",
+ "diff_blob": "a095b870c3a119f43a7c08deb9e4c2210806fb2afb2a7cdbc24402a4218433f9",
+ "diff_sha256": "a095b870c3a119f43a7c08deb9e4c2210806fb2afb2a7cdbc24402a4218433f9",
+ "duration_s": 36.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Reflection.lean:54` has `lemma schwarzReflection_of_im_nonneg {z : \u2102} (hz : 0 \u2264 z.im) : schwarzReflection f z = f z`; Mathlib has `EqOn.mono` at `Mathlib/Data/Set/Function.lean:82`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Use `fun _ hz => schwarzReflection_of_im_nonneg (f := f) ...` directly, or restrict the closed-upper result with Mathlib `EqOn.mono` instead of adding separate open/inter public lemmas.",
+   "issue": "`schwarzReflection_eqOn_im_nonneg`, `schwarzReflection_eqOn_im_pos`, `schwarzReflection_eqOn_inter_im_nonneg`, and `schwarzReflection_eqOn_inter_im_pos` are EqOn restatements of the existing pointwise lemma `schwarzReflection_of_im_nonneg`.",
+   "line": 70
+  },
+  {
+   "evidence": "Mathlib provides `ContinuousOn.congr` at `Mathlib/Topology/ContinuousOn.lean:370` and `DifferentiableOn.congr` at `Mathlib/Analysis/Calculus/FDeriv/Congr.lean:201`; the new proofs at lines 96, 105, 114, 123, 132, and 141 are exactly these congr calls with `schwarzReflection_of_im_nonneg`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Do not add these transfer wrappers; at call sites use `hf.congr fun _ hz => schwarzReflection_of_im_nonneg (f := f) ...` or Mathlib `ContinuousOn.congr` / `DifferentiableOn.congr` directly.",
+   "issue": "`ContinuousOn.schwarzReflection_im_nonneg`, `ContinuousOn.schwarzReflection_inter_im_nonneg`, and all four `DifferentiableOn.schwarzReflection_*` lemmas are just one-line applications of existing congruence APIs to `schwarzReflection_of_im_nonneg`.",
+   "line": 93
+  }
+ ],
+ "head_sha": "742fafad1c87cf2df57a3c793dcc38f2a7745f17",
+ "merge_base_sha": "5765870beb50d490a4f7b960a6c214ae023ba90f",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 704,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3a9d846101f213934d5db8bc181e99b4105fc64f6d6310b525dee2fd95cf0fa3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T103244Z-704-reuse-41e6c9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T10:32:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds only thin upper-branch wrappers around the existing pointwise Schwarz-reflection lemma and Mathlib congruence APIs. These should be removed or collapsed to direct uses of the existing lemmas rather than expanding the public API with duplicated special cases.",
+ "transcript_blob": "176bf3d49dd2a4f533f494cc0a024369fbdf2beb2e48b4ec414e7091ba18de54",
+ "usage": {
+  "cached_input_tokens": 40576,
+  "input_tokens": 76350,
+  "output_tokens": 1650,
+  "reasoning_output_tokens": 439
+ },
+ "verdict": "request_changes"
+}
