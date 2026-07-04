@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.419628,
+   "returncode": 0,
+   "secs": 61.8,
+   "usage": {
+    "cached_input_tokens": 80896,
+    "input_tokens": 138468,
+    "output_tokens": 3044,
+    "reasoning_output_tokens": 1419
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "cost_estimated": true,
+ "cost_usd": 0.419628,
+ "dedupe_key": "TauCetiProject/TauCeti|717|5e219d8bbcc599c3b430982c68d217ac2508246c|generality|gpt-5.5|caeca2a4b1193aa2|production|4",
+ "diff_blob": "6fe3b8b4c6f422f46af4b0416be658341eeb704152c160df5a3a0ce100757ea2",
+ "diff_sha256": "6fe3b8b4c6f422f46af4b0416be658341eeb704152c160df5a3a0ce100757ea2",
+ "duration_s": 61.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Basic.lean:111-112` defines `realOperator (t : \u211d) := S t.toNNReal`; Mathlib has `continuous_real_toNNReal` (`Mathlib/Topology/Instances/NNReal/Lemmas.lean:58`), and `Basic.lean:105-107` gives the orbit tendsto at `0` for nonnegative time.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Prove `StronglyContinuousSemigroup.continuous_realOperator_orbit (S) (x) : Continuous (fun t : \u211d => S.realOperator t x)` first, using the existing positive-time argument, `continuous_real_toNNReal` at zero, and local constancy for `t < 0`; derive the half-line wrapper from it if still useful.",
+   "issue": "`continuousOn_realOperator_orbit` only states continuity on `Set.Ici 0`, but `realOperator` is defined on all `\u211d` by `S t.toNNReal`, so the orbit is continuous on all real times.",
+   "line": 429
+  },
+  {
+   "evidence": "At `0`, `(S.continuousAt_zero_tendsto x).comp continuous_real_toNNReal.continuousAt.tendsto` gives continuity of `u \u21a6 S.realOperator u x`; for `t < 0`, `Real.toNNReal` is locally constant at `0`.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Replace it with an assumption-free theorem `ContinuousAt (fun u : \u211d => S.realOperator u x) t`, or derive it directly from the global `Continuous` theorem.",
+   "issue": "`continuousAt_realOperator_orbit` requires `0 < t`, but the same `realOperator` shim is continuous at `t = 0` and at negative `t` as well.",
+   "line": 436
+  },
+  {
+   "evidence": "The current proof only uses `ha`/`hb` to embed `Set.uIcc a b` into `Set.Ici 0`; that restriction disappears from the stronger all-real continuity theorem.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "State `ContinuousOn (fun t : \u211d => S.realOperator t x) (Set.uIcc a b)` with no endpoint hypotheses, derived from the global orbit continuity.",
+   "issue": "`continuousOn_realOperator_orbit_uIcc` carries unnecessary endpoint assumptions `0 \u2264 a` and `0 \u2264 b` once the real-time shim is used.",
+   "line": 442
+  }
+ ],
+ "head_sha": "5e219d8bbcc599c3b430982c68d217ac2508246c",
+ "merge_base_sha": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 717,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "407691d43d4074f4241fd762c8dd61965648db0aca6aa9c011b1ed82464cde95",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T224613Z-717-generality-d22ca8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T22:46:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The new orbit-continuity API is under-generalized for the public `realOperator` shim: since negative times are defined via `t.toNNReal`, the orbit is continuous on all real times, not only on the nonnegative half-line or positive points.",
+ "transcript_blob": "2ce1397ed626ce7d7881db2e0a422c01edd5324db74d716139dc5b512d57dd2a",
+ "usage": {
+  "cached_input_tokens": 80896,
+  "input_tokens": 138468,
+  "output_tokens": 3044,
+  "reasoning_output_tokens": 1419
+ },
+ "verdict": "request_changes"
+}
