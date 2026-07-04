@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.810789,
+   "returncode": 0,
+   "secs": 62.0,
+   "usage": {
+    "cached_input_tokens": 94208,
+    "input_tokens": 228885,
+    "output_tokens": 3010,
+    "reasoning_output_tokens": 1537
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.810789,
+ "dedupe_key": "TauCetiProject/TauCeti|659|38909339e94850729e52461e0a700a673c8a502d|placement|gpt-5.5|caeca2a4b1193aa2|production|5",
+ "diff_blob": "55965b74bc7a9aa38b6d2fc997e6690203817af3364f408aefbbf886ce6a0afc",
+ "diff_sha256": "55965b74bc7a9aa38b6d2fc997e6690203817af3364f408aefbbf886ce6a0afc",
+ "duration_s": 62.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg \"eLpNorm|memLp|LpSeminorm\" code/TauCeti/Probability/Martingale/Crossings/Bounds.lean` shows the import at line 5 and uses only in the private lemma/proof body at lines 42, 65, 70, 75, 125, 132, 143, 155; the public statement at lines 117-122 only mentions the upcrossing integral bound.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Bounds.lean",
+   "fix": "Change line 5 to a non-public `import Mathlib.MeasureTheory.Function.LpSeminorm.Basic`.",
+   "issue": "`Bounds.lean` publicly imports `Mathlib.MeasureTheory.Function.LpSeminorm.Basic`, but the public theorem statement does not mention `eLpNorm`/`memLp`; the Lp API is used only in private proof material.",
+   "line": 5
+  },
+  {
+   "evidence": "The public theorem `exists_ae_tendsto_condExp_of_antitone` at lines 217-222 states only existence of an integrable a.e. limit; `rg` shows the Mathlib convergence-specific uses are proof-internal at lines 231 (`ae_bdd_liminf_atTop_of_eLpNorm_bdd`) and 245 (`tendsto_of_uncrossing_lt_top`).",
+   "file": "TauCeti/Probability/Martingale/Crossings/AntitoneLimit.lean",
+   "fix": "Make line 3 a non-public import, or replace it with narrower non-public imports if available.",
+   "issue": "`AntitoneLimit.lean` publicly imports `Mathlib.Probability.Martingale.Convergence`, but that Mathlib convergence/upcrossing-limit API is only consumed by private proof steps, not by the exported theorem's interface.",
+   "line": 3
+  }
+ ],
+ "head_sha": "38909339e94850729e52461e0a700a673c8a502d",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "db49732cd425e632a663871945e2743027a98b3a4faa17ff222b6b91501dcc6b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T060628Z-659-placement-042de4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T06:06:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The new declarations are in natural martingale/crossing/measure-theory homes, but two proof-only dependencies are publicly re-exported. Make those imports non-public so downstream modules do not inherit unrelated Lp/convergence APIs from these support files.",
+ "transcript_blob": "27dbd45a6e63edc8421a7a0741d941d5507db4b0442651ee460d27e8fece8f92",
+ "usage": {
+  "cached_input_tokens": 94208,
+  "input_tokens": 228885,
+  "output_tokens": 3010,
+  "reasoning_output_tokens": 1537
+ },
+ "verdict": "request_changes"
+}

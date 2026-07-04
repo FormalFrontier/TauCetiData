@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.520849,
+   "returncode": 0,
+   "secs": 85.9,
+   "usage": {
+    "cached_input_tokens": 96768,
+    "input_tokens": 170135,
+    "output_tokens": 3521,
+    "reasoning_output_tokens": 1971
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.520849,
+ "dedupe_key": "TauCetiProject/TauCeti|659|38909339e94850729e52461e0a700a673c8a502d|api-design|gpt-5.5|caeca2a4b1193aa2|production|5",
+ "diff_blob": "55965b74bc7a9aa38b6d2fc997e6690203817af3364f408aefbbf886ce6a0afc",
+ "diff_sha256": "55965b74bc7a9aa38b6d2fc997e6690203817af3364f408aefbbf886ce6a0afc",
+ "duration_s": 85.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `theorem tendsto_ae_condExp_iInf` at `Convergence.lean:184` and `alias condExp_tendsto_iInf := tendsto_ae_condExp_iInf` at `Convergence.lean:202`; the roadmap target is named `condExp_tendsto_iInf` at `roadmap/TauCetiRoadmap/Exchangeability/README.md:496` and `:502`.",
+   "file": "TauCeti/Probability/Martingale/Convergence.lean",
+   "fix": "Make `condExp_tendsto_iInf` the theorem name directly and remove the public alias, or keep only the Mathlib-shaped name if that is the chosen downstream target.",
+   "issue": "The final downward theorem is public as both `tendsto_ae_condExp_iInf` and `condExp_tendsto_iInf`, duplicating the Layer 4 target API.",
+   "line": 202
+  },
+  {
+   "evidence": "`Convergence.lean:3` is a public import; `AntitoneLimit.lean:217` exports `lemma exists_ae_tendsto_condExp_of_antitone`, while the roadmap target theorem is `condExp_tendsto_iInf`.",
+   "file": "TauCeti/Probability/Martingale/Convergence.lean",
+   "fix": "Change this to a non-public `import` unless `exists_ae_tendsto_condExp_of_antitone` is intentionally part of the supported downstream API.",
+   "issue": "`Convergence.lean` uses `public import TauCeti.Probability.Martingale.Crossings.AntitoneLimit`, so importing the flagship theorem also re-exports the antitone-limit helper surface.",
+   "line": 3
+  },
+  {
+   "evidence": "`rg` hits: `revCondExpFinite_apply`/`revFiltration_apply` at `Reverse.lean:60,64`, `negProcess_apply`/`revProcess_apply` at `TimeReversal.lean:46,50`, and `downcrossingsBefore_eq` at `Pathwise.lean:50`; the only `[simp]` hit in these files is a private lemma.",
+   "file": "",
+   "fix": "Add `[simp]` to the public `_apply`/`_eq` characteristic lemmas that remain public, or hide the corresponding wrappers if they are proof-only.",
+   "issue": "Public defining equations for the exposed wrapper definitions are not marked `[simp]`, so users cannot rely on simp to reach the intended normal forms.",
+   "line": 0
+  }
+ ],
+ "head_sha": "38909339e94850729e52461e0a700a673c8a502d",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 659,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "14838be5e98ebb90623cc3d95a93868953dcd7a289f7a9582e1e7f4e3d912bff",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260704T060502Z-659-api-design-9cd12d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-04T06:05:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The flagship import still exposes more API than the roadmap target needs, and the final theorem is exported under two names. Several public wrapper definitions also lack the expected simp-normal-form lemmas.",
+ "transcript_blob": "46fd01b8b97f1803bd4ba40210a4feebee9b69623998191c7391eed2f8ffdfdb",
+ "usage": {
+  "cached_input_tokens": 96768,
+  "input_tokens": 170135,
+  "output_tokens": 3521,
+  "reasoning_output_tokens": 1971
+ },
+ "verdict": "request_changes"
+}
