@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.442586,
+   "returncode": 0,
+   "secs": 64.5,
+   "usage": {
+    "cached_input_tokens": 140672,
+    "input_tokens": 197422,
+    "output_tokens": 2950,
+    "reasoning_output_tokens": 1313
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "85c35d57ee64118977a049e600eb731dc63191f6",
+ "cost_estimated": true,
+ "cost_usd": 0.442586,
+ "dedupe_key": "TauCetiProject/TauCeti|723|e0da3e84d1f1c44155676a518d865c9ab344acde|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "5f0079c4c230385e2ce1ba53d84ef95ef85527f7b4792b0e12ec6d77a4f38869",
+ "diff_sha256": "5f0079c4c230385e2ce1ba53d84ef95ef85527f7b4792b0e12ec6d77a4f38869",
+ "duration_s": 64.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the only non-private declaration is `condExp_Xr_indicator_eq_of_contractable` at line 559, while the imported APIs are used by private lemmas such as `condExp_indicator_sup_eq_of_condIndep` at line 436 and proof-only `processCons`/`CondIndep` steps at lines 570-599.",
+   "file": "TauCeti/Probability/DeFinetti/PrefixDeletion.lean",
+   "fix": "Change the proof-only imports on lines 5-9, 11, 14, and 15 to plain `import`, leaving public only the imports needed to state `condExp_Xr_indicator_eq_of_contractable`.",
+   "issue": "Several proof-only dependencies are `public import`s even though the only public theorem at lines 559-568 mentions only conditional expectation notation, `Contractable`, `processShift`, and probability-measure structure; the private proof machinery is what uses `PullOut`, `AEEqOfIntegral`, `FactorsThrough`, `Bochner.Set`, `MeasurableSpace.Prod`, `Probability.Independence.Conditional`, `TauCeti.Probability.Independence.Conditional`, and `TauCeti.Probability.Process.Tail`.",
+   "line": 5
+  }
+ ],
+ "head_sha": "e0da3e84d1f1c44155676a518d865c9ab344acde",
+ "merge_base_sha": "be56f38b7d6101a2642d864d3fd5eab5c63610c0",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 723,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a9747a45dc43c060f48570c32cd4d38b1bd50bdd239f415174582f415fe8dc72",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T033800Z-723-api-design-6f45c5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T03:38:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The exported lemma is the intended public declaration, but the module publicly re-exports proof-only dependencies. That widens the downstream API surface for a file whose helpers are otherwise private.",
+ "transcript_blob": "624a4b4707097cd41cf9914a5ff3fb2ca568517095fa4f4549a6423ecae22918",
+ "usage": {
+  "cached_input_tokens": 140672,
+  "input_tokens": 197422,
+  "output_tokens": 2950,
+  "reasoning_output_tokens": 1313
+ },
+ "verdict": "request_changes"
+}
