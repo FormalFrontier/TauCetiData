@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.324063,
+   "returncode": 0,
+   "secs": 63.5,
+   "usage": {
+    "cached_input_tokens": 68096,
+    "input_tokens": 107877,
+    "output_tokens": 3037,
+    "reasoning_output_tokens": 1538
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "cost_estimated": true,
+ "cost_usd": 0.324063,
+ "dedupe_key": "TauCetiProject/TauCeti|726|3fbe7859ca5840b4122fb16ab63287e0e40df74b|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "2c84247bda2c84bab2aba885c5344dd78096b56731b64d704ffca36fea9572c4",
+ "diff_sha256": "2c84247bda2c84bab2aba885c5344dd78096b56731b64d704ffca36fea9572c4",
+ "duration_s": 63.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the only in-repo uses are `ArgumentPrinciple.lean:176` and `ResidueTheorem.lean:214`, while the new file opens `public section` at line 35 and exports the lemma at line 44.",
+   "file": "TauCeti/Analysis/Contour/CauchyGoursat.lean",
+   "fix": "Keep this lemma non-public/internal to the contour modules, or justify it as a roadmap-facing theorem with the surrounding API expected for that surface.",
+   "issue": "`circleIntegral_eq_zero_of_nonneg_meromorphicOrderAt` is exported as public API even though it is only a shared proof/base-case helper for `ArgumentPrinciple` and `ResidueTheorem`.",
+   "line": 35
+  },
+  {
+   "evidence": "Implemented signature at `ResidueTheorem.lean:225-229`; roadmap target at `roadmap/TauCetiRoadmap/ContourIntegration/Suggested.lean:190-194` has `hsupp : \u2200 z \u2208 Metric.closedBall c R, meromorphicOrderAt f z \u2260 0 \u2192 z \u2208 S`.",
+   "file": "TauCeti/Analysis/Contour/ResidueTheorem.lean",
+   "fix": "Expose the roadmap-signature theorem, either by changing this statement back to `\u2260 0` or by adding a wrapper with the roadmap signature and keeping the stronger pole-only version under a distinct name.",
+   "issue": "`classicalResidueTheorem_circle` does not expose the roadmap target type: it requires `meromorphicOrderAt f z < 0`, while the target requires `meromorphicOrderAt f z \u2260 0`.",
+   "line": 225
+  }
+ ],
+ "head_sha": "3fbe7859ca5840b4122fb16ab63287e0e40df74b",
+ "merge_base_sha": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 726,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8b91d34ed770350e501443b0e240c5310eb42103379523ae03adb29b849b3bdb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T054047Z-726-api-design-1f530f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T05:40:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes more public API than the roadmap target requires, and the named roadmap theorem does not present the roadmap signature exactly.",
+ "transcript_blob": "641c08c0dc0c22a8786ec8c402547888529575166d470511a3bd7c572bde5780",
+ "usage": {
+  "cached_input_tokens": 68096,
+  "input_tokens": 107877,
+  "output_tokens": 3037,
+  "reasoning_output_tokens": 1538
+ },
+ "verdict": "request_changes"
+}
