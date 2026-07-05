@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.495674,
+   "returncode": 0,
+   "secs": 82.2,
+   "usage": {
+    "cached_input_tokens": 218368,
+    "input_tokens": 275140,
+    "output_tokens": 3421,
+    "reasoning_output_tokens": 1289
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.495674,
+ "dedupe_key": "TauCetiProject/TauCeti|700|aee6cc903fceecfb5738e56db674c979baa0913c|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "29f0617c539a9403affe25dffba68aff9b06ab782ac89e1e019f3e13d466f043",
+ "diff_sha256": "29f0617c539a9403affe25dffba68aff9b06ab782ac89e1e019f3e13d466f043",
+ "duration_s": 82.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"mapValue_mapDomain|pointsMulEquiv_mapValue\"` shows the general commuting lemma at `HopfMap.lean:172` and analogous point-equivalence APIs such as `GroupAlgebraProduct.lean:122` and `DiagonalizableGroup.lean:198`; this file only exports the def and apply lemmas at lines 67-90.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Add a theorem such as `kerQuotientPointsMulEquiv_mapValue` (and the inverse direction if needed) stating compatibility with `AlgHom.mapValue`, proved from `AlgHom.mapValue_mapDomain`.",
+   "issue": "`kerQuotientPointsMulEquiv` is advertised as a functor-of-points equivalence, but the API has no naturality lemma in the value algebra `A`, so downstream users cannot transport along `AlgHom.mapValue` without unfolding the definition.",
+   "line": 67
+  },
+  {
+   "evidence": "The corresponding generic lemmas are `@[simp]` at `HopfMap.lean:152` and `HopfMap.lean:158`, while the new wrappers at `HopfKernelPoints.lean:74` and `HopfKernelPoints.lean:84` lack the annotation.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Mark both `kerQuotientPointsMulEquiv_apply` and `kerQuotientPointsMulEquiv_symm_apply` with `@[simp]`.",
+   "issue": "The characteristic action lemmas for the new equivalence are not marked `@[simp]`, so `simp` will not normalize applications of `kerQuotientPointsMulEquiv` or its inverse to the underlying `AlgHom.mapDomain` form.",
+   "line": 74
+  },
+  {
+   "evidence": "Lines 104-117 and 142-148 contain the raw `@ConcreteCategory.hom GrpCat ...` term; the existing API states the same map directly as `quotientPointsHom H I A f = ...` at `HopfIdealPoints.lean:64`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Restate them with the user-facing expression `CommHopfAlgCat.quotientPointsHom (_root_.CommHopfAlgCat.of R H) (ker f hf) A ... = ...` or an explicitly coerced `.hom` form, matching the existing quotient-points API.",
+   "issue": "The two exported compatibility lemmas expose fully elaborated `@ConcreteCategory.hom ...` terms in their statements, leaking category implementation details into the public API and making the theorem surface hard to read and use.",
+   "line": 101
+  }
+ ],
+ "head_sha": "aee6cc903fceecfb5738e56db674c979baa0913c",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "70bf1e1e87bb6b60dfb5fe28141e8603dfdc7b47e13f0ce43d580fbccd09a6bb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T124450Z-700-api-design-670b69",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T12:44:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The exposed equivalence is useful, but its public API is not yet complete or clean enough for downstream use as a functor-of-points equivalence.",
+ "transcript_blob": "355fd3f11997213e631c5455bc3cdea27f7b99c3b830113e08cf34283e5b6b0d",
+ "usage": {
+  "cached_input_tokens": 218368,
+  "input_tokens": 275140,
+  "output_tokens": 3421,
+  "reasoning_output_tokens": 1289
+ },
+ "verdict": "request_changes"
+}
