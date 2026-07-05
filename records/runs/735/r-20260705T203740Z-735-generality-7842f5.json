@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.412369,
+   "returncode": 0,
+   "secs": 68.7,
+   "usage": {
+    "cached_input_tokens": 112128,
+    "input_tokens": 163163,
+    "output_tokens": 3371,
+    "reasoning_output_tokens": 1966
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7295d84c3ea7728f0281866269691095b213131d",
+ "cost_estimated": true,
+ "cost_usd": 0.412369,
+ "dedupe_key": "TauCetiProject/TauCeti|735|a20dce4d76ad4a07b644046a8c83cc158569262d|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "63e0c926adbb69af1a17a430762e165ac670f34022867caa6aa4ca2561bb5fd6",
+ "diff_sha256": "63e0c926adbb69af1a17a430762e165ac670f34022867caa6aa4ca2561bb5fd6",
+ "duration_s": 68.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`RegularityConditions.lean:98` uses `\u00ac AnalyticAt`; `ResidueTheorem.lean:21-25` says only negative meromorphic order matters and no pointwise regularity of raw `f` is required because isolated wrong values are ignored.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Drive the condition from the meromorphic/Laurent support, e.g. `meromorphicOrderAt f (\u03b3 t\u2080) < 0` or the higher-order principal-part support needed for condition (B), rather than raw `AnalyticAt`.",
+   "issue": "The interior clause triggers on `\u00ac AnalyticAt \u2102 f (\u03b3 t\u2080)`, so a removable raw-value defect on the contour still forces `SectorCompatible`, including the rational-angle condition at line 85, even though the residue API is intentionally insensitive to isolated wrong values.",
+   "line": 98
+  },
+  {
+   "evidence": "`RegularityConditions.lean:102` uses `\u00ac AnalyticAt`; the roadmap theorem assumes meromorphicity at `S` (`Suggested.lean:220-226`) and the existing residue theorem normalizes away raw point values (`ResidueTheorem.lean:23-25`).",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Use the same meromorphic-order/principal-part trigger as the interior clause for the basepoint case.",
+   "issue": "The same over-strong raw `\u00ac AnalyticAt` trigger is used at the basepoint, so removable endpoint value defects require sector compatibility despite carrying no pole or higher Laurent obstruction.",
+   "line": 102
+  }
+ ],
+ "head_sha": "a20dce4d76ad4a07b644046a8c83cc158569262d",
+ "merge_base_sha": "7295d84c3ea7728f0281866269691095b213131d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 735,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c21dc06a6c91f0b5bd8e96afd15c33b500849da032b2c007ebe2de85fe46a8a5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T203740Z-735-generality-7842f5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T20:37:40Z",
+ "submitted_by": "kim-em",
+ "summary": "`ConditionB` is stronger than the natural residue-theorem/Laurent level because it treats raw non-analytic point values as singularities needing angle compatibility.",
+ "transcript_blob": "4ebfc7262f9379c3de6d076205bba3b54e043a54a7d4f1b85c659ce6abfe5618",
+ "usage": {
+  "cached_input_tokens": 112128,
+  "input_tokens": 163163,
+  "output_tokens": 3371,
+  "reasoning_output_tokens": 1966
+ },
+ "verdict": "request_changes"
+}
