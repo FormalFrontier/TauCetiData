@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.378007,
+   "returncode": 0,
+   "secs": 77.3,
+   "usage": {
+    "cached_input_tokens": 55424,
+    "input_tokens": 106943,
+    "output_tokens": 3090,
+    "reasoning_output_tokens": 1820
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.378007,
+ "dedupe_key": "TauCetiProject/TauCeti|690|fabb86433ca9ab9a32f1fbeb584dd539db2fd46b|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "363b2ef552956bf8908eb90908b0503d000abd5bf05a8c91a65a3cfe7e5ff1b3",
+ "diff_sha256": "363b2ef552956bf8908eb90908b0503d000abd5bf05a8c91a65a3cfe7e5ff1b3",
+ "duration_s": 77.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\].*(quotientPointsHom|mapQuotientPointsSubgroup|quotientPointsSubgroupFunctor|quotientPointsSubgroupIncl)\" code/TauCeti/Algebra/AlgebraicGroup` hits `HopfIdealPoints.lean:56` and `HopfIdealPointsNaturality.lean:58,67,80`; `quotientPointsHom_apply`, `quotientPointsHom_apply_apply`, `mapQuotientPointsSubgroup_apply`, and `quotientPointsSubgroupIncl_app` already show this can be characterized by lemmas.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPoints.lean",
+   "fix": "Remove these `@[expose]` annotations and add any missing characteristic lemmas, using `:= rfl` where appropriate rather than making downstream proofs depend on definitional unfolding.",
+   "issue": "`quotientPointsHom` is newly marked `@[expose]`, and the same body-exposure pattern appears on `mapQuotientPointsSubgroup`, `quotientPointsSubgroupFunctor`, and `quotientPointsSubgroupIncl` in `HopfIdealPointsNaturality.lean`; these are public interface objects whose behavior should be supplied by lemmas, not by unfolding bodies.",
+   "line": 56
+  },
+  {
+   "evidence": "`rg -n \"quotientPointsSubgroupFunctor_obj|quotientPointsSubgroupFunctor_map|quotientPointsSubgroupNatIso|quotientPointsSubgroupIso|liftQuotientPointHom\" code/TauCeti/Algebra/AlgebraicGroup` finds only the definitions at lines 144, 180, and 221 plus private/internal uses, with no public `*_hom`, `*_inv`, `*_app`, `*_obj`, or `*_map` characterization lemmas.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Make `liftQuotientPointHom` private if it is only an implementation helper, and add `[simp]` component lemmas for the iso/nat-iso hom and inv, e.g. that the hom component is the codrestricted `quotientPointsHom` and the inv component is `liftQuotientPoint`.",
+   "issue": "The public bundled helpers `liftQuotientPointHom`, `quotientPointsSubgroupIso`, and `quotientPointsSubgroupNatIso` are introduced without the API that characterizes their `toFun`/`hom`/`inv` components, leaving consumers unable to use the isomorphism opaquely.",
+   "line": 144
+  }
+ ],
+ "head_sha": "fabb86433ca9ab9a32f1fbeb584dd539db2fd46b",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 690,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ceb0c64732ee16d5db0b4daa8a5645819704bc58fa2f863bcac93a3544b05188",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T152012Z-690-api-design-0af84d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T15:20:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds the needed naturality surface, but several declarations expose implementation bodies or lack the characteristic lemmas needed to use the new bundled API opaquely.",
+ "transcript_blob": "d6a7d25163522ffe51e033638a09144e6cb48ecf77070c47b0d1d19bb22804b5",
+ "usage": {
+  "cached_input_tokens": 55424,
+  "input_tokens": 106943,
+  "output_tokens": 3090,
+  "reasoning_output_tokens": 1820
+ },
+ "verdict": "request_changes"
+}
