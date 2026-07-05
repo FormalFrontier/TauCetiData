@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.419593,
+   "returncode": 0,
+   "secs": 58.4,
+   "usage": {
+    "cached_input_tokens": 93696,
+    "input_tokens": 152657,
+    "output_tokens": 2598,
+    "reasoning_output_tokens": 1304
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "85c35d57ee64118977a049e600eb731dc63191f6",
+ "cost_estimated": true,
+ "cost_usd": 0.419593,
+ "dedupe_key": "TauCetiProject/TauCeti|725|5007a1790fe21a2122801611feba7008971245d0|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "2ece9296fa5a9454f2db79bb56a94b1c8bb54baa3da57fa5505ddfb8bd3dc5cc",
+ "diff_sha256": "2ece9296fa5a9454f2db79bb56a94b1c8bb54baa3da57fa5505ddfb8bd3dc5cc",
+ "duration_s": 58.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep shows only existing residue simp lemmas at lines 116, 125, 133, and 159; the new linearity declarations at lines 295, 320, and 338 have no `@[simp]` attribute.",
+   "file": "TauCeti/Analysis/Contour/Residue.lean",
+   "fix": "Mark the linearity rewrites `@[simp]` where they reduce a residue of an operation to operations on residues, or add equivalent simp-facing lemmas if these names should stay untagged.",
+   "issue": "`residue_add`, `residue_const_mul`, and `residue_sub` are normal-form linearity lemmas but are not tagged `@[simp]`, so expressions like `residue (f - m) z\u2080` will not normalize automatically even when the meromorphic hypotheses are available.",
+   "line": 295
+  },
+  {
+   "evidence": "The only scalar rewrite in the diff is `theorem residue_const_mul ... residue (fun z => c * f z) z\u2080 = c * residue f z\u2080` at line 320; no `residue_smul`/`smul`-shaped residue theorem appears in `rg -n \"residue_.*smul|residue_const_mul\"`.",
+   "file": "TauCeti/Analysis/Contour/Residue.lean",
+   "fix": "Add a public `residue_smul` theorem, preferably simp-facing, stated with pointwise scalar multiplication on functions; keep `residue_const_mul` as a derived alias if desired.",
+   "issue": "The scalar API is exposed only as `residue_const_mul : residue (fun z => c * f z) z\u2080 = ...`, not the module operation form users write for \u2102-linearity, `residue (c \u2022 f) z\u2080 = c \u2022 residue f z\u2080`.",
+   "line": 320
+  }
+ ],
+ "head_sha": "5007a1790fe21a2122801611feba7008971245d0",
+ "merge_base_sha": "85c35d57ee64118977a049e600eb731dc63191f6",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 725,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0a8e81f23f44e6726548874a01647e7be5ae32584e13af0c0f60c5641778948a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T031908Z-725-api-design-907e4a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T03:19:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The residue linearity surface is missing the automation and scalar-multiplication shape users need for downstream algebraic rewriting without unfolding pointwise functions.",
+ "transcript_blob": "65890286274d6c5cb679a51c8f74462477b41fedc977b9e679abec1077225f74",
+ "usage": {
+  "cached_input_tokens": 93696,
+  "input_tokens": 152657,
+  "output_tokens": 2598,
+  "reasoning_output_tokens": 1304
+ },
+ "verdict": "request_changes"
+}
