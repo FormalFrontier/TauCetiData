@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.565263,
+   "returncode": 0,
+   "secs": 90.0,
+   "usage": {
+    "cached_input_tokens": 180096,
+    "input_tokens": 248475,
+    "output_tokens": 4444,
+    "reasoning_output_tokens": 2299
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "65f1d5ee8d8e32d5dcf587286e53f869250dc03d",
+ "cost_estimated": true,
+ "cost_usd": 0.565263,
+ "dedupe_key": "TauCetiProject/TauCeti|736|004a3dd642d5a6aa9903c444f3ad3ccc295587e8|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "2257be6014d99f2926264928560b2550cff61ff689e78261031292af7e8f3ed1",
+ "diff_sha256": "2257be6014d99f2926264928560b2550cff61ff689e78261031292af7e8f3ed1",
+ "duration_s": 90.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/MeasureTheory/Measure/CharacteristicFunction/Basic.lean:160-163` states `charFun \u03bc t = VectorFourier.fourierIntegral fourierChar \u03bc (inner\u2097 E) 1 (-(2 * \u03c0)\u207b\u00b9 \u2022 t)`, while `TauCeti/.../FourierConvention.lean:64-65` states the same inverse rescaling after unfolding `VectorFourier.fourierIntegral` and `TauCeti.fourierAtom`.",
+   "file": "TauCeti/Analysis/Bochner/FourierConvention.lean",
+   "fix": "Remove this public inverse lemma, or make it private proof scaffolding; users can use `MeasureTheory.charFun_eq_fourierIntegral'` and unfold `VectorFourier.fourierIntegral`/`fourierAtom` when the integral form is needed.",
+   "issue": "`charFun_eq_integral_fourierAtom_neg_inv_two_pi_smul` is a thin restatement of Mathlib's Fourier-characteristic bridge `MeasureTheory.charFun_eq_fourierIntegral'`.",
+   "line": 64
+  },
+  {
+   "evidence": "`TauCeti/.../FourierConvention.lean:80` defines `continuous_fourierConventionCharFun`, `:95` defines `fourierConventionCharFun_isPositiveDefinite_of_star_eq_neg`, and `:122-127` merely packages those two declarations.",
+   "file": "TauCeti/Analysis/Bochner/FourierConvention.lean",
+   "fix": "Remove the bundled theorem and let callers write `\u27e8continuous_fourierConventionCharFun, fourierConventionCharFun_isPositiveDefinite_of_star_eq_neg hstar\u27e9` at use sites.",
+   "issue": "`continuous_fourierConventionCharFun_and_isPositiveDefinite_of_star_eq_neg` is only an `\u2227`-bundle of the two preceding public lemmas.",
+   "line": 122
+  }
+ ],
+ "head_sha": "004a3dd642d5a6aa9903c444f3ad3ccc295587e8",
+ "merge_base_sha": "65f1d5ee8d8e32d5dcf587286e53f869250dc03d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 736,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a1c2683e9b3973daf22a791749ae8ab44f7a6d36a80168f714f95fb8dfa7db99",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T175348Z-736-reuse-3d741d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T17:53:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds useful notation-level bridging, but two public declarations duplicate existing API rather than reusing it as the public surface.",
+ "transcript_blob": "c4fc6126a2083665e4e13023163d8d0a43bb77cc33e74b94853118f861e56808",
+ "usage": {
+  "cached_input_tokens": 180096,
+  "input_tokens": 248475,
+  "output_tokens": 4444,
+  "reasoning_output_tokens": 2299
+ },
+ "verdict": "request_changes"
+}
