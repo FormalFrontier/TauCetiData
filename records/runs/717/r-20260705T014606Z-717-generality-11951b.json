@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.278317,
+   "returncode": 0,
+   "secs": 43.9,
+   "usage": {
+    "cached_input_tokens": 50304,
+    "input_tokens": 88055,
+    "output_tokens": 2147,
+    "reasoning_output_tokens": 977
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "cost_estimated": true,
+ "cost_usd": 0.278317,
+ "dedupe_key": "TauCetiProject/TauCeti|717|e16db719eecb1e894bd269c90f6fdc91cb630087|generality|gpt-5.5|caeca2a4b1193aa2|production|5",
+ "diff_blob": "7ffa617bf4c1162cb8e0fd7557d44f4e7e2ad85c4543e977c006c9c11e57d411",
+ "diff_sha256": "7ffa617bf4c1162cb8e0fd7557d44f4e7e2ad85c4543e977c006c9c11e57d411",
+ "duration_s": 43.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Basic.lean:111-112` defines `realOperator (t : \u211d) := S t.toNNReal`; Mathlib has `continuous_real_toNNReal` at `Mathlib/Topology/Instances/NNReal/Lemmas.lean:58`, and the existing `Basic.lean:408-410` gives the positive half-line continuity needed away from zero.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Prove `StronglyContinuousSemigroup.realOperator_continuous (S) (x) : Continuous (fun t : \u211d => S.realOperator t x)` first, then derive this `ContinuousOn` wrapper if it is still wanted.",
+   "issue": "`realOperator_continuousOn_nonnegative` only states continuity on `Set.Ici 0`, but `S.realOperator` is defined on all `\u211d` by composing with `Real.toNNReal`.",
+   "line": 429
+  },
+  {
+   "evidence": "`Basic.lean:105-107` gives the native orbit continuity at `0`, composing with `continuous_real_toNNReal` handles `t = 0`; for `t < 0`, `Real.toNNReal` is locally constant equal to `0`, while `Basic.lean:408-410` already handles `t > 0`.",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Replace it with or derive it from `StronglyContinuousSemigroup.realOperator_continuousAt (S) (x) (t : \u211d) : ContinuousAt (fun u : \u211d => S.realOperator u x) t` with no positivity hypothesis.",
+   "issue": "`realOperator_continuousAt_of_pos` requires `0 < t`, but the same real-time shim is continuous at `t = 0` and at negative `t` as well.",
+   "line": 436
+  }
+ ],
+ "head_sha": "e16db719eecb1e894bd269c90f6fdc91cb630087",
+ "merge_base_sha": "32f9600873ada7acae0e5f46c9519b4786c061fd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 717,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e189faae470b329221b9586cb4b54a6d140fc5445a3cbafdf70176dbf827adcb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ca4019579fd4922464c844d112a9c5d4b996229f",
+ "rubrics_version": "caeca2a4b1193aa2",
+ "run_id": "r-20260705T014606Z-717-generality-11951b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T01:46:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The new orbit-continuity wrappers are under-generalized for the public `realOperator` shim. Since the shim is defined on all real times via `Real.toNNReal`, the natural public theorem is all-real continuity, with the half-line and positive-time forms derived as special cases.",
+ "transcript_blob": "064f4750628f6383369eea66091ad080626648a2b3730786534dd44aedc1084d",
+ "usage": {
+  "cached_input_tokens": 50304,
+  "input_tokens": 88055,
+  "output_tokens": 2147,
+  "reasoning_output_tokens": 977
+ },
+ "verdict": "request_changes"
+}
