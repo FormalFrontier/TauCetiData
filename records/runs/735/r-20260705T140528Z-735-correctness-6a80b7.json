@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.435451,
+   "returncode": 0,
+   "secs": 91.1,
+   "usage": {
+    "cached_input_tokens": 54912,
+    "input_tokens": 111119,
+    "output_tokens": 4232,
+    "reasoning_output_tokens": 3134
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1f21b4f744898b550fc1dc74be0eb7025c447674",
+ "cost_estimated": true,
+ "cost_usd": 0.435451,
+ "dedupe_key": "TauCetiProject/TauCeti|735|e8827e75e500b52b725e282016b87c99326cf1bc|correctness|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "9681f18b1b0cdad83d0ec45e50d6e56fbfbd4fda002c322dba1f5db84c5062f0",
+ "diff_sha256": "9681f18b1b0cdad83d0ec45e50d6e56fbfbd4fda002c322dba1f5db84c5062f0",
+ "duration_s": 91.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 65 has `Complex.arg (limUnder (\ud835\udcdd[>] t\u2080) (deriv \u03b3)) - Complex.arg (-limUnder (\ud835\udcdd[<] t\u2080) (deriv \u03b3))`; in the HW model sector with `L\u208a = 1` and `-L\u208b = exp(i\u03b1)`, the paper's angle is `\u03b1`, while this definition gives `-\u03b1` for `0 < \u03b1 \u2264 \u03c0`, so even the rationality clause with `p q : \u2115` fails for a quarter-sector.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Reverse the subtraction and normalize the oriented angle modulo `2\u03c0` (or represent it as a `Real.Angle` with a chosen `[0, 2\u03c0]` representative) before using it in `ConditionB`.",
+   "issue": "`crossingAngle` is defined as `arg L\u208a - arg (-L\u208b)`, but HW's positive sector angle is from the exit tangent `L\u208a` to the reversed entry tangent `-L\u208b`, i.e. `arg (-L\u208b) - arg L\u208a` normalized to `[0, 2\u03c0]`.",
+   "line": 65
+  }
+ ],
+ "head_sha": "e8827e75e500b52b725e282016b87c99326cf1bc",
+ "merge_base_sha": "1f21b4f744898b550fc1dc74be0eb7025c447674",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 735,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5fda7a496c352fc355761e7e26377813bf23c615cb541a25406a1f27835e0f88",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T140528Z-735-correctness-6a80b7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T14:05:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The crossing-angle primitive has the oriented angle backwards, so `ConditionB` rejects standard HW model sectors and downstream statements will use the wrong angle.",
+ "transcript_blob": "0d2f2fc6cc87f9bfca5a10a5fc6bd3a60ec07e9fada4da8139354474b4f09bac",
+ "usage": {
+  "cached_input_tokens": 54912,
+  "input_tokens": 111119,
+  "output_tokens": 4232,
+  "reasoning_output_tokens": 3134
+ },
+ "verdict": "block"
+}
