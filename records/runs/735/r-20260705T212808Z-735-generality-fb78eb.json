@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.60152,
+   "returncode": 0,
+   "secs": 85.9,
+   "usage": {
+    "cached_input_tokens": 110080,
+    "input_tokens": 195784,
+    "output_tokens": 3932,
+    "reasoning_output_tokens": 2418
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7295d84c3ea7728f0281866269691095b213131d",
+ "cost_estimated": true,
+ "cost_usd": 0.60152,
+ "dedupe_key": "TauCetiProject/TauCeti|735|a24b266c79f55f44cc78ad1edd0f67dfd9ebc78a|generality|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "a6c550546fd7ff4a2a47d1b4a8c82528d465fa16f43abfffabf2346f62ede791",
+ "diff_sha256": "a6c550546fd7ff4a2a47d1b4a8c82528d465fa16f43abfffabf2346f62ede791",
+ "duration_s": 85.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`RegularityConditions.lean:153-159` defines `SectorCompatible` with `angle_rational`; `RegularityConditions.lean:170-171` applies it under `< 0`; roadmap `Suggested.lean:108-110` and `README.md:186-187` say condition (B) is for poles of order `> 1`, with the simple-pole case first.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Restrict this clause to higher-order poles, e.g. `meromorphicOrderAt f (\u03b3 t\u2080) < -1`, or make the rational/Laurent compatibility requirement conditional on the presence of a nonzero coefficient of order `> 1`.",
+   "issue": "The interior clause triggers on every pole `meromorphicOrderAt f (\u03b3 t\u2080) < 0`, so a simple on-curve pole forces `SectorCompatible.angle_rational` even though the simple-pole case is handled without condition (B).",
+   "line": 170
+  },
+  {
+   "evidence": "`RegularityConditions.lean:174` applies `SectorCompatible` under `< 0`; roadmap `README.md:180-187` separates the simple-pole/half-residue case from condition (B), which handles higher-order Laurent cancellation.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Use the same higher-order gate at the basepoint, e.g. require `meromorphicOrderAt f (\u03b3 a) < -1` before imposing `SectorCompatible`.",
+   "issue": "The basepoint clause has the same over-strong trigger: a simple pole at `\u03b3 a` must satisfy rational-angle `SectorCompatible`, excluding valid simple-pole endpoint/join cases from the intended theorem API.",
+   "line": 174
+  }
+ ],
+ "head_sha": "a24b266c79f55f44cc78ad1edd0f67dfd9ebc78a",
+ "merge_base_sha": "7295d84c3ea7728f0281866269691095b213131d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 735,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "16456eba9225563069615860cad85bbe274ff0f4f9b44473eb34eb5eddeff4e2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T212808Z-735-generality-fb78eb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T21:28:08Z",
+ "submitted_by": "kim-em",
+ "summary": "`ConditionB` is still stronger than the natural residue-theorem level because it imposes rational-angle sector compatibility on simple poles, even though condition (B) is only needed for higher-order Laurent terms.",
+ "transcript_blob": "e879a1d911a4948c1da56a393e9baf3998cb3f90d5229149a9c17e86acc5281d",
+ "usage": {
+  "cached_input_tokens": 110080,
+  "input_tokens": 195784,
+  "output_tokens": 3932,
+  "reasoning_output_tokens": 2418
+ },
+ "verdict": "request_changes"
+}
