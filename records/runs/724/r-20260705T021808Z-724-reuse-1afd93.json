@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.659772,
+   "returncode": 0,
+   "secs": 72.6,
+   "usage": {
+    "cached_input_tokens": 306304,
+    "input_tokens": 386628,
+    "output_tokens": 3500,
+    "reasoning_output_tokens": 1780
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "85c35d57ee64118977a049e600eb731dc63191f6",
+ "cost_estimated": true,
+ "cost_usd": 0.659772,
+ "dedupe_key": "TauCetiProject/TauCeti|724|90c8e9b32680598a263f349c22b3c87f4aaac448|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "20d738fca5ff03da7edbd00b021ca08860df2dce664f8bff0986a10d4a8e97c7",
+ "diff_sha256": "20d738fca5ff03da7edbd00b021ca08860df2dce664f8bff0986a10d4a8e97c7",
+ "duration_s": 72.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Pathwise.lean:41-47` defines the wrappers by `upcrossingsBefore (-b) (-a) (-X)` and an `iSup`; Mathlib already has `upcrossingsBefore` at `Mathlib/Probability/Martingale/Upcrossing.lean:424-426` and `upcrossings` at `:774-776`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Pathwise.lean",
+   "fix": "Remove these public declarations and state the private reversal proof directly in terms of `upcrossingsBefore (-b) (-a) (-(revProcess X N)) (N + 1)`; use Mathlib's `upcrossingsBefore`/`upcrossings` rather than adding a parallel downcrossing API.",
+   "issue": "`downcrossingsBefore` and `downcrossings` are public thin wrappers for existing Mathlib declarations: `downcrossingsBefore a b X N` is exactly `upcrossingsBefore (-b) (-a) (-X) N`, and `downcrossings a b X` is exactly `upcrossings (-b) (-a) (-X)`.",
+   "line": 41
+  },
+  {
+   "evidence": "`Pathwise.lean:175-218` proves index bounds solely to build `BddAbove`; Mathlib has `theorem upperCrossingTime_lt_bddAbove (hab : a < b)` at `Mathlib/Probability/Martingale/Upcrossing.lean:286-287`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Pathwise.lean",
+   "fix": "Delete `upperCrossingTime_lt_imp_index_lt` and replace `hbdd2` with `upperCrossingTime_lt_bddAbove (by linarith : -b < -a)`; `hbdd1` is not used and can be removed.",
+   "issue": "`upperCrossingTime_lt_imp_index_lt` and the `hbdd1`/`hbdd2` blocks rederive boundedness of `{n | upperCrossingTime ... n \u03c9 < N}`, which Mathlib already exposes as `upperCrossingTime_lt_bddAbove`.",
+   "line": 175
+  }
+ ],
+ "head_sha": "90c8e9b32680598a263f349c22b3c87f4aaac448",
+ "merge_base_sha": "be56f38b7d6101a2642d864d3fd5eab5c63610c0",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 724,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "36b409860d1e9f971290558a63c7c45062b10e8b0a076dae6b2d63889cf2b8bc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T021808Z-724-reuse-1afd93",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T02:18:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces public downcrossing APIs that are just negated/flipped instances of Mathlib's existing upcrossing APIs, and it also reproves an existing Mathlib boundedness lemma inside the main proof.",
+ "transcript_blob": "b1aabab643dbba2e7f37f31c5c4b5b0a23e74e505c5b271b1cbae307ad1e9331",
+ "usage": {
+  "cached_input_tokens": 306304,
+  "input_tokens": 386628,
+  "output_tokens": 3500,
+  "reasoning_output_tokens": 1780
+ },
+ "verdict": "block"
+}
