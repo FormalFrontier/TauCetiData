@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.511568,
+   "returncode": 0,
+   "secs": 53.8,
+   "usage": {
+    "cached_input_tokens": 78976,
+    "input_tokens": 158002,
+    "output_tokens": 2565,
+    "reasoning_output_tokens": 1403
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "66e7c687b9793320e895988f6762ba0da1c99b81",
+ "cost_estimated": true,
+ "cost_usd": 0.511568,
+ "dedupe_key": "TauCetiProject/TauCeti|733|e77c69f5cecaf6ad93da14e05870a6ec07dbeb6c|api-design|gpt-5.5|fb0698ac514a62c5|production|5",
+ "diff_blob": "9b9544c916de3593d19b671e9d22dee80ce1ce6fa0bf75d931b984a22bfe6cf4",
+ "diff_sha256": "9b9544c916de3593d19b671e9d22dee80ce1ce6fa0bf75d931b984a22bfe6cf4",
+ "duration_s": 53.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"HasCauchyPV\\.(zero|const_mul|add|sum)|CauchyPVExists\\.(zero|const_mul|add|sum)\" code/TauCeti/Analysis/Contour/CauchyPrincipalValueOn.lean` finds only `HasCauchyPV.zero` at line 178, `HasCauchyPV.const_mul` at line 187, `CauchyPVExists.zero` at line 225, and `CauchyPVExists.const_mul` at line 230; the pointwise companion has `HasCauchyPVAt.add`/`sum` at `CauchyPrincipalValue.lean:199`/`:234`, and the roadmap target states a finite residue sum in `Suggested.lean:227`.",
+   "file": "TauCeti/Analysis/Contour/CauchyPrincipalValueOn.lean",
+   "fix": "Add public `HasCauchyPV.add`, `HasCauchyPV.sum`, `CauchyPVExists.add`, and `CauchyPVExists.sum` lemmas, using the existing private enlargement-inertness machinery as needed.",
+   "issue": "`HasCauchyPV.const_mul` exposes only the scalar half of the principal-value linearity API; there is no set-level `HasCauchyPV.add`/`HasCauchyPV.sum` or corresponding `CauchyPVExists` forms, so consumers proving finite residue-sum PV statements cannot combine summand PVs without rebuilding the excision-set reconciliation argument.",
+   "line": 187
+  }
+ ],
+ "head_sha": "e77c69f5cecaf6ad93da14e05870a6ec07dbeb6c",
+ "merge_base_sha": "66e7c687b9793320e895988f6762ba0da1c99b81",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 733,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "fbb3d0130a377e42a3f40eb06f2f6f4bbaa0967f0ea8484b1b2378113809a49b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T155415Z-733-api-design-fd96f8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T15:54:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The set-level PV surface now has uniqueness and the canonical zero normal form, but its linearity API stops at scalar multiplication. Since the file exposes zero/const_mul and the pointwise companion already has add/sum, downstream residue-sum users still lack the characteristic additive API for `HasCauchyPV`.",
+ "transcript_blob": "b0d55aad7faaeb9b81c6878bfeae9420b6b746fe6c917c6352741499e35e9386",
+ "usage": {
+  "cached_input_tokens": 78976,
+  "input_tokens": 158002,
+  "output_tokens": 2565,
+  "reasoning_output_tokens": 1403
+ },
+ "verdict": "request_changes"
+}
