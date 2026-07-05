@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.48315,
+   "returncode": 0,
+   "secs": 46.4,
+   "usage": {
+    "cached_input_tokens": 56960,
+    "input_tokens": 135600,
+    "output_tokens": 2049,
+    "reasoning_output_tokens": 939
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "cost_estimated": true,
+ "cost_usd": 0.48315,
+ "dedupe_key": "TauCetiProject/TauCeti|728|9ab5f02ac01449b11676673ee283e43deeb640d0|naming|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "89609ea848a226be372bdcd6c964b5ebdde9dc6b459a19ae9d7c0ac6ce0f83fd",
+ "diff_sha256": "89609ea848a226be372bdcd6c964b5ebdde9dc6b459a19ae9d7c0ac6ce0f83fd",
+ "duration_s": 46.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"Function\\.swap|flip_eq\" code/TauCeti/Analysis/PDE/IntegratedSymmetricEnergy.lean code/TauCeti/Analysis/PDE/SymmetricEnergy.lean` shows lines 67, 76, 84, 92 use `Function.swap`, while the adjacent pointwise `flip_eq` lemmas at `SymmetricEnergy.lean:89`, `:134`, `:150`, `:155` state `(energyIntegrand ...).flip = ...`; Mathlib naming convention says names should use the definition name with namespace removed, and Mathlib has `swap_dist : Function.swap (@dist \u03b1 _) = dist`.",
+   "file": "TauCeti/Analysis/PDE/IntegratedSymmetricEnergy.lean",
+   "fix": "Rename these integrated lemmas to use `swap`, e.g. `energyFormIntegral_zero_drift_swap_eq_of_isSymm_ae`, `energyFormIntegral_zero_drift_swap_eq_on`, `energyFormIntegral_coefficientSymmetricPart_zero_drift_swap_eq`, and `energyFormIntegral_one_zero_mass_swap_eq`, and update references/docstrings.",
+   "issue": "The declarations `energyFormIntegral_zero_drift_flip_eq_of_isSymm_ae`, `energyFormIntegral_zero_drift_flip_eq_on`, `energyFormIntegral_coefficientSymmetricPart_zero_drift_flip_eq`, and `energyFormIntegral_one_zero_mass_flip_eq` state `Function.swap (...) = ...`, but their names say `flip_eq`; `flip` is a distinct bundled-map operation used in the adjacent `energyIntegrand_*_flip_eq` lemmas.",
+   "line": 65
+  }
+ ],
+ "head_sha": "9ab5f02ac01449b11676673ee283e43deeb640d0",
+ "merge_base_sha": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 728,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "83b60e1de8a8e31b13f5fa1c08dd5a8fcabdefa07c767d943160e9bb40fa598d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T142012Z-728-naming-a1ad5a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T14:20:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The integrated symmetry lemmas name `Function.swap` as `flip`, which conflicts with Mathlib terminology and with the adjacent pointwise lemmas where `flip` is an actual bundled-map operation.",
+ "transcript_blob": "18a0369ed4bf721d71ac9aecc6eddfb69f349ba37bf1d1dc37a0db0d1afd3e6f",
+ "usage": {
+  "cached_input_tokens": 56960,
+  "input_tokens": 135600,
+  "output_tokens": 2049,
+  "reasoning_output_tokens": 939
+ },
+ "verdict": "request_changes"
+}

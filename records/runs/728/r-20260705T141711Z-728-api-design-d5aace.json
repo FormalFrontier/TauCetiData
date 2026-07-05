@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.454976,
+   "returncode": 0,
+   "secs": 70.7,
+   "usage": {
+    "cached_input_tokens": 171392,
+    "input_tokens": 224908,
+    "output_tokens": 3390,
+    "reasoning_output_tokens": 1671
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "cost_estimated": true,
+ "cost_usd": 0.454976,
+ "dedupe_key": "TauCetiProject/TauCeti|728|9ab5f02ac01449b11676673ee283e43deeb640d0|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "89609ea848a226be372bdcd6c964b5ebdde9dc6b459a19ae9d7c0ac6ce0f83fd",
+ "diff_sha256": "89609ea848a226be372bdcd6c964b5ebdde9dc6b459a19ae9d7c0ac6ce0f83fd",
+ "duration_s": 70.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`coefficientSymmetricPart` and its API are defined at `UniformEllipticity.lean:251`, `:256`, `:263`, `:269`, and `:279`; grep shows the new `coefficientSymmetricPart_eq_self_of_isSymm` only at `SymmetricEnergy.lean:58`.",
+   "file": "TauCeti/Analysis/PDE/SymmetricEnergy.lean",
+   "fix": "Move this lemma to `TauCeti/Analysis/PDE/UniformEllipticity.lean` next to `coefficientSymmetricPart_isSymm`, `coefficientSymmetricPart_apply`, and the other characteristic lemmas.",
+   "issue": "`coefficientSymmetricPart_eq_self_of_isSymm` is public API for `coefficientSymmetricPart`, but it is placed in `SymmetricEnergy` instead of beside the definition in `UniformEllipticity`.",
+   "line": 58
+  },
+  {
+   "evidence": "grep finds only `energyFormIntegral_zero_drift_comm_of_isSymm_ae` at line 53, while the specialized declarations at lines 83 and 91 are only `flip_eq`; the pointwise file has both comm forms at `SymmetricEnergy.lean:97` and `:124`.",
+   "file": "TauCeti/Analysis/PDE/IntegratedSymmetricEnergy.lean",
+   "fix": "Add `energyFormIntegral_coefficientSymmetricPart_zero_drift_comm` and `energyFormIntegral_one_zero_mass_comm` mirroring the pointwise `energyIntegrand_coefficientSymmetricPart_zero_drift_comm` and `energyIntegrand_one_zero_drift_comm` forms.",
+   "issue": "The specialized integrated symmetric-part and shifted-Laplacian APIs expose only bundled `Function.swap` equalities, with no direct `... U V = ... V U` comm lemmas.",
+   "line": 83
+  }
+ ],
+ "head_sha": "9ab5f02ac01449b11676673ee283e43deeb640d0",
+ "merge_base_sha": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 728,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "477645602f2281c9cb4d5f16f21ac1edd73413a85fa6bed9ba43c11404225ddb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T141711Z-728-api-design-d5aace",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T14:17:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The new symmetry surface is close, but two public API issues block approval: one characteristic lemma is exposed from the wrong module, and two specialized integrated symmetry APIs are missing their usable comm forms.",
+ "transcript_blob": "0da289652f3ce58122fd9e5de29203c26c30989e68aff1fa4cbd8b838fbf7c83",
+ "usage": {
+  "cached_input_tokens": 171392,
+  "input_tokens": 224908,
+  "output_tokens": 3390,
+  "reasoning_output_tokens": 1671
+ },
+ "verdict": "request_changes"
+}
