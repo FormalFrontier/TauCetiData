@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.543564,
+   "returncode": 0,
+   "secs": 59.4,
+   "usage": {
+    "cached_input_tokens": 32768,
+    "input_tokens": 121254,
+    "output_tokens": 2825,
+    "reasoning_output_tokens": 1452
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1f21b4f744898b550fc1dc74be0eb7025c447674",
+ "cost_estimated": true,
+ "cost_usd": 0.543564,
+ "dedupe_key": "TauCetiProject/TauCeti|735|8d3245dad6f21c17fe5c476d3b910d1f233e8a89|correctness|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "87148c3008eb6ac4aeae4c835e995669552968caacba5138314809763f18cd90",
+ "diff_sha256": "87148c3008eb6ac4aeae4c835e995669552968caacba5138314809763f18cd90",
+ "duration_s": 59.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 60-68 document the angle as from exit tangent to reversed entry tangent, while the code is `Complex.arg (-limUnder (\ud835\udcdd[<] t\u2080) (deriv \u03b3)) - Complex.arg (limUnder (\ud835\udcdd[>] t\u2080) (deriv \u03b3))`.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Swap the subtraction operands so the value is `Complex.arg (limUnder (\ud835\udcdd[>] t\u2080) (deriv \u03b3)) - Complex.arg (-limUnder (\ud835\udcdd[<] t\u2080) (deriv \u03b3))`, then normalize.",
+   "issue": "`crossingAngle` implements the complement of the documented/source angle for nonsmooth crossings: the doc says `arg L\u208a - arg (-L\u208b)`, but line 68 computes `arg (-L\u208b) - arg L\u208a`.",
+   "line": 66
+  },
+  {
+   "evidence": "Roadmap lines 220-227 consume only `hclosed`, `h\u03b3U`, `hA`, and `hB : ConditionB \u03b3 a b f` with no endpoint avoidance, while `HasCauchyPVAt` lines 89-93 excises over the whole interval.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Either add the needed endpoint/basepoint condition here, or add the source-style endpoint-avoidance/reparametrization hypothesis to the consuming theorem/roadmap before claiming this predicate matches that theorem.",
+   "issue": "`ConditionB` only quantifies over `Set.Ioo a b` at lines 78 and 84, so a singularity at the closed curve basepoint `\u03b3 a = \u03b3 b` with no interior preimage is completely unconstrained under the roadmap theorem.",
+   "line": 78
+  }
+ ],
+ "head_sha": "8d3245dad6f21c17fe5c476d3b910d1f233e8a89",
+ "merge_base_sha": "1f21b4f744898b550fc1dc74be0eb7025c447674",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 735,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "eb870e722e75eeaaf384c15fa2a89b20926796629a956c98d62f135c1020d102",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T143442Z-735-correctness-defcdc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T14:34:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The new crossing-angle primitive has the stated/source orientation reversed, and ConditionB is too weak for the roadmap theorem contract because it leaves closed-curve basepoint singularities unconstrained.",
+ "transcript_blob": "0583b438d87780f7f99ac3f6eee86fcf05d3e970b1577b77620c7702e225f667",
+ "usage": {
+  "cached_input_tokens": 32768,
+  "input_tokens": 121254,
+  "output_tokens": 2825,
+  "reasoning_output_tokens": 1452
+ },
+ "verdict": "block"
+}
