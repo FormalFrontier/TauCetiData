@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.620948,
+   "returncode": 0,
+   "secs": 81.2,
+   "usage": {
+    "cached_input_tokens": 153856,
+    "input_tokens": 240064,
+    "output_tokens": 3766,
+    "reasoning_output_tokens": 1670
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1f21b4f744898b550fc1dc74be0eb7025c447674",
+ "cost_estimated": true,
+ "cost_usd": 0.620948,
+ "dedupe_key": "TauCetiProject/TauCeti|734|edbbaf226bfd6ba8cedbdb0fd6d1c9e865aaab19|correctness|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "df1efe355863f785e3b18f75bc0d9f9cd59c580142e5b4df751c893c8c0959fa",
+ "diff_sha256": "df1efe355863f785e3b18f75bc0d9f9cd59c580142e5b4df751c893c8c0959fa",
+ "duration_s": 81.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Roadmap `Exchangeability/README.md` says `upcrossings_bdd_uniform` should give a uniform crossing bound for `n \u21a6 \u03bc[f | \ud835\udd3d n]`; the theorem conclusion at lines 121-122 only mentions `revCEFinite ... N`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Bounds.lean",
+   "fix": "State and prove the bound for `\u222b\u207b \u03c9, upcrossings a b (fun n => \u03bc[f | \ud835\udd3d n]) \u03c9 \u2202\u03bc`, using the existing pathwise reversal adapter to compare finite prefixes to the reversed martingales.",
+   "issue": "`upcrossings_bdd_uniform` bounds `upcrossings ... (fun n => revCEFinite ... N n)` for each finite horizon, not the intended antitone process `fun n => \u03bc[f | \ud835\udd3d n]`.",
+   "line": 122
+  },
+  {
+   "evidence": "Lines 159-163 use `condExp_of_not_integrable hf`; Mathlib `ConditionalExpectation/Basic.lean` defines this fallback theorem as `\u03bc[f | m] = 0` when `\u00ac Integrable f \u03bc`.",
+   "file": "TauCeti/Probability/Martingale/Crossings/Bounds.lean",
+   "fix": "Require `hf : Integrable f \u03bc` in the public theorem, as in the downstream `condExp_tendsto_iInf` target, and remove the non-integrable zero branch.",
+   "issue": "The theorem has no `Integrable f \u03bc` hypothesis and proves the non-integrable case by replacing every conditional expectation with zero, which is Mathlib's undefined-value convention rather than the classical conditional-expectation process.",
+   "line": 120
+  }
+ ],
+ "head_sha": "edbbaf226bfd6ba8cedbdb0fd6d1c9e865aaab19",
+ "merge_base_sha": "cbf0634d38a3ec893f98a57b47ecf1e9dd379949",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 734,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "445a79b3f7e59b76a338e2b8ef68d3d98fe0a6ddcc085b8ec05115dc56eb455b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T132523Z-734-correctness-382130",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T13:25:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The public theorem does not state the roadmap's antitone upcrossing bound; it bounds a finite reversed surrogate, and it exposes Mathlib's non-integrable `condExp = 0` fallback as if it were a mathematical conditional expectation bound.",
+ "transcript_blob": "7ec1570e933308bdd5dbaf4103e30a519a61537b7b92bd9e63d98a233ccc733c",
+ "usage": {
+  "cached_input_tokens": 153856,
+  "input_tokens": 240064,
+  "output_tokens": 3766,
+  "reasoning_output_tokens": 1670
+ },
+ "verdict": "block"
+}
