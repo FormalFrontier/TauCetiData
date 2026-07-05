@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.477393,
+   "returncode": 0,
+   "secs": 48.3,
+   "usage": {
+    "cached_input_tokens": 93056,
+    "input_tokens": 165405,
+    "output_tokens": 2304,
+    "reasoning_output_tokens": 822
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "cost_estimated": true,
+ "cost_usd": 0.477393,
+ "dedupe_key": "TauCetiProject/TauCeti|728|664a34b023df5996404933464a8807afec4b2f59|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "291c81c15c65d4777510187e19a67c64e3b9cd1fbe6d3279067b426571df6c6c",
+ "diff_sha256": "291c81c15c65d4777510187e19a67c64e3b9cd1fbe6d3279067b426571df6c6c",
+ "duration_s": 48.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"energyFormIntegral_.*flip_eq|energyFormIntegral_.*comm\" code/TauCeti/Analysis/PDE` shows only the new `energyFormIntegral_*_comm` lemmas; `SymmetricEnergy.lean:82`, `:130`, `:148`, and `:154` expose the corresponding pointwise `energyIntegrand_*_flip_eq` API.",
+   "file": "TauCeti/Analysis/PDE/IntegratedSymmetricEnergy.lean",
+   "fix": "Add bundled `Function.flip` lemmas, with `@[simp]` where they are normal forms: `energyFormIntegral_zero_drift_flip_eq_of_isSymm_ae`, `_flip_eq_on`, `energyFormIntegral_coefficientSymmetricPart_zero_drift_flip_eq`, and `energyFormIntegral_one_zero_mass_flip_eq`.",
+   "issue": "The new integrated symmetry API only states applied commutation lemmas, so consumers of the bilinear form must use `funext`/unfolding to prove symmetry of the form itself.",
+   "line": 53
+  }
+ ],
+ "head_sha": "664a34b023df5996404933464a8807afec4b2f59",
+ "merge_base_sha": "2b9ad380cce9d80a5734cc07192068c91ceb7b98",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 728,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d3094abbf1c347709740c859167242fb3cb28c0bb274d63453f3c33b73a5740a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T063354Z-728-api-design-79c9f5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T06:33:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The integrated symmetry surface is missing the bundled form-equality lemmas that downstream bilinear-form consumers need; the pointwise symmetry API already exposes these `flip_eq` forms, but this PR stops at applied `U V` equalities.",
+ "transcript_blob": "a38226795aba8469bfda175e298615731f5d585542f5eb0841ee2b625d408704",
+ "usage": {
+  "cached_input_tokens": 93056,
+  "input_tokens": 165405,
+  "output_tokens": 2304,
+  "reasoning_output_tokens": 822
+ },
+ "verdict": "request_changes"
+}
