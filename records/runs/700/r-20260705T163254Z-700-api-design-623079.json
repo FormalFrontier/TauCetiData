@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.575069,
+   "returncode": 0,
+   "secs": 68.8,
+   "usage": {
+    "cached_input_tokens": 169728,
+    "input_tokens": 249229,
+    "output_tokens": 3090,
+    "reasoning_output_tokens": 1078
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.575069,
+ "dedupe_key": "TauCetiProject/TauCeti|700|d0e9a5f7486f68c0008748201bf921a78dcc8ae7|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "444a34fa5105758d6aba51c53185b96d57160242c5923f623247da7912709463",
+ "diff_sha256": "444a34fa5105758d6aba51c53185b96d57160242c5923f623247da7912709463",
+ "duration_s": 68.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "This file develops both directions at lines 75 and 85, but only line 94 has a map-value lemma; existing point-equivalence APIs expose this parallel form, e.g. `Product.lean:192 mapValue_pointsMulEquiv_symm_apply`, `MultiplicativeGroup.lean:223 mapValue_pointsMulEquiv_symm_apply`, and `DiagonalizableGroupBaseChange.lean:133 mapValue_baseChangePointsMulEquiv_symm_apply`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Add the parallel inverse naturality lemma, e.g. a `mapValue_quotientKerPointsMulEquiv_symm_apply` statement rewriting `AlgHom.mapValue \u03c7 ((quotientKerPointsMulEquiv f hf A).symm g)` to `(quotientKerPointsMulEquiv f hf (CommAlgCat.of R B)).symm (AlgHom.mapValue \u03c7 g)`.",
+   "issue": "`quotientKerPointsMulEquiv_mapValue` gives naturality only in the forward direction; the inverse map from `K`-points back to quotient points has no corresponding map-value lemma, so users cannot transport `K`-points through base/value algebra maps without manually unfolding the equivalence.",
+   "line": 94
+  },
+  {
+   "evidence": "The wrapper lemmas themselves rewrite to existing simp-normal APIs (`AlgHom.mapDomainMulEquiv_apply`/`_symm_apply` are `@[simp]` in `HopfMap.lean:152` and `HopfMap.lean:158`, and `CommHopfAlgCat.quotientPointsHom_apply`/`_apply_apply` are `@[simp]` in `HopfIdealPoints.lean:63` and `HopfIdealPoints.lean:71`), but the new lemmas at `HopfKernelPoints.lean:75`, `:85`, `:113`, and `:126` have no attributes.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Mark the characteristic reductions at lines 75, 85, 113, and 126 with `@[simp]` if they do not loop; these are the public normal forms for the new definitions.",
+   "issue": "The exposed normal-form lemmas for the new equivalence and its quotient-points compatibility are missing `@[simp]`, so `simp` will not reduce the public equivalence/inclusion API to `AlgHom.mapDomain` normal forms.",
+   "line": 75
+  }
+ ],
+ "head_sha": "d0e9a5f7486f68c0008748201bf921a78dcc8ae7",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "36424439b299940060ac6bf7231b4f1729950fcb3675452e1d31c738defb679a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T163254Z-700-api-design-623079",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T16:32:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The new equivalence is the right public object, but its characteristic API is incomplete for downstream functor-of-points use and its normal-form lemmas are not registered with automation.",
+ "transcript_blob": "37e99cdb46b11800a4b4d97daaa11e454debc0fe6f4f90509d28ef03162150e5",
+ "usage": {
+  "cached_input_tokens": 169728,
+  "input_tokens": 249229,
+  "output_tokens": 3090,
+  "reasoning_output_tokens": 1078
+ },
+ "verdict": "request_changes"
+}
