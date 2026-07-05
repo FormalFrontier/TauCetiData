@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.535525,
+   "returncode": 0,
+   "secs": 64.8,
+   "usage": {
+    "cached_input_tokens": 112000,
+    "input_tokens": 189167,
+    "output_tokens": 3123,
+    "reasoning_output_tokens": 1138
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "cost_estimated": true,
+ "cost_usd": 0.535525,
+ "dedupe_key": "TauCetiProject/TauCeti|738|c428ca41e79b07127b518813041c6d99807a077a|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "78fd620fbdbdc28ad650b0456bce43d5f3a9b1b11d0a24a086e2da61159d98cd",
+ "diff_sha256": "78fd620fbdbdc28ad650b0456bce43d5f3a9b1b11d0a24a086e2da61159d98cd",
+ "duration_s": 64.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n '^@\\[expose\\]'` hits lines 54, 59, and 107 in `SmallGridGradings.lean`.",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Remove `@[expose]` from these three definitions and keep consumers on `twoByTwoId_zero/one`, `twoByTwoSwap_zero/one`, `twoByTwo_O`, `twoByTwo_X`, and the finite-set/grading lemmas; add any missing characteristic lemma instead of exposing bodies.",
+   "issue": "`GridState.twoByTwoId`, `GridState.twoByTwoSwap`, and `GridDiagram.twoByTwo` expose their bodies even though the file already provides pointwise/O/X characterization lemmas; downstream users can now depend on the exact constructors `\u27e81\u27e9`, `\u27e8Equiv.swap ...\u27e9`, and the structure literal.",
+   "line": 54
+  },
+  {
+   "evidence": "`rg -n '^theorem twoByTwo_OSet|^theorem twoByTwo_XSet|^theorem maslovO\u2124_twoByTwo|^theorem maslovX\u2124_twoByTwo|^theorem alexanderTwo\u2124_twoByTwo|^theorem alexander_twoByTwo_twoByTwo'` hits lines 126, 133, 141, 147, 153, 158, 166, 172, 178, and 184 with no preceding simp attribute.",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Add `@[simp]` to `twoByTwo_OSet`, `twoByTwo_XSet`, `maslovO\u2124_twoByTwo_twoByTwoId`, `maslovX\u2124_twoByTwo_twoByTwoId`, `alexanderTwo\u2124_twoByTwo_twoByTwoId`, `alexander_twoByTwo_twoByTwoId`, and the four corresponding `twoByTwoSwap` lemmas, unless a specific one creates a demonstrated simp loop.",
+   "issue": "The concrete normal forms for the named diagram are public theorems but not `@[simp]`, so `simp` will not reduce `twoByTwo.OSet`, `twoByTwo.XSet`, or the listed Maslov/Alexander grading table without manually naming every lemma.",
+   "line": 126
+  }
+ ],
+ "head_sha": "c428ca41e79b07127b518813041c6d99807a077a",
+ "merge_base_sha": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 738,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0516409217035f04b63fbf742ea9937cb50989389312aa0254f1cda418af7c53",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T202133Z-738-api-design-0479fb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T20:21:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface is too defeq-dependent and its concrete normal-form API is not wired into automation. These are fixable by hiding the concrete bodies and marking the characteristic computation lemmas as simp lemmas.",
+ "transcript_blob": "241f172b2a6fb3ffc536a02dfa38c2288b4ebfb1cae84cbfb8c2dc18cf12c60e",
+ "usage": {
+  "cached_input_tokens": 112000,
+  "input_tokens": 189167,
+  "output_tokens": 3123,
+  "reasoning_output_tokens": 1138
+ },
+ "verdict": "request_changes"
+}

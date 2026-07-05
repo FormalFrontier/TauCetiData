@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.31784,
+   "returncode": 0,
+   "secs": 45.2,
+   "usage": {
+    "cached_input_tokens": 41600,
+    "input_tokens": 90634,
+    "output_tokens": 1729,
+    "reasoning_output_tokens": 603
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "cost_estimated": true,
+ "cost_usd": 0.31784,
+ "dedupe_key": "TauCetiProject/TauCeti|738|c428ca41e79b07127b518813041c6d99807a077a|placement|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "78fd620fbdbdc28ad650b0456bce43d5f3a9b1b11d0a24a086e2da61159d98cd",
+ "diff_sha256": "78fd620fbdbdc28ad650b0456bce43d5f3a9b1b11d0a24a086e2da61159d98cd",
+ "duration_s": 45.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the generic classification already lives in `StateCardinality.lean:106` (`theorem eq_equivPerm_symm_one_or_eq_equivPerm_symm_swap`), while the new generic declarations start at `SmallGridGradings.lean:55` and `:108` before any grading theorem.",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Move the named `2 \u00d7 2` states and standard `GridDiagram.twoByTwo` facts to an earlier small-grid/state file, e.g. near `eq_equivPerm_symm_one_or_eq_equivPerm_symm_swap` in `StateCardinality.lean` or a new earlier `SmallGridDiagram.lean`, and leave only the grading-value lemmas here.",
+   "issue": "Generic small-grid API is placed in a grading-specific file: `GridState.twoByTwoId`, `twoByTwoSwap`, their simp/distinct/univ lemmas, and `GridDiagram.twoByTwo`/`twoByTwo_OSet`/`twoByTwo_XSet` do not depend on grading theory, yet users must import `SmallGridGradings` and its heavier grading dependencies to name the standard two-state diagram.",
+   "line": 55
+  },
+  {
+   "evidence": "`rg \"fullyBlockedDifferential|SmallGridDifferential\" SmallGridGradings.lean` only hits the import line and doc prose; the actual API is in `SmallGridDifferential.lean:105` (`theorem fullyBlockedDifferential_eq_zero_of_two`).",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Remove the import, or add an actual `twoByTwo` zero-differential lemma here if this file is meant to package that fact.",
+   "issue": "`public import TauCeti.KnotTheory.Grid.SmallGridDifferential` is unused by the file's declarations; no theorem in `SmallGridGradings.lean` references `fullyBlockedDifferential` or the small-grid zero differential API.",
+   "line": 8
+  }
+ ],
+ "head_sha": "c428ca41e79b07127b518813041c6d99807a077a",
+ "merge_base_sha": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 738,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d01e4d582cebcd30087d1601f5a48975172dd6d51425b49a1d9dfcee60718a6d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T202352Z-738-placement-e56db1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T20:23:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The grading computations are in a plausible new file, but the PR also parks generic two-by-two state/diagram API behind a grading import and carries an unused differential import.",
+ "transcript_blob": "7ee4fe883f164a7bf00698f313d40bda249e70ab0fbaa4e39de27a86cb1f80f1",
+ "usage": {
+  "cached_input_tokens": 41600,
+  "input_tokens": 90634,
+  "output_tokens": 1729,
+  "reasoning_output_tokens": 603
+ },
+ "verdict": "request_changes"
+}
