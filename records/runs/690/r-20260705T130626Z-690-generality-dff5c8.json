@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.772646,
+   "returncode": 0,
+   "secs": 87.5,
+   "usage": {
+    "cached_input_tokens": 104832,
+    "input_tokens": 229876,
+    "output_tokens": 3167,
+    "reasoning_output_tokens": 1398
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.772646,
+ "dedupe_key": "TauCetiProject/TauCeti|690|c4dedf8a6a028674e1fd7a4dfd2ead885d4be6a6|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "2af56d3cfa5a99589397af6b6dd4301a2c2da42139a1decfd223dd58f08c1887",
+ "diff_sha256": "2af56d3cfa5a99589397af6b6dd4301a2c2da42139a1decfd223dd58f08c1887",
+ "duration_s": 87.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `mapQuotientPointsSubgroup` at lines 72-78, with functor laws proved separately at lines 110-126; the module doc at lines 22-23 says this should be a `subfunctor`, and Mathlib provides `CategoryTheory.SubmonoidFunctor` in `Mathlib/CategoryTheory/Subfunctor/SubmonoidFunctor.lean`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Package these maps as a functor, e.g. `quotientPointsSubgroupFunctor H I : CommAlgCat R \u2964 GrpCat`, and an inclusion natural transformation to `HopfAlgebra.pointsFunctor`; or at least as a `CategoryTheory.SubmonoidFunctor (HopfAlgebra.pointsFunctor (H := H) \u22d9 forget\u2082 GrpCat MonCat)`. Derive the raw map and id/comp lemmas from that.",
+   "issue": "`mapQuotientPointsSubgroup` plus the separate id/comp lemmas exposes only raw restricted homomorphisms, even though the file claims the quotient points form a subfunctor of the ambient points functor.",
+   "line": 72
+  },
+  {
+   "evidence": "`CommHopfAlgCat.mapPointsFunctor_naturality` is added at `TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat.lean:85`, while `quotientPointsHom` is defined as `(mapPointsFunctor (mkQuotient H I)).app A` in `HopfIdealPoints.lean:56`, so the 20-line proof at lines 40-58 is duplicated special-case API.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Make `mapPoints_quotientPointsHom` a specialization of `mapPointsFunctor_naturality (mkQuotient H I)` using `quotientPointsHom`; avoid the separate `AlgHom.ext` proof.",
+   "issue": "`mapPoints_quotientPointsHom` reproves the quotient case of value-algebra naturality pointwise instead of deriving it from the general `mapPointsFunctor_naturality` added in the same PR.",
+   "line": 40
+  }
+ ],
+ "head_sha": "c4dedf8a6a028674e1fd7a4dfd2ead885d4be6a6",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 690,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "58b1b9c636d3b03a8977f183799502738fb6a4eaac7fdfa8f3e7b878854e144c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T130626Z-690-generality-dff5c8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T13:06:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR records the desired pointwise maps, but the API sits below the natural functor/subfunctor level and duplicates a quotient-special naturality proof that the PR already proves generally.",
+ "transcript_blob": "3609f940630e9e2e76310c2a408f9b07fc4b95b03820e51d83a4e4338dd6c441",
+ "usage": {
+  "cached_input_tokens": 104832,
+  "input_tokens": 229876,
+  "output_tokens": 3167,
+  "reasoning_output_tokens": 1398
+ },
+ "verdict": "request_changes"
+}
