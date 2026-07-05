@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.393408,
+   "returncode": 0,
+   "secs": 70.3,
+   "usage": {
+    "cached_input_tokens": 52736,
+    "input_tokens": 107322,
+    "output_tokens": 3137,
+    "reasoning_output_tokens": 1562
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e7f136aaabca23894fe03e53275eebb0248eb7e",
+ "cost_estimated": true,
+ "cost_usd": 0.393408,
+ "dedupe_key": "TauCetiProject/TauCeti|690|09fa1fd50d2fc128123135ae5663b1b5e769bb41|api-design|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "aeb77be35487b45017be21f2e5c2376c8057b2806a71b43a6473bd05984d778a",
+ "diff_sha256": "aeb77be35487b45017be21f2e5c2376c8057b2806a71b43a6473bd05984d778a",
+ "duration_s": 70.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"quotientPointsSubgroupFunctor|mapQuotientPointsSubgroup_apply\"` shows `@[expose] noncomputable def quotientPointsSubgroupFunctor` at line 67 and public map/app lemmas at lines 101, 111, 121, 131, and 138.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Remove `@[expose]` and make the exported characterization lemmas independent of body unfolding, e.g. by using `:= (rfl)` where defeq is intended or explicit pointwise proofs plus named API.",
+   "issue": "`quotientPointsSubgroupFunctor` is marked `@[expose]`, exposing the `restrict`/`codRestrict` implementation of the public functor body.",
+   "line": 67
+  },
+  {
+   "evidence": "The only occurrence defining the component is `app A := GrpCat.ofHom (quotientPointsSubgroup H I A).subtype` at line 87; `rg` finds no `quotientPointsSubgroupIncl_app` or pointwise inclusion lemma.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Add a `@[simp]` characteristic lemma such as `(quotientPointsSubgroupIncl H I).app A = GrpCat.ofHom (quotientPointsSubgroup H I A).subtype`, or the pointwise application form.",
+   "issue": "`quotientPointsSubgroupIncl` is public but has no component/application lemma, so clients cannot rewrite its `app` to the subgroup subtype map without unfolding the definition.",
+   "line": 83
+  },
+  {
+   "evidence": "The direct equality is proved internally as `hnat` at lines 46-62 and 180-196, but `rg -n \"mapPoints_quotientPointsHom|quotientPointsSubgroupFunctor_map_quotientPointsHom\"` finds only the packaged `quotientPointsSubgroupFunctor_map_quotientPointsHom` at line 147.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsNaturality.lean",
+   "fix": "Add a direct, preferably `@[simp]`, lemma `mapPoints_quotientPointsHom` stating `HopfAlgebra.mapPoints \u03c7 (quotientPointsHom H I A f) = quotientPointsHom H I B (HopfAlgebra.mapPoints \u03c7 f)`, and use it in the later proofs.",
+   "issue": "The advertised quotient-points naturality square is not exposed as a direct lemma for `quotientPointsHom`; only a subtype-packaged lemma is provided.",
+   "line": 147
+  }
+ ],
+ "head_sha": "09fa1fd50d2fc128123135ae5663b1b5e769bb41",
+ "merge_base_sha": "95725edb86a9d81cd932f99bb96deceb4fd5b68a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 690,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "43bd7a85c3f9921ca8f8181daf323a73c879ef9ed224f790e576ec66ad560f47",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T135713Z-690-api-design-5eea73",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T13:57:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The new surface still exposes implementation structure and misses characteristic lemmas for the public naturality objects. Consumers should not have to unfold the functor or package points into subtypes to use the advertised naturality square.",
+ "transcript_blob": "6fe7f84d30b2dd231ecf47ad2d9a671d322cc7dbfbaa984046b47652a506c40b",
+ "usage": {
+  "cached_input_tokens": 52736,
+  "input_tokens": 107322,
+  "output_tokens": 3137,
+  "reasoning_output_tokens": 1562
+ },
+ "verdict": "request_changes"
+}
