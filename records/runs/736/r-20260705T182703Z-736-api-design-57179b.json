@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.602078,
+   "returncode": 0,
+   "secs": 81.3,
+   "usage": {
+    "cached_input_tokens": 87936,
+    "input_tokens": 177076,
+    "output_tokens": 3747,
+    "reasoning_output_tokens": 2268
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "65f1d5ee8d8e32d5dcf587286e53f869250dc03d",
+ "cost_estimated": true,
+ "cost_usd": 0.602078,
+ "dedupe_key": "TauCetiProject/TauCeti|736|7d0c97d99554b45dcefd569a244a1e5b5247d5c6|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "ad609d0bf0c334bd0b14275692eb22a965dad7d6dceb877cc399d63d02539a40",
+ "diff_sha256": "ad609d0bf0c334bd0b14275692eb22a965dad7d6dceb877cc399d63d02539a40",
+ "duration_s": 81.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"integral_fourierAtom_eq|charFun.*fourierAtom|fourierAtom.*charFun\" code/TauCeti/Analysis/Bochner/FourierConvention.lean` finds only the forward theorem at line 61; the roadmap explicitly asks for a conversion between the two conventions at `roadmap/TauCetiRoadmap/OneParameterSemigroups/README.md:218-219`, and downstream Bochner uniqueness needs the arbitrary-`t` direction.",
+   "file": "TauCeti/Analysis/Bochner/FourierConvention.lean",
+   "fix": "Add the inverse characteristic lemma, e.g. `MeasureTheory.charFun \u03bc t = \u222b q, fourierAtom (((-2 * Real.pi)\u207b\u00b9) \u2022 t) q \u2202\u03bc`, with the appropriate `[simp]`/normal-form annotation if it is intended for rewriting.",
+   "issue": "Only the forward bridge `\u222b q, fourierAtom a q \u2202\u03bc = charFun \u03bc ((-2 * Real.pi) \u2022 a)` is public; there is no inverse theorem for an arbitrary `t`, so users proving characteristic-function equality/uniqueness from Fourier-convention equality must manually choose `a = (-2 * Real.pi)\u207b\u00b9 \u2022 t` and redo the nonzero-\u03c0 scalar proof.",
+   "line": 61
+  }
+ ],
+ "head_sha": "7d0c97d99554b45dcefd569a244a1e5b5247d5c6",
+ "merge_base_sha": "65f1d5ee8d8e32d5dcf587286e53f869250dc03d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 736,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "be1bd417f2212e3c32f53878361e21e6d21a54747150f16a374ac4936efe24d6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260705T182703Z-736-api-design-57179b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-05T18:27:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The forward convention bridge is exposed, but the API is missing the inverse rescaling form needed to move arbitrary `charFun \u03bc t` goals back to the Fourier-convention integral without redoing scalar algebra downstream.",
+ "transcript_blob": "215dbf711d22a889d5101666d10cbcda61f91b52f2e1e18a80635ea1319c0dc5",
+ "usage": {
+  "cached_input_tokens": 87936,
+  "input_tokens": 177076,
+  "output_tokens": 3747,
+  "reasoning_output_tokens": 2268
+ },
+ "verdict": "request_changes"
+}
