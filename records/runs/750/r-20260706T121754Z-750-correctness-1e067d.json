@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.339495,
+   "returncode": 0,
+   "secs": 36.4,
+   "usage": {
+    "cached_input_tokens": 28800,
+    "input_tokens": 83877,
+    "output_tokens": 1657,
+    "reasoning_output_tokens": 538
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e29a52487568c98f587de2c732edfa7b5b066f03",
+ "cost_estimated": true,
+ "cost_usd": 0.339495,
+ "dedupe_key": "TauCetiProject/TauCeti|750|5ae85be2f526b57e2a7352eda65d3aebdbf53431|correctness|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "fa55bdcf042183651d67e5aac880d18b63787d1eebc733e300b5404b896f771a",
+ "diff_sha256": "fa55bdcf042183651d67e5aac880d18b63787d1eebc733e300b5404b896f771a",
+ "duration_s": 36.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg`/line hits: code lines 218 and 221 require order `1`; `ConditionB` lines 267-272 only adds `SectorCompatible`; roadmap `Suggested.lean` lines 102-106 and README lines 182-185 state A\u2032 includes a prescribed pole order.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Make A\u2032 order-aware, e.g. by passing `f`/pole orders or replacing `S : Finset \u2102` with ordered singularity data, and require flatness of the required pole order at every crossing; otherwise do not export this as the HW A\u2032 condition consumed by the general residue theorem.",
+   "issue": "`ConditionAprime` hard-codes `FlatOfOrder ... 1` for interior crossings and `FlatOfOrderBasepoint ... 1` at the basepoint, so a higher-order on-curve pole can satisfy A\u2032 with only first-order flatness.",
+   "line": 218
+  },
+  {
+   "evidence": "Code lines 189-190 and 199-200 use `\u2016\u03b3 t - (\u03b3 t\u2080 + (t - t\u2080) \u2022 t_plus)\u2016` and endpoint analogues; the doc at lines 183-186 acknowledges the predicate is stricter than HW Def. 3.2 for `n \u2265 2`.",
+   "file": "TauCeti/Analysis/Contour/RegularityConditions.lean",
+   "fix": "Define higher-order flatness using distance to the one-sided tangent line/projection, or restrict/rename this predicate so it is not the general HW flatness notion used for higher-order A\u2032.",
+   "issue": "`FlatOfOrder`/`FlatOfOrderBasepoint` measure error from the parametrized affine point `\u03b3 t\u2080 + (t - t\u2080) \u2022 v`, not distance to the tangent line/projection required by HW flatness for order `n`; for `n \u2265 2` this rejects curves that are geometrically flat along the tangent line with nonlinear speed.",
+   "line": 187
+  }
+ ],
+ "head_sha": "5ae85be2f526b57e2a7352eda65d3aebdbf53431",
+ "merge_base_sha": "e29a52487568c98f587de2c732edfa7b5b066f03",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 750,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8aca142549d3466691276aec5d15fafb3e336882810658c055b0abb82d1481c7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T121754Z-750-correctness-1e067d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T12:17:54Z",
+ "submitted_by": "kim-em",
+ "summary": "ConditionAprime still implements only first-order transversality while the roadmap/HW condition requires flatness matched to prescribed pole order; the general flatness predicate also does not formalize HW's tangent-line definition for higher orders.",
+ "transcript_blob": "2fe1a658f046ce7628b9bbfeedf6b7844456357f4b026b9d57f2f5a425a2a48c",
+ "usage": {
+  "cached_input_tokens": 28800,
+  "input_tokens": 83877,
+  "output_tokens": 1657,
+  "reasoning_output_tokens": 538
+ },
+ "verdict": "block"
+}
