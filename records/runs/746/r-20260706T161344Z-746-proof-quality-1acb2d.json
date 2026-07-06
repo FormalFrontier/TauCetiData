@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.160543,
+   "returncode": 0,
+   "secs": 30.9,
+   "usage": {
+    "cached_input_tokens": 43136,
+    "input_tokens": 62459,
+    "output_tokens": 1412,
+    "reasoning_output_tokens": 436
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.160543,
+ "dedupe_key": "TauCetiProject/TauCeti|746|021cb24e510b48a4e2cca75d66ac50ae4856095e|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "c068ab0e920b2a21820974846e0cd390950d44e754dbd27a4896df76ecfe735d",
+ "diff_sha256": "c068ab0e920b2a21820974846e0cd390950d44e754dbd27a4896df76ecfe735d",
+ "duration_s": 30.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"exists_extending_pair\"` shows this call at line 45, while the former private `exists_perm_extending_castLE` was deleted from this file in the diff.",
+   "file": "TauCeti/Probability/Exchangeability/ExchangeableAtMonotone.lean",
+   "fix": "Add a public `exists_perm_extending_castLE` helper in `PermutationExtension.lean` and call it here.",
+   "issue": "The proof inlines `Equiv.Perm.exists_extending_pair` and its `Fin.castLE` injectivity proof, duplicating the removed extension helper rather than using a named lemma.",
+   "line": 45
+  },
+  {
+   "evidence": "`rg -n \"exists_extending_pair\"` shows the second inlined extension at line 62, and the diff deletes the previous private `exists_perm_nat_extending` wrapper.",
+   "file": "TauCeti/Probability/Exchangeability/FullyExchangeable.lean",
+   "fix": "Add a public `exists_perm_nat_extending` helper in `PermutationExtension.lean` and replace this `obtain` block with that lemma.",
+   "issue": "The proof similarly inlines the finite-to-`\u2115` permutation extension proof, leaving the nontrivial injectivity argument embedded in a measure-theoretic proof.",
+   "line": 62
+  }
+ ],
+ "head_sha": "021cb24e510b48a4e2cca75d66ac50ae4856095e",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 746,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2fcfe29feb17904d39da585c04f6ebcfa8f2452ada93cc01e76b324c38fdb868",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T161344Z-746-proof-quality-1acb2d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T16:13:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new proofs mostly elaborate cleanly, but the finite permutation-extension reasoning has been inlined at the two call sites instead of factored into the reusable helpers this PR is meant to expose.",
+ "transcript_blob": "7976d3edfbbd7bf54e678725c486fb2cb980c2813d31ddd3255bec6a955368b0",
+ "usage": {
+  "cached_input_tokens": 43136,
+  "input_tokens": 62459,
+  "output_tokens": 1412,
+  "reasoning_output_tokens": 436
+ },
+ "verdict": "request_changes"
+}
