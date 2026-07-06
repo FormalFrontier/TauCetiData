@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.405468,
+   "returncode": 0,
+   "secs": 56.3,
+   "usage": {
+    "cached_input_tokens": 68736,
+    "input_tokens": 129306,
+    "output_tokens": 2275,
+    "reasoning_output_tokens": 1179
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.405468,
+ "dedupe_key": "TauCetiProject/TauCeti|747|433a1b3eae0d42338c42a676138c059407373ce6|naming|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "345d43a5a0a3741341bdf85dbbb214647a7e3978f362c95c89829053c021031a",
+ "diff_sha256": "345d43a5a0a3741341bdf85dbbb214647a7e3978f362c95c89829053c021031a",
+ "duration_s": 56.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 49-56 prove `0 < Real.sqrt ((n.factorial : \u211d) * Real.sqrt Real.pi)` and its nonzero form; the naming convention says theorem names should describe the conclusion, and `_def`/helper-style names should correspond to actual definitions.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunction.lean",
+   "fix": "Either introduce a named denominator definition such as `hermiteFunctionDenom` and prove `hermiteFunctionDenom_pos`/`_ne_zero`, or rename these to describe the expression, e.g. `sqrt_factorial_mul_sqrt_pi_pos` and `sqrt_factorial_mul_sqrt_pi_ne_zero`.",
+   "issue": "`hermiteFunction_denom_pos` and `hermiteFunction_denom_ne_zero` name an informal denominator of `hermiteFunction`, not the expression in their conclusions.",
+   "line": 49
+  },
+  {
+   "evidence": "`rg` shows adjacent Hermite polynomial API as `Polynomial.hermite_zero`, `Polynomial.hermite_one`, Mathlib `Polynomial.hermite_eq_deriv_gaussian`, and TauCeti `_root_.Polynomial.hermite_add_two`; line 137 states `aeval x (hermite 2) = x ^ 2 - 1`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunction.lean",
+   "fix": "Move it to `Polynomial` as `_root_.Polynomial.aeval_hermite_two`, or keep it private if it is only an internal calculation for `hermiteFunction_two`.",
+   "issue": "`TauCeti.aeval_hermite_two` is a lemma about `Polynomial.hermite`, but it is introduced in the `TauCeti` namespace instead of the adjacent `Polynomial` namespace.",
+   "line": 137
+  }
+ ],
+ "head_sha": "433a1b3eae0d42338c42a676138c059407373ce6",
+ "merge_base_sha": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 747,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "feffbbaa4967adeeda8865072ae9d77c376cfdc4ce35ac042c5e9129ede05edb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T093311Z-747-naming-19b8ca",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T09:33:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API has naming issues: one Hermite-polynomial lemma is placed under the wrong namespace, and helper names describe informal proof subterms rather than their conclusions.",
+ "transcript_blob": "497827b6b3b1f1c2cacbe78934ea4ce45e5c2fa170ae7310f97ec5d910014822",
+ "usage": {
+  "cached_input_tokens": 68736,
+  "input_tokens": 129306,
+  "output_tokens": 2275,
+  "reasoning_output_tokens": 1179
+ },
+ "verdict": "request_changes"
+}

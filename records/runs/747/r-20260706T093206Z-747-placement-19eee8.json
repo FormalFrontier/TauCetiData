@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.584168,
+   "returncode": 0,
+   "secs": 64.5,
+   "usage": {
+    "cached_input_tokens": 67456,
+    "input_tokens": 158974,
+    "output_tokens": 3095,
+    "reasoning_output_tokens": 1270
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.584168,
+ "dedupe_key": "TauCetiProject/TauCeti|747|433a1b3eae0d42338c42a676138c059407373ce6|placement|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "345d43a5a0a3741341bdf85dbbb214647a7e3978f362c95c89829053c021031a",
+ "diff_sha256": "345d43a5a0a3741341bdf85dbbb214647a7e3978f362c95c89829053c021031a",
+ "duration_s": 64.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`roadmap/TauCetiRoadmap/OrthogonalL2Bases/README.md:126` says polynomial facts mirror `RingTheory/Polynomial/Hermite/...`, while `TauCeti/Analysis/SpecialFunctions/HermiteFunction.lean:137` declares `lemma aeval_hermite_two`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunction.lean",
+   "fix": "Move it, or a stronger `hermite 2 = X ^ 2 - 1` lemma, under `TauCeti/RingTheory/Polynomial/Hermite/...` and import that here; alternatively make it private if it is only a local proof helper.",
+   "issue": "`aeval_hermite_two` is public Hermite-polynomial API, not Hermite-function API, and it depends only on the polynomial recursion.",
+   "line": 137
+  },
+  {
+   "evidence": "`HermiteFunction.lean` uses `hermite`, `hermite_one`, and `hermite_succ`; `mathlib/Mathlib/RingTheory/Polynomial/Hermite/Basic.lean:54` and `:66` provide those, while `mathlib/Mathlib/RingTheory/Polynomial/Hermite/Gaussian.lean:35` is for `deriv_gaussian_eq_hermite_mul_gaussian`, which is not referenced.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunction.lean",
+   "fix": "Replace it with `Mathlib.RingTheory.Polynomial.Hermite.Basic` and the specific exp regularity import needed for `Real.continuous_exp`/`ContDiff.exp`.",
+   "issue": "`Mathlib.RingTheory.Polynomial.Hermite.Gaussian` imports the Gaussian derivative theory, but this file only uses the basic Hermite recursion/formulas plus `Real.exp` regularity.",
+   "line": 11
+  }
+ ],
+ "head_sha": "433a1b3eae0d42338c42a676138c059407373ce6",
+ "merge_base_sha": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 747,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "431a8dde1bf74302560f6d8ad74684e2a15cc235384d3afe3ddcebf2f2fe7cb0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T093206Z-747-placement-19eee8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T09:32:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The Hermite-function API is in the roadmap\u2019s intended analysis/special-functions area, but one public polynomial helper is in the wrong layer and one import is broader than the declarations need.",
+ "transcript_blob": "2c5d210ec2b5ddb0d9d05754b8faf77719109eab13d50b50b72815696d3105cb",
+ "usage": {
+  "cached_input_tokens": 67456,
+  "input_tokens": 158974,
+  "output_tokens": 3095,
+  "reasoning_output_tokens": 1270
+ },
+ "verdict": "request_changes"
+}
