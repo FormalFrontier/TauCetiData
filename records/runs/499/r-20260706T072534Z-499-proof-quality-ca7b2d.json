@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.34186,
+   "returncode": 0,
+   "secs": 39.7,
+   "usage": {
+    "cached_input_tokens": 84480,
+    "input_tokens": 134474,
+    "output_tokens": 1655,
+    "reasoning_output_tokens": 502
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "cost_estimated": true,
+ "cost_usd": 0.34186,
+ "dedupe_key": "TauCetiProject/TauCeti|499|324185a4ce1a918f0426a338a10fa6ed2b83f1b8|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "diff_sha256": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "duration_s": 39.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hit at lines 174-179: `have hval ... := by ... rw [Polynomial.hermite\u211d_def, iterate_derivative_map, coe_aeval_eq_eval, \u2190 eval\u2082_eq_eval_map, \u2190 algebraMap_int_eq, \u2190 aeval_def, iterate_derivative_hermite, ...]`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Add an explicit lemma such as `Polynomial.iterate_derivative_hermite\u211d_self` or an evaluation form for it, then use that lemma in the integral proof.",
+   "issue": "The diagonal case hides the reusable fact `derivative^[m] (hermite\u211d m)` evaluates to `m!` behind a long rewrite chain through `hermite\u211d_def`, `iterate_derivative_map`, `eval\u2082_eq_eval_map`, `algebraMap_int_eq`, and `aeval_def`.",
+   "line": 174
+  },
+  {
+   "evidence": "`rg` shows identical blocks at lines 195-200 and 239-244 proving `gaussianPDFReal 0 1 x = (Real.sqrt (2 * \u03c0))\u207b\u00b9 * Real.exp (-(x ^ 2 / 2))` by `simp only [gaussianPDFReal_def, NNReal.coe_one, mul_one, sub_zero]; congr 2; ring`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Factor a private lemma `gaussianPDFReal_zero_one_eq_inv_sqrt_mul_exp` and reuse it at lines 195 and 239.",
+   "issue": "The standard-normal density normalization proof is duplicated verbatim in both density and measure orthogonality proofs, including the same unfolding of `gaussianPDFReal_def` and `ring` step.",
+   "line": 195
+  }
+ ],
+ "head_sha": "324185a4ce1a918f0426a338a10fa6ed2b83f1b8",
+ "merge_base_sha": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 499,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "81f2c312fd3cefb3988a935d6701ac46a3480ac046133790eade630f31be923b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T072534Z-499-proof-quality-ca7b2d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T07:25:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The main proofs elaborate, but two proof fragments are brittle enough to maintain poorly across Mathlib/API changes. Factor the normalization and real-Hermite derivative facts into explicit lemmas instead of repeating or hiding them inside long rewrite scripts.",
+ "transcript_blob": "101841e2f26ee6e2cc17eebb0e9bc41ad0d1643b92d7f6778acd0bc726ffd2de",
+ "usage": {
+  "cached_input_tokens": 84480,
+  "input_tokens": 134474,
+  "output_tokens": 1655,
+  "reasoning_output_tokens": 502
+ },
+ "verdict": "request_changes"
+}
