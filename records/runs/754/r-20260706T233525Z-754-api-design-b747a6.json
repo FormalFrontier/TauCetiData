@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.244862,
+   "returncode": 0,
+   "secs": 51.5,
+   "usage": {
+    "cached_input_tokens": 88064,
+    "input_tokens": 114640,
+    "output_tokens": 2265,
+    "reasoning_output_tokens": 902
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aa120168873e08a1f25cfaac45bbfd7ee261877c",
+ "cost_estimated": true,
+ "cost_usd": 0.244862,
+ "dedupe_key": "TauCetiProject/TauCeti|754|1155b974cb736ef3d26bc6a5245370f1f6c303fe|api-design|gpt-5.5|fb0698ac514a62c5|production|7",
+ "diff_blob": "3e96401f7d49fbcee45275fb17bc4fc1dd3d4be1d9a3d854970fc815ab50d8cc",
+ "diff_sha256": "3e96401f7d49fbcee45275fb17bc4fc1dd3d4be1d9a3d854970fc815ab50d8cc",
+ "duration_s": 51.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"block_coord_condIndep|CondIndep \\\\(tailFamily\" code/TauCeti/Probability -g '*.lean'` finds only the docstring mention and the local `have hci : CondIndep (tailFamily X (m + 1)) ...` at line 124, while `PrefixDeletion.lean:219` exposes only `Contractable.condIndep_coord_prefix_tail` over `MeasurableSpace.comap W inferInstance`.",
+   "file": "TauCeti/Probability/DeFinetti/FutureFactorization.lean",
+   "fix": "Expose a public theorem, e.g. `block_coord_condIndep`, with the `tailFamily X (m+1)` signature from `hci` and prove it by the existing transport from `Contractable.condIndep_coord_prefix_tail`; then have the factorization theorem call that wrapper.",
+   "issue": "The `CondIndep (tailFamily X (m + 1)) ...` statement is buried as local `hci`, and there is no public `block_coord_condIndep`/future-tail wrapper; `Contractable.condIndep_coord_prefix_tail` is still stated over `MeasurableSpace.comap (processShift X (m+1))`, so consumers cannot use the future API without repeating the transport.",
+   "line": 124
+  }
+ ],
+ "head_sha": "1155b974cb736ef3d26bc6a5245370f1f6c303fe",
+ "merge_base_sha": "aa120168873e08a1f25cfaac45bbfd7ee261877c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 754,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "f62f566e1494c453d902d26802e7694d17dc10bf15a5b09b3c7e3acda31eb8d7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 7,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T233525Z-754-api-design-b747a6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T23:35:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The finite factorization theorem is exposed, but the future-tail conditional-independence API it depends on is only a local proof term. Downstream users would have to redo the processShift-to-tailFamily transport instead of using the advertised future-level interface.",
+ "transcript_blob": "2c0921cc56e8f861fb0fb35f4ff395743e31f044655e0d6ae57cb7c7befb043b",
+ "usage": {
+  "cached_input_tokens": 88064,
+  "input_tokens": 114640,
+  "output_tokens": 2265,
+  "reasoning_output_tokens": 902
+ },
+ "verdict": "request_changes"
+}
