@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.358028,
+   "returncode": 0,
+   "secs": 68.6,
+   "usage": {
+    "cached_input_tokens": 144256,
+    "input_tokens": 183400,
+    "output_tokens": 3006,
+    "reasoning_output_tokens": 1220
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "cost_estimated": true,
+ "cost_usd": 0.358028,
+ "dedupe_key": "TauCetiProject/TauCeti|752|a955b222ae432e9a9008786770d4c2af80519425|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "ceb936e614a9105083f146ce30908db6dc615d2c72fc51f382ffe78efc94ce3f",
+ "diff_sha256": "ceb936e614a9105083f146ce30908db6dc615d2c72fc51f382ffe78efc94ce3f",
+ "duration_s": 68.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 7-8 are public imports; lines 40-44 and 107-121 show no `Moebius` or Schwarz-lemma declarations in the exported theorem types.",
+   "file": "TauCeti/Analysis/Complex/Conformal/SchwarzPick.lean",
+   "fix": "Make proof-only dependencies plain `import`s and public-import only the minimal declaration dependencies, e.g. `PseudoHyperbolic` plus whatever Mathlib module is needed for the statement types.",
+   "issue": "`SchwarzPick` publicly re-exports proof-only dependencies: `public import Mathlib.Analysis.Complex.Schwarz` and `public import TauCeti.Analysis.Complex.Conformal.Moebius`, although the public theorem statements only expose `pseudoHyperbolicExpr`, `DifferentiableOn`, `MapsTo`, balls, and `Complex.UnitDisc`.",
+   "line": 7
+  },
+  {
+   "evidence": "`rg -n \"norm_div_sub_le\"` finds this new top-level declaration at `SchwarzPick.lean:107`, while the statement is specifically the Schwarz--Pick contraction quotient.",
+   "file": "TauCeti/Analysis/Complex/Conformal/SchwarzPick.lean",
+   "fix": "Rename it to a scoped/discoverable name such as `schwarzPick_norm_div_sub_le` or `pseudoHyperbolicExpr_map_norm_div_le`.",
+   "issue": "The public theorem name `TauCeti.norm_div_sub_le` is too generic for a Schwarz--Pick raw quotient corollary and pollutes the top-level namespace with an unscoped norm-division inequality.",
+   "line": 107
+  }
+ ],
+ "head_sha": "a955b222ae432e9a9008786770d4c2af80519425",
+ "merge_base_sha": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 752,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d5229f95bcd221dbd3f6a68b9196e9d2140c7503bca167c8d86917909708c1f8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T160822Z-752-api-design-2bacf7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T16:08:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The theorem surface is mostly appropriate, but the module exports proof-only dependencies and adds one overly generic top-level theorem name.",
+ "transcript_blob": "67d0314187809de12e9b2f1dff67e92f0c7c680101199bc51586d6566230e4ef",
+ "usage": {
+  "cached_input_tokens": 144256,
+  "input_tokens": 183400,
+  "output_tokens": 3006,
+  "reasoning_output_tokens": 1220
+ },
+ "verdict": "request_changes"
+}
