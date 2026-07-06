@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.204912,
+   "returncode": 0,
+   "secs": 36.4,
+   "usage": {
+    "cached_input_tokens": 50304,
+    "input_tokens": 76470,
+    "output_tokens": 1631,
+    "reasoning_output_tokens": 547
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.204912,
+ "dedupe_key": "TauCetiProject/TauCeti|746|f59b517aa1875bebbbdcdc42cfcf0ffbe8f7cd0f|reuse|gpt-5.5|fb0698ac514a62c5|production|7",
+ "diff_blob": "e5a7854c5fb4cc29f2cd0e05c6e37e616a64ee650e6872fe8719c1ca406b92a7",
+ "diff_sha256": "e5a7854c5fb4cc29f2cd0e05c6e37e616a64ee650e6872fe8719c1ca406b92a7",
+ "duration_s": 36.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`PermutationExtension.lean:34` and `:48` call `Equiv.Perm.exists_extending_pair` directly, and `:42` only delegates to the wrapper with `hk.injective`; Mathlib provides the general theorem at `Mathlib/Logic/Equiv/Fintype.lean:158`: `theorem Perm.exists_extending_pair [Finite \u03b1] (f g : \u03b1 \u2192 \u03b2) ... : \u2203 \u03c3 : Perm \u03b2, \u2200 a, \u03c3 (f a) = g a`.",
+   "file": "TauCeti/Probability/Exchangeability/PermutationExtension.lean",
+   "fix": "Remove these wrappers and use `Equiv.Perm.exists_extending_pair` at the call sites, with `Fin.castLE hmn`/`fun i : Fin n => i.val` and injectivity proofs `Fin.castLE_injective hmn`, `Fin.val_injective`, or `hk.injective` as appropriate.",
+   "issue": "`exists_perm_extending_castLE`, `exists_perm_extending_strictMono`, and `exists_perm_nat_extending` are public thin wrappers around Mathlib\u2019s `Equiv.Perm.exists_extending_pair`, creating parallel API for the same finite permutation-extension fact.",
+   "line": 31
+  }
+ ],
+ "head_sha": "f59b517aa1875bebbbdcdc42cfcf0ffbe8f7cd0f",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 746,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2c0ef2a58666a777758939da5c8fa776da82e7c68e8de9324d95c9379b535ca1",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 7,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T192151Z-746-reuse-29054a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T19:21:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The finite permutation-extension API added here duplicates Mathlib\u2019s existing `Equiv.Perm.exists_extending_pair`; the remaining strict-monotone `\u2115` tail-completion helper did not have a located direct replacement.",
+ "transcript_blob": "0f40d59f90d77ef21d57a11fbbdc7b55db52fe566322562e56cf73a27a8295d8",
+ "usage": {
+  "cached_input_tokens": 50304,
+  "input_tokens": 76470,
+  "output_tokens": 1631,
+  "reasoning_output_tokens": 547
+ },
+ "verdict": "block"
+}
