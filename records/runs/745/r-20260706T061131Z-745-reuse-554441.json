@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.263786,
+   "returncode": 0,
+   "secs": 49.7,
+   "usage": {
+    "cached_input_tokens": 62592,
+    "input_tokens": 94474,
+    "output_tokens": 2436,
+    "reasoning_output_tokens": 1063
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "cost_estimated": true,
+ "cost_usd": 0.263786,
+ "dedupe_key": "TauCetiProject/TauCeti|745|d64c83442ce114efe73c4ea8dd382132735afa3b|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "3645604aac8276cd8c83073bc2dd8886d3082878dfdfd80d90396e9155547fb6",
+ "diff_sha256": "3645604aac8276cd8c83073bc2dd8886d3082878dfdfd80d90396e9155547fb6",
+ "duration_s": 49.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib has `theorem integrable_measureT {f : \u211d \u2192 \u211d} (hf : ContinuousOn f (Set.Icc (-1) 1)) : Integrable f measureT` at `mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Orthogonality.lean:67`; the new proofs at lines 32-46 and 62-71 are exactly `integrable_measureT (by fun_prop)` or `.ofReal` specializations.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Moments.lean",
+   "fix": "Remove these wrappers and use `integrable_measureT (by fun_prop)` directly, with `.ofReal` for the `RCLike` cast forms.",
+   "issue": "The `L\u00b9` declarations `integrable_pow_measureT`, `integrable_eval_measureT`, `integrable_algebraMap_eval_measureT`, `integrable_eval_T_real_measureT`, and `integrable_algebraMap_eval_T_real_measureT` are thin public restatements of Mathlib's `Polynomial.Chebyshev.integrable_measureT`.",
+   "line": 32
+  },
+  {
+   "evidence": "The declarations at lines 62-82 have bodies exactly applying the polynomial lemmas from lines 37-57 to `(T \u211d n)`, so they create parallel API without adding content.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Moments.lean",
+   "fix": "Drop `integrable_eval_T_real_measureT`, `integrable_algebraMap_eval_T_real_measureT`, `memLp_two_eval_T_real_measureT`, and `memLp_two_algebraMap_eval_T_real_measureT`; downstream code can use `integrable_eval_measureT (T \u211d n)`, `integrable_algebraMap_eval_measureT (\ud835\udd5c := \ud835\udd5c) (T \u211d n)`, `memLp_two_eval_measureT (T \u211d n)`, and `memLp_two_algebraMap_eval_measureT (\ud835\udd5c := \ud835\udd5c) (T \u211d n)`.",
+   "issue": "The four Chebyshev-`T` consumer lemmas are duplicate special cases of the polynomial consumer lemmas introduced just above.",
+   "line": 62
+  }
+ ],
+ "head_sha": "d64c83442ce114efe73c4ea8dd382132735afa3b",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 745,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "702477182606031411f5229a51fa012799922481e991aa76ab5be3ef933b1d3b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T061131Z-745-reuse-554441",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T06:11:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds public Chebyshev integrability wrappers that are direct specializations of existing Mathlib API, plus Chebyshev-`T` special cases already covered by the polynomial lemmas in the same file.",
+ "transcript_blob": "2530df2a39ca4789374209e9003a2ae6bf5bfc2b6eaef4719b25319eccc6cd49",
+ "usage": {
+  "cached_input_tokens": 62592,
+  "input_tokens": 94474,
+  "output_tokens": 2436,
+  "reasoning_output_tokens": 1063
+ },
+ "verdict": "block"
+}
