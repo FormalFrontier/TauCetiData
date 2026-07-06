@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.64098,
+   "returncode": 0,
+   "secs": 80.6,
+   "usage": {
+    "cached_input_tokens": 183680,
+    "input_tokens": 269886,
+    "output_tokens": 3937,
+    "reasoning_output_tokens": 1746
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "cost_estimated": true,
+ "cost_usd": 0.64098,
+ "dedupe_key": "TauCetiProject/TauCeti|753|c6351ba402f58754e779a38f754ed0971663763a|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "174815229f7cf04e7b2ac6acd65963b8b42d569e437549bfbc4c60267a29a8e9",
+ "diff_sha256": "174815229f7cf04e7b2ac6acd65963b8b42d569e437549bfbc4c60267a29a8e9",
+ "duration_s": 80.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Topology/Algebra/ConstMulAction.lean:230` defines `def Homeomorph.smul (\u03b3 : G) : \u03b1 \u2243\u209c \u03b1` with `toEquiv := MulAction.toPerm \u03b3`; `mathlib/Mathlib/Analysis/Complex/UnitDisc/Basic.lean:159` gives the `MulAction Circle \ud835\udd3b`, and this PR's line 99 rebuilds the same homeomorphism from `MulAction.toPerm u`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/UnitDiscHomeomorph.lean",
+   "fix": "Import `Mathlib.Topology.Algebra.ConstMulAction`, add the missing `ContinuousConstSMul Circle Complex.UnitDisc` instance using `continuous_circle_smul_unitDisc`, and use `Homeomorph.smul u` in `unitDiscStandardAutomorphismHomeomorph` instead of a TauCeti-specific wrapper.",
+   "issue": "`circleSmulUnitDiscHomeomorph` and its apply/toEquiv/symm API duplicate Mathlib's generic `Homeomorph.smul` for group actions.",
+   "line": 96
+  },
+  {
+   "evidence": "`code/TauCeti/Analysis/Complex/Conformal/Moebius.lean:105` proves `differentiableOn_unitDiscMoebiusFormula (a : Complex.UnitDisc)` for `fun z => (z - a) / (1 - conj a * z)` on `Metric.ball 0 1`; PR lines 38-44 rederive continuity of exactly that formula using division and `one_sub_conj_mul_ne_zero_unitDisc`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/UnitDiscHomeomorph.lean",
+   "fix": "Derive this continuity lemma from `differentiableOn_unitDiscMoebiusFormula a` via `.continuousOn` and `continuousOn_iff_continuous_restrict`/`ContinuousOn.restrict`, after rewriting the bundled unit disc as the ball.",
+   "issue": "`continuous_unitDiscMoebius` reproves continuity of the rational Moebius formula by hand even though TauCeti already has the stronger differentiability theorem for the same scalar formula.",
+   "line": 34
+  }
+ ],
+ "head_sha": "c6351ba402f58754e779a38f754ed0971663763a",
+ "merge_base_sha": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 753,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0961c7a8c8f64cb1828c40d6c272de35f1dcf14916f03c43e224651d314ef9a8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T130050Z-753-reuse-a20c79",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T13:00:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds a specialized rotation homeomorphism that is directly covered by Mathlib's generic scalar-action homeomorphism API, and one continuity proof rederives an existing stronger differentiability result.",
+ "transcript_blob": "c71d3e5565954972ad53926380577d0bb0e4cdd69e8885396e41ec418f3e86b7",
+ "usage": {
+  "cached_input_tokens": 183680,
+  "input_tokens": 269886,
+  "output_tokens": 3937,
+  "reasoning_output_tokens": 1746
+ },
+ "verdict": "block"
+}
