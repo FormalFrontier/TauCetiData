@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.582003,
+   "returncode": 0,
+   "secs": 53.3,
+   "usage": {
+    "cached_input_tokens": 45056,
+    "input_tokens": 142071,
+    "output_tokens": 2480,
+    "reasoning_output_tokens": 1116
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "cost_estimated": true,
+ "cost_usd": 0.582003,
+ "dedupe_key": "TauCetiProject/TauCeti|753|ebe307cef9036b96cab9dacff318dcdcf336f866|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "981fa1d34de00082027d098fb7354124f8c94f0c3e487b2deab3d10c21fc2c8b",
+ "diff_sha256": "981fa1d34de00082027d098fb7354124f8c94f0c3e487b2deab3d10c21fc2c8b",
+ "duration_s": 53.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\].*unitDisc.*Homeomorph\"` hits lines 58 and 104, while the file already provides `unitDiscMoebiusHomeomorph_apply`, `unitDiscMoebiusHomeomorph_toEquiv`, and `unitDiscStandardAutomorphismHomeomorph_apply/toEquiv`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/UnitDiscHomeomorph.lean",
+   "fix": "Remove `@[expose]` from both definitions and keep/use the public `*_apply`, `*_toEquiv`, `*_symm`, and scalar formula lemmas as the API; add any missing lemmas instead of exposing bodies.",
+   "issue": "`unitDiscMoebiusHomeomorph` and `unitDiscStandardAutomorphismHomeomorph` are both marked `@[expose]`, making downstream code able to depend on their construction bodies rather than the supplied characteristic lemmas.",
+   "line": 58
+  },
+  {
+   "evidence": "`unitDiscMoebiusHomeomorph_symm` is present at lines 81-87 and `unitDiscStandardAutomorphismEquiv_symm` exists in `UnitDiscAutomorphism.lean`, but `rg \"unitDiscStandardAutomorphismHomeomorph_.*symm\"` returns no hit.",
+   "file": "TauCeti/Analysis/Complex/Conformal/UnitDiscHomeomorph.lean",
+   "fix": "Add a `[simp]` lemma such as `(unitDiscStandardAutomorphismHomeomorph u a).symm = (Homeomorph.smul u\u207b\u00b9).trans (unitDiscMoebiusHomeomorph (-a))`, or the equivalent formula used by consumers.",
+   "issue": "The standard automorphism homeomorphism has no public inverse formula, although the underlying equivalence and the Moebius homeomorphism both expose their `symm` behavior.",
+   "line": 104
+  }
+ ],
+ "head_sha": "ebe307cef9036b96cab9dacff318dcdcf336f866",
+ "merge_base_sha": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 753,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "21fe1e54aa1beb6490e63e85b86d5f72632a2a510a150e4fbe907bd6746cbbeb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T141936Z-753-api-design-a1aff5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T14:19:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The bundled homeomorphism API is mostly characterized pointwise, but it exposes implementation bodies unnecessarily and omits the inverse formula for the standard automorphism as a homeomorphism.",
+ "transcript_blob": "bcf2d9c80d6d83b40e130b793f1bc4d9ee4a3cea7ed392c092f231b7fe75b37f",
+ "usage": {
+  "cached_input_tokens": 45056,
+  "input_tokens": 142071,
+  "output_tokens": 2480,
+  "reasoning_output_tokens": 1116
+ },
+ "verdict": "request_changes"
+}
