@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.358798,
+   "returncode": 0,
+   "secs": 54.0,
+   "usage": {
+    "cached_input_tokens": 14976,
+    "input_tokens": 70898,
+    "output_tokens": 2390,
+    "reasoning_output_tokens": 965
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.358798,
+ "dedupe_key": "TauCetiProject/TauCeti|746|a8c19b54f5d9bcd414741015526c6ecd1f5b504b|placement|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "2bfe297baecf69e8808cd50dfb330368c2ce3a2d56c99785f45ab2c0e02f9d68",
+ "diff_sha256": "2bfe297baecf69e8808cd50dfb330368c2ce3a2d56c99785f45ab2c0e02f9d68",
+ "duration_s": 54.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"Equiv|Perm|Fintype|exists_extending_pair\" code/TauCeti/Probability/Exchangeability/PermutationExtension.lean` has no hits beyond the import; the theorem at line 29 only uses `Fin`, `StrictMono`, and `Finset.univ.sup`.",
+   "file": "TauCeti/Probability/Exchangeability/PermutationExtension.lean",
+   "fix": "Drop `public import Mathlib.Logic.Equiv.Fintype` from `PermutationExtension.lean`; keep only the Fin/Finset imports needed by the strict-mono tail construction.",
+   "issue": "`Mathlib.Logic.Equiv.Fintype` is imported but this file defines only `exists_strictMono_nat_extending_fin` and contains no `Equiv`, `Perm`, or `Fintype.card_le_of_injective` use.",
+   "line": 3
+  },
+  {
+   "evidence": "`rg -n \"exists_strictMono_nat_extending_fin|PermutationExtension|Equiv.Perm.exists_extending_pair\" ...` shows line 4 importing `PermutationExtension` and line 46 calling `Equiv.Perm.exists_extending_pair`, with no use of `exists_strictMono_nat_extending_fin`.",
+   "file": "TauCeti/Probability/Exchangeability/ExchangeableAtMonotone.lean",
+   "fix": "Replace this import with the specific Mathlib import providing `Equiv.Perm.exists_extending_pair`, as before, or move/reuse a real Tau Ceti wrapper if this file is meant to depend on the new API.",
+   "issue": "This file imports `TauCeti.Probability.Exchangeability.PermutationExtension` but does not use its public theorem; the only extension lemma used is Mathlib's `Equiv.Perm.exists_extending_pair` at line 46.",
+   "line": 4
+  },
+  {
+   "evidence": "`rg -n \"exists_strictMono_nat_extending_fin|PermutationExtension|Equiv.Perm.exists_extending_pair\" ...` shows line 5 importing `PermutationExtension` and line 62 using `Equiv.Perm.exists_extending_pair`; no `PermutationExtension.lean` declaration is referenced.",
+   "file": "TauCeti/Probability/Exchangeability/FullyExchangeable.lean",
+   "fix": "Replace the `PermutationExtension` import with the specific Mathlib import for `Equiv.Perm.exists_extending_pair`, or expose and use a Tau Ceti permutation-extension wrapper from the new module.",
+   "issue": "This file likewise imports `PermutationExtension` only to get the Mathlib theorem used directly at line 62, not any declaration from the new helper module.",
+   "line": 5
+  }
+ ],
+ "head_sha": "a8c19b54f5d9bcd414741015526c6ecd1f5b504b",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 746,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0a4fb17e6913d6a42656ea8c4941daa8ba79d46f1498a9482833e498a3261078",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T093144Z-746-placement-5e9512",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T09:31:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new helper file is a reasonable Layer 0 Exchangeability home, but the import structure is off: one Mathlib import is unused, and two downstream files import the Tau Ceti helper only as a transitively available source of a Mathlib permutation theorem.",
+ "transcript_blob": "cbbe3ff312a740fae9476ae9c44e480831024afb75d60ab48de0d21e1be5051d",
+ "usage": {
+  "cached_input_tokens": 14976,
+  "input_tokens": 70898,
+  "output_tokens": 2390,
+  "reasoning_output_tokens": 965
+ },
+ "verdict": "request_changes"
+}

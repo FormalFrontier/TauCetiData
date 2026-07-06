@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.200232,
+   "returncode": 0,
+   "secs": 35.7,
+   "usage": {
+    "cached_input_tokens": 37504,
+    "input_tokens": 64884,
+    "output_tokens": 1486,
+    "reasoning_output_tokens": 460
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.200232,
+ "dedupe_key": "TauCetiProject/TauCeti|746|a8c19b54f5d9bcd414741015526c6ecd1f5b504b|proof-quality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "2bfe297baecf69e8808cd50dfb330368c2ce3a2d56c99785f45ab2c0e02f9d68",
+ "diff_sha256": "2bfe297baecf69e8808cd50dfb330368c2ce3a2d56c99785f45ab2c0e02f9d68",
+ "duration_s": 35.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `Equiv.Perm.exists_extending_pair` at `ExchangeableAtMonotone.lean:46`, while `PermutationExtension.lean` only defines `exists_strictMono_nat_extending_fin`.",
+   "file": "TauCeti/Probability/Exchangeability/ExchangeableAtMonotone.lean",
+   "fix": "Move the former private `exists_perm_extending_castLE` wrapper into `PermutationExtension.lean` as a public theorem and use it here.",
+   "issue": "The proof still constructs the `Fin.castLE` permutation extension inline with `Equiv.Perm.exists_extending_pair`, duplicating a reusable combinatorial step that this PR is supposed to expose.",
+   "line": 46
+  },
+  {
+   "evidence": "`rg` shows the second inline `Equiv.Perm.exists_extending_pair` use at `FullyExchangeable.lean:62`; no public `exists_perm_nat_extending` theorem exists in `PermutationExtension.lean`.",
+   "file": "TauCeti/Probability/Exchangeability/FullyExchangeable.lean",
+   "fix": "Move the former private `exists_perm_nat_extending` wrapper into `PermutationExtension.lean` as a public theorem and replace this inline `exists_extending_pair` call with it.",
+   "issue": "The proof still constructs the `Fin n` to `\u2115` permutation extension inline, leaving another reusable extension fact hidden inside a measure-theoretic proof.",
+   "line": 61
+  }
+ ],
+ "head_sha": "a8c19b54f5d9bcd414741015526c6ecd1f5b504b",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 746,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "278609a7e401345ead4f5345dde5275388eeaf0e56df6180d852c8b5b0a3e51c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T093350Z-746-proof-quality-ae7321",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T09:33:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Nat monotone-extension proof is readable, but the finite permutation-extension proofs remain inline at their use sites instead of being factored into the new helper module.",
+ "transcript_blob": "b9b4ba92bdfecb8f8afb527e048eb346f422143a1f9131e94ef545ff1b198a60",
+ "usage": {
+  "cached_input_tokens": 37504,
+  "input_tokens": 64884,
+  "output_tokens": 1486,
+  "reasoning_output_tokens": 460
+ },
+ "verdict": "request_changes"
+}
