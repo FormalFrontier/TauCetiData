@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.492883,
+   "returncode": 0,
+   "secs": 55.6,
+   "usage": {
+    "cached_input_tokens": 149376,
+    "input_tokens": 219527,
+    "output_tokens": 2248,
+    "reasoning_output_tokens": 692
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "cost_estimated": true,
+ "cost_usd": 0.492883,
+ "dedupe_key": "TauCetiProject/TauCeti|745|98c7641a4490dda12e7ff05fdd8a367fee072aca|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "fec864ec4e6b737671f330fb302ac717b73530f7df76a4f688844f254562b009",
+ "diff_sha256": "fec864ec4e6b737671f330fb302ac717b73530f7df76a4f688844f254562b009",
+ "duration_s": 55.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`code/TauCeti/MeasureTheory/Function/PolynomialMemLp.lean:38` provides `integrable_eval_of_forall_integrable_pow`, `:47` provides the derived `memLp_two_eval_of_forall_integrable_pow`, while this PR only uses the moment hypothesis inline at `Moments.lean:33` as `fun _ => integrable_measureT (by fun_prop)`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Moments.lean",
+   "fix": "Add e.g. `integrable_pow_measureT (k) : Integrable (fun x : \u211d => x ^ k) measureT` and `integrable_eval_measureT (q : Polynomial \u211d) : Integrable (fun x => q.eval x) measureT` (plus the `RCLike` cast form if needed), then derive `memLp_two_eval_measureT` from those.",
+   "issue": "`memLp_two_eval_measureT` specializes directly to `L\u00b2`, but the natural API level here is the finite-moment/`L\u00b9` specialization for `measureT`, which the proof already has inline.",
+   "line": 31
+  }
+ ],
+ "head_sha": "98c7641a4490dda12e7ff05fdd8a367fee072aca",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 745,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "41e98ea140b52a5d44a44af569f4c311ffcd70bcb08898d53c42eab213c55a03",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T062311Z-745-generality-8ed9ad",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T06:23:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The added API is under-generalized: it only exposes the `L\u00b2` consequence while hiding the actual polynomial-moment/`L\u00b9` specialization for `measureT`. Expose the moment or integrability lemma first and derive the `L\u00b2` consumer from it.",
+ "transcript_blob": "19fcf1e60979715186d785a02f765d4f749ae162860f59e74bef44c82d328f04",
+ "usage": {
+  "cached_input_tokens": 149376,
+  "input_tokens": 219527,
+  "output_tokens": 2248,
+  "reasoning_output_tokens": 692
+ },
+ "verdict": "request_changes"
+}
