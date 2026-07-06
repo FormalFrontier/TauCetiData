@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.307266,
+   "returncode": 0,
+   "secs": 39.6,
+   "usage": {
+    "cached_input_tokens": 70272,
+    "input_tokens": 114276,
+    "output_tokens": 1737,
+    "reasoning_output_tokens": 577
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aa120168873e08a1f25cfaac45bbfd7ee261877c",
+ "cost_estimated": true,
+ "cost_usd": 0.307266,
+ "dedupe_key": "TauCetiProject/TauCeti|755|b7a077ce29a979cbb0a33d8c2f6db891b26ee5b1|api-design|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "0f3d90173e2e874e9c86d3b965ad1f11ca60d3c8fd480a9c5873d7a2d5c49484",
+ "diff_sha256": "0f3d90173e2e874e9c86d3b965ad1f11ca60d3c8fd480a9c5873d7a2d5c49484",
+ "duration_s": 39.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"aestronglyMeasurable_iInf_of_tendsto_ae_antitone\" code/TauCeti roadmap/TauCetiRoadmap` finds the declaration at line 139, docs, and the single proof call in `Probability/Martingale/Convergence.lean:81`; the roadmap hits only name `condExp_tendsto_iInf`.",
+   "file": "TauCeti/MeasureTheory/Function/AEStronglyMeasurable.lean",
+   "fix": "Make it private/local to the convergence proof, or otherwise provide an actual downstream roadmap consumer that requires this name as public API.",
+   "issue": "`aestronglyMeasurable_iInf_of_tendsto_ae_antitone` is public although it is only used as proof plumbing for `condExp_tendsto_iInf`.",
+   "line": 139
+  },
+  {
+   "evidence": "`rg -n \"condExp_ae_eq_of_tendsto_eLpNorm\" code/TauCeti roadmap/TauCetiRoadmap` finds the declaration at line 91, docs/comments, and the single call in `Probability/Martingale/Convergence.lean:98`; no roadmap entry names this API.",
+   "file": "TauCeti/MeasureTheory/Function/ConditionalExpectation.lean",
+   "fix": "Keep this lemma private/local to `condExp_tendsto_iInf` unless a later roadmap stage actually consumes it as a standalone API.",
+   "issue": "`condExp_ae_eq_of_tendsto_eLpNorm` is public although it is only used to identify the limit inside the new convergence theorem.",
+   "line": 91
+  }
+ ],
+ "head_sha": "b7a077ce29a979cbb0a33d8c2f6db891b26ee5b1",
+ "merge_base_sha": "aa120168873e08a1f25cfaac45bbfd7ee261877c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 755,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "ccd5bbcbddd7d4b53e6b1911d7f478fa92d756a030f8b0144bdea3fab5cf3fe9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T183251Z-755-api-design-38819e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T18:32:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The roadmap theorem is exposed, but the PR still exports proof-support lemmas that have no roadmap or downstream consumer outside this proof. Keeping them public expands the library API beyond the stated product.",
+ "transcript_blob": "209668f830c976ac7610d96af0a13a5b07e15873a42181cbed1e85d3444cb74d",
+ "usage": {
+  "cached_input_tokens": 70272,
+  "input_tokens": 114276,
+  "output_tokens": 1737,
+  "reasoning_output_tokens": 577
+ },
+ "verdict": "request_changes"
+}
