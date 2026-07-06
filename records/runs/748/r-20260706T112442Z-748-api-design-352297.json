@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.666478,
+   "returncode": 0,
+   "secs": 60.1,
+   "usage": {
+    "cached_input_tokens": 128896,
+    "input_tokens": 232796,
+    "output_tokens": 2751,
+    "reasoning_output_tokens": 1265
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e29a52487568c98f587de2c732edfa7b5b066f03",
+ "cost_estimated": true,
+ "cost_usd": 0.666478,
+ "dedupe_key": "TauCetiProject/TauCeti|748|edd05ddf3cf55105fc0f9aaa53366ad2c7762f7b|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "daff2b63079a8bff69e31a699df945524da1ea4f442d44b917310d4d85d06ca5",
+ "diff_sha256": "daff2b63079a8bff69e31a699df945524da1ea4f442d44b917310d4d85d06ca5",
+ "duration_s": 60.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows line 97 has `@[expose] noncomputable def quotientPointsSubgroupInclusion`, while lines 120-124 give the component equation and lines 128-134 give the map-compatibility equation.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsOrder.lean",
+   "fix": "Remove `@[expose]`; keep the body hidden and rely on the app/naturality lemmas for downstream use.",
+   "issue": "`quotientPointsSubgroupInclusion` is marked `@[expose]`, exposing the body of a bundled natural transformation even though its public behavior is already characterized by `quotientPointsSubgroupInclusion_app` and the commutation lemma.",
+   "line": 97
+  },
+  {
+   "evidence": "The analogous point-map normal forms are simp lemmas in `HopfIdealPointsNaturality.lean`: `mapPoints_quotientPointsHom` at lines 38-45, `mapQuotientPointsSubgroup_apply` at lines 113-121, and `coe_mapQuotientPointsSubgroup_apply` at lines 123-130; the new lemma at lines 128-134 has no attribute.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdealPointsOrder.lean",
+   "fix": "Add `@[simp]` to `mapQuotientPointsSubgroup_inclusion_apply` unless it creates a demonstrated simp loop.",
+   "issue": "`mapQuotientPointsSubgroup_inclusion_apply` is the characteristic normal-form lemma for the new inclusion, but it is not tagged `@[simp]`, so users must name it manually to normalize the naturality square.",
+   "line": 128
+  }
+ ],
+ "head_sha": "edd05ddf3cf55105fc0f9aaa53366ad2c7762f7b",
+ "merge_base_sha": "e29a52487568c98f587de2c732edfa7b5b066f03",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 748,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "81f3abe4b20e5078063a1a64b0c6c03013598483fc8f4d1143fc780a21ce65ef",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T112442Z-748-api-design-352297",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T11:24:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The order API has the right mathematical direction, but the public surface exposes an implementation body unnecessarily and leaves the main commutation lemma out of simp normal form.",
+ "transcript_blob": "556393c942b3aea8f46d4faf1214bf1444a54392482155b66c0b0487a7d1cc46",
+ "usage": {
+  "cached_input_tokens": 128896,
+  "input_tokens": 232796,
+  "output_tokens": 2751,
+  "reasoning_output_tokens": 1265
+ },
+ "verdict": "request_changes"
+}
