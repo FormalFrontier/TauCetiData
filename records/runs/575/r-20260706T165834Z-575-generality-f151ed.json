@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.454917,
+   "returncode": 0,
+   "secs": 73.5,
+   "usage": {
+    "cached_input_tokens": 167424,
+    "input_tokens": 221997,
+    "output_tokens": 3278,
+    "reasoning_output_tokens": 1841
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e80669823fdb20e05a47101b37dbabd64cc486cd",
+ "cost_estimated": true,
+ "cost_usd": 0.454917,
+ "dedupe_key": "TauCetiProject/TauCeti|575|c41c9907bf763512d0e00b6169aca72dd273595a|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "808d11d205846fab4a801c10c77ccf169aeac38fb8f8a6014f4771bd39ba2dc7",
+ "diff_sha256": "808d11d205846fab4a801c10c77ccf169aeac38fb8f8a6014f4771bd39ba2dc7",
+ "duration_s": 73.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `hausdorff_bernstein_widder` at lines 759-765, while lines 770-775 repeat the same `hausdorff_bernstein_widder_of_exists_of_laplaceTransform` assembly.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/BernsteinTheorem.lean",
+   "fix": "Use `hausdorff_bernstein_widder_unique_of_hausdorff_bernstein_widder (fun f => hausdorff_bernstein_widder f) f` so the unique statement depends on the general non-unique theorem.",
+   "issue": "`hausdorff_bernstein_widder_unique` rebuilds the non-unique HBW theorem from the same inputs instead of deriving from the already exported `hausdorff_bernstein_widder`.",
+   "line": 768
+  },
+  {
+   "evidence": "`Basic.lean:368` proves `IsClosedCompletelyMonotone.of_isCompletelyMonotone`, and `BernsteinTheorem.lean:768` proves the general unique theorem; lines 781-784 redo existence plus uniqueness for the stronger hypothesis.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/BernsteinTheorem.lean",
+   "fix": "Derive it from `(hausdorff_bernstein_widder_unique f).mp (IsClosedCompletelyMonotone.of_isCompletelyMonotone hcm)`.",
+   "issue": "`existsUnique_representsLaplace_of_isCompletelyMonotone` reproves the strong-predicate special case after the closed-half-line unique theorem is available.",
+   "line": 778
+  }
+ ],
+ "head_sha": "c41c9907bf763512d0e00b6169aca72dd273595a",
+ "merge_base_sha": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 575,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6e847ffcfef3620cbeec121703b26b2643ec9b8dce7581eea336c35ba3f7b082",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T165834Z-575-generality-f151ed",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T16:58:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem is at the intended closed-half-line level, but the final special-case corollaries duplicate the more general theorem instead of deriving from it.",
+ "transcript_blob": "ebf705f4713bac928b93f2bee2913cc01c8faf1cd4ad912c132781fdc7237392",
+ "usage": {
+  "cached_input_tokens": 167424,
+  "input_tokens": 221997,
+  "output_tokens": 3278,
+  "reasoning_output_tokens": 1841
+ },
+ "verdict": "request_changes"
+}
