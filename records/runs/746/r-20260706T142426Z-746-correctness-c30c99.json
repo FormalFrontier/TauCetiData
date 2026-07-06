@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.250094,
+   "returncode": 0,
+   "secs": 45.8,
+   "usage": {
+    "cached_input_tokens": 48128,
+    "input_tokens": 80830,
+    "output_tokens": 2084,
+    "reasoning_output_tokens": 887
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d23239e4feb3e69cec73e602a95fe58e2a1268d",
+ "cost_estimated": true,
+ "cost_usd": 0.250094,
+ "dedupe_key": "TauCetiProject/TauCeti|746|1a5cb6512a306f894d0ccfdba2d16fe7436076cc|correctness|gpt-5.5|fb0698ac514a62c5|production|6",
+ "diff_blob": "f427cc66d192c6544ae1c62c2a10984d8aafbc1f6ab53fc6fe3a6bb4ceb67441",
+ "diff_sha256": "f427cc66d192c6544ae1c62c2a10984d8aafbc1f6ab53fc6fe3a6bb4ceb67441",
+ "duration_s": 45.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds roadmap milestone `exists_perm_extending_strictMono` only in `roadmap/TauCetiRoadmap/Exchangeability/README.md:272`; in the PR code, `PermutationExtension.lean:31` defines only `exists_strictMono_nat_extending_fin`, and finite permutation uses remain inline Mathlib calls at `ExchangeableAtMonotone.lean:45` and `FullyExchangeable.lean:62`.",
+   "file": "TauCeti/Probability/Exchangeability/PermutationExtension.lean",
+   "fix": "Add the actual finite-permutation statement, e.g. `{m n} (hmn : m \u2264 n) {k : Fin m \u2192 Fin n} (hk : StrictMono k) : \u2203 \u03c3 : Equiv.Perm (Fin n), \u2200 i, \u03c3 (Fin.castLE hmn i) = k i`, proved via `Equiv.Perm.exists_extending_pair` and strict-mono injectivity, or remove the claim that this PR discharges that milestone.",
+   "issue": "The module claims to discharge `exists_perm_extending_strictMono`, but the only public theorem is `exists_strictMono_nat_extending_fin : \u2203 \u03c6 : \u2115 \u2192 \u2115, StrictMono \u03c6 \u2227 ...`; there is no public theorem extending a strictly monotone `Fin m \u2192 Fin n` selection across `Fin.castLE` to a permutation of `Fin n`.",
+   "line": 16
+  }
+ ],
+ "head_sha": "1a5cb6512a306f894d0ccfdba2d16fe7436076cc",
+ "merge_base_sha": "cf6eb09835c6ae788c4c4bf123359a12391a8834",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 746,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "1ce4ce420281620cedee899182d6c5f49cf2902566561a318acdab0bd10897e8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 6,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T142426Z-746-correctness-c30c99",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T14:24:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The new public theorem is true, but it is not the roadmap-named finite permutation extension it claims to discharge. This substitutes a strictly monotone self-map of \u2115 for the finite-permutation prerequisite.",
+ "transcript_blob": "83a8c92414851b6a44beb370cf992f3eb9f3c9780e70ebae9d3a384514b9cd06",
+ "usage": {
+  "cached_input_tokens": 48128,
+  "input_tokens": 80830,
+  "output_tokens": 2084,
+  "reasoning_output_tokens": 887
+ },
+ "verdict": "block"
+}
