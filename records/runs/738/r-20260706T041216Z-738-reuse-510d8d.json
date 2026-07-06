@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.493806,
+   "returncode": 0,
+   "secs": 72.4,
+   "usage": {
+    "cached_input_tokens": 176512,
+    "input_tokens": 236928,
+    "output_tokens": 3449,
+    "reasoning_output_tokens": 1595
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "cost_estimated": true,
+ "cost_usd": 0.493806,
+ "dedupe_key": "TauCetiProject/TauCeti|738|c035283b244b5a070762e33e7352623eefe5c051|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "diff_sha256": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "duration_s": 72.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`StateCardinality.lean:110` already proves `x = (equivPerm 2).symm 1 \u2228 x = (equivPerm 2).symm (Equiv.swap 0 1)`, while lines 138-145 reconstruct exactly those two states by choice.",
+   "file": "TauCeti/KnotTheory/Grid/StateCardinality.lean",
+   "fix": "Define them directly as `(equivPerm 2).symm 1` and `(equivPerm 2).symm (Equiv.swap 0 1)`, then prove the simp lemmas by `rfl`/`simp`; keep `eq_twoByTwoId_or_eq_twoByTwoSwap` as a thin `simpa` wrapper over `eq_equivPerm_symm_one_or_eq_equivPerm_symm_swap`.",
+   "issue": "`twoByTwoId`/`twoByTwoSwap` reassemble the two `GridState 2` permutations with `Classical.choose`, duplicating the existing `GridState.equivPerm` representation and the existing classification theorem.",
+   "line": 138
+  },
+  {
+   "evidence": "`SmallGridGradings.lean:145-160` proves `maslovX\u2124_O_of_two`; `Diagram.lean:1094` has `swapMarkings_O`, and `GradingInteger.lean:232` has `maslovX\u2124_swapMarkings`, which rewrite the swapped statement to `G.maslovO\u2124 G.X = 2`.",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Reuse marking-swap API: after `maslovX\u2124_O_of_two`, prove this as `by simpa using (maslovX\u2124_O_of_two G.swapMarkings)`.",
+   "issue": "`maslovO\u2124_X_of_two` repeats the full two-case count proof of `maslovX\u2124_O_of_two` with `O` and `X` swapped.",
+   "line": 163
+  }
+ ],
+ "head_sha": "c035283b244b5a070762e33e7352623eefe5c051",
+ "merge_base_sha": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 738,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1214a8565a544e6a25797684c0d604ed1bd6b5e4f69ef34dcaa57e01aa243fbd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T041216Z-738-reuse-510d8d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T04:12:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds the requested small-grid grading data, but some new code bypasses existing grid-state and marking-swap APIs instead of reusing them.",
+ "transcript_blob": "88f6067f5e00ad237bff4170a7b0453e7993ad3334355668ed8c2c7fcfd4515e",
+ "usage": {
+  "cached_input_tokens": 176512,
+  "input_tokens": 236928,
+  "output_tokens": 3449,
+  "reasoning_output_tokens": 1595
+ },
+ "verdict": "request_changes"
+}

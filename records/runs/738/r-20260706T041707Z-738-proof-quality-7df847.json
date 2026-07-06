@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.178136,
+   "returncode": 0,
+   "secs": 30.6,
+   "usage": {
+    "cached_input_tokens": 24832,
+    "input_tokens": 49606,
+    "output_tokens": 1395,
+    "reasoning_output_tokens": 535
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "cost_estimated": true,
+ "cost_usd": 0.178136,
+ "dedupe_key": "TauCetiProject/TauCeti|738|c035283b244b5a070762e33e7352623eefe5c051|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "diff_sha256": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "duration_s": 30.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: `StateCardinality.lean:139`, `:144`, `:150`, `:156`, `:162`, `:168`; `SmallGridGradings.lean:51`, `:63`, `:75` all use `show` only to feed `Classical.choose`/`choose_spec`.",
+   "file": "TauCeti/KnotTheory/Grid/StateCardinality.lean",
+   "fix": "Define the concrete values directly as structure literals (`\u27e81\u27e9`, `\u27e8Equiv.swap ...\u27e9`, and the `GridDiagram` record) so the projection lemmas are `rfl`/`simp`, eliminating the undocumented `show`/`choose_spec` proof scaffolding.",
+   "issue": "The concrete states and diagram are defined through `Classical.choose <| show ...`, and their simp lemmas repeat the same witness; the same pattern appears in `SmallGridGradings.lean:50`, `:62`, and `:74`.",
+   "line": 138
+  },
+  {
+   "evidence": "`SmallGridGradings.lean:146-160` and `:164-178` repeat the `eq_twoByTwoId_or_eq_twoByTwoSwap` splits and near-identical `rw [twoByTwo...pairCard...]` chains.",
+   "file": "TauCeti/KnotTheory/Grid/SmallGridGradings.lean",
+   "fix": "Factor the common 2x2 grading table or a reusable lemma for the two possible `(G.O, G.X)` orientations, then have both Maslov computations reuse it with `simp`/`norm_num` instead of repeating the brittle case script.",
+   "issue": "`maslovX\u2124_O_of_two` and `maslovO\u2124_X_of_two` duplicate the same four-way classification and long ordered rewrite chains against private pair-card lemmas.",
+   "line": 145
+  }
+ ],
+ "head_sha": "c035283b244b5a070762e33e7352623eefe5c051",
+ "merge_base_sha": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 738,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4bbd2eb58e5077d8df655fca892c30ba4549b0fdfa508b56e09fcd0e9d6ac9bf",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T041707Z-738-proof-quality-7df847",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T04:17:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR has proof-quality issues from avoidable opaque `choose` wrappers and duplicated small-grid case computations. These make the proofs more fragile than the concrete 2x2 computation requires.",
+ "transcript_blob": "2ce964493cd9df55f69b7feff63cc37cac128c48b77f7076e570f81aa8e5568e",
+ "usage": {
+  "cached_input_tokens": 24832,
+  "input_tokens": 49606,
+  "output_tokens": 1395,
+  "reasoning_output_tokens": 535
+ },
+ "verdict": "request_changes"
+}

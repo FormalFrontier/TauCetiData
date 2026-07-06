@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.269597,
+   "returncode": 0,
+   "secs": 50.2,
+   "usage": {
+    "cached_input_tokens": 60544,
+    "input_tokens": 94357,
+    "output_tokens": 2342,
+    "reasoning_output_tokens": 1072
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "cost_estimated": true,
+ "cost_usd": 0.269597,
+ "dedupe_key": "TauCetiProject/TauCeti|738|c035283b244b5a070762e33e7352623eefe5c051|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "diff_sha256": "2dd5d56f92ee7fb47dc5f9c736548c00764663fe50f9d10cec0b652deccdb345",
+ "duration_s": 50.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\].*(twoByTwo|twoByTwoId|twoByTwoSwap)|noncomputable def twoByTwo\"` hits `StateCardinality.lean:137`, `StateCardinality.lean:142`, and `SmallGridGradings.lean:49`; the same files provide simp characteristic lemmas at lines 149,155,161,167,62,74.",
+   "file": "TauCeti/KnotTheory/Grid/StateCardinality.lean",
+   "fix": "Remove `@[expose]` from `twoByTwoId`, `twoByTwoSwap`, and `twoByTwo`, and rely on `twoByTwoId_zero`, `twoByTwoId_one`, `twoByTwoSwap_zero`, `twoByTwoSwap_one`, `twoByTwo_O`, and `twoByTwo_X` for downstream use.",
+   "issue": "`GridState.twoByTwoId`, `GridState.twoByTwoSwap`, and `GridDiagram.twoByTwo` are marked `@[expose]` even though their characteristic simp lemmas provide the public API; exposing these `Classical.choose` bodies leaks implementation details as part of the interface.",
+   "line": 137
+  },
+  {
+   "evidence": "`rg -n \"theorem (maslov|alexander).*(: .* = )\"` shows these equations at `GradingInteger.lean:128,133` and `SmallGridGradings.lean:145,163,181,186,191,197,204,210,216,221,227,233,239,245`, with no `@[simp]` annotations except unrelated set/marking lemmas.",
+   "file": "TauCeti/KnotTheory/Grid/GradingInteger.lean",
+   "fix": "Add `@[simp]` to the exact grading equations: `maslovO\u2124_O`, `maslovX\u2124_X`, `maslovX\u2124_O_of_two`, `maslovO\u2124_X_of_two`, `alexanderTwo\u2124_O_of_two`, `alexanderTwo\u2124_X_of_two`, `alexander_O_of_two`, `alexander_X_of_two`, and the eight named `twoByTwo` grading lemmas.",
+   "issue": "The exact normal-form grading lemmas are public but not `@[simp]`, so computations such as `G.maslovO\u2124 G.O`, `twoByTwo.alexander GridState.twoByTwoId`, and the corresponding `X`/`twoByTwoSwap` values do not simplify automatically.",
+   "line": 128
+  }
+ ],
+ "head_sha": "c035283b244b5a070762e33e7352623eefe5c051",
+ "merge_base_sha": "befea50da6d9335556521e72acc64d25ccdc63dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 738,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4f76177ff236a10892dd802db893e33cdc9a97f2b44662a4ef41225941171a44",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T041425Z-738-api-design-6f9691",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T04:14:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes choice-based implementation bodies and omits simp annotations on the exact grading normal forms, so downstream users must either unfold implementation details or manually rewrite computations that should simplify.",
+ "transcript_blob": "9095fe255c25d198e3a173491353f00070bc27d982e22f4448a5a16af6491414",
+ "usage": {
+  "cached_input_tokens": 60544,
+  "input_tokens": 94357,
+  "output_tokens": 2342,
+  "reasoning_output_tokens": 1072
+ },
+ "verdict": "request_changes"
+}
