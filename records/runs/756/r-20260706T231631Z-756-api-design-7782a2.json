@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.211746,
+   "returncode": 0,
+   "secs": 62.2,
+   "usage": {
+    "cached_input_tokens": 42112,
+    "input_tokens": 61338,
+    "output_tokens": 3152,
+    "reasoning_output_tokens": 2019
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6c9b58ba36961ca435828f5d88d49103ab8dd351",
+ "cost_estimated": true,
+ "cost_usd": 0.211746,
+ "dedupe_key": "TauCetiProject/TauCeti|756|09193e9af84e16808a9dc145120ca25aa3eccf32|api-design|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "ee0b7210d8e657ade46e437ee85b14b4008b1004edb2870fd8072148c4032615",
+ "diff_sha256": "ee0b7210d8e657ade46e437ee85b14b4008b1004edb2870fd8072148c4032615",
+ "duration_s": 62.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"IsPiecewiseC1On\" code/TauCeti/Analysis/Contour/PiecewiseC1On.lean` shows the definition at line 60, the iff at line 68, `continuousOn` at line 77, and only `of_contDiffOn` at line 82.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Add named lemmas such as `IsPiecewiseC1On.of_breakpoints`, `IsPiecewiseC1On.exists_breakpoints`, and/or a direct `contDiffOn_of_disjoint` eliminator for breakpoint-free closed subintervals.",
+   "issue": "`IsPiecewiseC1On` has no public intro/elimination API for its breakpoint data or the `ContDiffOn` clause; the only projections/constructors are `continuousOn` and `of_contDiffOn`, so consumers must destruct `h.2` or rewrite by `isPiecewiseC1On_iff`.",
+   "line": 60
+  },
+  {
+   "evidence": "The roadmap defines piecewise-`C\u00b9` curves by finite partitions (`roadmap/TauCetiRoadmap/ContourIntegration/README.md:32`), but the new file exposes no `IsPiecewiseC1On.*mono*` or restriction lemma; the only declared methods are `continuousOn` and `of_contDiffOn`.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Add `IsPiecewiseC1On.mono`/restriction API, e.g. from `IsPiecewiseC1On \u03b3 a b` and `uIcc c d \u2286 uIcc a b` derive `IsPiecewiseC1On \u03b3 c d`, with the breakpoint set restricted to the smaller interior.",
+   "issue": "The interval predicate lacks the characteristic restriction/monotonicity lemma, so subdividing a piecewise-`C\u00b9` contour requires rebuilding the finite breakpoint witness by unfolding the definition.",
+   "line": 60
+  }
+ ],
+ "head_sha": "09193e9af84e16808a9dc145120ca25aa3eccf32",
+ "merge_base_sha": "6c9b58ba36961ca435828f5d88d49103ab8dd351",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 756,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "628375d0c2ac169d04ec5c2c15e1aeb6d5ba953f905ffe0f7f534d3ce41b7054",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T231631Z-756-api-design-7782a2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T23:16:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The predicate is exposed without the characteristic API needed to consume it as a regularity package; users must unfold the representation to get or supply breakpoints. Add named introduction/elimination and interval-restriction lemmas before making this public surface dependably usable.",
+ "transcript_blob": "50e43d85be8837469760ff0bb3366ab81e8bea716cdfa9b48bb6d0722bf45096",
+ "usage": {
+  "cached_input_tokens": 42112,
+  "input_tokens": 61338,
+  "output_tokens": 3152,
+  "reasoning_output_tokens": 2019
+ },
+ "verdict": "request_changes"
+}
