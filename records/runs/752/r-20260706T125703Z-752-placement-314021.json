@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.347371,
+   "returncode": 0,
+   "secs": 45.7,
+   "usage": {
+    "cached_input_tokens": 64512,
+    "input_tokens": 114563,
+    "output_tokens": 2162,
+    "reasoning_output_tokens": 757
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "cost_estimated": true,
+ "cost_usd": 0.347371,
+ "dedupe_key": "TauCetiProject/TauCeti|752|25034ec4ce46d8f7dc937598a5a93fb27467f1df|placement|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "d8d70aa6951fff2acf60a902172196c77b5c2a43aaf3c33703e4dc1adb3cacc8",
+ "diff_sha256": "d8d70aa6951fff2acf60a902172196c77b5c2a43aaf3c33703e4dc1adb3cacc8",
+ "duration_s": 45.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`SchwarzPick.lean:37` and `:48` define scalar Moebius maps-to lemmas; `Moebius.lean:84` and `:105` already house the corresponding scalar Moebius differentiability lemmas.",
+   "file": "TauCeti/Analysis/Complex/Conformal/SchwarzPick.lean",
+   "fix": "Move both lemmas to `TauCeti/Analysis/Complex/Conformal/Moebius.lean` next to `differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one` / `differentiableOn_unitDiscMoebiusFormula`.",
+   "issue": "`unitDiscMoebiusFormula_mapsTo_ball_of_norm_lt_one` and `unitDiscMoebiusFormula_mapsTo_ball` are generic unit-disc Moebius facts, not Schwarz--Pick-specific material.",
+   "line": 37
+  },
+  {
+   "evidence": "`SchwarzPick.lean:8` imports `UnitDiscAutomorphism`; grep in `SchwarzPick.lean` shows uses of `unitDiscMoebiusFormula_mapsTo_ball_of_norm_lt_one` and `differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one`, while `UnitDiscAutomorphism.lean:41` starts the unused `unitDiscStandardAutomorphismEquiv` API.",
+   "file": "TauCeti/Analysis/Complex/Conformal/SchwarzPick.lean",
+   "fix": "After moving the maps-to lemmas, replace this with `public import TauCeti.Analysis.Complex.Conformal.Moebius` plus the existing Schwarz import.",
+   "issue": "`SchwarzPick.lean` imports `UnitDiscAutomorphism`, the later rotation/standard-automorphism layer, although the file only needs the Moebius and pseudo-hyperbolic API.",
+   "line": 8
+  }
+ ],
+ "head_sha": "25034ec4ce46d8f7dc937598a5a93fb27467f1df",
+ "merge_base_sha": "cdc8af27311859e2a1a99f58f0fc3b65097d4b91",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 752,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a299704f7b710831505d32c38ce8b97876e84ed7872ebb504a525a792e327c29",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T125703Z-752-placement-314021",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T12:57:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The Schwarz--Pick theorem itself is naturally placed, but the PR puts reusable Moebius self-map API in the Schwarz--Pick consumer file and imports the later standard-automorphism layer unnecessarily.",
+ "transcript_blob": "187f05a3bb2845eb885e50dd78d3a7e9ab35f4871fd7e22571ba8b591b905f79",
+ "usage": {
+  "cached_input_tokens": 64512,
+  "input_tokens": 114563,
+  "output_tokens": 2162,
+  "reasoning_output_tokens": 757
+ },
+ "verdict": "request_changes"
+}
