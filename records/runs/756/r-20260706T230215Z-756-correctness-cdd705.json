@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.686028,
+   "returncode": 0,
+   "secs": 72.7,
+   "usage": {
+    "cached_input_tokens": 151296,
+    "input_tokens": 254004,
+    "output_tokens": 3228,
+    "reasoning_output_tokens": 1437
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6c9b58ba36961ca435828f5d88d49103ab8dd351",
+ "cost_estimated": true,
+ "cost_usd": 0.686028,
+ "dedupe_key": "TauCetiProject/TauCeti|756|36fb5b986a52e8df162b80d27e82f31ecf6ee85a|correctness|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "54ce881e39161dabeeb1930aa1ad465d61433c29b7e114e82982e8541d8f1733",
+ "diff_sha256": "54ce881e39161dabeeb1930aa1ad465d61433c29b7e114e82982e8541d8f1733",
+ "duration_s": 72.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Roadmap grep: `ContourIntegration/README.md:32-33` says a piecewise-`C\u00b9` curve is continuous and `C\u00b9` on each piece of a finite partition; PR grep: lines 60-63 require only `ContinuousOn \u03b3 (uIcc a b)` plus pointwise differentiability and `ContinuousAt (deriv \u03b3)` on `Ioo (min a b) (max a b) \\ p`, with no one-sided derivative limit or `ContDiffOn` condition at breakpoints.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Define the predicate using an actual finite partition and require `ContDiffOn \u211d 1 \u03b3` (or equivalent within-derivative plus continuous extension data) on each closed subinterval/piece, allowing corners only between pieces.",
+   "issue": "`IsPiecewiseC1On` only asks for `DifferentiableAt` and `ContinuousAt (deriv \u03b3)` away from the finite set, so a cusp with unbounded derivative at a breakpoint, e.g. `\u03b3 t = sqrt |t|` at `0`, satisfies the predicate on `[-1,1]` although it is not C\u00b9 on either closed partition piece adjacent to `0`.",
+   "line": 59
+  }
+ ],
+ "head_sha": "36fb5b986a52e8df162b80d27e82f31ecf6ee85a",
+ "merge_base_sha": "6c9b58ba36961ca435828f5d88d49103ab8dd351",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 756,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "089d69985f7a8fac9581d012e61457d8111ad03faa2f226be98df71d839a7c97",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T230215Z-756-correctness-cdd705",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T23:02:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The predicate is still weaker than the roadmap's piecewise-C\u00b9 object: it accepts curves with finite nondifferentiability points but no C\u00b9 extension on the adjacent partition pieces.",
+ "transcript_blob": "6c1c45aaeaa9b437cda9e77f4ba02fc0a5b441fba7329586df08cd27db24434c",
+ "usage": {
+  "cached_input_tokens": 151296,
+  "input_tokens": 254004,
+  "output_tokens": 3228,
+  "reasoning_output_tokens": 1437
+ },
+ "verdict": "block"
+}
