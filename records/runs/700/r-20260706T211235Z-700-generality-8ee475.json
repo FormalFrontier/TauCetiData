@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.314981,
+   "returncode": 0,
+   "secs": 48.0,
+   "usage": {
+    "cached_input_tokens": 90112,
+    "input_tokens": 130213,
+    "output_tokens": 2314,
+    "reasoning_output_tokens": 758
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.314981,
+ "dedupe_key": "TauCetiProject/TauCeti|700|d87106dcb38683165db0a8fcdc968733cb2eb368|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "33ca8bba634ba3023b850660d797bcbd5afd6508632afa4bf3b02031e3d6227c",
+ "diff_sha256": "33ca8bba634ba3023b850660d797bcbd5afd6508632afa4bf3b02031e3d6227c",
+ "duration_s": 48.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`code/TauCeti/Algebra/HopfAlgebra/Kernel.lean:94` has `@[simp] theorem ker_toIdeal ... : (ker f hf).toIdeal = RingHom.ker ... := rfl`; the new lemma at lines 86-92 proves itself by `rw [quotientKerPointsMulEquiv_apply]`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Remove this lemma, or replace the preceding API with the single preferred kernel spelling if callers really need that normal form.",
+   "issue": "`quotientKerPointsMulEquiv_apply_ringHomKer` is only a duplicate spelling of `quotientKerPointsMulEquiv_apply`: the changed quotient type uses `RingHom.ker`, but `(ker f hf).toIdeal` is already definitionally that kernel.",
+   "line": 86
+  },
+  {
+   "evidence": "Lines 96-102 and 106-112 have the same arguments and target; the latter is proved only by `rw [quotientKerPointsMulEquiv_symm_apply]`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Delete `quotientKerPointsMulEquiv_symm_apply_ringHomKer`; users can use `quotientKerPointsMulEquiv_symm_apply` directly.",
+   "issue": "`quotientKerPointsMulEquiv_symm_apply_ringHomKer` is a second name for exactly the same signature and conclusion as `quotientKerPointsMulEquiv_symm_apply`, so it creates duplicated API with no more general statement.",
+   "line": 106
+  }
+ ],
+ "head_sha": "d87106dcb38683165db0a8fcdc968733cb2eb368",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7a96f9803df64fd99810b9e16d7818b766b2c906d8111b67e3a79f0a0891a7db",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T211235Z-700-generality-8ee475",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T21:12:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The main equivalence and compatibility statements are at the expected level, but the PR adds duplicate normalized-kernel lemmas instead of relying on the existing definitional kernel API.",
+ "transcript_blob": "267a71fc650c61f0e8b5971b7abdd13bbe4a7847227d5e335eebf62883d66a59",
+ "usage": {
+  "cached_input_tokens": 90112,
+  "input_tokens": 130213,
+  "output_tokens": 2314,
+  "reasoning_output_tokens": 758
+ },
+ "verdict": "request_changes"
+}

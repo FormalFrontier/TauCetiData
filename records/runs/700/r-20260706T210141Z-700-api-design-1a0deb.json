@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.515254,
+   "returncode": 0,
+   "secs": 653.3,
+   "usage": {
+    "cached_input_tokens": 215808,
+    "input_tokens": 283148,
+    "output_tokens": 2355,
+    "reasoning_output_tokens": 709
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "cost_estimated": true,
+ "cost_usd": 0.515254,
+ "dedupe_key": "TauCetiProject/TauCeti|700|d87106dcb38683165db0a8fcdc968733cb2eb368|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "33ca8bba634ba3023b850660d797bcbd5afd6508632afa4bf3b02031e3d6227c",
+ "diff_sha256": "33ca8bba634ba3023b850660d797bcbd5afd6508632afa4bf3b02031e3d6227c",
+ "duration_s": 653.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: lines 86 and 106 define the two `_ringHomKer` variants; `TauCeti/Algebra/HopfAlgebra/Kernel.lean:105` has `@[simp] theorem ker_toIdeal ... = RingHom.ker ...`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Remove these two public lemmas or make them private implementation conveniences; consumers can use `quotientKerPointsMulEquiv_apply` / `_symm_apply` together with `HopfIdeal.ker_toIdeal`.",
+   "issue": "`quotientKerPointsMulEquiv_apply_ringHomKer` and `quotientKerPointsMulEquiv_symm_apply_ringHomKer` expose duplicate API for a definally/simp-normalized kernel spelling.",
+   "line": 86
+  },
+  {
+   "evidence": "Nearby API marks the analogous normal forms as simp: `HopfMap.lean:152`/`:158` for `mapDomainMulEquiv_apply`/`_symm_apply`, and `HopfIdealPoints.lean:63`/`:71` for `quotientPointsHom_apply`/`_apply_apply`; the new corresponding declarations are at lines 76, 96, 159, and 178 without attributes.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfKernelPoints.lean",
+   "fix": "Add `@[simp]` to `quotientKerPointsMulEquiv_apply`, `quotientKerPointsMulEquiv_symm_apply`, `quotientPointsHom_quotientKerPointsMulEquiv_symm_apply_apply`, and `quotientPointsHom_quotientKerPointsMulEquiv_apply_apply`, provided simp confirms no loop.",
+   "issue": "The characteristic normal-form lemmas for the new equivalence and its pointwise quotient inclusion are not tagged `@[simp]`, so downstream users must unfold or name bespoke lemmas for routine normalization.",
+   "line": 76
+  }
+ ],
+ "head_sha": "d87106dcb38683165db0a8fcdc968733cb2eb368",
+ "merge_base_sha": "25e9f615a78b7c5e6ce0c06f7d3e6d606e4d9a4a",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 700,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "628e1f7a8609582cfcf64107a01ec863017ecdef049709f3d38861464f6ca4a5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260706T210141Z-700-api-design-1a0deb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-06T21:01:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The exposed equivalence has the needed characteristic statements, but the public surface includes redundant normalized-kernel variants and omits expected simp annotations on the normal-form lemmas.",
+ "transcript_blob": "598e8a00032cf1e069ac904b5bd3e73adda7cbbe37f3ea4ac86a5a7d4dc3cc92",
+ "usage": {
+  "cached_input_tokens": 215808,
+  "input_tokens": 283148,
+  "output_tokens": 2355,
+  "reasoning_output_tokens": 709
+ },
+ "verdict": "request_changes"
+}
