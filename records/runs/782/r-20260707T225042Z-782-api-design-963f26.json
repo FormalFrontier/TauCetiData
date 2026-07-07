@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.429584,
+   "returncode": 0,
+   "secs": 52.7,
+   "usage": {
+    "cached_input_tokens": 76288,
+    "input_tokens": 139318,
+    "output_tokens": 2543,
+    "reasoning_output_tokens": 1094
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b54f170f12ca1ccd0677adae8970d6aa6e81d988",
+ "cost_estimated": true,
+ "cost_usd": 0.429584,
+ "dedupe_key": "TauCetiProject/TauCeti|782|856585e25d120c770aeee70b4519c5c0ad97f239|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "bcce511230042d1f8f01d3148b84cee68644f868219197a0355e37cbdf1a3121",
+ "diff_sha256": "bcce511230042d1f8f01d3148b84cee68644f868219197a0355e37cbdf1a3121",
+ "duration_s": 52.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"cauchyPVAt_.*translate|cauchyPVAt_symm\" code/TauCeti/Analysis/Contour` finds `cauchyPVAt_symm` in `CauchyPrincipalValue.lean:344` but no translate value theorem.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberTranslate.lean",
+   "fix": "Add a public theorem such as `cauchyPVAt_translate (h : CauchyPVExistsAt \u03b3 a b f z\u2080) (c : \u2102) : cauchyPVAt (fun t => \u03b3 t + c) a b (fun z => f (z - c)) (z\u2080 + c) = cauchyPVAt \u03b3 a b f z\u2080`.",
+   "issue": "`CauchyPVExistsAt.translate` has no value-level companion for `cauchyPVAt`, so the claimed principal-value invariance is not exposed as a rewrite theorem.",
+   "line": 70
+  },
+  {
+   "evidence": "`WindingNumberReverse.lean:76` exposes `IsNullHomologous.symm_of_avoidance` and `WindingNumberConcat.lean:107` exposes `IsNullHomologous.concat_of_avoidance`; `rg -n \"translate_of_avoidance\" code/TauCeti/Analysis/Contour` has no hit.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberTranslate.lean",
+   "fix": "Add `IsNullHomologous.translate_of_avoidance`, deriving the `hpv` argument from `h\u03b3 : \u2200 t \u2208 Set.uIcc a b, \u03b3 t \u2208 \u03a9`, continuity, and exterior index-integrability, analogous to `symm_of_avoidance` and `concat_of_avoidance`.",
+   "issue": "`IsNullHomologous.translate` lacks the avoided-pole convenience form provided for the parallel null-homology operations, forcing every downstream use with a curve contained in the domain to rebuild the pointwise PV hypothesis manually.",
+   "line": 98
+  }
+ ],
+ "head_sha": "856585e25d120c770aeee70b4519c5c0ad97f239",
+ "merge_base_sha": "b54f170f12ca1ccd0677adae8970d6aa6e81d988",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 782,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "354b7241e8b0b2df985593b0d02fb79cb36534a500c9c76c6d07b1e1c294e6f1",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T225042Z-782-api-design-963f26",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T22:50:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The translation API exposes the core invariance lemmas but omits characteristic value and avoided-pole forms that consumers need to use the operation at the same level as the existing reversal/concatenation API.",
+ "transcript_blob": "9bca9b0f794694e395d8e34528c3804a742d36675a50fd5cd38fd1795747b356",
+ "usage": {
+  "cached_input_tokens": 76288,
+  "input_tokens": 139318,
+  "output_tokens": 2543,
+  "reasoning_output_tokens": 1094
+ },
+ "verdict": "request_changes"
+}
