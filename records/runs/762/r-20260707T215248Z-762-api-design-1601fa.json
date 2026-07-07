@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.432739,
+   "returncode": 0,
+   "secs": 66.6,
+   "usage": {
+    "cached_input_tokens": 165248,
+    "input_tokens": 215891,
+    "output_tokens": 3230,
+    "reasoning_output_tokens": 1061
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7224b3ceb10c96b2b0f8304361276c0570ecdd3e",
+ "cost_estimated": true,
+ "cost_usd": 0.432739,
+ "dedupe_key": "TauCetiProject/TauCeti|762|bd9277e55518c1f45781c8024194a676f18331c8|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "84da0b23b3cf0badeca94bad2692cd2b1a319aeb9ccb7b937b49d90cd037deb5",
+ "diff_sha256": "84da0b23b3cf0badeca94bad2692cd2b1a319aeb9ccb7b937b49d90cd037deb5",
+ "duration_s": 66.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"baseChangeMap_apply_tmul|map_tmul\"` shows `FiniteTypeBaseChange.lean:76` states the wrapper lemma without `@[simp]`, while `mathlib/Mathlib/RingTheory/Bialgebra/TensorProduct.lean:77` declares `theorem map_tmul` without a simp attribute.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/FiniteTypeBaseChange.lean",
+   "fix": "Add `@[simp]` to `baseChangeMap_apply_tmul`; the underlying Mathlib theorem is only `theorem Bialgebra.TensorProduct.map_tmul`, not a simp lemma, so this wrapper should be the simp-facing API.",
+   "issue": "`baseChangeMap_apply_tmul` is the normal-form formula for the scalar-extended coordinate morphism on pure tensors, but it is not marked `@[simp]`, so users must manually rewrite the defining tensor-product map.",
+   "line": 76
+  },
+  {
+   "evidence": "`FiniteTypeBaseChange.lean:83` has `@[expose] noncomputable def baseChangeFunctor`, and `FiniteTypeBaseChange.lean:112`/`:118` provide the `@[simp]` object/map lemmas.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/FiniteTypeBaseChange.lean",
+   "fix": "Remove `@[expose]` from `baseChangeFunctor`; keep consumers on `baseChangeFunctor_obj` and `baseChangeFunctor_map`, adding any further characteristic lemmas if needed.",
+   "issue": "`baseChangeFunctor` is marked `@[expose]` even though lines 112 and 118 already provide the public object and morphism characterization; this exposes the functor proof fields as downstream reduction behavior.",
+   "line": 83
+  },
+  {
+   "evidence": "`RestrictScalars.lean:87` has `@[expose] noncomputable def restrictScalars`, while `RestrictScalars.lean:94`, `:100`, `:107`, and `:119` give the public characterization lemmas.",
+   "file": "TauCeti/Algebra/Category/CommAlgCat/RestrictScalars.lean",
+   "fix": "Remove `@[expose]` from `restrictScalars`; rely on `restrictScalars_obj`, `restrictScalars_map`, `restrictScalars_map_hom`, and `restrictScalars_map_apply` as the characteristic API.",
+   "issue": "`restrictScalars` is marked `@[expose]` although its public behavior is already captured by object/map/hom/app lemmas, making implementation details part of the API.",
+   "line": 87
+  }
+ ],
+ "head_sha": "bd9277e55518c1f45781c8024194a676f18331c8",
+ "merge_base_sha": "292e10d27ae748389e50fe7b571d8ce0773466ab",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 762,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9d7d0402153e1f4c6f362a0115c153d78a9863e240c1c02ea05bfeb4971cca39",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T215248Z-762-api-design-1601fa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T21:52:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface is mostly characterized, but one characteristic base-change formula is not registered for automation and the new functor bodies are exposed despite having object/map API.",
+ "transcript_blob": "ec94c283bad015e6fef41b0a9ff824cd0f710d154394e4f9510c4f8062c85ac3",
+ "usage": {
+  "cached_input_tokens": 165248,
+  "input_tokens": 215891,
+  "output_tokens": 3230,
+  "reasoning_output_tokens": 1061
+ },
+ "verdict": "request_changes"
+}
