@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6412915,
+   "returncode": 0,
+   "secs": 130.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 32150,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 32150,
+    "cache_read_input_tokens": 108477,
+    "inference_geo": "not_available",
+    "input_tokens": 3154,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10811,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10811,
+      "cache_read_input_tokens": 37350,
+      "input_tokens": 2,
+      "output_tokens": 2964,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9747,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f25e89043f3d90348e6372a55efbe07cfbb9e879",
+ "cost_usd": 0.641292,
+ "dedupe_key": "TauCetiProject/TauCeti|765|cba5ad8ca80661af0b2a7d35356c889f75e757b7|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "2c824aa0688b271df71965d12936618d4407fc5163a52275a4c5e8d112355416",
+ "diff_sha256": "2c824aa0688b271df71965d12936618d4407fc5163a52275a4c5e8d112355416",
+ "duration_s": 130.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "map_apply := rfl at line 40-42 plus GenLoop.ext (Mathlib HomotopyGroup.lean:114) fully characterize the term; project convention hides bodies when characteristic @[simp] API suffices (Probability/Process/Tail.lean:192).",
+   "file": "TauCeti/Topology/Homotopy/HomotopyGroup/Map.lean",
+   "fix": "Drop @[expose] from `map`; downstream should use `map_apply`/`ext`. If a specific consumer genuinely must unfold, add the missing lemma instead.",
+   "issue": "GenLoop.map is @[expose] but its full characteristic API (map_apply via FunLike + ext, map_const, map_id, map_comp, map_transAt, map_symmAt, map_homotopic) is already provided, so no downstream consumer needs the body. The in-file rfl lemmas do not require exposure (bodies are visible within the module regardless).",
+   "line": "36"
+  },
+  {
+   "evidence": "map_mk (line 105) characterizes it on representatives; all downstream reasoning goes through the listed lemmas.",
+   "file": "TauCeti/Topology/Homotopy/HomotopyGroup/Map.lean",
+   "fix": "Remove @[expose] from `map`.",
+   "issue": "HomotopyGroup.map is @[expose] but map_mk, map_id_apply, map_comp_apply, map_mul, map_one give a complete functorial characterization; the body need not be exposed.",
+   "line": "100"
+  },
+  {
+   "evidence": "mapHom_apply := rfl (line 142-145) exposes the underlying function via a lemma, so the structure body is not needed downstream.",
+   "file": "TauCeti/Topology/Homotopy/HomotopyGroup/Map.lean",
+   "fix": "Remove @[expose] from `mapHom`.",
+   "issue": "mapHom is @[expose] but mapHom_apply, mapHom_id, mapHom_comp fully characterize it and reduce it to `map`; no unfold is required.",
+   "line": "131"
+  }
+ ],
+ "head_sha": "cba5ad8ca80661af0b2a7d35356c889f75e757b7",
+ "merge_base_sha": "f25e89043f3d90348e6372a55efbe07cfbb9e879",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 765,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "751a5c247163728d6b864d7e8388435cd7e461b81599966a6b228feb279d9f3c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T062306Z-765-api-design-5fccdf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T06:23:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is complete and correctly annotated, but all three definitions are marked @[expose] without a consumer that must unfold or compute; the provided simp lemmas already cover every use.",
+ "transcript_blob": "0104dc74a905449d8f3edee3eeb61d6e818300684e12d740eacc68baf1ba43a6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32150,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 32150,
+  "cache_read_input_tokens": 108477,
+  "inference_geo": "not_available",
+  "input_tokens": 3154,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10811,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10811,
+    "cache_read_input_tokens": 37350,
+    "input_tokens": 2,
+    "output_tokens": 2964,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9747,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
