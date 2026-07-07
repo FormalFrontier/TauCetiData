@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.761555,
+   "returncode": 0,
+   "secs": 123.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 34733,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 34733,
+    "cache_read_input_tokens": 364906,
+    "inference_geo": "not_available",
+    "input_tokens": 3295,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2829,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2829,
+      "cache_read_input_tokens": 47915,
+      "input_tokens": 2,
+      "output_tokens": 1599,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8340,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f25e89043f3d90348e6372a55efbe07cfbb9e879",
+ "cost_usd": 0.761555,
+ "dedupe_key": "TauCetiProject/TauCeti|766|ea266308d605d78fe40313c04037ead16525a0c6|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "ecdda4d7b937561851a1be0deb2a3e704acb81f3c69fd49ee37dec6806779eec",
+ "diff_sha256": "ecdda4d7b937561851a1be0deb2a3e704acb81f3c69fd49ee37dec6806779eec",
+ "duration_s": 123.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PrimeDiscriminantExamples.lean:48 `private theorem not_intCast_prime_dvd_natPrime {p l : \u2115} [Fact p.Prime] (hl : l.Prime) (hne : p \u2260 l) : \u00ac (p:\u2124) \u2223 (l:\u2124) := by intro h; have := ... (Nat.prime_dvd_prime_iff_eq Fact.out hl).mp ...` \u2014 identical proof body.",
+   "file": "TauCeti/NumberTheory/NumberField/PrimeRadicandSplitting.lean",
+   "fix": "Hoist the single lemma to a shared (public) location both files import and drop this copy; e.g. place it near the multiquadratic splitting infrastructure and reuse it from PrimeDiscriminantExamples too.",
+   "issue": "The private `not_intCast_prime_dvd_natPrime` is a character-for-character duplicate (modulo variable renaming p/l\u2194q/p) of the existing private lemma of the same name in TauCeti/NumberTheory/NumberField/PrimeDiscriminantExamples.lean:48.",
+   "line": 43
+  },
+  {
+   "evidence": "LegendreEvenPrimeDiscriminant.lean:111-116 proves `legendreSym q (evenPrimeDiscriminantRadicand 8) = 1 \u2194 q%8=1\u2228q%8=7` via `legendreSym.eq_one_iff (a := (2:\u2124))` and `ZMod.exists_sq_eq_two_iff hq`; EvenPrimeDiscriminant.lean:75 `evenPrimeDiscriminantRadicand_eight : evenPrimeDiscriminantRadicand 8 = 2`.",
+   "file": "TauCeti/NumberTheory/NumberField/PrimeRadicandSplitting.lean",
+   "fix": "Reuse the existing result, e.g. `rw [\u2190 evenPrimeDiscriminantRadicand_eight]; exact legendreSym_evenPrimeDiscriminantRadicand_eight_eq_one_iff htwo` (importing LegendreEvenPrimeDiscriminant), or hoist a single shared `legendreSym_two_eq_one_iff` used by both.",
+   "issue": "`legendreSym_two_eq_one_iff : legendreSym q (2:\u2124) = 1 \u2194 q%8=1\u2228q%8=7` re-derives (same `legendreSym.eq_one_iff` + `ZMod.exists_sq_eq_two_iff` steps) the already-proved fact about radicand `2` in TauCeti/NumberTheory/Multiquadratic/LegendreEvenPrimeDiscriminant.lean:111, where `evenPrimeDiscriminantRadicand 8 = 2` (simp, EvenPrimeDiscriminant.lean:75).",
+   "line": 86
+  }
+ ],
+ "head_sha": "ea266308d605d78fe40313c04037ead16525a0c6",
+ "merge_base_sha": "f25e89043f3d90348e6372a55efbe07cfbb9e879",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 766,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e9d6f59044a0eebb8d118de9cec3cc376f527a60793f20156d9d4150672a196f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T061851Z-766-reuse-be31b8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T06:18:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The core prime-radicand splitting specialization and the concrete \u211a(\u221a2,\u221a3) corollaries are genuinely new, but two supporting pieces re-derive existing TauCeti lemmas verbatim.",
+ "transcript_blob": "b9120e922b6ce9886a52a7d6eb0224dc693df67485941ca4b795b1b468dd9a0d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34733,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 34733,
+  "cache_read_input_tokens": 364906,
+  "inference_geo": "not_available",
+  "input_tokens": 3295,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2829,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2829,
+    "cache_read_input_tokens": 47915,
+    "input_tokens": 2,
+    "output_tokens": 1599,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8340,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
