@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.363976,
+   "returncode": 0,
+   "secs": 66.1,
+   "usage": {
+    "cached_input_tokens": 47232,
+    "input_tokens": 96878,
+    "output_tokens": 3071,
+    "reasoning_output_tokens": 1841
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7224b3ceb10c96b2b0f8304361276c0570ecdd3e",
+ "cost_estimated": true,
+ "cost_usd": 0.363976,
+ "dedupe_key": "TauCetiProject/TauCeti|762|9b361195085ddb5c368915f6808314c882cda298|api-design|gpt-5.5|fb0698ac514a62c5|production|5",
+ "diff_blob": "9d96b6c398019cab5488ac714eb7581c6a6149539cddc80721a4a326e541a3b2",
+ "diff_sha256": "9d96b6c398019cab5488ac714eb7581c6a6149539cddc80721a4a326e541a3b2",
+ "duration_s": 66.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\]\"` hits `CommHopfAlgCatBaseChange.lean:81`, `FiniteTypeBaseChange.lean:82`, and `RestrictScalars.lean:80`; the adjacent `*_obj`/`*_map` lemmas at lines 112/118, 97/103, and 87/93 are the intended characterization lemmas.",
+   "file": "",
+   "fix": "Remove `@[expose]` from these functor definitions; adjust the exported projection lemmas to avoid forcing body exposure, e.g. prove them with the protected-defeq pattern `:= (rfl)` or with explicit non-unfolding proofs.",
+   "issue": "`CommHopfAlgCat.baseChangeFunctor`, `FiniteTypeCommHopfAlgCat.baseChangeFunctor`, and `TauCeti.CommAlgCat.restrictScalars` are marked `@[expose]`, exposing implementation bodies even though object/map projection lemmas are provided as the public API.",
+   "line": 0
+  },
+  {
+   "evidence": "`CommHopfAlgCatBaseChange.lean:74` and `FiniteTypeBaseChange.lean:76` define unannotated `baseChangeMap_apply_tmul` lemmas rewriting `(baseChangeMap \u03c6)` on `s \u2297\u209c[k] h` to `s \u2297\u209c[k] \u03c6 h`.",
+   "file": "",
+   "fix": "Add `@[simp]` to both `CommHopfAlgCat.baseChangeMap_apply_tmul` and `FiniteTypeCommHopfAlgCat.baseChangeMap_apply_tmul`.",
+   "issue": "The normal-form pure-tensor rules `baseChangeMap_apply_tmul` are public characteristic lemmas but are not tagged `@[simp]`, so `simp` will not normalize scalar-extended maps on pure tensors.",
+   "line": 0
+  }
+ ],
+ "head_sha": "9b361195085ddb5c368915f6808314c882cda298",
+ "merge_base_sha": "292e10d27ae748389e50fe7b571d8ce0773466ab",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 762,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "7cac7275ba88323c7c2c297a84583d30f8e38e06e833d2bc800e34e83abd76b8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T224848Z-762-api-design-2a82c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T22:48:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is mostly present, but the PR still exposes functor bodies and leaves the pure-tensor map rule out of simp. Those are public-interface issues because downstream code can depend on implementation unfolding and cannot normalize the advertised map without naming the lemma.",
+ "transcript_blob": "291d59300f2f9bbe8ea28dc3ba1fb3a0a301781f7513746fba3386672edfde8f",
+ "usage": {
+  "cached_input_tokens": 47232,
+  "input_tokens": 96878,
+  "output_tokens": 3071,
+  "reasoning_output_tokens": 1841
+ },
+ "verdict": "request_changes"
+}
