@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.245847,
+   "returncode": 0,
+   "secs": 46.5,
+   "usage": {
+    "cached_input_tokens": 80384,
+    "input_tokens": 108681,
+    "output_tokens": 2139,
+    "reasoning_output_tokens": 673
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f25e89043f3d90348e6372a55efbe07cfbb9e879",
+ "cost_estimated": true,
+ "cost_usd": 0.245847,
+ "dedupe_key": "TauCetiProject/TauCeti|763|c2e3813e794d9512bba128871c806b834e64d1a0|placement|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "a6273d020a4e16ba2b93f4a04e124235b632d8ee4bd95197dcfad01c5c1a1911",
+ "diff_sha256": "a6273d020a4e16ba2b93f4a04e124235b632d8ee4bd95197dcfad01c5c1a1911",
+ "duration_s": 46.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"memLp_hermite_gaussianReal|integrable_eval_mul_gaussianEnvelope|integrable_eval_mul_exp_neg_sq\" code/TauCeti/Analysis/SpecialFunctions/HermiteFunctionMemLp.lean code/TauCeti/Probability/Distributions/Gaussian/*.lean` shows `HermiteFunctionMemLp.lean:58` and `:90` use `integrable_eval_mul_gaussianEnvelope`/`integrable_eval_mul_exp_neg_sq` from `Gaussian/PolynomialMemLp.lean:65`/`:82`, while `memLp_hermite_gaussianReal` is only declared in `Gaussian/HermiteMemLp.lean:45`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionMemLp.lean",
+   "fix": "Replace this import with `public import TauCeti.Probability.Distributions.Gaussian.PolynomialMemLp` so the Hermite-function API depends only on the generic Gaussian-polynomial layer it consumes.",
+   "issue": "`HermiteFunctionMemLp` imports `TauCeti.Probability.Distributions.Gaussian.HermiteMemLp`, but the file only uses the generic envelope lemmas now defined in `Gaussian/PolynomialMemLp`, not the Hermite-specific `memLp_hermite_gaussianReal`.",
+   "line": 9
+  }
+ ],
+ "head_sha": "c2e3813e794d9512bba128871c806b834e64d1a0",
+ "merge_base_sha": "7224b3ceb10c96b2b0f8304361276c0570ecdd3e",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 763,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "de4c772f466c11b75163fa73963697a7051e261cc16a9f6081bde1befc3c9277",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T061744Z-763-placement-072601",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T06:17:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic Gaussian-polynomial material has been moved to a natural file, but the Hermite-function file still imports the Hermite-polynomial Gaussian `L\u00b2` specialization instead of the generic Gaussian-polynomial API it uses.",
+ "transcript_blob": "7fa844252ae8f92ebe2e7b7a0704cfec2f4fd5c20e48c374e26478432452e384",
+ "usage": {
+  "cached_input_tokens": 80384,
+  "input_tokens": 108681,
+  "output_tokens": 2139,
+  "reasoning_output_tokens": 673
+ },
+ "verdict": "request_changes"
+}
