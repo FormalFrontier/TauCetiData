@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.307053,
+   "returncode": 0,
+   "secs": 58.8,
+   "usage": {
+    "cached_input_tokens": 126336,
+    "input_tokens": 159027,
+    "output_tokens": 2681,
+    "reasoning_output_tokens": 1000
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2e98e438bd72a91420eb1b0d62af5b448d517c92",
+ "cost_estimated": true,
+ "cost_usd": 0.307053,
+ "dedupe_key": "TauCetiProject/TauCeti|768|86cad4b8a91500ffe8f4c03832053c2291395062|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "0124d496bc7c8969b37c253a55697315df8f99af64f060ae28f10fa60b7c6bb2",
+ "diff_sha256": "0124d496bc7c8969b37c253a55697315df8f99af64f060ae28f10fa60b7c6bb2",
+ "duration_s": 58.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`LaplacianMaximumPrinciple.lean:46-49` uses `ContinuousOn` only to call `hK.exists_isMaxOn`; Mathlib has `UpperSemicontinuousOn.exists_isMaxOn` at `Mathlib/Topology/Semicontinuity/Basic.lean:744-748` and `ContinuousOn.upperSemicontinuousOn` at lines `835-836`.",
+   "file": "TauCeti/Analysis/InnerProductSpace/LaplacianMaximumPrinciple.lean",
+   "fix": "Replace `hcont : ContinuousOn f K` by `husc : UpperSemicontinuousOn f K` in the helper and public max theorem, use `husc.exists_isMaxOn hne hK`, and derive the continuous corollary if needed via `ContinuousOn.upperSemicontinuousOn`.",
+   "issue": "The maximum theorem assumes `hcont : ContinuousOn f K`, but the proof only needs existence of a compact maximum; Mathlib\u2019s natural API is `UpperSemicontinuousOn.exists_isMaxOn`.",
+   "line": 78
+  },
+  {
+   "evidence": "`LaplacianMaximumPrinciple.lean:60-63` uses `ContinuousOn` only to call `hK.exists_isMinOn`; Mathlib has `LowerSemicontinuousOn.exists_isMinOn` at `Mathlib/Topology/Semicontinuity/Basic.lean:76-79` and `ContinuousOn.lowerSemicontinuousOn` at lines `255-256`.",
+   "file": "TauCeti/Analysis/InnerProductSpace/LaplacianMaximumPrinciple.lean",
+   "fix": "Replace `hcont : ContinuousOn f K` by `hlsc : LowerSemicontinuousOn f K` in the helper and public min theorem, use `hlsc.exists_isMinOn hne hK`, and keep a continuous corollary only as a specialization if desired.",
+   "issue": "The minimum theorem similarly assumes `hcont : ContinuousOn f K`, but compact minimum existence only needs lower semicontinuity.",
+   "line": 91
+  }
+ ],
+ "head_sha": "86cad4b8a91500ffe8f4c03832053c2291395062",
+ "merge_base_sha": "1f8c8b4dfd99fff29cf660dcb7f8bc05a694a506",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 768,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f0a43d3d5ad8466789c7510fd85fcde60151d5d3309377c20d01bad37ae5ed17",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T123132Z-768-generality-b3bae8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T12:31:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The boundary handoff is stated with stronger regularity on K than the Mathlib extrema APIs require. Generalize the max/min hypotheses to the one-sided semicontinuity actually used for existence of the relevant extremum.",
+ "transcript_blob": "817e50fda181c880802e44543df6a0d2c1803922063bd4d2112f7f049aa517e0",
+ "usage": {
+  "cached_input_tokens": 126336,
+  "input_tokens": 159027,
+  "output_tokens": 2681,
+  "reasoning_output_tokens": 1000
+ },
+ "verdict": "request_changes"
+}
