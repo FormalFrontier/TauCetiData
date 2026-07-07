@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.576272,
+   "returncode": 0,
+   "secs": 70.0,
+   "usage": {
+    "cached_input_tokens": 392704,
+    "input_tokens": 452554,
+    "output_tokens": 2689,
+    "reasoning_output_tokens": 793
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e80669823fdb20e05a47101b37dbabd64cc486cd",
+ "cost_estimated": true,
+ "cost_usd": 0.576272,
+ "dedupe_key": "TauCetiProject/TauCeti|575|86d3887049489c41332208952b059c55baeaf272|proof-quality|gpt-5.5|fb0698ac514a62c5|production|5",
+ "diff_blob": "f69e397b0d3858d0c99ed80ad33c63d5275104b57bb7610579856892cc273706",
+ "diff_sha256": "f69e397b0d3858d0c99ed80ad33c63d5275104b57bb7610579856892cc273706",
+ "duration_s": 70.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"hasDerivAt_laplaceMomentTransform|have hle_exp\"` hits line 228 and the inline bound block at lines 255-279.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Extract the ball-local bound, e.g. `norm_laplaceMomentKernel_deriv_le_on_ball`, and call it from the dominated-differentiation proof.",
+   "issue": "`hasDerivAt_laplaceMomentTransform` is a long dominated-differentiation proof whose key local domination estimate is buried in the anonymous theorem argument.",
+   "line": 228
+  },
+  {
+   "evidence": "The same `hasDerivAt_mul_const ... .neg`, `.exp.const_mul`, `simpa [pow_succ, mul_assoc, mul_comm, mul_left_comm]` pattern occurs at lines 281-289 and 364-371.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Factor a reusable pointwise derivative lemma for `fun y => (-(x : \u211d)) ^ n * exp (-(y * x))`, with separate `HasDerivAt`/within-at corollaries if needed.",
+   "issue": "The pointwise derivative of the Laplace moment kernel is proved inline twice, once for positive `t` and again at `0`, making both proofs sensitive to simplifier/defeq changes.",
+   "line": 228
+  }
+ ],
+ "head_sha": "86d3887049489c41332208952b059c55baeaf272",
+ "merge_base_sha": "5e5793a65a3b77361c63627afccafdc2c7db67a4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 575,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0afd3e808a544177b7486cb2171517b2520c6cc3a1fec2fe3962f5b8919b4df6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T104907Z-575-proof-quality-010602",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T10:49:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem proofs are better factored than the prior version, but the Laplace differentiation API still leaves substantial reusable analytic obligations embedded inside long proofs.",
+ "transcript_blob": "28ec65449cc831f7569c4fe1050b0d901ad40ae6b910b243d436caa91ce43fe7",
+ "usage": {
+  "cached_input_tokens": 392704,
+  "input_tokens": 452554,
+  "output_tokens": 2689,
+  "reasoning_output_tokens": 793
+ },
+ "verdict": "request_changes"
+}
