@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.578019,
+   "returncode": 0,
+   "secs": 80.7,
+   "usage": {
+    "cached_input_tokens": 200448,
+    "input_tokens": 274839,
+    "output_tokens": 3528,
+    "reasoning_output_tokens": 1206
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bd9d65d27d60b3bb93ae6d4b675b78c3b536f095",
+ "cost_estimated": true,
+ "cost_usd": 0.578019,
+ "dedupe_key": "TauCetiProject/TauCeti|757|ea4fcfcd2bf8cc4780534786f32542d6303e4e8d|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "4f643199d3b7ef284de9a13ac952c21a1f17796e0d1bdefe445cfe6711939c26",
+ "diff_sha256": "4f643199d3b7ef284de9a13ac952c21a1f17796e0d1bdefe445cfe6711939c26",
+ "duration_s": 80.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`CurveMeasureZero.lean:71-73` requires `hf : LipschitzOnWith K f s`; `PiecewiseC1On.lean:64` defines `IsPiecewiseC1On`; roadmap `ContourIntegration/README.md:176` and `Suggested.lean:216` state the later cycle hypotheses as piecewise-C\u00b9.",
+   "file": "TauCeti/Analysis/Contour/CurveMeasureZero.lean",
+   "fix": "Add public contour-facing lemmas such as `IsPiecewiseC1On.volume_image_zero` and `IsPiecewiseC1On.exists_mem_notMem_image_of_isOpen` for `\u03b3 '' Set.uIcc a b` (or at least `IsPiecewiseC1On.exists_lipschitzOnWith`) and use the raw Lipschitz theorem as an implementation detail.",
+   "issue": "The off-curve theorem is exposed only for `LipschitzOnWith K f s`, but the contour API already uses `Contour.IsPiecewiseC1On \u03b3 a b`; downstream homology-Cauchy code cannot get the advertised point off `\u03b3 '' Set.uIcc a b` without reproving the piecewise-C\u00b9-to-Lipschitz bridge.",
+   "line": 71
+  },
+  {
+   "evidence": "`CurveMeasureZero.lean:47` exports the `\u03bcH[2]` image-zero theorem, and its only in-repo use is the proof of `volume_image_zero_of_lipschitzOnWith` at `CurveMeasureZero.lean:67`.",
+   "file": "TauCeti/Analysis/Contour/CurveMeasureZero.lean",
+   "fix": "Make the Hausdorff-measure lemma `private` or keep it in an internal namespace unless a roadmap consumer needs to reason specifically about `\u03bcH[2]`.",
+   "issue": "`hausdorffMeasure_two_image_zero_of_lipschitzOnWith` is exported even though the user-facing contour result is Lebesgue-nullness/off-image existence; this leaks a proof artifact from the Hausdorff-measure argument into the public API.",
+   "line": 47
+  }
+ ],
+ "head_sha": "ea4fcfcd2bf8cc4780534786f32542d6303e4e8d",
+ "merge_base_sha": "bd9d65d27d60b3bb93ae6d4b675b78c3b536f095",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 757,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1987f144c24bec2d1d86e713faea6140508760bf6165cad0fe57b2b80a13419f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T001230Z-757-api-design-f40e6e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T00:12:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface proves only raw Lipschitz-on-a-set statements, so it does not expose the contour-level API needed by the roadmap\u2019s piecewise-C\u00b9 contour predicate. It also exports a Hausdorff-measure implementation lemma that appears unnecessary for downstream contour consumers.",
+ "transcript_blob": "b5e58fb41b21a2b45fd7b64e5a75bb5334c1ecd04ebac13c7a963d21ef5fd4b4",
+ "usage": {
+  "cached_input_tokens": 200448,
+  "input_tokens": 274839,
+  "output_tokens": 3528,
+  "reasoning_output_tokens": 1206
+ },
+ "verdict": "request_changes"
+}
