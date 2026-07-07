@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.19604,
+   "returncode": 0,
+   "secs": 44.5,
+   "usage": {
+    "cached_input_tokens": 56960,
+    "input_tokens": 79012,
+    "output_tokens": 1910,
+    "reasoning_output_tokens": 816
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "632679ba95e43532ea1bfd15ca1f55042f9983bb",
+ "cost_estimated": true,
+ "cost_usd": 0.19604,
+ "dedupe_key": "TauCetiProject/TauCeti|779|51f398fe00b5026a5f55f08d755046984229439c|naming|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "6883f50c6ec535714b3afa5fd7f0b83e213cd7a7f8060caa03f1fabb20359bc5",
+ "diff_sha256": "6883f50c6ec535714b3afa5fd7f0b83e213cd7a7f8060caa03f1fabb20359bc5",
+ "duration_s": 44.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"Integrable\\.exp_norm_smul_of_ae_norm_le|integrable_exp_mul_abs\"` shows this declaration at line 37, while Mathlib uses `integrable_exp_mul_abs` for `exp (t * |X|)` and the local Chebyshev consumer is `integrable_exp_mul_abs_smul_measureT`; the naming reference maps `*` to `mul` and says theorem names describe the conclusion.",
+   "file": "TauCeti/MeasureTheory/Function/BoundedSupportExponential.lean",
+   "fix": "Rename it to a `mul` name such as `Integrable.exp_mul_norm_smul_of_ae_norm_le` and update callers/docstrings.",
+   "issue": "`Integrable.exp_norm_smul_of_ae_norm_le` names the weight as `exp_norm`, but the conclusion is `Real.exp (a * \u2016x\u2016)`, so the name drops the multiplication by the parameter `a`.",
+   "line": 37
+  },
+  {
+   "evidence": "Line 55 states `Integrable (fun x : \u211d => (Real.exp (a * |x|) : \ud835\udd5c) \u2022 g x) \u03bc`; Mathlib precedent is `integrable_exp_mul_abs` for the same `exp (t * |X|)` pattern.",
+   "file": "TauCeti/MeasureTheory/Function/BoundedSupportExponential.lean",
+   "fix": "Rename it consistently, e.g. `Integrable.exp_mul_abs_smul_of_ae_abs_le`, and update the Chebyshev call site.",
+   "issue": "`Integrable.exp_abs_smul_of_ae_abs_le` has the same naming problem: its conclusion is `Real.exp (a * |x|)`, but the name says only `exp_abs`.",
+   "line": 55
+  }
+ ],
+ "head_sha": "51f398fe00b5026a5f55f08d755046984229439c",
+ "merge_base_sha": "632679ba95e43532ea1bfd15ca1f55042f9983bb",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 779,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "402501c5ac51aafb63d6000ce2bcb3ba812b7a46a2d40a363c048a47925b9a55",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T231314Z-779-naming-81da8f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T23:13:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The new reusable theorem names omit the `mul` component of the exponential weight, unlike the existing Mathlib and local naming precedent for `exp (a * |x|)`. Rename the introduced APIs so their names describe the conclusion using the standard `mul` atom.",
+ "transcript_blob": "0e1e8db8bcceb48a6904a2b29629423f7c374899b14852ad38f1f6c0c72d5d95",
+ "usage": {
+  "cached_input_tokens": 56960,
+  "input_tokens": 79012,
+  "output_tokens": 1910,
+  "reasoning_output_tokens": 816
+ },
+ "verdict": "request_changes"
+}

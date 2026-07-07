@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.274847,
+   "returncode": 0,
+   "secs": 63.1,
+   "usage": {
+    "cached_input_tokens": 60544,
+    "input_tokens": 91033,
+    "output_tokens": 3071,
+    "reasoning_output_tokens": 1897
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "632679ba95e43532ea1bfd15ca1f55042f9983bb",
+ "cost_estimated": true,
+ "cost_usd": 0.274847,
+ "dedupe_key": "TauCetiProject/TauCeti|779|51f398fe00b5026a5f55f08d755046984229439c|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "6883f50c6ec535714b3afa5fd7f0b83e213cd7a7f8060caa03f1fabb20359bc5",
+ "diff_sha256": "6883f50c6ec535714b3afa5fd7f0b83e213cd7a7f8060caa03f1fabb20359bc5",
+ "duration_s": 63.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib\u2019s nearby moment lemmas use an observable, e.g. `mathlib/Mathlib/Probability/Moments/Basic.lean:495` has `integrable_exp_mul_of_mem_Icc ... {X : \u03a9 \u2192 \u211d} ... (hm : AEMeasurable X \u03bc) (hb : \u2200\u1d50 \u03c9 \u2202\u03bc, X \u03c9 \u2208 Set.Icc a b)`.",
+   "file": "TauCeti/MeasureTheory/Function/BoundedSupportExponential.lean",
+   "fix": "State the general lemma with `{X : \u03a9 \u2192 E}`, `hX : AEStronglyMeasurable X \u03bc`, and `\u2200\u1d50 \u03c9 \u2202\u03bc, \u2016X \u03c9\u2016 \u2264 R`, then derive the current support-of-domain form by taking `X = id`.",
+   "issue": "`Integrable.exp_norm_smul_of_ae_norm_le` only handles the identity variable on the measure space, so it is less general than the standard Mathlib moment API for a random variable `X : \u03a9 \u2192 E`.",
+   "line": 37
+  },
+  {
+   "evidence": "The called theorem is already polymorphic in `\u03b2`: `code/TauCeti/MeasureTheory/Function/BoundedSupportExponential.lean:55` states `{g : \u211d \u2192 \u03b2}` under `[NormedAddCommGroup \u03b2] [NormedSpace \ud835\udd5c \u03b2]`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Measure.lean",
+   "fix": "Generalize the signature to `{\ud835\udd5c \u03b2 : Type*} [RCLike \ud835\udd5c] [NormedAddCommGroup \u03b2] [NormedSpace \ud835\udd5c \u03b2] {g : \u211d \u2192 \u03b2}` with the same proof.",
+   "issue": "`integrable_exp_mul_abs_smul_measureT` still restricts `g : \u211d \u2192 \ud835\udd5c`, although the new lemma it calls works for any normed target space over `\ud835\udd5c`.",
+   "line": 151
+  }
+ ],
+ "head_sha": "51f398fe00b5026a5f55f08d755046984229439c",
+ "merge_base_sha": "632679ba95e43532ea1bfd15ca1f55042f9983bb",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 779,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "865f31542776cf6bec3830a1575fa4d444ab4b083545de25e8cfcd31ac9ecc18",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T231144Z-779-generality-3a230c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T23:11:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new bounded-support lemma is useful, but two statements are kept at unnecessarily special levels relative to the API they are meant to expose.",
+ "transcript_blob": "8bbb8968464733a0e49fd4fe36c81b4e10be2cfd99c725bf32ec44c406497ca5",
+ "usage": {
+  "cached_input_tokens": 60544,
+  "input_tokens": 91033,
+  "output_tokens": 3071,
+  "reasoning_output_tokens": 1897
+ },
+ "verdict": "request_changes"
+}
