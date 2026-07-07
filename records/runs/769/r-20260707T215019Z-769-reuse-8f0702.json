@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.282497,
+   "returncode": 0,
+   "secs": 60.7,
+   "usage": {
+    "cached_input_tokens": 88064,
+    "input_tokens": 118621,
+    "output_tokens": 2856,
+    "reasoning_output_tokens": 1041
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2e98e438bd72a91420eb1b0d62af5b448d517c92",
+ "cost_estimated": true,
+ "cost_usd": 0.282497,
+ "dedupe_key": "TauCetiProject/TauCeti|769|7bfcdb664a27201d5d47641568dab737b55665ab|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "4b8a7e6194e9771e8768f5a6642bef0a500b20d9073b02b7ad8b7a79cae211f2",
+ "diff_sha256": "4b8a7e6194e9771e8768f5a6642bef0a500b20d9073b02b7ad8b7a79cae211f2",
+ "duration_s": 60.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/RingTheory/Finiteness/Basic.lean:271` has `instance range [Module.Finite R M] (f : M \u2192\u2097[R] N) : Module.Finite R f.range`; `TauCeti/Algebra/Coalgebra/Subcomodule.lean:343` identifies the comodule range with `LinearMap.range f.toLinearMap`.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule.lean",
+   "fix": "Remove this declaration and use `rw [Comodule.Hom.range_toSubmodule]; exact Module.Finite.range f.toLinearMap` or just `infer_instance` at call sites.",
+   "issue": "`Comodule.Hom.range_finite` duplicates Mathlib's `Module.Finite.range` for `f.toLinearMap` after `range_toSubmodule`.",
+   "line": 349
+  },
+  {
+   "evidence": "`mathlib/Mathlib/RingTheory/Noetherian/Defs.lean:63` defines `IsNoetherian.noetherian : \u2200 s : Submodule R M, s.FG`, with `isNoetherian_submodule'` at line 96; `TauCeti/Algebra/Coalgebra/Subcomodule/Comap.lean:174` gives `(B.comap f).toSubmodule = B.toSubmodule.comap f.toLinearMap`.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Comap.lean",
+   "fix": "Remove this declaration and use `rw [Subcomodule.comap_toSubmodule]; infer_instance` or `IsNoetherian.noetherian` through the existing submodule API.",
+   "issue": "`Subcomodule.comap_finite` duplicates the generic noetherian-submodule fact for the submodule `B.toSubmodule.comap f.toLinearMap`.",
+   "line": 180
+  },
+  {
+   "evidence": "`mathlib/Mathlib/RingTheory/Noetherian/Defs.lean:63` has the generic finite-generation fact for every submodule of a noetherian module; `TauCeti/Algebra/Coalgebra/Subcomodule/Comap.lean:268` identifies the comodule kernel with `LinearMap.ker f.toLinearMap`.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Comap.lean",
+   "fix": "Remove this declaration and use `rw [Comodule.Hom.ker_toSubmodule]; infer_instance` at call sites.",
+   "issue": "`Comodule.Hom.ker_finite` is the same noetherian-submodule wrapper specialized to `LinearMap.ker f.toLinearMap`.",
+   "line": 274
+  }
+ ],
+ "head_sha": "7bfcdb664a27201d5d47641568dab737b55665ab",
+ "merge_base_sha": "2e98e438bd72a91420eb1b0d62af5b448d517c92",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 769,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8419b6017063335671081b07bef9f65f4e1d3f7783fd5993a95c300d2d8dfb34",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T215019Z-769-reuse-8f0702",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T21:50:19Z",
+ "submitted_by": "kim-em",
+ "summary": "The new finiteness API is only thin wrappers around existing Mathlib noetherian/range finiteness facts after the already-present `*_toSubmodule` rewrites.",
+ "transcript_blob": "42e58441f9ce84c243903c0087d82082adeb4ce902e8929ba0273a8329a65e02",
+ "usage": {
+  "cached_input_tokens": 88064,
+  "input_tokens": 118621,
+  "output_tokens": 2856,
+  "reasoning_output_tokens": 1041
+ },
+ "verdict": "request_changes"
+}
