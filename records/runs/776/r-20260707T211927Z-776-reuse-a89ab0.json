@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.301727,
+   "returncode": 0,
+   "secs": 53.4,
+   "usage": {
+    "cached_input_tokens": 62464,
+    "input_tokens": 101131,
+    "output_tokens": 2572,
+    "reasoning_output_tokens": 1127
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "695dda63c1ce1a0b5ad9369165db888ba22ebff9",
+ "cost_estimated": true,
+ "cost_usd": 0.301727,
+ "dedupe_key": "TauCetiProject/TauCeti|776|6ea449ebc9bfe31a747b427006e1c5efd91d2068|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "ce27a74a059d3d7ede71e8e9f0f5ee7c58b9abdaa07bc3fd3443bc296cbeb9e7",
+ "diff_sha256": "ce27a74a059d3d7ede71e8e9f0f5ee7c58b9abdaa07bc3fd3443bc296cbeb9e7",
+ "duration_s": 53.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`CubeFaceExponent.lean:49` proves the lower exponent cast as `weight C - weight (C.lowerFace v hv)`; `CubeGenerator.lean:261` already has `characteristicLowerFaceExponent_natCast` giving `weight C - weight (C.eraseDirection v)`, and the PR proof itself closes the conversion by `simp [lowerFace_def]`.",
+   "file": "TauCeti/LowDimTopology/Plumbing/CubeFaceExponent.lean",
+   "fix": "Use `PlumbingCube.characteristicLowerFaceExponent_natCast` from `CubeGenerator.lean` directly, with `lowerFace_def`/`eraseDirection` simplification at the call sites, instead of adding a private duplicate helper.",
+   "issue": "`characteristicLowerFaceExponent_natCast_lowerFace` restates the existing bundled cast lemma after unfolding the lower face.",
+   "line": 49
+  },
+  {
+   "evidence": "`CubeFaceExponent.lean:95` defines `characteristicLowerFaceExponent_add_upperFace_comm`; `CubeFaceExponent.lean:123` proves the new line-115 theorem entirely by `rw [add_comm, characteristicLowerFaceExponent_add_upperFace_comm P k C hw hv hne.symm]; rw [add_comm]`.",
+   "file": "TauCeti/LowDimTopology/Plumbing/CubeFaceExponent.lean",
+   "fix": "Drop this theorem and use `characteristicLowerFaceExponent_add_upperFace_comm P k C hw hv hne.symm` with `add_comm` at use sites, or keep it private only if a local proof needs the orientation.",
+   "issue": "`characteristicUpperFaceExponent_add_lowerFace_comm` is only the symmetric spelling of `characteristicLowerFaceExponent_add_upperFace_comm`, creating parallel public API for the same mixed square.",
+   "line": 115
+  }
+ ],
+ "head_sha": "6ea449ebc9bfe31a747b427006e1c5efd91d2068",
+ "merge_base_sha": "695dda63c1ce1a0b5ad9369165db888ba22ebff9",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 776,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d84643897eebcc3e306760020fc0cce2033597d4b87e6a93b29ecb5f90a07187",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T211927Z-776-reuse-a89ab0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T21:19:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The new square-exponent content is mostly new, but the PR adds avoidable duplicate API/proof scaffolding. Remove the duplicate lower-face cast helper and the symmetric mixed-face public theorem unless there is a concrete downstream need.",
+ "transcript_blob": "ec2b4493e0e12d93eef350cd86857cd8f0a4a18ebe79f3932871c8b58a31370c",
+ "usage": {
+  "cached_input_tokens": 62464,
+  "input_tokens": 101131,
+  "output_tokens": 2572,
+  "reasoning_output_tokens": 1127
+ },
+ "verdict": "request_changes"
+}
