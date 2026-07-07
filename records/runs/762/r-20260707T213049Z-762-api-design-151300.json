@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.535145,
+   "returncode": 0,
+   "secs": 69.4,
+   "usage": {
+    "cached_input_tokens": 176000,
+    "input_tokens": 246967,
+    "output_tokens": 3077,
+    "reasoning_output_tokens": 1307
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7224b3ceb10c96b2b0f8304361276c0570ecdd3e",
+ "cost_estimated": true,
+ "cost_usd": 0.535145,
+ "dedupe_key": "TauCetiProject/TauCeti|762|7e6587d850f2826d896f917914addc4d4b79b484|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "3b6d3a163b67895fc45a60b3c2052b3c6c85a35ecef2e023e5e2ec8c7de57941",
+ "diff_sha256": "3b6d3a163b67895fc45a60b3c2052b3c6c85a35ecef2e023e5e2ec8c7de57941",
+ "duration_s": 69.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: line 47 defines `restrictScalarsMap`; lines 65-72 only give functor obj/map equalities, while line 55 is the unexposed implementation users need.",
+   "file": "TauCeti/Algebra/Category/CommAlgCat/RestrictScalars.lean",
+   "fix": "Add simp/pointwise lemmas such as `(restrictScalarsMap f \u03c7).hom = \u03c7.hom.restrictScalars k`, `restrictScalarsMap f \u03c7 a = \u03c7 a`, and the corresponding lemma for `((restrictScalars f).map \u03c7).hom`.",
+   "issue": "`restrictScalarsMap` is public but has no characteristic lemmas identifying its underlying `AlgHom` or pointwise action, so downstream proofs must unfold the implementation to use the restricted categorical map.",
+   "line": 47
+  },
+  {
+   "evidence": "grep: line 76 proves `toBialgHom (baseChangeMap ... \u03c6) (s \u2297\u209c[k] h) = s \u2297\u209c[k] toBialgHom \u03c6 h`; analogous pointwise base-change lemmas such as `AlgHom.baseChangePointsMulEquiv_mapDomain_apply_tmul` are marked `@[simp]`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/FiniteTypeBaseChange.lean",
+   "fix": "Annotate `baseChangeMap_apply_tmul` with `@[simp]` so users of `baseChangeMap` and `baseChangeFunctor.map` get the expected tensor normal form automatically.",
+   "issue": "`baseChangeMap_apply_tmul` is the normal-form lemma for the scalar-extended morphism on pure tensors, but it is not marked `@[simp]`.",
+   "line": 76
+  }
+ ],
+ "head_sha": "7e6587d850f2826d896f917914addc4d4b79b484",
+ "merge_base_sha": "292e10d27ae748389e50fe7b571d8ce0773466ab",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 762,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4ad272921174205fe4bce227a06a3334318216d170efed9b18ddff6ead34e48f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260707T213049Z-762-api-design-151300",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-07T21:30:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The finite-type base-change surface is close, but two characteristic API gaps leave consumers relying on unfolding or manual rewrites.",
+ "transcript_blob": "6a8692fb407ed2071d4b56a06353f7530d2bc02dde286c1da67c7c59a12e524f",
+ "usage": {
+  "cached_input_tokens": 176000,
+  "input_tokens": 246967,
+  "output_tokens": 3077,
+  "reasoning_output_tokens": 1307
+ },
+ "verdict": "request_changes"
+}
