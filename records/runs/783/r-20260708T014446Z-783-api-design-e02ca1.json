@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.321571,
+   "returncode": 0,
+   "secs": 73.8,
+   "usage": {
+    "cached_input_tokens": 90112,
+    "input_tokens": 128591,
+    "output_tokens": 2804,
+    "reasoning_output_tokens": 1383
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8a74e9c2e30debb7348799b16bd0e4bdf972bc7d",
+ "cost_estimated": true,
+ "cost_usd": 0.321571,
+ "dedupe_key": "TauCetiProject/TauCeti|783|d89ddb28c20e92133b6a58a1ea2b3483f76f4ef8|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "060a90cfc6bb2f16c1eae2c623af125dab54f32b4bb6604e91ace86a308e627b",
+ "diff_sha256": "060a90cfc6bb2f16c1eae2c623af125dab54f32b4bb6604e91ace86a308e627b",
+ "duration_s": 73.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`nl -ba .../ContractableLaw.lean` shows raw forall hypotheses at lines 54-56, 93-95, and 101-103, while `PathSpace/Law.lean:52` has `ExchangeableLaw.map_permReindex ... (h\u03c1 : ExchangeableLaw \u03c1)`.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/ContractableLaw.lean",
+   "fix": "Change those hypotheses to `h\u03c1 : ContractableLaw \u03c1`, matching `measurePreserving_reindex` and `ExchangeableLaw.map_permReindex`; keep only `contractableLaw_iff` as the explicit unfolding lemma.",
+   "issue": "`ContractableLaw.map_reindex`, `ContractableLaw.map_shift`, and `ContractableLaw.map_shift_iterate` take the unfolded defining forall instead of `(h\u03c1 : ContractableLaw \u03c1)`, exposing the body as part of the public eliminator API.",
+   "line": 54
+  },
+  {
+   "evidence": "`rg` confirms only whole-path/shift API in this file (`ContractableLaw.map_reindex` at line 54 and measure-preserving iff at line 69); the analogous exchangeable path API exists as `ExchangeableLaw.map_prefixProj_of_injective` in `PathSpace/Law.lean:85`, and the needed strict extension lemma is `exists_strictMono_nat_extending_fin` in `PermutationExtension.lean:30`.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/ContractableLaw.lean",
+   "fix": "Add a characteristic lemma such as `ContractableLaw.map_prefixProj_of_strictMono` and, ideally, an iff against all strict finite selections, using `exists_strictMono_nat_extending_fin` and `map_reindex_prefixProj`.",
+   "issue": "The predicate has no public finite-marginal characterization, so a user cannot derive the contractability statement `\u03c1.map (fun x => fun i : Fin n => x (k i)) = \u03c1.map (prefixProj \u03b1 n)` for strict finite selections without unfolding and reproving the extension argument.",
+   "line": 69
+  }
+ ],
+ "head_sha": "d89ddb28c20e92133b6a58a1ea2b3483f76f4ef8",
+ "merge_base_sha": "8a74e9c2e30debb7348799b16bd0e4bdf972bc7d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 783,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "501698edbc0e536a0f8a73f65065a7de52cac7b2c4d005ff1c27f1313270bbcc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T014446Z-783-api-design-e02ca1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T01:44:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The new path-law predicate is useful, but its public API still exposes the defining forall in core theorem signatures and does not provide the finite-dimensional marginal characterization users need to consume contractability without unfolding.",
+ "transcript_blob": "8f5a44df60b3442dac637452ed9cf4b54ada436e217b9abd6520736b2739fab4",
+ "usage": {
+  "cached_input_tokens": 90112,
+  "input_tokens": 128591,
+  "output_tokens": 2804,
+  "reasoning_output_tokens": 1383
+ },
+ "verdict": "request_changes"
+}
