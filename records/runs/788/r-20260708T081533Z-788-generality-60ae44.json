@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.334591,
+   "returncode": 0,
+   "secs": 71.2,
+   "usage": {
+    "cached_input_tokens": 92672,
+    "input_tokens": 131003,
+    "output_tokens": 3220,
+    "reasoning_output_tokens": 1554
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b1578314269dad4db38912d06872704524628767",
+ "cost_estimated": true,
+ "cost_usd": 0.334591,
+ "dedupe_key": "TauCetiProject/TauCeti|788|7ffc7cec325fb369812bc0b1ff258de68bfe76b6|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "6381eb938940b16310919ac8003c807fda34c7bc7f4786abe400d49ad886e4e4",
+ "diff_sha256": "6381eb938940b16310919ac8003c807fda34c7bc7f4786abe400d49ad886e4e4",
+ "duration_s": 71.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib defines `covariance` without probability or L\u00b2 assumptions at `mathlib/Mathlib/Probability/Moments/Covariance.lean:38`, and `IdentDistrib.integral_eq` at `mathlib/Mathlib/Probability/IdentDistrib.lean:189` gives equality of integrals for identically distributed real variables without integrability hypotheses.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "State the lemma with just `h : IdentDistrib (fun \u03c9 => (X \u03c9, Y \u03c9)) (fun \u03c9 => (X' \u03c9, Y' \u03c9)) \u03bc \u03bd`; prove it by composing `h` with the measurable centered-product function, or via `covariance_map`, instead of using `covariance_eq_sub`.",
+   "issue": "`covariance_eq_of_identDistrib_pair` assumes `[IsProbabilityMeasure \u03bc]`, `[IsProbabilityMeasure \u03bd]`, and four `MemLp` hypotheses, although equality of covariance follows from equality of the two-dimensional laws alone.",
+   "line": 52
+  },
+  {
+   "evidence": "`Contractable.identDistrib_pair` already has the weaker input at `code/TauCeti/Probability/Exchangeability/Contractability.lean:103`, while the covariance helpers at `code/TauCeti/Probability/Exchangeability/L2/Covariance.lean:86` and `:96` require the stronger L\u00b2/probability assumptions.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "Generalize these helper lemmas to take `hX_meas : \u2200 n, AEMeasurable (X n) \u03bc`; keep the L\u00b2/probability hypotheses only on the headline `contractable_covariance_structure` if that milestone is meant to be L\u00b2-specific.",
+   "issue": "`Contractable.covariance_eq_of_lt` and `Contractable.covariance_eq_of_ne` inherit the same unnecessary `[IsProbabilityMeasure \u03bc]` and `\u2200 n, MemLp (X n) 2 \u03bc` assumptions, even though the contractable pair law only needs a.e. measurability.",
+   "line": 86
+  }
+ ],
+ "head_sha": "7ffc7cec325fb369812bc0b1ff258de68bfe76b6",
+ "merge_base_sha": "b1578314269dad4db38912d06872704524628767",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 788,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "4423e987a8e6ee5dcd1672bb81c0f60378f97382e3b644b118430d3dedf26e55",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T081533Z-788-generality-60ae44",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T08:15:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The pair-law covariance API is now present, but it is still under-generalized: the reusable covariance equalities require probability and L\u00b2 hypotheses that Mathlib's covariance/equal-law machinery does not need.",
+ "transcript_blob": "24b9075fa156d9813299679a6e293cfc48b63b5fa23ce018e04559b084091420",
+ "usage": {
+  "cached_input_tokens": 92672,
+  "input_tokens": 131003,
+  "output_tokens": 3220,
+  "reasoning_output_tokens": 1554
+ },
+ "verdict": "request_changes"
+}
