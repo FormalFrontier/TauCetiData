@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.694662,
+   "returncode": 0,
+   "secs": 104.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38580,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38580,
+    "cache_read_input_tokens": 179348,
+    "inference_geo": "not_available",
+    "input_tokens": 3174,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4384,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4384,
+      "cache_read_input_tokens": 50207,
+      "input_tokens": 2,
+      "output_tokens": 3832,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7770,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_usd": 0.694662,
+ "dedupe_key": "TauCetiProject/TauCeti|781|9db78870688d2ee917eb9f89dc5ca65e7894192f|api-design|claude-opus-4-8|fb0698ac514a62c5|production|3",
+ "diff_blob": "06ccb48ee682a3b05f58fad69219a197f4340a4ed1db86d5954b3ac72e580c66",
+ "diff_sha256": "06ccb48ee682a3b05f58fad69219a197f4340a4ed1db86d5954b3ac72e580c66",
+ "duration_s": 104.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "JHolomorphicEnergy.lean:79-83 uses `irreducible_def` with no `@[expose]` and comments \"supplies the public `_def` lemma while keeping this body unexposed\"; CubeGenerator.lean:83,95 have structure-valued `irreducible_def`s (`eraseDirection`, `upperFace`) with no `@[expose]` whose `_def` lemmas are public.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Remove the `@[expose] section` \u2026 `end` wrapper (lines 34-37 and 66), leaving the plain `irreducible_def expShift`. The consumers use `expShift_apply`/`expShift_realOperator_apply_of_nonneg`, not the body.",
+   "issue": "`expShift` is wrapped in `@[expose] section`, exposing its full structure body downstream. The comment claims this is required for `expShift_def` to type-check, but `irreducible_def` alone gives the public `_def` lemma with the body unexposed.",
+   "line": "37"
+  },
+  {
+   "evidence": "Same idiom as CubeGenerator.lean structure `irreducible_def`s; lines 173-192 already provide the simp lemmas that make unfolding unnecessary.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Remove the `@[expose] section` \u2026 `end` wrapper (lines 154-156 and 171); the plain `irreducible_def` yields the public `expShiftContraction_def` used at line 179 without exposing the body.",
+   "issue": "`expShiftContraction` is wrapped in the same unnecessary `@[expose] section`, exposing the contraction package body by defeq though `expShiftContraction_toStronglyContinuousSemigroup` and `expShiftContraction_apply` already supply the needed API.",
+   "line": "156"
+  }
+ ],
+ "head_sha": "9db78870688d2ee917eb9f89dc5ca65e7894192f",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 781,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "584049e4364f94983a4bb2bef4487f8fa0fce2f293ef5aedbd5124113560c5a8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T040709Z-781-api-design-671660",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T04:07:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is complete and well annotated, but both new bundled constructors wrap their irreducible_def in @[expose] section, unnecessarily exposing the structure bodies across module boundaries. The stated justification (needed for the _def lemma to type-check) is false, as the repo's own irreducible_def structure defs show.",
+ "transcript_blob": "5dd32b982b11b3478c956ee019af981efd95002748962a47616f8c9faf7e41ff",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38580,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38580,
+  "cache_read_input_tokens": 179348,
+  "inference_geo": "not_available",
+  "input_tokens": 3174,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4384,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4384,
+    "cache_read_input_tokens": 50207,
+    "input_tokens": 2,
+    "output_tokens": 3832,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7770,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
