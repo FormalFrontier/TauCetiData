@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.207957,
+   "returncode": 0,
+   "secs": 45.1,
+   "usage": {
+    "cached_input_tokens": 47744,
+    "input_tokens": 71991,
+    "output_tokens": 2095,
+    "reasoning_output_tokens": 855
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_estimated": true,
+ "cost_usd": 0.207957,
+ "dedupe_key": "TauCetiProject/TauCeti|777|e7c819f4f810fe1c0326830e85bd990b200f38aa|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "ba45bbeb5336c677205885b0ae59d722a6bde3baa1c1705f8ce775f9c0aff042",
+ "diff_sha256": "ba45bbeb5336c677205885b0ae59d722a6bde3baa1c1705f8ce775f9c0aff042",
+ "duration_s": 45.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep hits: `HermiteFunctionMemLp.lean:134:lemma integral_hermiteFunction_zero_mul_self :` states the expanded `Real.exp ...` integrand; `HermiteFunction.lean:101:lemma hermiteFunction_zero` is available to bridge the formula.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionMemLp.lean",
+   "fix": "Make the public `@[simp]` lemma state the normalization in terms of `hermiteFunction 0`, and keep the expanded Gaussian calculation private if needed.",
+   "issue": "`integral_hermiteFunction_zero_mul_self` is documented as the square integral of the zeroth Hermite function, but its public statement exposes the expanded formula instead of `\u222b x, hermiteFunction 0 x * hermiteFunction 0 x = 1`.",
+   "line": 134
+  },
+  {
+   "evidence": "Grep hit: `HermiteFunctionLp.lean:67:lemma inner_hermiteFunctionLp_zero_zero :` has a norm-square conclusion; roadmap `OrthogonalL2Bases/README.md:160` requires `Orthonormal \ud835\udd5c (hermiteFunctionLp \ud835\udd5c)`, and the existing Chebyshev analogue exposes `inner ... = if ...` at `Measure.lean:255`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionLp.lean",
+   "fix": "Expose a `@[simp]` lemma `inner \ud835\udd5c (hermiteFunctionLp \ud835\udd5c 0) (hermiteFunctionLp \ud835\udd5c 0) = 1`; derive any norm statement from that as secondary API.",
+   "issue": "`inner_hermiteFunctionLp_zero_zero` is named and documented as an inner-product normalization, but the public theorem is `(\u2016hermiteFunctionLp \ud835\udd5c 0\u2016 : \ud835\udd5c) ^ 2 = 1`, so it cannot rewrite the `inner` goal needed by the later `Orthonormal \ud835\udd5c (hermiteFunctionLp \ud835\udd5c)` API.",
+   "line": 67
+  }
+ ],
+ "head_sha": "e7c819f4f810fe1c0326830e85bd990b200f38aa",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 777,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "f38716ffb180126855484a10765eb4603863549fe4e299090fd31c8f1156c557",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T051456Z-777-api-design-0c6617",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T05:14:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The Hermite Lp packaging exposes the right family and representatives, but the normalization API is not stated in the object-level forms downstream users need. Replace the expanded/norm-square public facts with characteristic `hermiteFunction` and `inner` normal forms, keeping proof-only expansions private.",
+ "transcript_blob": "ab5c36c908d9693965b7df00c6483d2f38a3db3b3f2d76ed9f01d0b68fbddd9a",
+ "usage": {
+  "cached_input_tokens": 47744,
+  "input_tokens": 71991,
+  "output_tokens": 2095,
+  "reasoning_output_tokens": 855
+ },
+ "verdict": "request_changes"
+}
