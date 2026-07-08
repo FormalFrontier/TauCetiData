@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.253515,
+   "returncode": 0,
+   "secs": 53.8,
+   "usage": {
+    "cached_input_tokens": 87040,
+    "input_tokens": 114531,
+    "output_tokens": 2418,
+    "reasoning_output_tokens": 1018
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a23e667ab240d5a2e476d70ea29a09883bbfdbe1",
+ "cost_estimated": true,
+ "cost_usd": 0.253515,
+ "dedupe_key": "TauCetiProject/TauCeti|789|98fa2c036658ec36b7e1f0122cf9d9f879e41b30|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "a406e9a8a04cb88d4c6eef0265e9edc4322312a7356028d9662b2fc18e2d818a",
+ "diff_sha256": "a406e9a8a04cb88d4c6eef0265e9edc4322312a7356028d9662b2fc18e2d818a",
+ "duration_s": 53.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"ofInvariant\"` shows `@[expose] noncomputable def Hom.ofInvariant` at line 154 and only `Hom.ofInvariant_one` at line 167; the body at lines 157-158 is `LinearMap.toSpanSingleton R M (m : M)`.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Invariants.lean",
+   "fix": "Remove `@[expose]` and add a simp lemma such as `Hom.ofInvariant_apply (m) (r : R) : (Hom.ofInvariant m) r = r \u2022 (m : M)`; keep `Hom.ofInvariant_one` as a specialization if useful.",
+   "issue": "`Hom.ofInvariant` exposes its body but only characterizes the value at `1`, so users needing the documented map `r \u21a6 r \u2022 m` must unfold the implementation.",
+   "line": 154
+  },
+  {
+   "evidence": "Line 122 exposes `def mapInvariants`; lines 127, 133, and 141 provide the public characterization and id/comp laws.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Invariants.lean",
+   "fix": "Drop `@[expose]`; consumers can use the existing simp and functoriality lemmas instead of depending on the `restrict` implementation.",
+   "issue": "`Hom.mapInvariants` is marked `@[expose]` even though the file already provides the needed opaque API (`mapInvariants_coe_apply`, `mapInvariants_id`, `mapInvariants_comp`).",
+   "line": 122
+  },
+  {
+   "evidence": "Line 186 exposes `def invariantsEquivHom`; lines 203 and 210 give the forward and inverse application lemmas, so downstream code should not need the constructor body at lines 190-199.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Invariants.lean",
+   "fix": "Drop `@[expose]`; the equivalence is already characterized by `invariantsEquivHom_apply` and `invariantsEquivHom_symm_apply_coe`, plus the pointwise `Hom.ofInvariant_apply` requested above.",
+   "issue": "`invariantsEquivHom` is marked `@[expose]`, exposing the equivalence construction and inverse proofs as public implementation details.",
+   "line": 186
+  }
+ ],
+ "head_sha": "98fa2c036658ec36b7e1f0122cf9d9f879e41b30",
+ "merge_base_sha": "9d685fa80cac49cc7e22539488b3219ea40f52dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 789,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9c6dace997e89e8e31718f02eadab93a5b00d9aaed05e62c0d91a9807041816f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T064146Z-789-api-design-c6a782",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T06:41:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The invariants API exposes implementation bodies where characteristic lemmas should suffice, and one constructor is missing its pointwise characterization. Downstream users should not have to unfold these definitions to use the universal property.",
+ "transcript_blob": "b14cdc48fa1c7075bc27c6a42529a7569c2821f0fe8cac2ce637496f87aee855",
+ "usage": {
+  "cached_input_tokens": 87040,
+  "input_tokens": 114531,
+  "output_tokens": 2418,
+  "reasoning_output_tokens": 1018
+ },
+ "verdict": "request_changes"
+}
