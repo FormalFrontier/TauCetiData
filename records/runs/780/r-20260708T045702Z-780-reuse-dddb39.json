@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.329515,
+   "returncode": 0,
+   "secs": 43.0,
+   "usage": {
+    "cached_input_tokens": 56960,
+    "input_tokens": 106553,
+    "output_tokens": 1769,
+    "reasoning_output_tokens": 568
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_estimated": true,
+ "cost_usd": 0.329515,
+ "dedupe_key": "TauCetiProject/TauCeti|780|628dc9f6bad3cf62cf2735c8f140752514d189c9|reuse|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "24d49901db8a1529ee9ae9961472e24baf3207e0ab75149b2339703b82baf65f",
+ "diff_sha256": "24d49901db8a1529ee9ae9961472e24baf3207e0ab75149b2339703b82baf65f",
+ "duration_s": 43.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"def leftResidual|def rightResidual|def subOfLe\"` shows Common.lean:143/150 are aliases of `subOfLe`; existing `subOfLe` is at FixedDegreeSubtraction.lean:44 with exactly the needed degree index `e - d`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/Common.lean",
+   "fix": "Remove these public wrappers and use `subOfLe D (inf D E) (inf_le_left D E)` / `subOfLe E (inf D E) (inf_le_right D E)` at call sites.",
+   "issue": "`leftResidual` and `rightResidual` are direct aliases for existing `subOfLe` applications: lines 143-152 define exactly `subOfLe D (inf D E) (inf_le_left D E)` and `subOfLe E (inf D E) (inf_le_right D E)`.",
+   "line": 143
+  },
+  {
+   "evidence": "FixedDegreeSubtraction.lean:54 has `coe_subOfLe`, :70 has `multiplicityFinsupp_subOfLe`, :97 has `equivSym_subOfLe`, :120 has `add_subOfLe`, and :131 has `subOfLe_add`; Common.lean:157,186,207,238,248,258,268 invoke exactly those lemmas.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/Common.lean",
+   "fix": "Delete these specialized residual lemmas and use `coe_subOfLe`, `multiplicityFinsupp_subOfLe`, `equivSym_subOfLe`, `subOfLe_add`, and `add_subOfLe` with `E := inf D E`.",
+   "issue": "The residual support lemmas duplicate existing subtraction lemmas specialized to `inf`: `coe_leftResidual`/`coe_rightResidual`, `multiplicityFinsupp_leftResidual`/`_rightResidual`, `equivSym_leftResidual`/`_rightResidual`, and the four reconstruction lemmas at lines 233, 243, 253, 263 are all immediate restatements of existing `subOfLe` API.",
+   "line": 154
+  }
+ ],
+ "head_sha": "628dc9f6bad3cf62cf2735c8f140752514d189c9",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 780,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "24e242f7d546a6b3fc7e489e83b2d5f1d366297cfc6cab72eeda7c53fb396d22",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T045702Z-780-reuse-dddb39",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T04:57:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The common-part construction itself is new, but the residual API introduces public thin wrappers and duplicate lemma names for existing fixed-degree subtraction API. These should be removed or replaced by direct uses of `subOfLe` and its existing lemmas.",
+ "transcript_blob": "293f3e2c0e5256f34b3ac0b526aa51cdb80b194babb579f6d60c5da6c6b7f3b5",
+ "usage": {
+  "cached_input_tokens": 56960,
+  "input_tokens": 106553,
+  "output_tokens": 1769,
+  "reasoning_output_tokens": 568
+ },
+ "verdict": "block"
+}
