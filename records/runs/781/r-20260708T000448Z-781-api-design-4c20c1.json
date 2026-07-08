@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.273699,
+   "returncode": 0,
+   "secs": 49.7,
+   "usage": {
+    "cached_input_tokens": 96768,
+    "input_tokens": 127869,
+    "output_tokens": 2327,
+    "reasoning_output_tokens": 921
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b54f170f12ca1ccd0677adae8970d6aa6e81d988",
+ "cost_estimated": true,
+ "cost_usd": 0.273699,
+ "dedupe_key": "TauCetiProject/TauCeti|781|a5b42bf67254f3d65818e5617b4bc609b3a474f5|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "da9b96ea88c3bc3dfff464792dd8d8413b40e6db4393f6db099770562469f871",
+ "diff_sha256": "da9b96ea88c3bc3dfff464792dd8d8413b40e6db4393f6db099770562469f871",
+ "duration_s": 49.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: ExponentialShift.lean:38 `public abbrev expShift`; Resolvent.lean:210 and :218 use `S.expShift lambda` plus `expShift_realOperator_apply_of_nonneg`, not unfolding.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Make it an opaque public definition, preferably `irreducible_def`, and prove/use `expShift_apply` and the real-time lemmas as the public characteristic API.",
+   "issue": "`expShift` is a `public abbrev`, so its structure body is reducible public surface even though no consumer needs to unfold it.",
+   "line": 38
+  },
+  {
+   "evidence": "grep: ExponentialShift.lean:145 `public abbrev expShiftContraction`; ExponentialShift.lean:157-168 already supplies the needed simp lemmas.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Make it an opaque public definition and keep `expShiftContraction_toStronglyContinuousSemigroup` and `expShiftContraction_apply` as the public API.",
+   "issue": "`expShiftContraction` is also a `public abbrev`, exposing the contraction package body by defeq.",
+   "line": 145
+  }
+ ],
+ "head_sha": "a5b42bf67254f3d65818e5617b4bc609b3a474f5",
+ "merge_base_sha": "632679ba95e43532ea1bfd15ca1f55042f9983bb",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 781,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "4d174740b6cd92a12435421cabd18815294865713fc39705891c6dbff691d113",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T000448Z-781-api-design-4c20c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T00:04:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic lemmas are present, but the two new bundled constructors are still exposed as reducible `public abbrev`s. Consumers should use the supplied API, not depend on the construction by defeq.",
+ "transcript_blob": "dd929cf6aa3251eea5a97af26326d3a4ebe947bc27eac04be336988997a39daf",
+ "usage": {
+  "cached_input_tokens": 96768,
+  "input_tokens": 127869,
+  "output_tokens": 2327,
+  "reasoning_output_tokens": 921
+ },
+ "verdict": "request_changes"
+}
