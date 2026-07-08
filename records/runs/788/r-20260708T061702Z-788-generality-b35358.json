@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.46098,
+   "returncode": 0,
+   "secs": 67.3,
+   "usage": {
+    "cached_input_tokens": 122880,
+    "input_tokens": 186750,
+    "output_tokens": 2673,
+    "reasoning_output_tokens": 1089
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b1578314269dad4db38912d06872704524628767",
+ "cost_estimated": true,
+ "cost_usd": 0.46098,
+ "dedupe_key": "TauCetiProject/TauCeti|788|8fcb44e7b66420599ce2c63aa551a5c2bd5ce140|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "bfe76131890b493ee6f682db3442965d10fc2e3f7638eff77f11e079dd07a144",
+ "diff_sha256": "bfe76131890b493ee6f682db3442965d10fc2e3f7638eff77f11e079dd07a144",
+ "duration_s": 67.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Covariance.lean:126-128` has `i < j \u2192 k < l`; Mathlib provides `ProbabilityTheory.covariance_comm` at `mathlib/Mathlib/Probability/Moments/Covariance.lean:75`, so reversed off-diagonal pairs need no extra contractability.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "State/prove a public `Contractable.covariance_eq_of_ne` with hypotheses `i \u2260 j` and `k \u2260 l`, using `lt_or_gt_of_ne` plus `ProbabilityTheory.covariance_comm`, and derive the `<` version only as a specialization if desired.",
+   "issue": "`Contractable.covariance_eq_of_lt` only handles `i < j` and `k < l`, but the natural covariance-structure statement is for all off-diagonal pairs `i \u2260 j` and `k \u2260 l`; reversed pairs are covered by `covariance_comm`.",
+   "line": 126
+  },
+  {
+   "evidence": "`Covariance.lean:143-144` packages `(\u2200 i j k l, i < j \u2192 k < l \u2192 ...)`, while the docstring at lines 137-139 describes a single common off-diagonal covariance.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "Change the third component to `\u2200 i j k l, i \u2260 j \u2192 k \u2260 l \u2192 cov[X i, X j; \u03bc] = cov[X k, X l; \u03bc]`, backed by the generalized covariance lemma.",
+   "issue": "`contractable_covariance_structure` packages the same under-generalized covariance field, requiring both pairs to be increasing rather than merely off-diagonal.",
+   "line": 143
+  }
+ ],
+ "head_sha": "8fcb44e7b66420599ce2c63aa551a5c2bd5ce140",
+ "merge_base_sha": "b1578314269dad4db38912d06872704524628767",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 788,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2fae4d693e2646b8bdc0c68a218057aa1af9be3f6a681ae3ad038bf51cb3bb3e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T061702Z-788-generality-b35358",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T06:17:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The covariance API is under-generalized: it exposes only increasing index pairs even though covariance symmetry gives the natural off-diagonal statement.",
+ "transcript_blob": "632e770a630d0148640e9469f30cf81e58cce76e75e4afcec849a3f4d833cc8a",
+ "usage": {
+  "cached_input_tokens": 122880,
+  "input_tokens": 186750,
+  "output_tokens": 2673,
+  "reasoning_output_tokens": 1089
+ },
+ "verdict": "request_changes"
+}

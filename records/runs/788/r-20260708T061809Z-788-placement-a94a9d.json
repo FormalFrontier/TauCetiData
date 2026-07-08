@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.534807,
+   "returncode": 0,
+   "secs": 72.7,
+   "usage": {
+    "cached_input_tokens": 156544,
+    "input_tokens": 229053,
+    "output_tokens": 3133,
+    "reasoning_output_tokens": 1292
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b1578314269dad4db38912d06872704524628767",
+ "cost_estimated": true,
+ "cost_usd": 0.534807,
+ "dedupe_key": "TauCetiProject/TauCeti|788|8fcb44e7b66420599ce2c63aa551a5c2bd5ce140|placement|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "bfe76131890b493ee6f682db3442965d10fc2e3f7638eff77f11e079dd07a144",
+ "diff_sha256": "bfe76131890b493ee6f682db3442965d10fc2e3f7638eff77f11e079dd07a144",
+ "duration_s": 72.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Covariance.lean:82` and `:94` have `{\u03b1 : Type*} [MeasurableSpace \u03b1]` and no real, `MemLp`, variance, or covariance assumptions; `Contractability.lean:15-17` says it is the Layer 0 home for contractability-specific API, and roadmap lines 263-276 list `Contractable.map_single`/`map_pair` as Layer 0 milestones.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "Move these declarations, with their private block-law projection helpers, to the contractability/finite-marginal API near `Contractable.map_single` and `Contractable.map_pair`; let `L2/Covariance.lean` import that and keep only the real moment/covariance consequences.",
+   "issue": "`Contractable.identDistrib_coord` and `Contractable.identDistrib_pair` are generic over any measurable value space and use only `Contractable.map_single`/`map_pair`, so they are Layer 0 contractability API rather than L2 covariance material.",
+   "line": 82
+  },
+  {
+   "evidence": "`Covariance.lean:4-6` imports `IdentDistrib`, `Moments.Covariance`, and `Moments.Variance`; `mathlib/Mathlib/Probability/IdentDistrib.lean:8` publicly imports `Mathlib.Probability.Moments.Variance`, and `mathlib/Mathlib/Probability/Moments/Variance.lean:8` publicly imports `Mathlib.Probability.Moments.Covariance`.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "Drop the redundant direct moment imports, or keep only imports not already supplied after the generic `IdentDistrib` API is moved.",
+   "issue": "The direct public imports of `Mathlib.Probability.Moments.Covariance` and `Mathlib.Probability.Moments.Variance` are redundant because `Mathlib.Probability.IdentDistrib` already publicly imports `Moments.Variance`, which publicly imports `Moments.Covariance`.",
+   "line": 5
+  }
+ ],
+ "head_sha": "8fcb44e7b66420599ce2c63aa551a5c2bd5ce140",
+ "merge_base_sha": "b1578314269dad4db38912d06872704524628767",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 788,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "961aa97e1a5c8c022b425d212f6969ecddf4a74b0bf62b0b983f79c8079aa340",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T061809Z-788-placement-a94a9d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T06:18:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The L2 covariance module is the right home for the real-valued moment consequences, but it also introduces generic contractability-to-law API and redundant moment imports.",
+ "transcript_blob": "85e973a7856a24b0220785c360aa035d1db3c1f145ffa953b78dc4ed0bc13f5f",
+ "usage": {
+  "cached_input_tokens": 156544,
+  "input_tokens": 229053,
+  "output_tokens": 3133,
+  "reasoning_output_tokens": 1292
+ },
+ "verdict": "request_changes"
+}
