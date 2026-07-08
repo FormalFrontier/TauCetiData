@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5846064999999999,
+   "returncode": 0,
+   "secs": 103.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 29421,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 29421,
+    "cache_read_input_tokens": 125853,
+    "inference_geo": "not_available",
+    "input_tokens": 3172,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2619,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2619,
+      "cache_read_input_tokens": 42813,
+      "input_tokens": 2,
+      "output_tokens": 6123,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8131,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_usd": 0.584606,
+ "dedupe_key": "TauCetiProject/TauCeti|784|1bc68f9bdbdc76140296004dff11fb5955d38c29|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "6ee1d625410dad52d49da917ad5058ebcf1ee700cb25804c52db5357a5d300b1",
+ "diff_sha256": "6ee1d625410dad52d49da917ad5058ebcf1ee700cb25804c52db5357a5d300b1",
+ "duration_s": 103.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Each mem_iff body is `<symmetric_lemma> (mapsTo_conj_of_mem_iff h\u03a9) ...` (lines 210, 240, 376, 402); the `_of_symmetric` targets are context (existing) lines 186, 216, 359, 383.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Keep only `mapsTo_conj_of_mem_iff` and delete the four `_of_mem_iff` wrappers; the L4 assembly calls `image_conj_inter_im_pos_of_symmetric (mapsTo_conj_of_mem_iff hsymm)` etc. directly.",
+   "issue": "The four `_of_mem_iff` lemmas (image_conj_inter_im_pos_of_mem_iff:207, image_conj_inter_im_neg_of_mem_iff:237, differentiableOn_conj_conj_inter_im_neg_of_mem_iff:371, differentiableOn_schwarzReflection_inter_im_neg_of_mem_iff:398) are a parallel API over the existing `_of_symmetric` lemmas, each just applying `mapsTo_conj_of_mem_iff`. This duplicates the whole surface for a hypothesis conversion that is already a single public lemma.",
+   "line": "207"
+  },
+  {
+   "evidence": "Bodies at 81, 90, 104, 113, 322, 332 are pure specializations of the general lemmas at 73/95/310; grep shows no in-file callers of the six specializations.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Reflection.lean",
+   "fix": "Drop these specializations; downstream callers apply the general `_of_subset_` lemma with the appropriate subset proof. Re-add a specialization only when a concrete consumer needs it.",
+   "issue": "Consumer-less trivial specializations re-derive the general `_of_subset_` lemmas: eqOn_schwarzReflection_im_nonneg:79, eqOn_schwarzReflection_inter_im_nonneg:88, eqOn_schwarzReflection_im_neg:101, eqOn_schwarzReflection_inter_im_neg:110, differentiableOn_schwarzReflection_im_pos:319, differentiableOn_schwarzReflection_inter_im_pos:329. Each is a one-line `Subset.rfl`/`inter_subset_right`/`.2.le` application of `eqOn_schwarzReflection_of_subset_im_nonneg`/`_neg` or `differentiableOn_schwarzReflection_of_subset_im_nonneg`, and none is used within the PR.",
+   "line": "79"
+  }
+ ],
+ "head_sha": "1bc68f9bdbdc76140296004dff11fb5955d38c29",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 784,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7e1b019657d8f0dc196c7c1206cb96667b0500ea91dfece8ea272a13324cb433",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T033324Z-784-reuse-a1a8ac",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T03:33:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR ships a full parallel `_of_mem_iff` family that duplicates the existing `_of_symmetric` lemmas via the trivial new bridge `mapsTo_conj_of_mem_iff`, plus several consumer-less trivial specializations of the general `_of_subset_` lemmas. Collapse the parallel API and drop the unused special cases.",
+ "transcript_blob": "511088a50065f016cf842916d4c8955a9ab68010ee7791e897eaada5fa4cff2d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 29421,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 29421,
+  "cache_read_input_tokens": 125853,
+  "inference_geo": "not_available",
+  "input_tokens": 3172,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2619,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2619,
+    "cache_read_input_tokens": 42813,
+    "input_tokens": 2,
+    "output_tokens": 6123,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8131,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
