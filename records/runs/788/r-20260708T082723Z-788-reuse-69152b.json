@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.313956,
+   "returncode": 0,
+   "secs": 40.6,
+   "usage": {
+    "cached_input_tokens": 105472,
+    "input_tokens": 146676,
+    "output_tokens": 1840,
+    "reasoning_output_tokens": 546
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b1578314269dad4db38912d06872704524628767",
+ "cost_estimated": true,
+ "cost_usd": 0.313956,
+ "dedupe_key": "TauCetiProject/TauCeti|788|bc6f303db9ffdd6ebb6551ea6aa349ba642dc853|reuse|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "a98dd95318a860816cf775286f97699a925c077f24e29214d62010445600286d",
+ "diff_sha256": "a98dd95318a860816cf775286f97699a925c077f24e29214d62010445600286d",
+ "duration_s": 40.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Probability/HasLaw.lean:163` defines `HasLaw.covariance_comp` and `:173` defines `HasLaw.covariance_fun_comp`; `mathlib/Mathlib/Probability/IdentDistrib.lean:149` defines `IdentDistrib.hasLaw`; the PR proof at `Covariance.lean:58-67` manually pushes both pair maps through `covariance_map` and `h.map_eq`.",
+   "file": "TauCeti/Probability/Exchangeability/L2/Covariance.lean",
+   "fix": "Remove this theorem or make the local proof use `HasLaw.covariance_fun_comp`: define `F := fun \u03c9 => (X \u03c9, Y \u03c9)`, `G := fun \u03c9 => (X' \u03c9, Y' \u03c9)`, use `hF : HasLaw F (\u03bc.map F) \u03bc := \u27e8h.aemeasurable_fst, rfl\u27e9` and `h.hasLaw hF` for `G`, then rewrite both covariances with `covariance_fun_comp measurable_fst.aemeasurable measurable_snd.aemeasurable`.",
+   "issue": "`covariance_eq_of_identDistrib_pair` is a public parallel API for covariance equality under identical pair laws.",
+   "line": 52
+  }
+ ],
+ "head_sha": "bc6f303db9ffdd6ebb6551ea6aa349ba642dc853",
+ "merge_base_sha": "b1578314269dad4db38912d06872704524628767",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 788,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "69cabe09b778cd7d8c74453ea3a743892a56bb77d6936236ad409c85e0bc7c8c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T082723Z-788-reuse-69152b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T08:27:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still adds a public covariance invariance wrapper that duplicates Mathlib's `HasLaw` covariance API instead of reusing it.",
+ "transcript_blob": "9970fff797c09584a0050e29a2141aaa097f64941ebd3a3df4f1cd2dc1ce0c9b",
+ "usage": {
+  "cached_input_tokens": 105472,
+  "input_tokens": 146676,
+  "output_tokens": 1840,
+  "reasoning_output_tokens": 546
+ },
+ "verdict": "request_changes"
+}
