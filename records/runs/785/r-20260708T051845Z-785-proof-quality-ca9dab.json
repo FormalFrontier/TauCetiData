@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.234838,
+   "returncode": 0,
+   "secs": 43.7,
+   "usage": {
+    "cached_input_tokens": 58496,
+    "input_tokens": 87134,
+    "output_tokens": 2080,
+    "reasoning_output_tokens": 952
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_estimated": true,
+ "cost_usd": 0.234838,
+ "dedupe_key": "TauCetiProject/TauCeti|785|f1c764a0a549f7ca8cd57999fd7a4e0804264393|proof-quality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "e2c7421fd4f66719f27737ec5710c647f267fdfaa1a34356c91c38a8348c640d",
+ "diff_sha256": "e2c7421fd4f66719f27737ec5710c647f267fdfaa1a34356c91c38a8348c640d",
+ "duration_s": 43.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `Comap.lean:117 private theorem rTensor_mkQ_map_subtype` and `Quotient.lean:54 private theorem rTensor_mkQ_map_subtype` have the same statement/proof shape.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Quotient.lean",
+   "fix": "Make the existing lemma non-private or move it to a shared helper file, then reuse it from both `Comap.lean` and `Quotient.lean`.",
+   "issue": "`rTensor_mkQ_map_subtype` repeats the same nontrivial induction already present in the imported `Subcomodule/Comap.lean` instead of using a shared lemma.",
+   "line": 54
+  },
+  {
+   "evidence": "lines 177-180 prove `TensorProduct.map N.toSubmodule.mkQ (LinearMap.id : R \u2192\u2097[R] R) ... = ((TensorProduct.mk R (M \u29f8 N.toSubmodule) R).flip 1) ...` by only `rw [Comodule.lTensor_counit_coact]; rfl`.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Quotient.lean",
+   "fix": "Replace the `rfl` with explicit rewriting/simplification using the tensor and quotient application lemmas, or factor that naturality step into a named lemma.",
+   "issue": "The counit proof ends with bare `rfl` after `rw [Comodule.lTensor_counit_coact]`, relying on definitional equality through `TensorProduct.map`, `Submodule.mkQ`, and the quotient-side unit tensor.",
+   "line": 180
+  }
+ ],
+ "head_sha": "f1c764a0a549f7ca8cd57999fd7a4e0804264393",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 785,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "98dc16fc2247f02e0f47cab427bcca362454240b3ead61c189051b073f6e6104",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T051845Z-785-proof-quality-ca9dab",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T05:18:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs compile, but two proof-quality issues remain: a nontrivial tensor-quotient proof is duplicated instead of being reused, and the quotient counit proof closes a wrapper-heavy tensor equality by bare definitional equality.",
+ "transcript_blob": "70f38f4a3b76fcb0d4981aafaa9b6d6eb125d5501658ff44f083072ef415ceef",
+ "usage": {
+  "cached_input_tokens": 58496,
+  "input_tokens": 87134,
+  "output_tokens": 2080,
+  "reasoning_output_tokens": 952
+ },
+ "verdict": "request_changes"
+}
