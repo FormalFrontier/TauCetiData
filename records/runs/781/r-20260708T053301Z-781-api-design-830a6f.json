@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.657908,
+   "returncode": 0,
+   "secs": 119.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 34690,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 34690,
+    "cache_read_input_tokens": 173012,
+    "inference_geo": "not_available",
+    "input_tokens": 2625,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3697,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3697,
+      "cache_read_input_tokens": 47004,
+      "input_tokens": 2,
+      "output_tokens": 2521,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8114,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "526789fceccca92a2600c5029001715321af90a5",
+ "cost_usd": 0.657908,
+ "dedupe_key": "TauCetiProject/TauCeti|781|4c97905f07006337e46faf051bd937b8fbb9ae86|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "f1e69a79947353bdf786c15521141ad746513f08d414fb1df01d03d7a862ed99",
+ "diff_sha256": "f1e69a79947353bdf786c15521141ad746513f08d414fb1df01d03d7a862ed99",
+ "duration_s": 119.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "These two are the only `@[expose]` in TauCeti/Analysis/Semigroups/ (grep); Resolvent.lean:211 uses `T.tendsto_average_orbit_zero` and `expShift_realOperator_apply_of_nonneg`, never the body.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Remove `@[expose]` from `expShift`; the in-file `rfl` lemmas still elaborate since the body is visible within the module.",
+   "issue": "`expShift` is `@[expose]`, exposing its body downstream, but its characteristic API is complete (`expShift_apply` simp/rfl, `expShift_apply_apply`, `expShift_realOperator_of_nonneg`, `HasGrowthBound.expShift`) and the only importer (Resolvent.lean) works entirely through those lemmas. No consumer must unfold or compute the body.",
+   "line": "39"
+  },
+  {
+   "evidence": "Basic.lean defines `ContractionSemigroup` and `realOperator` without `@[expose]` and exposes only lemmas; same pattern applies here.",
+   "file": "TauCeti/Analysis/Semigroups/ExponentialShift.lean",
+   "fix": "Remove `@[expose]`; the rfl characteristic lemmas remain provable in-file.",
+   "issue": "`expShiftContraction` is `@[expose]` for no consumer need; its projection (`expShiftContraction_toStronglyContinuousSemigroup`, simp/rfl) and value (`expShiftContraction_apply`, simp) lemmas already characterize it, mirroring the un-exposed `ContractionSemigroup` in Basic.lean.",
+   "line": "149"
+  }
+ ],
+ "head_sha": "4c97905f07006337e46faf051bd937b8fbb9ae86",
+ "merge_base_sha": "526789fceccca92a2600c5029001715321af90a5",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 781,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "dc4ef7e09053e2ac6b869c1ac1fd701ff5695c333a248263fcce4ebafe97f345",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260708T053301Z-781-api-design-830a6f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-08T05:33:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API for both new definitions is complete and correctly annotated, but both `expShift` and `expShiftContraction` are needlessly marked `@[expose]` \u2014 the only two in the whole Semigroups directory \u2014 even though the full lemma API exists and no consumer unfolds the bodies.",
+ "transcript_blob": "4e3f7e09298fc1c51bf5ba57f35b0ffb92c0689c95d4b2f214cb76ec30faf0bf",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34690,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 34690,
+  "cache_read_input_tokens": 173012,
+  "inference_geo": "not_available",
+  "input_tokens": 2625,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3697,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3697,
+    "cache_read_input_tokens": 47004,
+    "input_tokens": 2,
+    "output_tokens": 2521,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8114,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
