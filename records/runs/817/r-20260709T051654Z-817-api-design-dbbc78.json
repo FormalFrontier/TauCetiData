@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.460995,
+   "returncode": 0,
+   "secs": 69.7,
+   "usage": {
+    "cached_input_tokens": 224000,
+    "input_tokens": 275097,
+    "output_tokens": 3117,
+    "reasoning_output_tokens": 1181
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "cost_estimated": true,
+ "cost_usd": 0.460995,
+ "dedupe_key": "TauCetiProject/TauCeti|817|05a4389ae729712b6530cba2fe5f409cd81d1102|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "8e4e594555986b632b04894c95cdafed80b37c935cbd523a66d8e27012d8a73b",
+ "diff_sha256": "8e4e594555986b632b04894c95cdafed80b37c935cbd523a66d8e27012d8a73b",
+ "duration_s": 69.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg \"unweightedAbelJacobiDegreeZeroDivisor\" code -n` finds only its definition and its own private/public coercion lemmas at `WeilDivisor.lean:535,541,547`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor.lean",
+   "fix": "Delete it and its simp lemma, or make it private/local if a proof still needs it; consumers should use `weightedAbelJacobiDegreeZeroDivisor (fun _ => 1) rfl` plus the weighted API instead.",
+   "issue": "`unweightedAbelJacobiDegreeZeroDivisor` remains a public unweighted Abel-Jacobi representative helper even though the PR deletes the unweighted Abel-Jacobi quotient/divisor-class API it supported.",
+   "line": 535
+  },
+  {
+   "evidence": "`rg \"degreeZeroSubgroupEquivWeightedDegreeZeroOne\" code -n` finds only the exposed definition and its own apply/coe lemmas at `WeilDivisor.lean:554,573,583,589,599`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor.lean",
+   "fix": "Remove this equivalence and its four simp lemmas unless a roadmap-facing consumer requires it; otherwise keep any needed transport private to the weighted implementation.",
+   "issue": "`degreeZeroSubgroupEquivWeightedDegreeZeroOne` and its simp API are still exposed as a public weight-one transport layer, but after the unweighted quotient equivalences were removed it has no remaining consumers.",
+   "line": 554
+  }
+ ],
+ "head_sha": "05a4389ae729712b6530cba2fe5f409cd81d1102",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 817,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f77014e3c74e47cf53ce3f6a89a0261bd10e0bbb894212d59ba8b54a82b17b11",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T051654Z-817-api-design-dbbc78",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:16:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The specialized unweighted Abel-Jacobi/Pic0 layer is mostly collapsed, but two leftover public weight-one helper APIs remain with no consumers. These should not stay in the exported surface after the corresponding unweighted quotient layer is removed.",
+ "transcript_blob": "ddee706ec7f0c428dcfed623a23bde679fabf0512b4796a8f1d005ec13c6acfc",
+ "usage": {
+  "cached_input_tokens": 224000,
+  "input_tokens": 275097,
+  "output_tokens": 3117,
+  "reasoning_output_tokens": 1181
+ },
+ "verdict": "request_changes"
+}
