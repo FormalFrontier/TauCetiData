@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.413829,
+   "returncode": 0,
+   "secs": 72.5,
+   "usage": {
+    "cached_input_tokens": 119808,
+    "input_tokens": 170499,
+    "output_tokens": 3349,
+    "reasoning_output_tokens": 2033
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a23e667ab240d5a2e476d70ea29a09883bbfdbe1",
+ "cost_estimated": true,
+ "cost_usd": 0.413829,
+ "dedupe_key": "TauCetiProject/TauCeti|789|13a0e59e3d272356e74e930fe2a3e5e58b2aa0ed|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "5506404ac5ae3ddd03cc9ab7ff9293e6deb3e9701d04d863c1d3ae529be6b438",
+ "diff_sha256": "5506404ac5ae3ddd03cc9ab7ff9293e6deb3e9701d04d863c1d3ae529be6b438",
+ "duration_s": 72.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"mem_invariants|mapInvariants_coe_apply\"` shows `mem_invariants` at line 263 and `mapInvariants_coe_apply` at line 288 with no preceding `@[simp]`, while the generic versions at lines 82 and 132 are annotated.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean",
+   "fix": "Add `@[simp]` to `mem_invariants` and `Hom.mapInvariants_coe_apply`, matching `mem_coinvariants` and `mapCoinvariants_coe_apply`.",
+   "issue": "The characteristic invariant-specialized normal forms are not simp lemmas: `mem_invariants` and `Hom.mapInvariants_coe_apply` are both public API lemmas but lack `@[simp]`.",
+   "line": 263
+  },
+  {
+   "evidence": "`rg -n \"mapInvariants_id|mapInvariants_comp|mapCoinvariants_id|mapCoinvariants_comp\"` finds only `mapCoinvariants_id` at line 140 and `mapCoinvariants_comp` at line 147; no `mapInvariants_id` or `mapInvariants_comp` declarations exist.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean",
+   "fix": "Add public `@[simp]` lemmas `mapInvariants_id` and `mapInvariants_comp` as the `g = 1` specializations of `mapCoinvariants_id` and `mapCoinvariants_comp`.",
+   "issue": "`Hom.mapInvariants` has no invariant-specialized identity or composition lemmas, so users of the bialgebra fixed-vector API must fall back to the generic `mapCoinvariants_*` lemmas with `(1 : GroupLike R C)`.",
+   "line": 284
+  }
+ ],
+ "head_sha": "13a0e59e3d272356e74e930fe2a3e5e58b2aa0ed",
+ "merge_base_sha": "9d685fa80cac49cc7e22539488b3219ea40f52dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 789,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "a62215bdd739050cd1fe23a8607802bc7b072c627dba4dd777acce4e0608a9b0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T082310Z-789-api-design-32a076",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T08:23:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The invariant-specialized surface is thinner than the public API it introduces: the named invariants lemmas are not registered for normal-form automation, and the `mapInvariants` functorial laws promised by the surface are missing.",
+ "transcript_blob": "06f4f5d013534f9568fdc50171f6b723af8ee67b5c0857a4339e1816d6dd79f7",
+ "usage": {
+  "cached_input_tokens": 119808,
+  "input_tokens": 170499,
+  "output_tokens": 3349,
+  "reasoning_output_tokens": 2033
+ },
+ "verdict": "request_changes"
+}
