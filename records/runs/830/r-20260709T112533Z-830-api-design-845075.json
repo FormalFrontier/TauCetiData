@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.311173,
+   "returncode": 0,
+   "secs": 42.2,
+   "usage": {
+    "cached_input_tokens": 81536,
+    "input_tokens": 124277,
+    "output_tokens": 1890,
+    "reasoning_output_tokens": 747
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a1218ddabd2cbdf947749054977b108142f30403",
+ "cost_estimated": true,
+ "cost_usd": 0.311173,
+ "dedupe_key": "TauCetiProject/TauCeti|830|9131fe919ff5b60fd352a4811d0bb5bb90e7f10d|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "60191b9ccc421548833a1e620d1c56e2ecfd2f4f852d88bd988a53e0032ea662",
+ "diff_sha256": "60191b9ccc421548833a1e620d1c56e2ecfd2f4f852d88bd988a53e0032ea662",
+ "duration_s": 42.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`public structure IntervalPartition` at line 31; grep shows the public endpoints are `Path.exists_isOpen_mem_subset_setOf_homotopic` line 610, `Path.isOpen_setOf_homotopic` line 644, and `Path.Homotopic.Quotient.instDiscreteTopology` line 654, none of which expose `IntervalPartition`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Remove `public` from `IntervalPartition` or make the whole tube construction an explicitly supported public API with downstream use.",
+   "issue": "`IntervalPartition` is public even though it is described as proof-local and only appears in non-public construction lemmas, not in the public discreteness API.",
+   "line": 31
+  },
+  {
+   "evidence": "`public structure TubeData` at line 57, but `structure PathInTube` line 79, `def TubeData.toSet` line 101, and `theorem TubeData.isOpen` line 273 are non-public; the public theorem at line 610 returns only an open `Set (Path x y)`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Make `TubeData` non-public, or if it is intended as public API also expose and commit to `PathInTube`, `TubeData.toSet`, `TubeData.mem_toSet_iff`, and `TubeData.isOpen` as the characteristic interface.",
+   "issue": "`TubeData` is public while its basic consumer interface remains non-public, leaving an exposed structure without the characteristic API needed to use it as a stable tube abstraction.",
+   "line": 57
+  }
+ ],
+ "head_sha": "9131fe919ff5b60fd352a4811d0bb5bb90e7f10d",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 830,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "06b0b1d20244a27a723e7f0ed7b8fba79d6afee25fd744296f0be248002761dd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T112533Z-830-api-design-845075",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T11:25:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The final discreteness API is present, but proof scaffolding is still exposed as public API without roadmap need or a complete stable interface. Keep the interval/tube machinery internal unless a later stage is meant to consume it directly.",
+ "transcript_blob": "41885558b3f590a6697ae026369e4f8e5cfa1ae9f39b5e94b051a55db5ddf4b7",
+ "usage": {
+  "cached_input_tokens": 81536,
+  "input_tokens": 124277,
+  "output_tokens": 1890,
+  "reasoning_output_tokens": 747
+ },
+ "verdict": "request_changes"
+}
