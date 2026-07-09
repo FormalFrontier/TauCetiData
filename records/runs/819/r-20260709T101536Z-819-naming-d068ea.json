@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.300889,
+   "returncode": 0,
+   "secs": 50.2,
+   "usage": {
+    "cached_input_tokens": 79488,
+    "input_tokens": 117407,
+    "output_tokens": 2385,
+    "reasoning_output_tokens": 1032
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc1bbf821120168c1a2af6629452988d7d1fb658",
+ "cost_estimated": true,
+ "cost_usd": 0.300889,
+ "dedupe_key": "TauCetiProject/TauCeti|819|861e387bad49005873a83b428237bb63a093ce7e|naming|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "dd3634c702a49cb647fb85915b912c91abe66971095acfc985d9109210faa7ef",
+ "diff_sha256": "dd3634c702a49cb647fb85915b912c91abe66971095acfc985d9109210faa7ef",
+ "duration_s": 50.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"# Pointwise diagonal lower bounds|not.*coercivity|IsCoercive|lemma\" code/TauCeti/Analysis/PDE/CoerciveEnergy.lean` shows line 10 `# Pointwise diagonal lower bounds...`, lines 19-21 `not coercivity... IsCoercive`, and no `IsCoercive` declarations; Mathlib names should describe conclusions, and `IsCoercive` is the standard source term for coercivity.",
+   "file": "TauCeti/Analysis/PDE/CoerciveEnergy.lean",
+   "fix": "Rename the module/import path to describe lower/diagonal energy bounds, or move this material into an existing lower-bound energy file.",
+   "issue": "`CoerciveEnergy` is now a misleading public module/file name: the file title is diagonal lower bounds and the docstring explicitly says these are not `IsCoercive` coercivity statements.",
+   "line": 10
+  },
+  {
+   "evidence": "`rg -n \"# Diagonal energy lower bounds|not coercivity|IsCoercive|lemma\" code/TauCeti/Analysis/PDE/CoercivePerturbation.lean` shows line 11 `# Diagonal energy lower bounds...`, lines 19-20 `not coercivity... IsCoercive`, and only lower-bound lemmas.",
+   "file": "TauCeti/Analysis/PDE/CoercivePerturbation.lean",
+   "fix": "Rename the file/module to a lower-bound perturbation name, or relocate the lemmas under a lower-bound energy module.",
+   "issue": "`CoercivePerturbation` has the same mismatch: it now contains perturbation lemmas for explicit diagonal lower bounds, not coercivity preservation.",
+   "line": 11
+  },
+  {
+   "evidence": "`rg -n \"diagonalLowerBound\" code/TauCeti mathlib/Mathlib` finds only the new TauCeti names at CoerciveEnergy lines 123/129, CoercivePerturbation lines 71/89/102, UniformEllipticEnergy lines 172/188, and IntegratedEnergyForm lines 442/514; Mathlib naming rule 1 says terms of `Prop`s, including theorem names, use `snake_case`.",
+   "file": "TauCeti/Analysis/PDE/CoerciveEnergy.lean",
+   "fix": "Rename all public theorem/wrapper names to `min_diagonal_lower_bound...` and update docstrings, calls, and `grind_pattern`s accordingly.",
+   "issue": "The new public theorem family uses `diagonalLowerBound` inside theorem names, e.g. `min_diagonalLowerBound_pos`, but theorem/proof names are supposed to be snake_case unless the mixed-case token is an existing declaration being referenced.",
+   "line": 123
+  }
+ ],
+ "head_sha": "861e387bad49005873a83b428237bb63a093ce7e",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 819,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3ca0cdb257ce93853008211dbfcc886db55197c3c13b65b62e030a208802df7c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T101536Z-819-naming-d068ea",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T10:15:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API still has naming mismatches after removing the `IsCoercive` content: two module/file names advertise coercivity, and the new theorem names use lowerCamel words inside theorem identifiers without referencing an existing declaration.",
+ "transcript_blob": "2f7d85039a9cb93a3eb0299544c2728c25b0e1bb5bb441699a88a5f60cc9d6f6",
+ "usage": {
+  "cached_input_tokens": 79488,
+  "input_tokens": 117407,
+  "output_tokens": 2385,
+  "reasoning_output_tokens": 1032
+ },
+ "verdict": "request_changes"
+}
