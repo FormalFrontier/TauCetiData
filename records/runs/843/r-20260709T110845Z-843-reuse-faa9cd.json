@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.502413,
+   "returncode": 0,
+   "secs": 72.8,
+   "usage": {
+    "cached_input_tokens": 205056,
+    "input_tokens": 264933,
+    "output_tokens": 3350,
+    "reasoning_output_tokens": 936
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.502413,
+ "dedupe_key": "TauCetiProject/TauCeti|843|a916251c5c33a41e02880c8c19438e4fc6a39218|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "926cc0e014220f5882f4e990bba798d3c34f62bf1087bc0d6f5c268898e8770a",
+ "diff_sha256": "926cc0e014220f5882f4e990bba798d3c34f62bf1087bc0d6f5c268898e8770a",
+ "duration_s": 72.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"ContDiffOn\\.hasDerivAt_iteratedDerivWithin|hasDerivAt_iteratedDerivWithin_succ\"` shows the duplicated calls at `Integral.lean:125` and `Integral.lean:141`, while `Basic.lean:217` defines `lemma hasDerivAt_iteratedDerivWithin_succ ... HasDerivAt (iteratedDerivWithin k f (Ici 0)) ...`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Replace both local derivations with `fun t ht => hcm.hasDerivAt_iteratedDerivWithin_succ 0 ht` (or the corresponding `simpa` around that), instead of calling the generic `ContDiffOn.hasDerivAt_iteratedDerivWithin` with `contDiffOn`, `uniqueDiffOn_Ici`, and `Ici_mem_nhds` each time.",
+   "issue": "The `hderiv` proofs at lines 122-127 and 138-143 reprove the completely-monotone derivative fact already provided by `IsCompletelyMonotone.hasDerivAt_iteratedDerivWithin_succ`.",
+   "line": 125
+  }
+ ],
+ "head_sha": "a916251c5c33a41e02880c8c19438e4fc6a39218",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "71badc84bf12085da301aabaa47e400a673a34e2f5bc0c6cdb7e4a3b89df9688",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T110845Z-843-reuse-faa9cd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T11:08:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR removes the direct Mathlib FTC duplicates, but it re-derives an existing TauCeti completely-monotone derivative helper in two new proof blocks.",
+ "transcript_blob": "813d4ec739bcd03caafedf13b8e017b51fa1ba0b2081bf951730f28e25a1314a",
+ "usage": {
+  "cached_input_tokens": 205056,
+  "input_tokens": 264933,
+  "output_tokens": 3350,
+  "reasoning_output_tokens": 936
+ },
+ "verdict": "request_changes"
+}
