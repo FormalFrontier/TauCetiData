@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.399848,
+   "returncode": 0,
+   "secs": 51.0,
+   "usage": {
+    "cached_input_tokens": 88576,
+    "input_tokens": 145912,
+    "output_tokens": 2296,
+    "reasoning_output_tokens": 948
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0cd116dae144aff57af0e35c7e105adec0e4060d",
+ "cost_estimated": true,
+ "cost_usd": 0.399848,
+ "dedupe_key": "TauCetiProject/TauCeti|866|3c8666c1c9632d8c0e7c7fef5954d51b8ed88ec9|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "f4d85d66508626ce7c97f49596f056205da7ef24daaf32ee602308ff84cb81bf",
+ "diff_sha256": "f4d85d66508626ce7c97f49596f056205da7ef24daaf32ee602308ff84cb81bf",
+ "duration_s": 51.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`code/TauCeti/Analysis/Contour/WindingNumberTranslate.lean:50` has unconditional `theorem windingNumber_translate (c : \u2102)`, proved via `cauchyPVAt_translate` at `code/TauCeti/Analysis/Contour/CauchyPrincipalValue.lean:402`; this PR has only `HasCauchyPVAt.const_mul_curve`/`CauchyPVExistsAt.const_mul_curve` at `code/TauCeti/Analysis/Contour/CauchyPrincipalValue.lean:415` and `:456`, while `code/TauCeti/Analysis/Contour/WindingNumberScale.lean:81`, `:90`, and `:97` require `CauchyPVExistsAt`.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberScale.lean",
+   "fix": "Add a value lemma `cauchyPVAt_const_mul_curve` using `map (fun \u03b5 => \u03b5 / \u2016c\u2016) (\ud835\udcdd[>] 0) = \ud835\udcdd[>] 0`, then state `windingNumber_const_mul (hc : c \u2260 0)` with no `CauchyPVExistsAt`; remove the derived `hpv` assumptions from `windingNumber_eq_zero_const_mul` and `IsNullHomologous.const_mul`.",
+   "issue": "`windingNumber_const_mul` assumes `CauchyPVExistsAt`, unlike the analogous unconditional `windingNumber_translate`; the scaling only reindexes the excision radius by the order-isomorphic map `\u03b5 \u21a6 \u03b5 / \u2016c\u2016`, so the raw `cauchyPVAt` value should be preserved without an existence hypothesis.",
+   "line": 81
+  }
+ ],
+ "head_sha": "3c8666c1c9632d8c0e7c7fef5954d51b8ed88ec9",
+ "merge_base_sha": "0cd116dae144aff57af0e35c7e105adec0e4060d",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 866,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "ee44567b8d72000a1b267c9eb3c8b6ac572ea880de6d502630b312321c424486",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T234438Z-866-generality-ebbd55",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T23:44:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The CPV-level scaling lemma is now general, but the winding/null-homology API is still under-generalized by requiring principal-value existence where the raw `limUnder` value should be invariant under positive radius rescaling.",
+ "transcript_blob": "d2596a43e23e6e2416135f17c650753104b325660ac2457698604436de504541",
+ "usage": {
+  "cached_input_tokens": 88576,
+  "input_tokens": 145912,
+  "output_tokens": 2296,
+  "reasoning_output_tokens": 948
+ },
+ "verdict": "request_changes"
+}
