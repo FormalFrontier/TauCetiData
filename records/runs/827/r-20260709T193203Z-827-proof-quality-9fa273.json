@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.146821,
+   "returncode": 0,
+   "secs": 43.2,
+   "usage": {
+    "cached_input_tokens": 42112,
+    "input_tokens": 54815,
+    "output_tokens": 2075,
+    "reasoning_output_tokens": 794
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b73427443ad31f4cd3ed7f80b3c30a601b1da050",
+ "cost_estimated": true,
+ "cost_usd": 0.146821,
+ "dedupe_key": "TauCetiProject/TauCeti|827|054404ea976f156dc8ff791ba6bc7e8b12ef96d7|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "cc528561b2b09cc382e39849636f8c39f668fb32942809472698b29bf49e8d29",
+ "diff_sha256": "cc528561b2b09cc382e39849636f8c39f668fb32942809472698b29bf49e8d29",
+ "duration_s": 43.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"\\b(change|show)\\b\" ...` reports `DiagonalizableGroup.lean:228:  change MonoidAlgebra.ofCoeff ...`; the surrounding proof then rewrites `Finsupp.mapDomain_single` and `MonoidAlgebra.ofCoeff_single`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup.lean",
+   "fix": "Replace the `change` with a named lemma or `convert`/rewrite step, or add a short proof comment explaining why this defeq step is unavoidable.",
+   "issue": "`toMultiplicativeAlgEquiv_T` uses an uncommented `change`, relying on the current unfolded representation of `AddMonoidAlgebra.toMultiplicative`/`MonoidAlgebra.ofCoeff`.",
+   "line": 228
+  },
+  {
+   "evidence": "`rg -n \"mapDomainBialgHom_single_one|mapDomainBialgHom.*single|mapDomain_single\"` shows the private lemma at `DiagonalizableGroupFunctoriality.lean:71-75` and the duplicated local proof at `DiagonalizableGroupBaseChange.lean:157-160`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroupBaseChange.lean",
+   "fix": "Make the existing single-on-one lemma reusable, or add one shared local/API lemma and use it in both files instead of duplicating the `rw [MonoidAlgebra.mapDomainBialgHom, BialgHom.ofAlgHom_apply, MonoidAlgebra.mapDomainAlgHom_apply, MonoidAlgebra.mapDomain_single]` chain.",
+   "issue": "The proof repeats the same low-level unfolding chain for `MonoidAlgebra.mapDomainBialgHom` that already exists as `mapDomainBialgHom_single_one` in `DiagonalizableGroupFunctoriality.lean`, leaving two brittle copies tied to wrapper internals.",
+   "line": 159
+  }
+ ],
+ "head_sha": "054404ea976f156dc8ff791ba6bc7e8b12ef96d7",
+ "merge_base_sha": "b73427443ad31f4cd3ed7f80b3c30a601b1da050",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 827,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "afc8bcb9aff2d2a25b9d8954d3b74a517c5b2891bddfc9cce5358de8021c628f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T193203Z-827-proof-quality-9fa273",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T19:32:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR fixes the bump mechanically, but the new proof scripts add undocumented definitional-equality manipulation and duplicate a brittle unfolding calculation instead of factoring it once.",
+ "transcript_blob": "f9df5c5f6168820d8e6311b54ce20c47f07001837764b8e9d6686d5d0af608eb",
+ "usage": {
+  "cached_input_tokens": 42112,
+  "input_tokens": 54815,
+  "output_tokens": 2075,
+  "reasoning_output_tokens": 794
+ },
+ "verdict": "request_changes"
+}
