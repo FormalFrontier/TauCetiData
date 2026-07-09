@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.690214,
+   "returncode": 0,
+   "secs": 79.4,
+   "usage": {
+    "cached_input_tokens": 346368,
+    "input_tokens": 428450,
+    "output_tokens": 3554,
+    "reasoning_output_tokens": 1328
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a1218ddabd2cbdf947749054977b108142f30403",
+ "cost_estimated": true,
+ "cost_usd": 0.690214,
+ "dedupe_key": "TauCetiProject/TauCeti|830|61b6889f1599544784b283a8e3d5ad83b3a3f764|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "8dadf908bd1e6913c4e29129b91789ad29475482ca2b40d4778491553cf26344",
+ "diff_sha256": "8dadf908bd1e6913c4e29129b91789ad29475482ca2b40d4778491553cf26344",
+ "duration_s": 79.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib has `Mathlib/Topology/UnitInterval.lean:470: lemma exists_monotone_Icc_subset_open_cover_Icc` and `:480: lemma exists_monotone_Icc_subset_open_cover_unitInterval`; the new wrappers at `Prelude.lean:38` and `:52` only call these and repackage `N` as `Fin (N + 1)`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Prelude.lean",
+   "fix": "Use `exists_monotone_Icc_subset_open_cover_Icc` / `exists_monotone_Icc_subset_open_cover_unitInterval` directly in `Path.exists_partition_in_cover`, choosing the eventual constant index `N`, or make these adapters private if they are only implementation plumbing.",
+   "issue": "`exists_monotone_partition_Icc` and `exists_monotone_partition_unitInterval` are public Fin-indexed wrappers around Mathlib's open-cover partition lemmas, duplicating the existing cover API.",
+   "line": 38
+  },
+  {
+   "evidence": "Mathlib provides `Mathlib/Topology/Connected/PathConnected.lean:399: theorem IsPathConnected.joinedIn`, `:183: def JoinedIn.somePath`, and `:186: theorem JoinedIn.somePath_mem`; the new declaration at `Prelude.lean:63` is exactly `hU.joinedIn _ ha _ hb` repackaged and is only used at `SemilocallySimplyConnectedOn.lean:535`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Prelude.lean",
+   "fix": "Delete this wrapper and at the sole use construct the path with `let h := (T.V_pathConn j).joinedIn _ (h\u03b3.passes_through_V j) _ (h\u03b3'.passes_through_V j); \u27e8h.somePath, Set.range_subset_iff.mpr h.somePath_mem\u27e9`.",
+   "issue": "`IsPathConnected.exists_path` is a public existential restatement of Mathlib's `IsPathConnected.joinedIn` plus `JoinedIn.somePath`.",
+   "line": 63
+  }
+ ],
+ "head_sha": "61b6889f1599544784b283a8e3d5ad83b3a3f764",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 830,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "31e76dbb4c1f1b98d0f77e730850c62f781bae26c1df076bd04a2a10be5366fb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T052725Z-830-reuse-879d36",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:27:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds substantial new SLSC material, but the prelude exposes public convenience wrappers for existing Mathlib path-connectedness and interval-cover APIs. These create parallel API where the existing declarations should be used directly or the adapters should be kept private to this construction.",
+ "transcript_blob": "96412d97dc1b202803f929c2f5b4a4ac8ee36ab9aaec1eccc0db3e5f49642743",
+ "usage": {
+  "cached_input_tokens": 346368,
+  "input_tokens": 428450,
+  "output_tokens": 3554,
+  "reasoning_output_tokens": 1328
+ },
+ "verdict": "request_changes"
+}
