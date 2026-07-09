@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.446627,
+   "returncode": 0,
+   "secs": 108.6,
+   "usage": {
+    "cached_input_tokens": 189184,
+    "input_tokens": 235339,
+    "output_tokens": 4042,
+    "reasoning_output_tokens": 1752
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc1bbf821120168c1a2af6629452988d7d1fb658",
+ "cost_estimated": true,
+ "cost_usd": 0.446627,
+ "dedupe_key": "TauCetiProject/TauCeti|821|522850a01899d30395010cc3020b0416a2df25f3|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "5c83574395fc974e70a0bd426715a84f3b322e426c51f2799f3127ae27dba72d",
+ "diff_sha256": "5c83574395fc974e70a0bd426715a84f3b322e426c51f2799f3127ae27dba72d",
+ "duration_s": 108.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows line 8 is `public import ...BaseChangeNaturality`; `BaseChangeNaturality.lean:7-8` publicly imports `BaseChange` and `HopfMap`; `rg 'AlgHom\\.mapDomain|baseChangePointsMulEquiv_mapDomain' AdditiveGroupBaseChange.lean` has no hits.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/AdditiveGroupBaseChange.lean",
+   "fix": "Restore `public import TauCeti.Algebra.AlgebraicGroup.BaseChange` and add a non-public `import TauCeti.Algebra.AlgebraicGroup.BaseChangeNaturality` for the rewritten proofs, or otherwise avoid re-exporting `HopfMap`.",
+   "issue": "This public import re-exports `BaseChangeNaturality`, which publicly imports `HopfMap`, although this file exposes only value-algebra naturality and no `mapDomain` API.",
+   "line": 8
+  },
+  {
+   "evidence": "`MultiplicativeGroupBaseChange.lean:7` is `public import ...BaseChangeNaturality`; `rg 'AlgHom\\.mapDomain|baseChangePointsMulEquiv_mapDomain' MultiplicativeGroupBaseChange.lean` has no hits.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/MultiplicativeGroupBaseChange.lean",
+   "fix": "Make `BaseChangeNaturality` a non-public proof import and keep `BaseChange` as the public dependency.",
+   "issue": "This public import re-exports the generic base-change naturality/map-domain layer from the `\ud835\udd3e_m` example, but the public API here only needs `BaseChange` plus value-algebra lemmas.",
+   "line": 7
+  },
+  {
+   "evidence": "`RootsOfUnityBaseChange.lean:7` is `public import ...BaseChangeNaturality`; `rg 'AlgHom\\.mapDomain|baseChangePointsMulEquiv_mapDomain' RootsOfUnityBaseChange.lean` has no hits.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/RootsOfUnityBaseChange.lean",
+   "fix": "Use a non-public import of `BaseChangeNaturality` for the proof rewrite and publicly import only the narrower `BaseChange` dependency.",
+   "issue": "This public import widens the roots-of-unity worked example to re-export `BaseChangeNaturality` and its public `HopfMap` dependency without any exposed map-domain declarations in the file.",
+   "line": 7
+  }
+ ],
+ "head_sha": "522850a01899d30395010cc3020b0416a2df25f3",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 821,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e92ac9c634f0522faae55257a9dab935834278d8354f2d7c28217769e46d698c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T052926Z-821-api-design-1a4715",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:29:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The rewritten proofs unnecessarily widen the public imports of three worked-example modules. Keep the generic naturality lemmas as proof dependencies without re-exporting the broader `BaseChangeNaturality`/`HopfMap` API from these examples.",
+ "transcript_blob": "aed4d8e7204e475962748ee786a5aef05d3b2b884307da9115b719c676c51db0",
+ "usage": {
+  "cached_input_tokens": 189184,
+  "input_tokens": 235339,
+  "output_tokens": 4042,
+  "reasoning_output_tokens": 1752
+ },
+ "verdict": "request_changes"
+}
