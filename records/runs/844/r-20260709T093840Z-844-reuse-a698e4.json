@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.395164,
+   "returncode": 0,
+   "secs": 52.5,
+   "usage": {
+    "cached_input_tokens": 109568,
+    "input_tokens": 162638,
+    "output_tokens": 2501,
+    "reasoning_output_tokens": 933
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.395164,
+ "dedupe_key": "TauCetiProject/TauCeti|844|4c6a48eb42fad8a71cc468fd6668051068f72a22|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "fa53fc96c1b24c0de991e29ed4ef779dd336f5190c73f32b5de05d0d5d1dac8a",
+ "diff_sha256": "fa53fc96c1b24c0de991e29ed4ef779dd336f5190c73f32b5de05d0d5d1dac8a",
+ "duration_s": 52.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"eventuallyEq_comp_homeomorph_zero_iff\" code/TauCeti` reports identical private declarations at `HarmonicIsometry.lean:47` and `HarmonicDilation.lean:47`; Mathlib has the underlying API at `mathlib/Mathlib/Order/Filter/Map.lean:48` (`theorem eventuallyEq_map`) and `mathlib/Mathlib/Topology/Homeomorph/Defs.lean:366` (`theorem map_nhds_eq`).",
+   "file": "TauCeti/Analysis/InnerProductSpace/HarmonicDilation.lean",
+   "fix": "Make a single helper available from `HarmonicIsometry` or a shared topology file, remove the duplicate in `HarmonicDilation`, and call that shared lemma at lines 136 and 140; the helper proof itself should use Mathlib's `Filter.eventuallyEq_map` with `Homeomorph.map_nhds_eq` instead of redoing the `eventually_map` element chase.",
+   "issue": "`eventuallyEq_comp_homeomorph_zero_iff` is copied verbatim from `HarmonicIsometry.lean:47`, even though `HarmonicDilation` imports that file.",
+   "line": 47
+  }
+ ],
+ "head_sha": "4c6a48eb42fad8a71cc468fd6668051068f72a22",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 844,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6af236642b7e3f2e81d5a78388f8e2c419af3dbda4068cb864695c1ca892a4a2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T093840Z-844-reuse-a698e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T09:38:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still leaves a duplicated private helper in the two inner-product files it claims to deduplicate. Delete the second copy and reuse one shared lemma, with its proof reduced through Mathlib's filter API.",
+ "transcript_blob": "07bc5a75180423b1cad83d728ea83f00253a34f7d459c16170e05609e12c4d94",
+ "usage": {
+  "cached_input_tokens": 109568,
+  "input_tokens": 162638,
+  "output_tokens": 2501,
+  "reasoning_output_tokens": 933
+ },
+ "verdict": "request_changes"
+}
