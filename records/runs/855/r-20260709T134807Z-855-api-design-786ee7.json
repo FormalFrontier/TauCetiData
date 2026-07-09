@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.244807,
+   "returncode": 0,
+   "secs": 58.4,
+   "usage": {
+    "cached_input_tokens": 63104,
+    "input_tokens": 94175,
+    "output_tokens": 1930,
+    "reasoning_output_tokens": 978
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d1470d60217f9f517079b4afab79a9076942195f",
+ "cost_estimated": true,
+ "cost_usd": 0.244807,
+ "dedupe_key": "TauCetiProject/TauCeti|855|34bfa701f7af0fb6334cf63c0d1cccdf3128f1b3|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "7d14202c69183bd0556d6181f6df40ce07f7765655e6c3b788f9cbc884821e61",
+ "diff_sha256": "7d14202c69183bd0556d6181f6df40ce07f7765655e6c3b788f9cbc884821e61",
+ "duration_s": 58.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 56-69 introduce the public defs; lines 100, 109, and 114 unfold them directly.",
+   "file": "TauCeti/Analysis/Contour/DixonDef.lean",
+   "fix": "Define these with `irreducible_def` or otherwise hide the bodies and provide public `dixonH1_def`, `dixonH2_def`, and `dixonFunction_def` lemmas for the integral/if equations.",
+   "issue": "`dixonH1`, `dixonH2`, and `dixonFunction` are public plain definitions with no `*_def` restatements, so downstream users must unfold the bodies directly; the proof itself relies on `simp only [dixonH1, dixonH2]` and `rw [dixonFunction, ...]`.",
+   "line": 56
+  },
+  {
+   "evidence": "Lines 107-114 define the two branch equations with no attributes.",
+   "file": "TauCeti/Analysis/Contour/DixonDef.lean",
+   "fix": "Add `@[simp]` to both branch equations once the body is hidden behind the public API.",
+   "issue": "The branch lemmas `dixonFunction_eq_dixonH1` and `dixonFunction_eq_dixonH2` are characteristic normal-form lemmas for the glued function but lack `@[simp]`, so later analyticity/gluing proofs will not simplify the selected branch automatically.",
+   "line": 107
+  }
+ ],
+ "head_sha": "34bfa701f7af0fb6334cf63c0d1cccdf3128f1b3",
+ "merge_base_sha": "d1470d60217f9f517079b4afab79a9076942195f",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 855,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6b426c252c14e13759494dfd821ecf37ea175ad2526459736378eb91a3b3c7db",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T134807Z-855-api-design-786ee7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T13:48:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Dixon surface exposes raw bodies without the public definitional API the roadmap consumers need, and the branch characterizations are not registered as normal forms.",
+ "transcript_blob": "2a18ca8cecde12bb2ffd19443521d6f649b6e1cf00d48545ddf62e12337f79f2",
+ "usage": {
+  "cached_input_tokens": 63104,
+  "input_tokens": 94175,
+  "output_tokens": 1930,
+  "reasoning_output_tokens": 978
+ },
+ "verdict": "request_changes"
+}
