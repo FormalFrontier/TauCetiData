@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.198701,
+   "returncode": 0,
+   "secs": 26.7,
+   "usage": {
+    "cached_input_tokens": 29952,
+    "input_tokens": 59431,
+    "output_tokens": 1211,
+    "reasoning_output_tokens": 441
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.198701,
+ "dedupe_key": "TauCetiProject/TauCeti|843|1d1732b347cb2bfa159a9d6d9ab4fee509fa8bab|reuse|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "fbb2efaa29cce57e08f1f25e34276f1550ec73a7a6938b7d279b0d719121e397",
+ "diff_sha256": "fbb2efaa29cce57e08f1f25e34276f1550ec73a7a6938b7d279b0d719121e397",
+ "duration_s": 26.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep: `code/TauCeti/Analysis/CompletelyMonotone/BernsteinMeasures.lean:620 private lemma integral_neg_iteratedDerivWithin_one_Icc_eq_sub`; replacement API: `mathlib/Mathlib/MeasureTheory/Integral/IntervalIntegral/ContDiff.lean:52 theorem integral_derivWithin_Icc_of_contDiffOn_Icc`; the helper body is exactly `congrArg Neg.neg (intervalIntegral.integral_derivWithin_Icc_of_contDiffOn_Icc ...)` plus simplification.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/BernsteinMeasures.lean",
+   "fix": "Delete the helper and use `intervalIntegral.integral_derivWithin_Icc_of_contDiffOn_Icc` directly at the two call sites with the existing `simpa [iteratedDerivWithin_one, intervalIntegral.integral_neg, neg_sub] using congrArg Neg.neg ...` proof.",
+   "issue": "`private lemma integral_neg_iteratedDerivWithin_one_Icc_eq_sub` is the deleted finite-interval FTC wrapper specialized to completely monotone functions, rederived from Mathlib and used at lines 635 and 1225.",
+   "line": 620
+  }
+ ],
+ "head_sha": "1d1732b347cb2bfa159a9d6d9ab4fee509fa8bab",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "56334ae3f817c230821ff1b62e1410a109a0f7ac0a01b5674b3ce5d4ca618ee6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T093924Z-843-reuse-5c3473",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T09:39:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR removes the public FTC wrappers but reintroduces the same Mathlib-derived finite-interval identity as a new private helper in `BernsteinMeasures`. That declaration should be eliminated rather than kept under local scope.",
+ "transcript_blob": "8dba065a2d0bb89b04a8601002545b3e50ce99037b0583c7a15de0ed67c80554",
+ "usage": {
+  "cached_input_tokens": 29952,
+  "input_tokens": 59431,
+  "output_tokens": 1211,
+  "reasoning_output_tokens": 441
+ },
+ "verdict": "block"
+}
