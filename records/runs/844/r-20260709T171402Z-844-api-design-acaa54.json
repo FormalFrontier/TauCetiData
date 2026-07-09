@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.240198,
+   "returncode": 0,
+   "secs": 50.2,
+   "usage": {
+    "cached_input_tokens": 83456,
+    "input_tokens": 109512,
+    "output_tokens": 2273,
+    "reasoning_output_tokens": 743
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.240198,
+ "dedupe_key": "TauCetiProject/TauCeti|844|d3f101945296a84e1a1bae0f153afc45874957e5|api-design|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "ab07f383c47c1c0c0ed911189b3d29685dca365e5b2b035acc437c894934997c",
+ "diff_sha256": "ab07f383c47c1c0c0ed911189b3d29685dca365e5b2b035acc437c894934997c",
+ "duration_s": 50.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"eventuallyEq_zero_comp_homeomorph_iff\" roadmap code/TauCeti` shows the declaration at line 51 and only proof uses at `HarmonicIsometry.lean:71,95` and `HarmonicDilation.lean:122,128`, with no roadmap hits.",
+   "file": "TauCeti/Analysis/InnerProductSpace/HarmonicIsometry.lean",
+   "fix": "Keep this helper private by inlining the `Filter.eventuallyEq_map` argument at the cross-file use, duplicating the small private proof, or otherwise avoid exporting it as TauCeti API.",
+   "issue": "`eventuallyEq_zero_comp_homeomorph_iff` is a new public topology lemma exposed from a harmonicity file, but it is only used inside proof bodies.",
+   "line": 51
+  },
+  {
+   "evidence": "Line 46 declares `{G \u03b1} [Group G] [MulAction G \u03b1]`; `rg -n \"finite_compl_fixedBy_conj\" roadmap code/TauCeti` shows only the declaration and the exchangeability use at `Probability/Exchangeability/PathSpace/ExchangeableSigma.lean:94`.",
+   "file": "TauCeti/Algebra/GroupAction/FiniteSupportPerm.lean",
+   "fix": "Keep the public theorem at the `Equiv.Perm` specialization needed by exchangeability, or make any general group-action helper private and use it to prove the specialized public statement.",
+   "issue": "`finite_compl_fixedBy_conj` was broadened from the needed permutation finite-support lemma to a public theorem for arbitrary groups and actions, expanding the API beyond the sole consumer.",
+   "line": 46
+  }
+ ],
+ "head_sha": "d3f101945296a84e1a1bae0f153afc45874957e5",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 844,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3747a0fb63cd4458541db7488d682854977d879dce222e7fe5587bd9b1ffc3cd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T171402Z-844-api-design-acaa54",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T17:14:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactors of existing bodies are mostly API-neutral, but the PR still expands the public surface beyond the roadmap-facing declarations. Two proof-support generalizations should either remain private/inlined or be kept at the already-needed specialization.",
+ "transcript_blob": "a1f01f7e5dd467eaccf78f4e42694be2cb53b292d7a9c9fd55c5f594897501b7",
+ "usage": {
+  "cached_input_tokens": 83456,
+  "input_tokens": 109512,
+  "output_tokens": 2273,
+  "reasoning_output_tokens": 743
+ },
+ "verdict": "request_changes"
+}
