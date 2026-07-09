@@ -1,0 +1,92 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.361745,
+   "returncode": 0,
+   "secs": 83.5,
+   "usage": {
+    "cached_input_tokens": 127360,
+    "input_tokens": 164017,
+    "output_tokens": 3826,
+    "reasoning_output_tokens": 1281
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc1bbf821120168c1a2af6629452988d7d1fb658",
+ "cost_estimated": true,
+ "cost_usd": 0.361745,
+ "dedupe_key": "TauCetiProject/TauCeti|821|9df3daa4899cf96433c5bce0ac28f2efe8c69781|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "fe9bf4e7959ffea9ec0822d2c30e1c750b75ee0d15d2b806821c683f21b95524",
+ "diff_sha256": "fe9bf4e7959ffea9ec0822d2c30e1c750b75ee0d15d2b806821c683f21b95524",
+ "duration_s": 83.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg 'baseChangePointsMulEquiv_mapValue|mapValue_baseChangePointsMulEquiv_symm' code/TauCeti/Algebra/AlgebraicGroup/MultiplicativeGroupBaseChange.lean` has no hits; the def at lines 63-66 is a composition of `AlgHom.baseChangePointsMulEquiv` and `pointsMulEquiv`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/MultiplicativeGroupBaseChange.lean",
+   "fix": "Restore the specialized forward and inverse mapValue lemmas, proved from the generic base-change and `MultiplicativeGroup.pointsMulEquiv_mapValue` lemmas if desired.",
+   "issue": "`MultiplicativeGroup.baseChangePointsMulEquiv` no longer has the public `baseChangePointsMulEquiv_mapValue` / inverse naturality lemmas characterizing post-composition.",
+   "line": 63
+  },
+  {
+   "evidence": "`rg 'baseChangePointsMulEquiv_mapValue|mapValue_baseChangePointsMulEquiv_symm' code/TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroupBaseChange.lean` has no hits; lines 70-74 define the composed equivalence exposed to users.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroupBaseChange.lean",
+   "fix": "Restore the specialized `baseChangePointsMulEquiv_mapValue` and inverse `mapValue_baseChangePointsMulEquiv_symm_apply` statements for characters.",
+   "issue": "`DiagonalizableGroup.baseChangePointsMulEquiv` lost its value-algebra naturality lemmas, leaving only map-domain naturality for the public composed equivalence.",
+   "line": 70
+  },
+  {
+   "evidence": "`rg 'baseChangePointsMulEquiv_mapValue|mapValue_baseChangePointsMulEquiv_symm' code/TauCeti/Algebra/AlgebraicGroup/RootsOfUnityBaseChange.lean` has no hits; the target at lines 70-75 is `rootsOfUnity n A`, not the generic `AlgHom` target.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/RootsOfUnityBaseChange.lean",
+   "fix": "Restore the specialized forward lemma using `restrictRootsOfUnity` and the inverse symm lemma.",
+   "issue": "`RootsOfUnityGroup.baseChangePointsMulEquiv` no longer exposes naturality under `A \u2192\u2090[K] B`, although this is the characteristic functoriality of the roots-of-unity points calculation.",
+   "line": 70
+  },
+  {
+   "evidence": "`rg 'baseChangePointsMulEquiv_mapValue|mapValue_baseChangePointsMulEquiv_symm' code/TauCeti/Algebra/AlgebraicGroup/SplitTorusBaseChange.lean` has no hits; lines 66-69 define the split-torus equivalence as a composed public API.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SplitTorusBaseChange.lean",
+   "fix": "Restore the specialized coordinatewise `baseChangePointsMulEquiv_mapValue` and inverse symm lemma.",
+   "issue": "`SplitTorus.baseChangePointsMulEquiv` no longer has the coordinatewise mapValue and inverse naturality lemmas, so consumers must unfold through `DiagonalizableGroup.baseChangePointsMulEquiv` and `freeAbelianCharEquiv`.",
+   "line": 66
+  },
+  {
+   "evidence": "`rg 'baseChangePointsMulEquiv_mapValue|mapValue_baseChangePointsMulEquiv_symm' code/TauCeti/Algebra/AlgebraicGroup/AdditiveGroupBaseChange.lean` finds only `toAdd_baseChangePointsMulEquiv_mapValue` and the separate `gaBaseChangePointsMulEquiv` lemmas, not the general equivalence-level statements.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/AdditiveGroupBaseChange.lean",
+   "fix": "Restore `baseChangePointsMulEquiv_mapValue` and `mapValue_baseChangePointsMulEquiv_symm_apply` as wrappers around the existing `toAdd_baseChangePointsMulEquiv_mapValue` lemma.",
+   "issue": "The additive base-change equivalence keeps only a `toAdd_..._mapValue` form and drops the equivalence-level and inverse mapValue lemmas, making the API incomplete compared with the parent additive API and the `\ud835\udd3e\u2090` specialization below.",
+   "line": 68
+  }
+ ],
+ "head_sha": "9df3daa4899cf96433c5bce0ac28f2efe8c69781",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 821,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "39728d027e1ecbd645f5586bd18ddb299b6083d9eb451ff322835543c466310a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T055337Z-821-api-design-e8bf99",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:53:37Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR removes the characteristic value-algebra naturality API for most base-changed worked-example equivalences. The remaining generic lemmas are for the underlying `AlgHom.baseChangePointsMulEquiv`, so users of the public example equivalences must unfold the composed definitions to recover the deleted rewrites.",
+ "transcript_blob": "018fb212f92c4ab7005fb7c65fa56f20bb1fbd8dffb2593b4ceb3fdad64e569a",
+ "usage": {
+  "cached_input_tokens": 127360,
+  "input_tokens": 164017,
+  "output_tokens": 3826,
+  "reasoning_output_tokens": 1281
+ },
+ "verdict": "request_changes"
+}
