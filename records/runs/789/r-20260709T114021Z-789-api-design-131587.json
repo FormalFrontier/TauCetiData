@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.295525,
+   "returncode": 0,
+   "secs": 54.6,
+   "usage": {
+    "cached_input_tokens": 54400,
+    "input_tokens": 94397,
+    "output_tokens": 2278,
+    "reasoning_output_tokens": 1066
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a23e667ab240d5a2e476d70ea29a09883bbfdbe1",
+ "cost_estimated": true,
+ "cost_usd": 0.295525,
+ "dedupe_key": "TauCetiProject/TauCeti|789|7d1aa296e5a8dbe2a397d0946f3a1cdbf6f1ad88|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "27e1623fac72fd2ef2b713af1f6477c485963c55931ff189fab0dcc81542c912",
+ "diff_sha256": "27e1623fac72fd2ef2b713af1f6477c485963c55931ff189fab0dcc81542c912",
+ "duration_s": 54.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"@\\[expose\\].*coinvariantsEquivHom|coinvariantsEquivHom_apply|coinvariantsEquivHom_symm_apply_coe\" code/TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean` shows `@[expose] noncomputable def coinvariantsEquivHom` at line 199 and public characterization lemmas at lines 226 and 234.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean",
+   "fix": "Remove `@[expose]`; if the current `rfl` characterization lemmas force unfolding across the module boundary, restructure the equivalence/lemmas so consumers get explicit forward/inverse characterization theorems without exposing the equivalence body.",
+   "issue": "`coinvariantsEquivHom` is declared `@[expose]`, so downstream code can unfold and depend on the structure-literal implementation of the universal-property equivalence rather than only its API.",
+   "line": 199
+  },
+  {
+   "evidence": "`rg -n \"theorem mem_invariants|theorem mapInvariants_coe_apply|theorem mapInvariants_comp|theorem mem_coinvariants|theorem mapCoinvariants_coe_apply|theorem mapCoinvariants_comp\" code/TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean` shows the coinvariant parallels are `@[simp]` at lines 83, 133, and 147, while the invariant versions at lines 264, 289, and 304 have no annotation.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Coinvariants.lean",
+   "fix": "Add `@[simp]` to these invariant characteristic lemmas so users of the public `invariants`/`mapInvariants` interface do not have to unfold through the generic `coinvariants` layer manually.",
+   "issue": "The invariant-specialized normal-form lemmas `mem_invariants`, `mapInvariants_coe_apply`, and `mapInvariants_comp` are not tagged for automation, unlike the parallel coinvariant API.",
+   "line": 264
+  }
+ ],
+ "head_sha": "7d1aa296e5a8dbe2a397d0946f3a1cdbf6f1ad88",
+ "merge_base_sha": "9d685fa80cac49cc7e22539488b3219ea40f52dd",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 789,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "20669082793618e4b9c0011dfd4782feb506853bacaa5eb2ccc6304a6f8ab2d4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T114021Z-789-api-design-131587",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T11:40:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The invariants surface still leaves its main normal forms out of simp automation, and the universal-property equivalence exposes its implementation body instead of relying on a closed characteristic API.",
+ "transcript_blob": "93fa4b1f42d6aa79f5e631502b8896cb319d7596d918a9ae5fdd53a341c86392",
+ "usage": {
+  "cached_input_tokens": 54400,
+  "input_tokens": 94397,
+  "output_tokens": 2278,
+  "reasoning_output_tokens": 1066
+ },
+ "verdict": "request_changes"
+}
