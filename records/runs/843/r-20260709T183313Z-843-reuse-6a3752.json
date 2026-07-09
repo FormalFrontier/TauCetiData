@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6148695,
+   "returncode": 0,
+   "secs": 109.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 32697,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 32697,
+    "cache_read_input_tokens": 94107,
+    "inference_geo": "not_available",
+    "input_tokens": 2622,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5702,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5702,
+      "cache_read_input_tokens": 43006,
+      "input_tokens": 185,
+      "output_tokens": 3665,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8543,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_usd": 0.614869,
+ "dedupe_key": "TauCetiProject/TauCeti|843|a78f987626d1abdfe35181a35887100ee6d2a946|reuse|claude-opus-4-8|fb0698ac514a62c5|production|2",
+ "diff_blob": "d4cdb5677f07aa5edeea7294f8fa2c12ebeb6abdea9532c148074f5c58bb1c91",
+ "diff_sha256": "d4cdb5677f07aa5edeea7294f8fa2c12ebeb6abdea9532c148074f5c58bb1c91",
+ "duration_s": 109.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep iteratedDerivWithin_eq_iteratedDeriv shows the duplicated pair at Integral.lean:70/72 and 109/111; the deleted lemma appears in the diff as `lemma iteratedDerivWithin_Icc_eq_Ici {n : \u2115} ... : iteratedDerivWithin n f (Icc x T) t = iteratedDerivWithin n f (Ici 0) t`, previously consumed by neg_one_pow_mul_taylor_remainder_nonneg via `hf.iteratedDerivWithin_Icc_eq_Ici`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Retain a single private helper `IsCompletelyMonotone.iteratedDerivWithin_Icc_eq_Ici {n} (ht_pos : 0 < t) (ht : t \u2208 Ioo x T) : iteratedDerivWithin n f (Icc x T) t = iteratedDerivWithin n f (Ici 0) t` and call it in both proofs (`rw [hf.iteratedDerivWithin_Icc_eq_Ici ht_pos ht]` at line 70; `congrArg Neg.neg (hcm.iteratedDerivWithin_Icc_eq_Ici ht_pos ht)` at line 108).",
+   "issue": "The Icc x T \u2194 Ici 0 iteratedDerivWithin transfer (two iteratedDerivWithin_eq_iteratedDeriv applications plus the hcda derivation) is inlined identically here (lines 70-73) and in integral_neg_iteratedDerivWithin_one_Ici_eq_sub (lines 109-112). This is the exact body of the deleted IsCompletelyMonotone.iteratedDerivWithin_Icc_eq_Ici, which had two genuine consumers and no Mathlib equivalent (Mathlib has no direct Icc\u2194Ici iteratedDerivWithin equality).",
+   "line": "70"
+  }
+ ],
+ "head_sha": "a78f987626d1abdfe35181a35887100ee6d2a946",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "b398595fea2a56d18e2498f5f18a7f49e0554e888640894e70efc14da926a297",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T183313Z-843-reuse-6a3752",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T18:33:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The direct-Mathlib-duplicate deletions are correct, but the PR deletes the shared IsCompletelyMonotone.iteratedDerivWithin_Icc_eq_Ici helper and inlines its identical body in two proofs, creating a within-diff near-clone.",
+ "transcript_blob": "7579f254097fa6f5249666bf36b2009442d2ba8b233de112c1424ab7050bf6f6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32697,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 32697,
+  "cache_read_input_tokens": 94107,
+  "inference_geo": "not_available",
+  "input_tokens": 2622,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5702,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5702,
+    "cache_read_input_tokens": 43006,
+    "input_tokens": 185,
+    "output_tokens": 3665,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8543,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
