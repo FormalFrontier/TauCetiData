@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.456612,
+   "returncode": 0,
+   "secs": 76.1,
+   "usage": {
+    "cached_input_tokens": 108544,
+    "input_tokens": 168336,
+    "output_tokens": 3446,
+    "reasoning_output_tokens": 1975
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "cost_estimated": true,
+ "cost_usd": 0.456612,
+ "dedupe_key": "TauCetiProject/TauCeti|815|9064ab07762f70d946fa45cd7a279d722af6dbbc|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "c19dd2e3304e12ab8ea9ff8ab447c97de26d72ee82aa4153a8eae52d62a5b67c",
+ "diff_sha256": "c19dd2e3304e12ab8ea9ff8ab447c97de26d72ee82aa4153a8eae52d62a5b67c",
+ "duration_s": 76.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 9-11 show public imports; grep hits for `isPositiveDefiniteKernel_normSq_le`, `isPositiveDefiniteKernel_sum`, and `isPositiveDefiniteKernel_prod` occur only in proof bodies at Basic.lean:223,287,294, not in public theorem types.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Basic.lean",
+   "fix": "Keep only `Kernel` public for the `IsPositiveDefiniteKernel` statements, and make `KernelBounds`/`KernelClosure` non-public implementation imports if Lean accepts that dependency split.",
+   "issue": "`Basic` publicly imports `KernelBounds` and `KernelClosure`, so importing the basic positive-definite-function predicate now re-exports kernel bound/closure API used only to prove bodies of `normSq_le`, `sum`, `prod`, and `pow` transports.",
+   "line": 10
+  },
+  {
+   "evidence": "`rg -n \"sum_const_mul|sum_real_const_mul\" code/TauCeti roadmap` finds only the declarations/wrappers in FunctionClosure.lean:66,79,113,121,147,155,182,189,210,217 and no consumers; the roadmap only asks for closure under sums/products at OneParameterSemigroups/README.md:211.",
+   "file": "TauCeti/Analysis/PositiveDefinite/FunctionClosure.lean",
+   "fix": "Remove these multiplication-form restatements, or at least make them private/internal and keep the public API in `\u2022` notation with users rewriting by `Algebra.smul_def` when needed.",
+   "issue": "The multiplication-notation weighted-sum API duplicates the canonical scalar API and expands the public surface without a roadmap need: `sum_const_mul`, `sum_real_const_mul`, and the six `_apply`/`_apply_zero` variants are just `simpa [Algebra.smul_def]` wrappers around `sum_smul`/`sum_real_smul` lemmas.",
+   "line": 66
+  }
+ ],
+ "head_sha": "9064ab07762f70d946fa45cd7a279d722af6dbbc",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 815,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7c4ebe2480dd8dad143ba7bd3a38b5fb50befb4b3ce2508b7e5659b47537ae72",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T055053Z-815-api-design-29a49b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:50:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactor leaves avoidable public API exposed: `Basic` now re-exports proof-only kernel modules, and `FunctionClosure` still exposes duplicate multiplication-notation weighted-sum lemmas despite canonical `\u2022` lemmas covering the same use cases.",
+ "transcript_blob": "326ad42e210d44722e84e38cd30821fac1aa4bcf09f2f0eb5353ad7b53277aa2",
+ "usage": {
+  "cached_input_tokens": 108544,
+  "input_tokens": 168336,
+  "output_tokens": 3446,
+  "reasoning_output_tokens": 1975
+ },
+ "verdict": "request_changes"
+}
