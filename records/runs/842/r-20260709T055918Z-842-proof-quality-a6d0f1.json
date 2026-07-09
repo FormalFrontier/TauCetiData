@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.109962,
+   "returncode": 0,
+   "secs": 24.9,
+   "usage": {
+    "cached_input_tokens": 20224,
+    "input_tokens": 33990,
+    "output_tokens": 1034,
+    "reasoning_output_tokens": 216
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a1218ddabd2cbdf947749054977b108142f30403",
+ "cost_estimated": true,
+ "cost_usd": 0.109962,
+ "dedupe_key": "TauCetiProject/TauCeti|842|070eece6a0313820ff2fdeabeeccf6d7127bba8e|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "03bc6fb22a451ae037b11cdfed54b456d388c32f333ecf4ffee3570c509b917e",
+ "diff_sha256": "03bc6fb22a451ae037b11cdfed54b456d388c32f333ecf4ffee3570c509b917e",
+ "duration_s": 24.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hit: `GrowthBound.lean:139: rw [show (\u2191(k + 1) : \u211d) = 1 + \u2191k from by push_cast; ring]`",
+   "file": "TauCeti/Analysis/Semigroups/GrowthBound.lean",
+   "fix": "Replace it with a direct rewrite such as a named cast/arithmetic lemma plus `ring_nf`, or add a short comment explaining why this goal cannot be reached otherwise.",
+   "issue": "The induction step uses an inline `show` inside `rw` for a routine cast/arithmetic equality, which is an undocumented `show` proof step.",
+   "line": 139
+  },
+  {
+   "evidence": "grep hit: `GrowthBound.lean:153: rw [show (t - \u2191n) + \u2191n = t from by ring]`",
+   "file": "TauCeti/Analysis/Semigroups/GrowthBound.lean",
+   "fix": "Use a direct arithmetic rewrite, for example `rw [sub_add_cancel]` if it applies, or document why the `show` bridge is needed.",
+   "issue": "The fractional-part decomposition uses undocumented `show` to establish `(t - \u2191n) + \u2191n = t` before applying the factored lemma.",
+   "line": 153
+  },
+  {
+   "evidence": "grep hit: `Basic.lean:328: rw [show (t - \u2191k) + \u2191k = t from by ring]`",
+   "file": "TauCeti/Analysis/Semigroups/Basic.lean",
+   "fix": "Use a direct arithmetic rewrite such as `rw [sub_add_cancel]` where possible, or add a comment justifying why `show` is necessary here.",
+   "issue": "`normBoundedOnInterval` has the same undocumented `show` bridge for `(t - \u2191k) + \u2191k = t`.",
+   "line": 328
+  }
+ ],
+ "head_sha": "070eece6a0313820ff2fdeabeeccf6d7127bba8e",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 842,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a84f849ab6d49959bba02c16c96fd585c7f8e913a396a2246383c0c7ccd93ab5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T055918Z-842-proof-quality-a6d0f1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:59:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The new factoring lemma is fine, but the rewritten call sites introduce undocumented `show` casts for arithmetic equalities. These should be replaced by direct arithmetic rewrites or documented if there is a real elaboration reason.",
+ "transcript_blob": "b7eec294399dc882cdaaec6bad35e90aed68de6649803ceaa7e6a3071e6e0a85",
+ "usage": {
+  "cached_input_tokens": 20224,
+  "input_tokens": 33990,
+  "output_tokens": 1034,
+  "reasoning_output_tokens": 216
+ },
+ "verdict": "request_changes"
+}
