@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.35065,
+   "returncode": 0,
+   "secs": 56.8,
+   "usage": {
+    "cached_input_tokens": 99840,
+    "input_tokens": 144938,
+    "output_tokens": 2508,
+    "reasoning_output_tokens": 1072
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "19d754b663d26229307263b811238e632333d11c",
+ "cost_estimated": true,
+ "cost_usd": 0.35065,
+ "dedupe_key": "TauCetiProject/TauCeti|863|e9f794bb7f920c0b62c65817e4cad6ed30cae9b4|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "f2d6d7082ceb40a7ef015e51396a67950ddb1e70cc97422dc79c97cd18fac97c",
+ "diff_sha256": "f2d6d7082ceb40a7ef015e51396a67950ddb1e70cc97422dc79c97cd18fac97c",
+ "duration_s": 56.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The proof rewrites the integrand at lines 56-63 as `\u2016f (\u03b3 t)\u2016 / \u2016\u03b3 t - w\u2016 * \u2016deriv \u03b3 t\u2016`; nearby API already treats this as one numerator, e.g. `DixonH2Diff.lean:100` rewrites `dixonH2` as `(\u03b3 t - w')\u207b\u00b9 * (f (\u03b3 t) * deriv \u03b3 t)` and `DixonH2Diff.lean:108` uses bound `\u03b5\u207b\u00b9 ^ 2 * \u2016f (\u03b3 t) * deriv \u03b3 t\u2016`.",
+   "file": "TauCeti/Analysis/Contour/DixonH2Bound.lean",
+   "fix": "Generalize the main theorem to `(hM : \u2200 t \u2208 uIcc a b, \u2016f (\u03b3 t) * deriv \u03b3 t\u2016 \u2264 M)` with conclusion `\u2016dixonH2 f \u03b3 a b w\u2016 \u2264 M / (\u2016w\u2016 - R) * |b - a|`; derive the current split-bound statement as a corollary if it is useful downstream.",
+   "issue": "`dixonH2_norm_le` assumes separate bounds `hM_f` and `hM_d`, although the proof only needs a bound on the numerator product `\u2016f (\u03b3 t) * deriv \u03b3 t\u2016`.",
+   "line": 48
+  },
+  {
+   "evidence": "Line 82 invokes `dixonH2_norm_le hR hM_f hM_d hRw`; with the product-bound theorem the same argument only needs `M / (\u2016w\u2016 - R) * |b - a| \u2192 0`, matching the numerator form used in `DixonH2Diff.lean:100`.",
+   "file": "TauCeti/Analysis/Contour/DixonH2Bound.lean",
+   "fix": "Prove decay from the generalized product-bound theorem using a single `M` and hypothesis `\u2200 t \u2208 uIcc a b, \u2016f (\u03b3 t) * deriv \u03b3 t\u2016 \u2264 M`, then optionally provide the `M_f * M_d` specialization.",
+   "issue": "`dixonH2_tendsto_zero` inherits the same unnecessary split bounds from `dixonH2_norm_le`.",
+   "line": 69
+  }
+ ],
+ "head_sha": "e9f794bb7f920c0b62c65817e4cad6ed30cae9b4",
+ "merge_base_sha": "19d754b663d26229307263b811238e632333d11c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 863,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3a9c7b76813e752286585762518a5ad7599f5fac63a5f7aa241c0208e9ff0845",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T211508Z-863-generality-a8dd23",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T21:15:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Dixon H2 estimates are under-generalized: they require separate uniform bounds on `\u2016f (\u03b3 t)\u2016` and `\u2016deriv \u03b3 t\u2016`, but the integrand only uses the product `f (\u03b3 t) * deriv \u03b3 t`. State the product-bound theorem first and keep the split-bound version, if desired, as a corollary.",
+ "transcript_blob": "bcd07c34d056ea9e07d32b7d0f9419d5c0de26a0029fa14ac574dfebbd3b261c",
+ "usage": {
+  "cached_input_tokens": 99840,
+  "input_tokens": 144938,
+  "output_tokens": 2508,
+  "reasoning_output_tokens": 1072
+ },
+ "verdict": "request_changes"
+}
