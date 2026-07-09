@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.45168,
+   "returncode": 0,
+   "secs": 91.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 24777,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 24777,
+    "cache_read_input_tokens": 44238,
+    "inference_geo": "not_available",
+    "input_tokens": 2436,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 12561,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 12561,
+      "cache_read_input_tokens": 28227,
+      "input_tokens": 1711,
+      "output_tokens": 4170,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6451,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "19d754b663d26229307263b811238e632333d11c",
+ "cost_usd": 0.45168,
+ "dedupe_key": "TauCetiProject/TauCeti|862|50bec28dbe073e7be72f0730d93a59e0f93e0aef|api-design|claude-opus-4-8|fb0698ac514a62c5|production|2",
+ "diff_blob": "b06d1fb718da07b5f8811f9b8d3b596f48759ad1cae826354ed2d1efcac7f1f0",
+ "diff_sha256": "b06d1fb718da07b5f8811f9b8d3b596f48759ad1cae826354ed2d1efcac7f1f0",
+ "duration_s": 91.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 96 `noncomputable abbrev inclusion (n : \u2115) : ... := DiagonalizableGroup.pointsMap (toMultZMod n)`; line 102 `theorem inclusion_apply ... := rfl`; contrast sibling `toMultZMod` at line 76 (`noncomputable def`, not reducible/exposed).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/RootsOfUnityInclusion.lean",
+   "fix": "Make `inclusion` a non-exposed `noncomputable def` (drop `abbrev`, do not add `@[expose]`). In-module proofs (`mapValue_inclusion` via `mapValue_pointsMap`, others via `\u2190 inclusion_apply`) still elaborate since the body is visible within the module.",
+   "issue": "`inclusion` is declared `noncomputable abbrev`, i.e. `@[reducible]`, so its body is exposed cross-module and unfolds during unification, leaking the internal `DiagonalizableGroup.pointsMap (toMultZMod n)` into downstream goals. The prior `@[expose] def` finding was not resolved, only re-expressed as an abbrev (an equal-or-stronger exposure). No consumer needs to unfold: `inclusion_apply` (line 102), `charOfPoint_inclusion`, `mapValue_inclusion`, and `inclusion_injective` provide the full characterization, and in-module proofs see the body regardless.",
+   "line": "96"
+  }
+ ],
+ "head_sha": "50bec28dbe073e7be72f0730d93a59e0f93e0aef",
+ "merge_base_sha": "19d754b663d26229307263b811238e632333d11c",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 862,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "24693b2af2d756280a46a2862314395984d25c2649d7d4744fd42e7f04e9bb2d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T213023Z-862-api-design-0cd5a0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T21:30:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API for the new inclusion is complete and correctly annotated, but `inclusion` is now a `noncomputable abbrev`, which is `@[reducible]` and still exposes its body (auto-unfolding to the internal `pointsMap (toMultZMod n)`), despite a full lemma API making unfolding unnecessary.",
+ "transcript_blob": "f6c131872b389b3d5a09a187c15b583405da2469a825f9eb77ca0d5ed12a9bfb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 24777,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 24777,
+  "cache_read_input_tokens": 44238,
+  "inference_geo": "not_available",
+  "input_tokens": 2436,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 12561,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 12561,
+    "cache_read_input_tokens": 28227,
+    "input_tokens": 1711,
+    "output_tokens": 4170,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6451,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
