@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.3855615,
+   "returncode": 0,
+   "secs": 81.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19728,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 19728,
+    "cache_read_input_tokens": 75927,
+    "inference_geo": "not_available",
+    "input_tokens": 2623,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2780,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2780,
+      "cache_read_input_tokens": 32959,
+      "input_tokens": 185,
+      "output_tokens": 3603,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5178,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_usd": 0.385562,
+ "dedupe_key": "TauCetiProject/TauCeti|844|46d5fd7857c293f3a31d2855444e3de2b97071ba|proof-quality|claude-opus-4-8|fb0698ac514a62c5|production|3",
+ "diff_blob": "e3e3f932809c10f95a21ce08a775e48e2773c3dee37a9998135bef25f06aa8eb",
+ "diff_sha256": "e3e3f932809c10f95a21ce08a775e48e2773c3dee37a9998135bef25f06aa8eb",
+ "duration_s": 81.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `eventuallyEq_zero_comp_homeomorph_iff` returns no matches in ./code; identical `(Filter.eventuallyEq_map (f := \ud835\udcdd x) (m := ...) ...).symm` blocks at HarmonicIsometry:61-62, 89-90 and HarmonicDilation:123-124, 132-133.",
+   "file": "TauCeti/Analysis/InnerProductSpace/HarmonicIsometry.lean",
+   "fix": "Restore the general two-space helper (as the description states: public, docstring, kept in HarmonicIsometry which Dilation imports) and call it at all three sites, removing the inline `change`/`eventuallyEq_map` blocks.",
+   "issue": "The reusable `eventuallyEq_zero_comp_homeomorph_iff` helper is deleted and its proof inlined here (lines 56-62), again at 83-90, and in HarmonicDilation (121-133). The same `rw [\u2190 _.map_nhds_eq x]` + `Filter.eventuallyEq_map` reasoning is now duplicated across three call sites in two files instead of factored into one lemma \u2014 the rubric requires factoring repeated reasoning, and the PR description itself claims to keep this shared lemma public.",
+   "line": "56"
+  },
+  {
+   "evidence": "Lines 56, 59, 83, 86 (this file) and HarmonicDilation.lean:131 each contain a `change` with no preceding justifying comment (contrast the pre-existing commented `change` at HarmonicDilation.lean:135-136).",
+   "file": "TauCeti/Analysis/InnerProductSpace/HarmonicIsometry.lean",
+   "fix": "Eliminate these by routing through the restored helper; if any `change` genuinely remains, add a comment stating why no lemma/rewrite reaches the goal.",
+   "issue": "New undocumented `change` steps rely on definitional equalities (coercion of `l.toHomeomorph`, `0 \u2218 h = 0`) with no comment explaining why the goal cannot be reached by a rewrite. Rubric flags `change`/`show` without a documenting comment. Same at lines 56, 83, 86 here and HarmonicDilation:131.",
+   "line": "59"
+  }
+ ],
+ "head_sha": "46d5fd7857c293f3a31d2855444e3de2b97071ba",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 844,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "73ee9f51ae17c123da854df7a20170ef43cebf61851fb40ee857a4486c50d8a1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T185354Z-844-proof-quality-e40077",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T18:53:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The FiniteSupportPerm and QuotientCovering rewrites are robust and clean. But the InnerProductSpace change deletes a reusable helper and inlines its map_nhds_eq/eventuallyEq_map reasoning at three call sites with undocumented `change` chains, duplicating reasoning and increasing brittleness \u2014 the opposite of the PR's stated 'keep one public shared lemma' intent.",
+ "transcript_blob": "1340818a3ee17871c65106d1ddd3570b7b410838136bf99b0f0460d45f6ed959",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 19728,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 19728,
+  "cache_read_input_tokens": 75927,
+  "inference_geo": "not_available",
+  "input_tokens": 2623,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2780,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2780,
+    "cache_read_input_tokens": 32959,
+    "input_tokens": 185,
+    "output_tokens": 3603,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5178,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
