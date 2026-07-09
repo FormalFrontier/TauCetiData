@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7285235,
+   "returncode": 0,
+   "secs": 90.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 45547,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 45547,
+    "cache_read_input_tokens": 182817,
+    "inference_geo": "not_available",
+    "input_tokens": 2624,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2204,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2204,
+      "cache_read_input_tokens": 59354,
+      "input_tokens": 2,
+      "output_tokens": 2151,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5623,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a1218ddabd2cbdf947749054977b108142f30403",
+ "cost_usd": 0.728523,
+ "dedupe_key": "TauCetiProject/TauCeti|830|32f0a31db3499690e8f98adac0cb670b1b564415|api-design|claude-opus-4-8|fb0698ac514a62c5|production|5",
+ "diff_blob": "8ccba96c665e0562f1621324bfc68fccd755fa1a33076475ea36d58a76cb5953",
+ "diff_sha256": "8ccba96c665e0562f1621324bfc68fccd755fa1a33076475ea36d58a76cb5953",
+ "duration_s": 90.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 32 `public structure IntervalPartition`; all referencing theorems at lines 191\u2013604 are non-public; public API starts at line 607 and none mention it.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Drop `public` from the structure (and thus from the exported simp/grind attributes); the non-public theorems referencing it may keep referring to a module-private type.",
+   "issue": "`IntervalPartition` is `public` yet its own docstring calls it \"A proof-local partition\"; it is used only by non-public tube lemmas, and its `[simp, grind =]` fields `t_zero`/`t_last` (line 44) then leak into the global simp/grind sets. No public endpoint (lines 607\u2013671) references it.",
+   "line": "32"
+  },
+  {
+   "evidence": "Line 58 `public structure TubeData`; all uses are in non-public theorems (lines 191\u2013604); public endpoints at lines 607\u2013671 expose only `Path.Homotopic.Quotient` / path-space openness, not `TubeData`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Drop `public` from `structure TubeData`; the non-public consumers can still reference it.",
+   "issue": "`TubeData` is `public` but is proof-local scaffolding for the tube construction; it appears only in non-public theorem signatures (`exists_pathHomotopyTrivial_tube`, `TubeData.isOpen`, `tube_subset_homotopy_class`, \u2026), never in the Stage 0.1 product API.",
+   "line": "58"
+  }
+ ],
+ "head_sha": "32f0a31db3499690e8f98adac0cb670b1b564415",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 830,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "bba12351118197bdd84c917763dacc3860c5bfc6e926f333e3c1da7e1a99f8bc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T183604Z-830-api-design-0324ab",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T18:36:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The Stage 0.1 product API (discreteness instance and the open-homotopy-class lemmas) is minimal and complete, but the proof-local tube scaffolding IntervalPartition and TubeData are still exported as public structures with no public consumer.",
+ "transcript_blob": "cf2eb20d33b863788c1522c5f458361280775146bf82d49e26474917c1c5646c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45547,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 45547,
+  "cache_read_input_tokens": 182817,
+  "inference_geo": "not_available",
+  "input_tokens": 2624,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2204,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2204,
+    "cache_read_input_tokens": 59354,
+    "input_tokens": 2,
+    "output_tokens": 2151,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5623,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
