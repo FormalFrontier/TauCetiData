@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.541997,
+   "returncode": 0,
+   "secs": 105.3,
+   "usage": {
+    "cached_input_tokens": 189824,
+    "input_tokens": 250873,
+    "output_tokens": 4728,
+    "reasoning_output_tokens": 2508
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc1bbf821120168c1a2af6629452988d7d1fb658",
+ "cost_estimated": true,
+ "cost_usd": 0.541997,
+ "dedupe_key": "TauCetiProject/TauCeti|819|cf2e4a95d8ba2e7d77835f39f7a97c30820e0d40|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "735c052c8ad26bedd669d25e823c9150f391aebc5cf4b331790f7469879ee446",
+ "diff_sha256": "735c052c8ad26bedd669d25e823c9150f391aebc5cf4b331790f7469879ee446",
+ "duration_s": 105.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`EnergyLowerBounds.lean:61` has `variable {X n : Type*} [Fintype n] [DecidableEq n]`; the renamed preimage in the PR diff had `variable {X n : Type*} [Fintype n]` plus a local classical decidable-equality instance, and the theorem statements at lines 92, 129, 145, 159, and 172 do not mention decidable equality.",
+   "file": "TauCeti/Analysis/PDE/EnergyLowerBounds.lean",
+   "fix": "Expose only `[Fintype n]` here, as the old `CoerciveEnergy.lean` did, and add a local `noncomputable` `DecidableEq n := Classical.decEq n` or local `letI` only inside proofs that need it.",
+   "issue": "All the lower-bound lemmas in this file inherit `[DecidableEq n]`, although their statements only need finite coordinates; this makes callers provide an avoidable instance for results such as `garding_energyIntegrand_self_of_mass_lower_bound_of_bounds`, `min_diagonal_lower_bound_mul_norm_sq_le_energyIntegrand_self`, and the zero-drift specializations.",
+   "line": 61
+  }
+ ],
+ "head_sha": "cf2e4a95d8ba2e7d77835f39f7a97c30820e0d40",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 819,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "92cc9f21580cb1ff77c12ba10a069718ae0691a8db19952f8240c652d1aad178",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T110328Z-819-generality-1a3901",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T11:03:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The strict mass-dominance overgeneralization from the prior review is fixed, but the renamed lower-bound API now exposes an unnecessary `[DecidableEq n]` requirement. That is a generality regression from the old pointwise API, which used only `[Fintype n]` and a local classical instance for proofs.",
+ "transcript_blob": "18b5ede6d7bf16167fa79f53a0dbbfe611013e33905883a91cb01f577f2f4351",
+ "usage": {
+  "cached_input_tokens": 189824,
+  "input_tokens": 250873,
+  "output_tokens": 4728,
+  "reasoning_output_tokens": 2508
+ },
+ "verdict": "request_changes"
+}
