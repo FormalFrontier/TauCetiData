@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.339207,
+   "returncode": 0,
+   "secs": 74.0,
+   "usage": {
+    "cached_input_tokens": 63104,
+    "input_tokens": 103629,
+    "output_tokens": 3501,
+    "reasoning_output_tokens": 2068
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.339207,
+ "dedupe_key": "TauCetiProject/TauCeti|843|9d25668d7fc73c639eda8336ec33609d7c410930|reuse|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "e897c741e1b235a15fe3b4908961aa5750d0de3d1f26dc7d664d6f1306f92d1a",
+ "diff_sha256": "e897c741e1b235a15fe3b4908961aa5750d0de3d1f26dc7d664d6f1306f92d1a",
+ "duration_s": 74.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep: `code/TauCeti/Analysis/Calculus/IteratedDerivWithin.lean:53 private lemma ContDiffAt.iteratedDerivWithin_eq_of_mem_uniqueDiffOn`; replacement lemma used in its body at lines 57-58 is Mathlib's `iteratedDerivWithin_eq_iteratedDeriv`.",
+   "file": "TauCeti/Analysis/Calculus/IteratedDerivWithin.lean",
+   "fix": "Delete the helper and inline the two rewrites at the only use: `rw [iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_Icc ...) ..., iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_Ici ...) ...]`.",
+   "issue": "`private lemma ContDiffAt.iteratedDerivWithin_eq_of_mem_uniqueDiffOn` is a thin wrapper around Mathlib's `iteratedDerivWithin_eq_iteratedDeriv`.",
+   "line": 53
+  },
+  {
+   "evidence": "Grep: `code/TauCeti/Analysis/CompletelyMonotone/Integral.lean:46 private lemma iteratedDerivWithin_Icc_eq_Ici`; its proof is exactly `rw [iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_Icc hxT) ..., iteratedDerivWithin_eq_iteratedDeriv (uniqueDiffOn_Ici 0) ...]` at lines 50-51.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Remove the private lemma and use Mathlib's `iteratedDerivWithin_eq_iteratedDeriv` directly at line 75, as the proof already has all required `UniqueDiffOn` and membership hypotheses.",
+   "issue": "`private lemma iteratedDerivWithin_Icc_eq_Ici` repeats the same bridge from `Icc` to `Ici 0` by rewriting both sides to `iteratedDeriv`.",
+   "line": 46
+  }
+ ],
+ "head_sha": "9d25668d7fc73c639eda8336ec33609d7c410930",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "c0d750a313147e8ddd6b66fdf0e3e02c3a2d00b204f56fff7ccb102a954f6793",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T150427Z-843-reuse-d90ff6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T15:04:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR removes the public FTC wrappers, but it still adds private bridge lemmas that are just two applications of Mathlib's `iteratedDerivWithin_eq_iteratedDeriv`. Those helpers should be eliminated instead of preserved as local API.",
+ "transcript_blob": "cd5dd0694f329784500b992407290b79731e7561e7cb9e30f45e811baf590830",
+ "usage": {
+  "cached_input_tokens": 63104,
+  "input_tokens": 103629,
+  "output_tokens": 3501,
+  "reasoning_output_tokens": 2068
+ },
+ "verdict": "request_changes"
+}
