@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.263806,
+   "returncode": 0,
+   "secs": 60.3,
+   "usage": {
+    "cached_input_tokens": 54912,
+    "input_tokens": 87512,
+    "output_tokens": 2445,
+    "reasoning_output_tokens": 1288
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.263806,
+ "dedupe_key": "TauCetiProject/TauCeti|844|63fcc90c83629405c8b9d8147f01bfe4e89e43c7|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "04a65572c396e577738cef403537f97edb340b4e4b07f9f08ae132ce92b9d208",
+ "diff_sha256": "04a65572c396e577738cef403537f97edb340b4e4b07f9f08ae132ce92b9d208",
+ "duration_s": 60.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"eventuallyEq_comp_(iff|const_iff|zero_iff)\" code/TauCeti roadmap` shows declarations at `HomeomorphCongr.lean:57,72,77`, proof uses only in `HarmonicIsometry.lean:57,79` and `HarmonicDilation.lean:121,125`, and no roadmap hits.",
+   "file": "TauCeti/Topology/Algebra/HomeomorphCongr.lean",
+   "fix": "Keep the helper private by inlining/duplicating the short argument in the harmonic proofs, or justify a real public topology API with only the needed characteristic lemma set and annotations.",
+   "issue": "`eventuallyEq_comp_iff`, `eventuallyEq_comp_const_iff`, and `eventuallyEq_comp_zero_iff` are new public topology API added only to share harmonic proof internals; `eventuallyEq_comp_const_iff` is not used at all and the zero/general forms are only proof dependencies.",
+   "line": 57
+  },
+  {
+   "evidence": "Line 10 is `public import TauCeti.Topology.Algebra.HomeomorphCongr`; grep shows `TauCeti.Homeomorph.eventuallyEq_comp_zero_iff` appears only inside proofs at `HarmonicIsometry.lean:57,79`.",
+   "file": "TauCeti/Analysis/InnerProductSpace/HarmonicIsometry.lean",
+   "fix": "Make this a non-public `import` if the proof helper remains public, or remove it after keeping the helper private/inlined.",
+   "issue": "`HarmonicIsometry` publicly imports `TauCeti.Topology.Algebra.HomeomorphCongr` even though none of its public theorem statements mention that module; this reexports unrelated homeomorphism-conjugation API from the harmonicity module.",
+   "line": 10
+  }
+ ],
+ "head_sha": "63fcc90c83629405c8b9d8147f01bfe4e89e43c7",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 844,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6d206d38dea7c1a1717920be3a08ce647a86a7298aad67f46bbb2c2e409a2ec6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T075800Z-844-api-design-48b173",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T07:58:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactors of existing theorem bodies are API-neutral, but the PR still expands the public surface for proof plumbing. The new homeomorphism eventual-equality lemmas and their public reexport are not roadmap products or needed theorem statements.",
+ "transcript_blob": "b58b966ff032dd7739181722f5b71c012d6c8d3edb32c6fd9372ce1bc089d95a",
+ "usage": {
+  "cached_input_tokens": 54912,
+  "input_tokens": 87512,
+  "output_tokens": 2445,
+  "reasoning_output_tokens": 1288
+ },
+ "verdict": "request_changes"
+}
