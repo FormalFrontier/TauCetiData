@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.394835,
+   "returncode": 0,
+   "secs": 70.1,
+   "usage": {
+    "cached_input_tokens": 46720,
+    "input_tokens": 101953,
+    "output_tokens": 3177,
+    "reasoning_output_tokens": 2098
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "cost_estimated": true,
+ "cost_usd": 0.394835,
+ "dedupe_key": "TauCetiProject/TauCeti|815|30545093f711181d06c993740f018e5a1224cd1a|placement|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "98414be7292827546098cb5032a0650007463cf4d0f86ec09cc04259acbd48c1",
+ "diff_sha256": "98414be7292827546098cb5032a0650007463cf4d0f86ec09cc04259acbd48c1",
+ "duration_s": 70.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Basic.lean:8` imports `Mathlib.Analysis.Matrix.Order`; `Basic.lean:10` imports `TauCeti.Analysis.PositiveDefinite.Kernel`, and `Kernel.lean:8` already publicly imports `Mathlib.Analysis.Matrix.Order`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Basic.lean",
+   "fix": "Remove the direct `public import Mathlib.Analysis.Matrix.Order` from `Basic.lean`.",
+   "issue": "`Mathlib.Analysis.Matrix.Order` is now imported both directly and via the newly added public import of `TauCeti.Analysis.PositiveDefinite.Kernel`.",
+   "line": 8
+  },
+  {
+   "evidence": "`FunctionKernel.lean:7-8` imports both `Basic` and `Kernel`; `Basic.lean:10` publicly imports `TauCeti.Analysis.PositiveDefinite.Kernel`, so the kernel names used in `FunctionKernel.lean` are already available.",
+   "file": "TauCeti/Analysis/PositiveDefinite/FunctionKernel.lean",
+   "fix": "Remove the direct `public import TauCeti.Analysis.PositiveDefinite.Kernel` from `FunctionKernel.lean`.",
+   "issue": "`TauCeti.Analysis.PositiveDefinite.Kernel` is redundant because `FunctionKernel.lean` already publicly imports `Basic.lean`, which now publicly imports the kernel layer.",
+   "line": 8
+  }
+ ],
+ "head_sha": "30545093f711181d06c993740f018e5a1224cd1a",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 815,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c2014b166b33f814d6274c34d67b02bc44d81ec4c84542cdfa0e2aa57e2d2d63",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T052226Z-815-placement-955721",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:22:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The moved declarations are in plausible homes, but the new import graph leaves redundant public imports that should be removed.",
+ "transcript_blob": "cf7d9c0ad77c33396b3ec2a50cb12574b3ac804ecda28cb6aaf1dc83542882d2",
+ "usage": {
+  "cached_input_tokens": 46720,
+  "input_tokens": 101953,
+  "output_tokens": 3177,
+  "reasoning_output_tokens": 2098
+ },
+ "verdict": "request_changes"
+}
