@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.298101,
+   "returncode": 0,
+   "secs": 71.3,
+   "usage": {
+    "cached_input_tokens": 87552,
+    "input_tokens": 119487,
+    "output_tokens": 3155,
+    "reasoning_output_tokens": 1492
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.298101,
+ "dedupe_key": "TauCetiProject/TauCeti|843|4a1b0f9da259e08003d3691970d28e1aedad5fcb|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "a32e03d592159b05f370824e7e635e747f0ecaf8299250a118ceb5429d79db19",
+ "diff_sha256": "a32e03d592159b05f370824e7e635e747f0ecaf8299250a118ceb5429d79db19",
+ "duration_s": 71.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 106-108 are exactly `ContDiffOn.integral_neg_iteratedDerivWithin_one_Icc_eq_Ici ...`; the more general signature is in `TauCeti/Analysis/Calculus/IteratedDerivWithin.lean:63-66`, and `rg` shows the only code use is `BernsteinMeasures.lean:628`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Remove this public lemma or make it private at the BernsteinMeasures call site; call `ContDiffOn.integral_neg_iteratedDerivWithin_one_Icc_eq_Ici` with the local `ContDiffAt` proof instead.",
+   "issue": "`IsCompletelyMonotone.integral_neg_iteratedDerivWithin_one_Icc_eq_Ici` is a public CM-specialized wrapper around the generic transfer lemma, so it exposes an unnecessary `IsCompletelyMonotone f` assumption for a plain local-continuity fact.",
+   "line": 102
+  },
+  {
+   "evidence": "Lines 116-117 directly call `ContDiffOn.tendsto_integral_neg_iteratedDerivWithin_one_Icc_atTop`; the general theorem is declared at `TauCeti/Analysis/Calculus/IteratedDerivWithin.lean:78-82`, and `rg` shows no consumers beyond this declaration.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Remove this wrapper or keep only the generic `ContDiffOn.tendsto_integral_neg_iteratedDerivWithin_one_Icc_atTop` API and instantiate it at `a := 0` where needed.",
+   "issue": "`IsCompletelyMonotone.tendsto_integral_neg_iteratedDerivWithin_one_Icc_atTop` is another public CM-specialized wrapper whose conclusion only needs `ContDiffOn \u211d 1 f (Ici a)` plus the convergence hypothesis.",
+   "line": 112
+  }
+ ],
+ "head_sha": "4a1b0f9da259e08003d3691970d28e1aedad5fcb",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0df98c37fcefc9d89716e8a352b1442a5a8251451ac4d71859e871e5ab1c6bc6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T144427Z-843-generality-ac9ef6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T14:44:27Z",
+ "submitted_by": "kim-em",
+ "summary": "Two public completely-monotone lemmas remain as stronger specializations of generic `ContDiffOn` calculus lemmas already in this PR's generic module. They should be removed or made private at the use sites so the public API stays at the natural generality level.",
+ "transcript_blob": "e47bc786f426638eac28fcfe1d28c1e4272f3c28aea60789f545c0d2adee5f17",
+ "usage": {
+  "cached_input_tokens": 87552,
+  "input_tokens": 119487,
+  "output_tokens": 3155,
+  "reasoning_output_tokens": 1492
+ },
+ "verdict": "request_changes"
+}
