@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.452805,
+   "returncode": 0,
+   "secs": 70.9,
+   "usage": {
+    "cached_input_tokens": 163200,
+    "input_tokens": 217059,
+    "output_tokens": 3397,
+    "reasoning_output_tokens": 1737
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cc1bbf821120168c1a2af6629452988d7d1fb658",
+ "cost_estimated": true,
+ "cost_usd": 0.452805,
+ "dedupe_key": "TauCetiProject/TauCeti|819|b281dd96bb08789a23a0af25b9aae6d86f5c9cfc|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "57887ed612e6c73b3272378ae51db7643ec8e4e2a9de5fd7850303460581a92f",
+ "diff_sha256": "57887ed612e6c73b3272378ae51db7643ec8e4e2a9de5fd7850303460581a92f",
+ "duration_s": 70.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep hits: `CoerciveEnergy.lean:132 (hmu : beta ^ 2 / (2 * lam) < mu)` and proof lines 136-138 use it only via `hdef.le`; analogous signatures occur at `UniformEllipticEnergy.lean:175,189` and `CoercivePerturbation.lean:74,92,105`.",
+   "file": "TauCeti/Analysis/PDE/CoerciveEnergy.lean",
+   "fix": "Change these lower-bound lemmas to assume `beta ^ 2 / (2 * lam) \u2264 mu`; keep `min_coercivityConstant_pos` with strict `<` for callers that need a positive constant.",
+   "issue": "`min_coercivityConstant_mul_norm_sq_le_energyIntegrand_self` requires `beta ^ 2 / (2 * lam) < mu`, but the conclusion is only a lower-bound inequality and the proof only needs `0 \u2264 mu - beta ^ 2 / (2 * lam)`. The same over-strong hypothesis appears in the wrappers at `UniformEllipticEnergy.lean:172`, `UniformEllipticEnergy.lean:184`, and `CoercivePerturbation.lean:71`, `:89`, `:102`.",
+   "line": 129
+  }
+ ],
+ "head_sha": "b281dd96bb08789a23a0af25b9aae6d86f5c9cfc",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 819,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9316f92e6ab23586b94e03e615b28767670027d5eebd58d90c8df79a666a8dfa",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T052543Z-819-generality-1fe176",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T05:25:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The lower-bound API is still stated with a strict mass-dominance hypothesis even though the inequalities only need nonnegative dominance. Generalize those statements and keep strict positivity only in the separate positivity/coercivity consumer lemmas.",
+ "transcript_blob": "6ef8d7804f98d097a1b1c822efe7473abd7ea7a8c5fb7eedd06662db99dafdc7",
+ "usage": {
+  "cached_input_tokens": 163200,
+  "input_tokens": 217059,
+  "output_tokens": 3397,
+  "reasoning_output_tokens": 1737
+ },
+ "verdict": "request_changes"
+}
