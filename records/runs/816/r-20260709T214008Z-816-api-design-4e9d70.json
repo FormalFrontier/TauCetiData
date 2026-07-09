@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.291593,
+   "returncode": 0,
+   "secs": 67.5,
+   "usage": {
+    "cached_input_tokens": 55936,
+    "input_tokens": 89905,
+    "output_tokens": 3126,
+    "reasoning_output_tokens": 1957
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9ac3e9b44b1da0e3a77c215b3c2cd48763f86080",
+ "cost_estimated": true,
+ "cost_usd": 0.291593,
+ "dedupe_key": "TauCetiProject/TauCeti|816|472ce3cbf30fcfc21196de2c665f43a09b5f945a|api-design|gpt-5.5|fb0698ac514a62c5|production|5",
+ "diff_blob": "ebb98efe93f494d665c16e631848ecbe499d50ff6dc8dca41e9ebd1c3773b497",
+ "diff_sha256": "ebb98efe93f494d665c16e631848ecbe499d50ff6dc8dca41e9ebd1c3773b497",
+ "duration_s": 67.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits show the theorem is declared at `QuadraticIntegralBasis.lean:32` and only used at `EffectiveBounds/Discriminant.lean:169` and `EffectiveBounds/WorkedExamples.lean:133`.",
+   "file": "TauCeti/NumberTheory/NumberField/QuadraticIntegralBasis.lean",
+   "fix": "Do not expose this helper: keep the construction local/private in the consumers, or otherwise hide it from the public API while exposing only the quadratic discriminant/class-number and worked-example theorems.",
+   "issue": "`TauCeti.NumberField.exists_basis_eq_one_self_of_notMem_range_of_isIntegral` is public even though it is only a `{1,x}` basis-construction helper for proofs, not a roadmap product or characteristic API.",
+   "line": 32
+  },
+  {
+   "evidence": "`rg \"abs_discr_cyclotomicField_four\" code` finds no declaration, while the file exposes `discr_cyclotomicField_four` at line 172 and `natAbs_discr_cyclotomicField_four` at line 179; the roadmap acceptance criterion is `|d_{\u211a(i)}| = 4`.",
+   "file": "TauCeti/NumberTheory/EffectiveBounds/WorkedExamples.lean",
+   "fix": "Add the parallel public theorem, e.g. `abs_discr_cyclotomicField_four : |NumberField.discr (CyclotomicField 4 \u211a)| = (4 : \u2124)`, proved from `discr_cyclotomicField_four`.",
+   "issue": "The `\u211a(i)` worked-example API gives the signed discriminant and `.natAbs`, but not the integer absolute-value theorem `|NumberField.discr (CyclotomicField 4 \u211a)| = 4` that the roadmap statement and existing discriminant-bound API use.",
+   "line": 179
+  }
+ ],
+ "head_sha": "472ce3cbf30fcfc21196de2c665f43a09b5f945a",
+ "merge_base_sha": "9ac3e9b44b1da0e3a77c215b3c2cd48763f86080",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 816,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "9903fadf994bc22a83b76a8935123f789652540f9dec8fb29fec8d61a3877ced",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T214008Z-816-api-design-4e9d70",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T21:40:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The roadmap-facing worked examples are present, but the PR still widens the public API with proof plumbing and leaves the absolute-discriminant example missing one advertised characteristic form.",
+ "transcript_blob": "9483655fdfd5fe80f4a1a487613edf90080c6376bc424af112869670226b8a13",
+ "usage": {
+  "cached_input_tokens": 55936,
+  "input_tokens": 89905,
+  "output_tokens": 3126,
+  "reasoning_output_tokens": 1957
+ },
+ "verdict": "request_changes"
+}
