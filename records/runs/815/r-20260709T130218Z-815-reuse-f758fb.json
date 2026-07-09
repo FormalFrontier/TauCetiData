@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.46447,
+   "returncode": 0,
+   "secs": 95.7,
+   "usage": {
+    "cached_input_tokens": 176000,
+    "input_tokens": 227474,
+    "output_tokens": 3970,
+    "reasoning_output_tokens": 2007
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "cost_estimated": true,
+ "cost_usd": 0.46447,
+ "dedupe_key": "TauCetiProject/TauCeti|815|097d4e031c2b8e330b1c820bf4ccece8dd20a845|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "446a1e48c120d6e519e79b6e894b151c53d01c5f15dd4f09a86e42885967195d",
+ "diff_sha256": "446a1e48c120d6e519e79b6e894b151c53d01c5f15dd4f09a86e42885967195d",
+ "duration_s": 95.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: `Basic.lean:93 theorem sum_nonneg ...`; `Basic.lean:255 theorem kernel_form_nonneg ...`; its proof is exactly `have h := hF.sum_nonneg (fun i => conj (x i)) v` followed by `Complex.conj_conj`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Basic.lean",
+   "fix": "Do not add this as public API; make it private or inline it in `isPositiveDefiniteKernel` using `hF.sum_nonneg (fun i => conj (x i)) v` and `simpa only [Complex.conj_conj]`.",
+   "issue": "`IsPositiveDefinite.kernel_form_nonneg` is a new public thin restatement of the existing `IsPositiveDefinite.sum_nonneg` with `c := fun i => conj (x i)`.",
+   "line": 255
+  },
+  {
+   "evidence": "`rg` hits: `Basic.lean:183 theorem normSq_le`; `KernelBounds.lean:60 theorem isPositiveDefiniteKernel_normSq_le`; the current proof spans lines 186-208 with a quadratic/discriminant argument.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Basic.lean",
+   "fix": "Import `KernelBounds`, place the bridge before this lemma if needed, and prove it by transporting `isPositiveDefiniteKernel_normSq_le hF.isPositiveDefiniteKernel a b`.",
+   "issue": "`normSq_le` still carries the old discriminant proof even though the kernel bridge plus `isPositiveDefiniteKernel_normSq_le` directly gives the result.",
+   "line": 183
+  },
+  {
+   "evidence": "`rg` hits: `Basic.lean:231 add`, `241 const_mul`, `287 mul`, `303 isPositiveDefinite_const`, `323 sum`, `332 prod`; replacements are at `Kernel.lean:107`, `117`, `135`, `198` and `KernelClosure.lean:53`, `64`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Basic.lean",
+   "fix": "Rewrite them with `of_isPositiveDefiniteKernel` and the located replacements: `isPositiveDefiniteKernel_add`, `isPositiveDefiniteKernel_smul_of_nonneg`, `isPositiveDefiniteKernel_mul`, `isPositiveDefiniteKernel_const_of_nonneg`, `isPositiveDefiniteKernel_sum`, and `isPositiveDefiniteKernel_prod` (adding `KernelClosure` where needed).",
+   "issue": "The function closure lemmas `add`, `const_mul`, `mul`, `isPositiveDefinite_const`, `sum`, and `prod` still duplicate kernel closure API instead of transporting it across `isPositiveDefiniteKernel`.",
+   "line": 231
+  }
+ ],
+ "head_sha": "097d4e031c2b8e330b1c820bf4ccece8dd20a845",
+ "merge_base_sha": "b07e0d4f6eb6ae961d1642cf79620d9e48178be4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 815,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "38c7463dc3242a6e47a29c239549cb30c8a168ae88bbfb704d1d1327671b012c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T130218Z-815-reuse-f758fb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T13:02:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes a new function-level helper that is just `sum_nonneg` with conjugated coefficients, and several surviving function-level proofs still duplicate the kernel API that this refactor is meant to reuse.",
+ "transcript_blob": "19136838b3fc2e61c68aed8247a1091df0424a4534a397ea33e7f9f59d2d5e92",
+ "usage": {
+  "cached_input_tokens": 176000,
+  "input_tokens": 227474,
+  "output_tokens": 3970,
+  "reasoning_output_tokens": 2007
+ },
+ "verdict": "block"
+}
