@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.569862,
+   "returncode": 0,
+   "secs": 92.5,
+   "usage": {
+    "cached_input_tokens": 232704,
+    "input_tokens": 296970,
+    "output_tokens": 4406,
+    "reasoning_output_tokens": 2293
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "72fed39a083ab51ef78993b002367788f47b6e64",
+ "cost_estimated": true,
+ "cost_usd": 0.569862,
+ "dedupe_key": "TauCetiProject/TauCeti|843|cd5a80ee98f902d5d690ab890e173a051fbcf874|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "5fecbbb6452855e35c040ce3de46ce0e38dd18b7f1a2e698cea12461a9081b8a",
+ "diff_sha256": "5fecbbb6452855e35c040ce3de46ce0e38dd18b7f1a2e698cea12461a9081b8a",
+ "duration_s": 92.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib grep hits: `mathlib/Mathlib/MeasureTheory/Integral/IntegralEqImproper.lean:891 theorem integrableOn_Ioi_deriv_of_nonpos` and `:910 theorem integral_Ioi_of_hasDerivAt_of_nonpos`; TauCeti currently applies `integrableOn_Ioi_of_intervalIntegral_norm_tendsto` at `Integral.lean:122` and reconstructs the interval FTC/tendsto proof again at `Integral.lean:155-168`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Integral.lean",
+   "fix": "Use Mathlib's `integrableOn_Ioi_deriv_of_nonpos` and `integral_Ioi_of_hasDerivAt_of_nonpos` with `g' := fun t => iteratedDerivWithin 1 f (Ici 0) t`, deriving `hderiv` on `Ioi 0` from `ContDiffOn.hasDerivAt_iteratedDerivWithin` and the sign from `hcm.iteratedDerivWithin_one_nonpos`; then negate the integrability/integral result for `-g'`.",
+   "issue": "`neg_iteratedDerivWithin_one_integrableOn` and `integral_Ioi_neg_iteratedDerivWithin_one` manually redo the improper-integral/nonpositive-derivative argument over lines 122-168.",
+   "line": 122
+  }
+ ],
+ "head_sha": "cd5a80ee98f902d5d690ab890e173a051fbcf874",
+ "merge_base_sha": "a1218ddabd2cbdf947749054977b108142f30403",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 843,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d9b7f188c98be9cfa83e5d6aa10c8c89624da5c90818184e8863487a863a3ec3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260709T075053Z-843-reuse-47f8b5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-09T07:50:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR removes the targeted finite-interval wrappers, but it leaves a newly expanded improper-integral proof that rederives Mathlib's packaged semi-infinite FTC/nonpositive-derivative API.",
+ "transcript_blob": "825325983014ded435c0d81944c5a2c78736b29adbaca3b67bb95d2ac5729646",
+ "usage": {
+  "cached_input_tokens": 232704,
+  "input_tokens": 296970,
+  "output_tokens": 4406,
+  "reasoning_output_tokens": 2293
+ },
+ "verdict": "request_changes"
+}
