@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.211114,
+   "returncode": 0,
+   "secs": 43.2,
+   "usage": {
+    "cached_input_tokens": 59008,
+    "input_tokens": 83810,
+    "output_tokens": 1920,
+    "reasoning_output_tokens": 812
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "cost_estimated": true,
+ "cost_usd": 0.211114,
+ "dedupe_key": "TauCetiProject/TauCeti|890|ad7db6db89d915d88b55eb54d250b75da7d97c40|api-design|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "c29c43c32a1aa97549c260fc3fdcf5bab4a6fd37b057f1ec962902834858cd61",
+ "diff_sha256": "c29c43c32a1aa97549c260fc3fdcf5bab4a6fd37b057f1ec962902834858cd61",
+ "duration_s": 43.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`nl -ba .../TensorProduct.lean` shows `abbrev tensorCombine` at 62-65 and `theorem tensorCombine_def ... := rfl` at 68-72; `Geometry/Symplectic/JHolomorphicEnergy.lean:83-84` documents the local pattern: `irreducible_def` supplies a public `_def` lemma while keeping the body unexposed.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Make `tensorCombine` an opaque `def` or `irreducible_def` and keep downstream access through `@[simp] tensorCombine_tmul_tmul` and naturality lemmas; if a public definitional restatement is required, use the local `irreducible_def` pattern rather than a reducible `abbrev`.",
+   "issue": "`tensorCombine` is a public `abbrev`, and `tensorCombine_def` at lines 68-72 publishes its exact shuffle/composition body by `rfl`; this exposes implementation choice as definitional API.",
+   "line": 62
+  },
+  {
+   "evidence": "`nl -ba .../TensorProduct.lean` shows `abbrev tensorCoact` at 137-143 and `theorem tensorCoact_def ... := rfl` at 146-153.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Make `tensorCoact` opaque or `irreducible_def`, and expose only the needed characterization lemmas such as `tensorCoact_tmul` and `tensorCoact_natural`.",
+   "issue": "`tensorCoact` is also a public `abbrev`, with `tensorCoact_def` at lines 146-153 exposing the body as a definitional composition; later users can accidentally rely on this implementation instead of the characteristic coaction API.",
+   "line": 137
+  }
+ ],
+ "head_sha": "ad7db6db89d915d88b55eb54d250b75da7d97c40",
+ "merge_base_sha": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 890,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "4b76e99b915764947fd574534f8dda64d4ea601cf09bc8850f519ef1c84d13ac",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T180114Z-890-api-design-516024",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T18:01:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API still exposes implementation bodies for the new tensor-product maps, now through `abbrev` and public `rfl` `_def` lemmas rather than `@[expose]`. Consumers should use the characteristic tensor/naturality lemmas, not depend on the chosen shuffle/composition definition by reduction.",
+ "transcript_blob": "2cb953014e79c687b53c6e42ac4d87019b5d1569d079bb83b2eabb28facfd639",
+ "usage": {
+  "cached_input_tokens": 59008,
+  "input_tokens": 83810,
+  "output_tokens": 1920,
+  "reasoning_output_tokens": 812
+ },
+ "verdict": "request_changes"
+}
