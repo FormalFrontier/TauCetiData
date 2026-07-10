@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.481687,
+   "returncode": 0,
+   "secs": 332.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 70678,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 70678,
+    "cache_read_input_tokens": 290850,
+    "inference_geo": "not_available",
+    "input_tokens": 3306,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1670,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1670,
+      "cache_read_input_tokens": 85019,
+      "input_tokens": 2,
+      "output_tokens": 2514,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24199,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "cost_usd": 1.481687,
+ "dedupe_key": "TauCetiProject/TauCeti|890|099ee0d8071b844b419c7e596355362d120a93df|api-design|claude-opus-4-8|fb0698ac514a62c5|production|4",
+ "diff_blob": "d733bb9566a0f865524963782672ef8461e25ffd1675563e51a7f2f7fa9e19a3",
+ "diff_sha256": "d733bb9566a0f865524963782672ef8461e25ffd1675563e51a7f2f7fa9e19a3",
+ "duration_s": 332.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: line 62 `@[expose] def tensorCombine`, line 137 `@[expose] def tensorCoact`; lines 68/146 `tensorCombine_def`/`tensorCoact_def := rfl`. The contest's failure is specific to bare `:= rfl`; Mathlib `Analysis/Complex/Norm.lean:25-29` shows the working pattern \u2014 `@[no_expose] instance instNorm` with public `theorem norm_def ... := (rfl)` \u2014 a non-exposed def carrying a public `_def` lemma, which the rubric's `:= (rfl)` guidance names directly.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Drop `@[expose]` from both defs and prove `tensorCombine_def`/`tensorCoact_def` with `:= (rfl)` (parenthesized) rather than `:= rfl`. The parenthesized form gives a public propositional restatement without requiring the body to be exposed; the four characterization lemmas route through `_def` and continue to work with the body hidden.",
+   "issue": "`@[expose] def tensorCombine` (and identically `@[expose] def tensorCoact` at line 137) export the `tensorTensorTensorComm \u2218 map id (mul')` / `tensorCombine \u2218 map coact coact` bodies, letting consumers unfold the implementation by defeq instead of depending on the stated lemmas.",
+   "line": "62"
+  }
+ ],
+ "head_sha": "099ee0d8071b844b419c7e596355362d120a93df",
+ "merge_base_sha": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 890,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "d8c2b282c92e2ac799438a1f1ec975667a532c2bdad0e16989048f48ba2b069a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T163236Z-890-api-design-af100d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T16:32:36Z",
+ "submitted_by": "kim-em",
+ "summary": "tensorCombine and tensorCoact are @[expose], publishing their implementation bodies even though named characterization lemmas (_def, _tmul_tmul/_tmul, _natural) already cover every downstream need. The bodies should be hidden.",
+ "transcript_blob": "b4b27fe342f3e11a396a7a4ab5d7bfeadbfde2b73bf308176e962e5301ababe1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 70678,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 70678,
+  "cache_read_input_tokens": 290850,
+  "inference_geo": "not_available",
+  "input_tokens": 3306,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1670,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1670,
+    "cache_read_input_tokens": 85019,
+    "input_tokens": 2,
+    "output_tokens": 2514,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24199,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
