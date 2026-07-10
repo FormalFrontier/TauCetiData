@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.522356,
+   "returncode": 0,
+   "secs": 78.6,
+   "usage": {
+    "cached_input_tokens": 232192,
+    "input_tokens": 291868,
+    "output_tokens": 3596,
+    "reasoning_output_tokens": 1649
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1bd7df62369cdd2496d850a7dfdde2c3a9810451",
+ "cost_estimated": true,
+ "cost_usd": 0.522356,
+ "dedupe_key": "TauCetiProject/TauCeti|887|7b8dfa8e4493198c5113772e7e70c8045a45ea93|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "7279b081fc272a3b25f9d2338e4d3af70c549856e75729d17cbafc363cf516df",
+ "diff_sha256": "7279b081fc272a3b25f9d2338e4d3af70c549856e75729d17cbafc363cf516df",
+ "duration_s": 78.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "code lines 63-71 define only `grpObj`, `isProper`, and `geometricallyIntegral`; roadmap lines 139-141 state `Abelian variety = smooth, proper, geometrically connected group scheme`; Mathlib has `class Smooth` in `Morphisms/Smooth.lean:62` and `class GeometricallyConnected` in `Geometrically/Connected.lean:40`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Basic.lean",
+   "fix": "Add public instances/fields for `Smooth A.toOver.hom` and `GeometricallyConnected A.toOver.hom` (derived from `GeometricallyIntegral` where possible, or carried explicitly if the needed theorem is unavailable), and preserve them through `baseChange`.",
+   "issue": "`AbelianVariety` is publicly documented as the Layer E abelian-variety interface, but the bundle only exposes `IsProper` and `GeometricallyIntegral`; users do not get the roadmap's `Smooth A.toOver.hom` or `GeometricallyConnected A.toOver.hom` API from an `A : AbelianVariety K`.",
+   "line": 63
+  },
+  {
+   "evidence": "code lines 116-120 mark `baseChange_toOver` as `[simp]`, while lines 124-127 give the analogous `baseChange_toScheme` restatement with no attribute.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Basic.lean",
+   "fix": "Add `@[simp]` to `baseChange_toScheme` so downstream users can normalize the underlying scheme of a base change without unfolding `baseChange`.",
+   "issue": "`baseChange_toScheme` is a characteristic normal-form lemma for the public `baseChange` operation but is not tagged `[simp]`, unlike `baseChange_toOver`.",
+   "line": 124
+  }
+ ],
+ "head_sha": "7b8dfa8e4493198c5113772e7e70c8045a45ea93",
+ "merge_base_sha": "1bd7df62369cdd2496d850a7dfdde2c3a9810451",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 887,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d816c64936f123eb5fcec36b9840e245f8c0b94f21fd9d7c95c74b1d9d4ddf8d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T082244Z-887-api-design-3580ee",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T08:22:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new surface is close, but it does not expose the roadmap's characteristic smooth/geometrically-connected API for abelian varieties, and one base-change normal-form lemma is missing its automation annotation.",
+ "transcript_blob": "0df70407b000fef01ae86d37cc7fb4eb145aee106b7f4851597430d367c65274",
+ "usage": {
+  "cached_input_tokens": 232192,
+  "input_tokens": 291868,
+  "output_tokens": 3596,
+  "reasoning_output_tokens": 1649
+ },
+ "verdict": "request_changes"
+}
