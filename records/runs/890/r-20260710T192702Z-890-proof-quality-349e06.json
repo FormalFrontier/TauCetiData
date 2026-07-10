@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.23352,
+   "returncode": 0,
+   "secs": 49.9,
+   "usage": {
+    "cached_input_tokens": 62080,
+    "input_tokens": 88866,
+    "output_tokens": 2285,
+    "reasoning_output_tokens": 1315
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "cost_estimated": true,
+ "cost_usd": 0.23352,
+ "dedupe_key": "TauCetiProject/TauCeti|890|5191f2a82f6b5e05ced650e5784b47862753abcd|proof-quality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "adcf9b8a7ab64076c951e150e351737e1197050a07f37376a61e89736fca9181",
+ "diff_sha256": "adcf9b8a7ab64076c951e150e351737e1197050a07f37376a61e89736fca9181",
+ "duration_s": 49.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 169-177: `rw [tensorCoact_def ...]` followed by `rfl` for a non-definition theorem.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Replace the final `rfl` with an explicit simplification proof, e.g. `simpa [tensorCoact_def]` or a rewrite using the public `TensorProduct.map_tmul` lemma.",
+   "issue": "`tensorCoact_tmul` proves the pure-tensor formula by rewriting `tensorCoact_def` and then using `rfl`, relying on the current definitional behavior of `LinearMap.comp_apply`/`TensorProduct.map` through wrappers.",
+   "line": 176
+  },
+  {
+   "evidence": "Lines 193-201 are only successive `rw` steps: `tensorCoact_def`, `tensorCombine_natural`, `tensorCombine_def`, `LinearMap.comp_assoc`, `TensorProduct.map_comp`, and `Hom.map_coact_eq`.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Prove it by extensionality on pure tensors using `tensorCoact_tmul`, `tensorCombine_tmul_tmul`, and `Hom.map_coact_apply`, or factor the map-composition calculation into a named reusable lemma before the final proof.",
+   "issue": "`tensorCoact_natural` is an opaque rewrite chain over associativity, `tensorCombine_def`, and `TensorProduct.map_comp`; the reason the naturality square commutes is not visible and the proof is sensitive to rewrite direction/normal form changes.",
+   "line": 193
+  }
+ ],
+ "head_sha": "5191f2a82f6b5e05ced650e5784b47862753abcd",
+ "merge_base_sha": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 890,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b1f71c38edb2b9c643039ea9130d25240a4c541709f26c852869efe271e8f34d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T192702Z-890-proof-quality-349e06",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T19:27:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The new proofs elaborate, but two proof scripts rely on brittle definitional or rewrite-normal-form behavior rather than stable characteristic lemmas.",
+ "transcript_blob": "64ba2d55f25400cd122a35187f3822229f3f08e97d7a0dbc4b3d11223f9c2020",
+ "usage": {
+  "cached_input_tokens": 62080,
+  "input_tokens": 88866,
+  "output_tokens": 2285,
+  "reasoning_output_tokens": 1315
+ },
+ "verdict": "request_changes"
+}
