@@ -1,0 +1,85 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.309463,
+   "returncode": 0,
+   "secs": 56.1,
+   "usage": {
+    "cached_input_tokens": 93696,
+    "input_tokens": 130409,
+    "output_tokens": 2635,
+    "reasoning_output_tokens": 671
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.309463,
+ "dedupe_key": "TauCetiProject/TauCeti|893|ab304c57bd3153dc8f71e973c0f2d1fa73dafcbd|reuse|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "d9978378b3de0ef28eff59cea5ec4f5448c65b848a855bd894b4939ef0df6e29",
+ "diff_sha256": "d9978378b3de0ef28eff59cea5ec4f5448c65b848a855bd894b4939ef0df6e29",
+ "duration_s": 56.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR lines 292-295 define `isDomain_of_ringEquiv`; grep found `mathlib/Mathlib/Algebra/Ring/Equiv.lean:968-978` defining `MulEquiv.isDomain` and `MulEquiv.isDomain_iff`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Delete it and use `e.symm.isDomain` or `(e.symm : B \u2243* A).isDomain` at the call site on line 402.",
+   "issue": "`isDomain_of_ringEquiv` directly duplicates Mathlib's ring-equivalence domain transport.",
+   "line": 292
+  },
+  {
+   "evidence": "PR lines 92-126 define the transport stack; grep found `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:151` `Ideal.comap_minimalPrimes_eq_of_surjective` and `:161` `Ideal.minimalPrimes_map_of_surjective`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Replace the membership proofs with Mathlib's surjective-map API applied to the ring equivalence, e.g. `Ideal.minimalPrimes_map_of_surjective e.surjective \u22a5` plus `Ideal.comap_minimalPrimes_eq_of_surjective e.surjective` for the inverse direction.",
+   "issue": "`minimalPrimes_map_of_ringEquiv`, `minimalPrimes_map_iff`, and `minimalPrimes_equiv_of_ringEquiv` rederive minimal-prime transport under an isomorphism from ideal plumbing.",
+   "line": 92
+  },
+  {
+   "evidence": "PR lines 143-173 define the equivalence mostly by rewriting with localization under/map lemmas; grep found `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:181` `IsLocalization.minimalPrimes_map`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Use `IsLocalization.minimalPrimes_map S A \u22a5` for the forward/backward membership and keep only the small subtype packaging around primes below `p.asIdeal`.",
+   "issue": "`minimalPrimesEquivMinimalPrimesLe` hand-builds the localization minimal-prime correspondence that Mathlib already states.",
+   "line": 143
+  },
+  {
+   "evidence": "PR lines 177-218 explicitly say this reconstructs `minimalPrimes.equivIrreducibleComponents`; grep found `mathlib/Mathlib/RingTheory/Spectrum/Prime/Topology.lean:1261` `minimalPrimes.equivIrreducibleComponents`, plus `:1270` `vanishingIdeal_irreducibleComponents`, `:1277` `zeroLocus_minimalPrimes`, and `:1294` `zeroLocus_ideal_mem_irreducibleComponents`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Remove `equiv_clean`; base `irreducibleComponentsContainingEquivMinimalPrimesLe` on `minimalPrimes.equivIrreducibleComponents` or on the existing public lemmas `zeroLocus_minimalPrimes`, `vanishingIdeal_irreducibleComponents`, and `zeroLocus_ideal_mem_irreducibleComponents` for the needed subtype packaging.",
+   "issue": "`equiv_clean` reconstructs Mathlib's minimal-prime/irreducible-component correspondence for `Spec R`; the author reply explains why the cast-free copy was convenient, but this is still a local duplicate of the located public API and supporting lemmas.",
+   "line": 182
+  }
+ ],
+ "head_sha": "ab304c57bd3153dc8f71e973c0f2d1fa73dafcbd",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "bbcecc3a1e1c8c83f6e72854d8e05ddabd13962ac689d77891e0673ba7fd9379",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T182040Z-893-reuse-20bca3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T18:20:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still introduces local copies of existing Mathlib transport and Spec-component APIs instead of reusing the located declarations. One direct replacement is blocking; the other duplicated equivalence scaffolding should be refactored onto Mathlib lemmas rather than maintained locally.",
+ "transcript_blob": "b9cb6923ef6696c10af4bdcb32507d4b9a585d053e531bdd12eb5c2af0b83614",
+ "usage": {
+  "cached_input_tokens": 93696,
+  "input_tokens": 130409,
+  "output_tokens": 2635,
+  "reasoning_output_tokens": 671
+ },
+ "verdict": "block"
+}
