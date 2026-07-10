@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6355615,
+   "returncode": 0,
+   "secs": 156.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 25782,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 25782,
+    "cache_read_input_tokens": 43227,
+    "inference_geo": "not_available",
+    "input_tokens": 2436,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 14577,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 14577,
+      "cache_read_input_tokens": 27216,
+      "input_tokens": 1711,
+      "output_tokens": 11705,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13456,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "cost_usd": 0.635562,
+ "dedupe_key": "TauCetiProject/TauCeti|869|192c0df2d724ee39a8e149b88be17393b4916f34|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "25e98f1a5905504a71b5ee7c50c0b9231f48f6b234d48c82fedbc9e8d28cbe38",
+ "diff_sha256": "25e98f1a5905504a71b5ee7c50c0b9231f48f6b234d48c82fedbc9e8d28cbe38",
+ "duration_s": 156.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "cylinderFundamentalGroupMulEquiv_apply_eq_iff uses `simp only [..., FundamentalGroup.prodMulEquivRight_apply]`; _symm_fst uses `rw [... \u2190 FundamentalGroup.prodMulEquivRight_apply ...]`. Contrast: upstream prodMulEquiv is @[expose] because prodMulEquivRight_apply unfolds it by rfl across modules.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/CylinderFundamentalGroup.lean",
+   "fix": "Drop @[expose] from both prodMulEquivRight and prodMulEquivLeft; the complete _apply/_symm_apply simp lemmas fully characterize them.",
+   "issue": "prodMulEquivRight (and prodMulEquivLeft, line 60) are @[expose], but their bodies are never unfolded: cylinderFundamentalGroupMulEquiv uses .trans, and all downstream lemmas rewrite through the prodMulEquivRight_apply simp lemma, not the body. Their _apply/_symm_apply rfl lemmas are same-module and don't need exposure. cylinderFundamentalGroupMulEquiv in the same file is (correctly) not exposed.",
+   "line": "35"
+  },
+  {
+   "evidence": "CircleFundamentalGroup.lean gives fundamentalGroupMulEquiv_zero_apply_eq_iff (249), _apply (254), _symm_apply (261), _symm_monodromy (268), _eq_one_iff (276); the cylinder specializations have none.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/CylinderFundamentalGroup.lean",
+   "fix": "Add the parallel _apply_eq_iff, _eq_one_iff, and _symm_monodromy (and an _apply relating each to the general cylinderFundamentalGroupMulEquiv), mirroring CircleFundamentalGroup.lean lines 245-313.",
+   "issue": "realCylinderFundamentalGroupMulEquiv (and UnitAddCircle.cylinderFundamentalGroupMulEquiv, line 175) are declared as main products but have no characteristic lemmas and are not @[expose], so a consumer cannot read off which integer a loop maps to. The circle file characterizes the analogous fundamentalGroupMulEquiv_zero and UnitAddCircle.fundamentalGroupMulEquiv (apply_eq_iff / symm_monodromy / eq_one_iff / apply).",
+   "line": "154"
+  },
+  {
+   "evidence": "CircleFundamentalGroup.lean marks fundamentalGroupMulEquiv_symm_monodromy (223), fundamentalGroupMulEquivInt_symm_monodromy (179), and UnitAddCircle.fundamentalGroupMulEquiv_symm_monodromy (302) @[simp].",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/CylinderFundamentalGroup.lean",
+   "fix": "Add @[simp] to cylinderFundamentalGroupMulEquiv_symm_monodromy.",
+   "issue": "cylinderFundamentalGroupMulEquiv_symm_monodromy is not @[simp], though every corresponding _symm_monodromy in the circle file is @[simp].",
+   "line": "132"
+  }
+ ],
+ "head_sha": "192c0df2d724ee39a8e149b88be17393b4916f34",
+ "merge_base_sha": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 869,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d668dc7c692806b56ef37f45f800823ad7cab630483014169b03af48faab6bb2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T010129Z-869-api-design-9ff891",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T01:01:29Z",
+ "submitted_by": "kim-em",
+ "summary": "The two projection isos are needlessly @[expose]d (never unfolded; a complete simp API characterizes them), and the two culminating specializations realCylinderFundamentalGroupMulEquiv / UnitAddCircle.cylinderFundamentalGroupMulEquiv are opaque non-exposed isos with no characteristic lemmas, unlike the analogous circle specializations. Minor: a _symm_monodromy lemma lacks @[simp].",
+ "transcript_blob": "b65d415a9686b8d54f6f5864400bda6ee3b106d7812dd89707d166623aa10200",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25782,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 25782,
+  "cache_read_input_tokens": 43227,
+  "inference_geo": "not_available",
+  "input_tokens": 2436,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14577,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 14577,
+    "cache_read_input_tokens": 27216,
+    "input_tokens": 1711,
+    "output_tokens": 11705,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13456,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
