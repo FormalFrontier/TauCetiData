@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.169963,
+   "returncode": 0,
+   "secs": 27.2,
+   "usage": {
+    "cached_input_tokens": 28416,
+    "input_tokens": 51863,
+    "output_tokens": 1284,
+    "reasoning_output_tokens": 535
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "244d661dfb0bae29a10ad22e8f2a0391299f9e71",
+ "cost_estimated": true,
+ "cost_usd": 0.169963,
+ "dedupe_key": "TauCetiProject/TauCeti|880|d2275779458ed0caa3bb8dbf310de6978b598c9c|proof-quality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "8b2a4d7489a9fc0f5f000bb6684f5e19a40dc1c2752b9768a4f2a0dc6847166c",
+ "diff_sha256": "8b2a4d7489a9fc0f5f000bb6684f5e19a40dc1c2752b9768a4f2a0dc6847166c",
+ "duration_s": 27.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: line 73 `rw [show (2 : \u211d) * k = 4 * (k / 2) by ring`, line 86 `rw [show Real.sqrt (1 / 2) * ...`, line 137 `rw [show Real.sqrt (1 / 2) * ...`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionLadder.lean",
+   "fix": "Replace these with small named/private coefficient lemmas or add comments at each use explaining why the explicit `show` rewrite is needed instead of `ring_nf`/`simp`/a reusable lemma.",
+   "issue": "Undocumented `show` rewrites appear at lines 73-75, 86-88, and 137-141; the rubric flags `show` without a comment explaining why the goal cannot be reached otherwise.",
+   "line": 73
+  },
+  {
+   "evidence": "Lines 90-109 and 144-162 repeat the same recurrence setup and denominator-clearing proof shape; the derivative theorem is 56 lines long (113-168), so the repeated algebra is no longer a genuine one-off.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionLadder.lean",
+   "fix": "Factor the shared successor algebra into private lemmas, e.g. normalized polynomial recurrence/coefficient lemmas, and let the public theorems call those after the calculus/product-rule setup.",
+   "issue": "The successor-case normalization clearing is substantial and duplicated in `mul_hermiteFunction` and `hasDerivAt_hermiteFunction`, with the same `hrec`, `normFactor_succ`, nonzero hypotheses, `field_simp`, and `linear_combination` pattern.",
+   "line": 90
+  }
+ ],
+ "head_sha": "d2275779458ed0caa3bb8dbf310de6978b598c9c",
+ "merge_base_sha": "738fcb0b0a9fdead04fd64b0c3065e6f829aa6d5",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 880,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "460e92f3d4f9b6d8948581e2f79c880305817af0a1afc104f95bb80bfb9a1f06",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T045856Z-880-proof-quality-3796b2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T04:58:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs elaborate, but several proof scripts rely on undocumented `show` rewrites and repeated normalization-clearing algebra that should be factored for maintainability.",
+ "transcript_blob": "e5a79550455b9111a998959d17edc15d81bc9b881e180b119135a86533280566",
+ "usage": {
+  "cached_input_tokens": 28416,
+  "input_tokens": 51863,
+  "output_tokens": 1284,
+  "reasoning_output_tokens": 535
+ },
+ "verdict": "request_changes"
+}

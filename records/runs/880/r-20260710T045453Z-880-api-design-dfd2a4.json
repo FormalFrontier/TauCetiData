@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.43949,
+   "returncode": 0,
+   "secs": 65.6,
+   "usage": {
+    "cached_input_tokens": 110080,
+    "input_tokens": 169744,
+    "output_tokens": 2871,
+    "reasoning_output_tokens": 1165
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "244d661dfb0bae29a10ad22e8f2a0391299f9e71",
+ "cost_estimated": true,
+ "cost_usd": 0.43949,
+ "dedupe_key": "TauCetiProject/TauCeti|880|d2275779458ed0caa3bb8dbf310de6978b598c9c|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "8b2a4d7489a9fc0f5f000bb6684f5e19a40dc1c2752b9768a4f2a0dc6847166c",
+ "diff_sha256": "8b2a4d7489a9fc0f5f000bb6684f5e19a40dc1c2752b9768a4f2a0dc6847166c",
+ "duration_s": 65.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"deriv_hermiteFunction|\\@\\[simp\\]|\\@\\[grind\\]\" code/TauCeti/Analysis/SpecialFunctions/HermiteFunctionLadder.lean` shows the theorem at line 171 with no preceding attribute; existing Hermite normal forms such as `hermiteFunction_zero`, `hermiteFunction_one`, and `hermiteFunction_neg` are `@[simp]` in `HermiteFunction.lean`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionLadder.lean",
+   "fix": "Annotate `deriv_hermiteFunction` with `@[simp, grind =]` if accepted by the automation, or at least the corresponding non-looping attributes used in this project.",
+   "issue": "`deriv_hermiteFunction` is the normal-form lemma for `deriv (hermiteFunction n) x`, but it has no `@[simp]`/`@[grind]` annotation.",
+   "line": 171
+  },
+  {
+   "evidence": "The public equations are at lines 79, 179, and 187, and the same grep shows no `@[grind]` attributes in the new file; the rubric requires characteristic lemmas that should drive `grind` to be annotated.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionLadder.lean",
+   "fix": "Add suitable `@[grind =]` annotations to the non-looping equational ladder lemmas, and add `@[simp]` too where the project wants the expression as a simplifier normal form.",
+   "issue": "The new public ladder equations `mul_hermiteFunction`, `hermiteFunction_lowering`, and `hermiteFunction_raising` are characteristic equations meant to drive downstream proofs, but none is registered for `grind`.",
+   "line": 79
+  }
+ ],
+ "head_sha": "d2275779458ed0caa3bb8dbf310de6978b598c9c",
+ "merge_base_sha": "738fcb0b0a9fdead04fd64b0c3065e6f829aa6d5",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 880,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b16af8705f2849f27352d3a915583ea444f00d3bde22a07360ba32c51b57ecfe",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T045453Z-880-api-design-dfd2a4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T04:54:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The public ladder identities are the right surface, but the characteristic rewrite API is not wired into automation. Add the expected simp/grind attributes so downstream pointwise and operator proofs can use the new interface without manually unfolding or naming every theorem.",
+ "transcript_blob": "a11b35019b39b118abe9bcb0f49d058878c38f64a566a9e6eddbd7ac2875bea2",
+ "usage": {
+  "cached_input_tokens": 110080,
+  "input_tokens": 169744,
+  "output_tokens": 2871,
+  "reasoning_output_tokens": 1165
+ },
+ "verdict": "request_changes"
+}
