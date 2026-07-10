@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.501396,
+   "returncode": 0,
+   "secs": 72.7,
+   "usage": {
+    "cached_input_tokens": 145792,
+    "input_tokens": 214626,
+    "output_tokens": 2811,
+    "reasoning_output_tokens": 905
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "42e694061a20b6f7ad64dc569c7400978b3f8900",
+ "cost_estimated": true,
+ "cost_usd": 0.501396,
+ "dedupe_key": "TauCetiProject/TauCeti|874|0d6f0c561e40f780d46ee6cf92a1b7de47ccbc29|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "8f8f1bea865d7213418f65ca63145e2e5530566532f581bdc53f26e9a6fb3ecb",
+ "diff_sha256": "8f8f1bea865d7213418f65ca63145e2e5530566532f581bdc53f26e9a6fb3ecb",
+ "duration_s": 72.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: Mathlib `Orthogonality.lean:67` has `theorem integrable_measureT {f : \u211d \u2192 \u211d} (hf : ContinuousOn f (Set.Icc (-1) 1)) : Integrable f measureT`; PR line 162 states exactly the specialization to a continuous exponential-absolute function.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Measure.lean",
+   "fix": "Remove this lemma or make downstream code use `integrable_measureT (by fun_prop)` directly.",
+   "issue": "`integrable_exp_abs_measureT` duplicates the existing generic Mathlib theorem `Polynomial.Chebyshev.integrable_measureT` specialized to the continuous function `fun x => Real.exp (a * |x|)`.",
+   "line": 162
+  },
+  {
+   "evidence": "grep: Mathlib `Orthogonality.lean:67` provides `integrable_measureT`; Mathlib `Integrable.lean:1107` provides `Integrable.ofReal`; PR lines 168-172 are only this specialization plus `.ofReal`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Trigonometric/Chebyshev/Measure.lean",
+   "fix": "Remove this lemma or inline `(integrable_measureT (by fun_prop : ContinuousOn (fun x : \u211d => Real.exp (a * |x|)) (Set.Icc (-1) 1))).ofReal (\ud835\udd5c := \ud835\udd5c)` at the use site.",
+   "issue": "`integrable_algebraMap_exp_abs_measureT` is the same redundant specialization after scalar cast: prove the real case with `integrable_measureT (by fun_prop)` and apply `.ofReal`.",
+   "line": 168
+  }
+ ],
+ "head_sha": "0d6f0c561e40f780d46ee6cf92a1b7de47ccbc29",
+ "merge_base_sha": "42e694061a20b6f7ad64dc569c7400978b3f8900",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 874,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c2e3b2ebecfd3b84f296e39ee7cb2c994e63e10659b6375bd860f8ba5a022f4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T030119Z-874-reuse-114f07",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T03:01:19Z",
+ "submitted_by": "kim-em",
+ "summary": "The new exponential-moment consumer lemmas are just special cases of Mathlib's existing Chebyshev integrability theorem, so this PR adds redundant API instead of reusing the located replacement.",
+ "transcript_blob": "e4d9e371c58279761162decbd316c3e01cd6f421e8ba64a728dd22d59a881ed5",
+ "usage": {
+  "cached_input_tokens": 145792,
+  "input_tokens": 214626,
+  "output_tokens": 2811,
+  "reasoning_output_tokens": 905
+ },
+ "verdict": "request_changes"
+}
