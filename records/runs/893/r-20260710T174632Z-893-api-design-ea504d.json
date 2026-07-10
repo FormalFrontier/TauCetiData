@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.381773,
+   "returncode": 0,
+   "secs": 59.4,
+   "usage": {
+    "cached_input_tokens": 121856,
+    "input_tokens": 168703,
+    "output_tokens": 2887,
+    "reasoning_output_tokens": 1458
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.381773,
+ "dedupe_key": "TauCetiProject/TauCeti|893|f176854e985ffd42779670de1b20cbab21d3bfde|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "diff_sha256": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "duration_s": 59.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the only current use is internal at line 297; the declaration itself is exported at line 231 and has no accompanying public API lemmas.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Either make this equivalence private and keep only the derived theorems public, or add public characteristic lemmas for its forward and inverse maps so consumers need not unfold the construction.",
+   "issue": "`equiv_minimalPrimes_irreducibleComponents` is a public `def` whose body is a choice-heavy affine-cover construction, but the PR exposes no `*_def`/apply/inverse lemmas characterizing either direction of the equivalence.",
+   "line": 231
+  },
+  {
+   "evidence": "`rg` hits: line 324 declares it publicly; line 359 is its only use.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Make it `private`, or intentionally promote it as topology API with a non-auxiliary name/docstring and any needed automation annotations.",
+   "issue": "`isOpen_irreducibleComponents_of_pairwise_disjoint` is exported even though its docstring says \u201cAuxiliary declaration\u201d and it is only used to prove the affine/global scheme lemmas.",
+   "line": 324
+  },
+  {
+   "evidence": "The parameter is named `_hDisj` at lines 468-469 and is not used; `rg` shows the only current use is internal in `irreducibleSpace_of_connected_reduced_no_embedded` at line 495.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Make it private, or replace the public lemma by the sharper signature requiring only `[ConnectedSpace \u03b1]` and open irreducible components.",
+   "issue": "`irreducible_of_connected_of_disjoint_components` is public with a redundant `_hDisj` premise, so the exposed interface asks users for data the proof ignores.",
+   "line": 466
+  }
+ ],
+ "head_sha": "f176854e985ffd42779670de1b20cbab21d3bfde",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4a319c1cc86a1df34993bbb8b54168fb57e1a81c943063281d18b0bab375331f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T174632Z-893-api-design-ea504d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T17:46:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem can be useful, but the PR exports implementation scaffolding as public API without the characteristic lemmas or clean signatures needed by downstream users.",
+ "transcript_blob": "1effbd2b4739efdd50b9946c94ad36f8357a75cda631573126393e2b027b5e44",
+ "usage": {
+  "cached_input_tokens": 121856,
+  "input_tokens": 168703,
+  "output_tokens": 2887,
+  "reasoning_output_tokens": 1458
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.716604,
+   "returncode": 0,
+   "secs": 100.4,
+   "usage": {
+    "cached_input_tokens": 345728,
+    "input_tokens": 426018,
+    "output_tokens": 4743,
+    "reasoning_output_tokens": 1958
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.716604,
+ "dedupe_key": "TauCetiProject/TauCeti|893|f176854e985ffd42779670de1b20cbab21d3bfde|reuse|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "diff_sha256": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "duration_s": 100.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR lines 80-104 duplicate map/comap minimal-prime transport; Mathlib has `Ideal.minimalPrimes_map_of_surjective` at `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:161`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Prove the forward direction from `Ideal.minimalPrimes_map_of_surjective e.surjective \u22a5`, rewriting `Ideal.map_bot`, `RingHom.ker_eq_bot_iff.mpr e.injective`, and `bot_sup_eq`; use the same theorem for `e.symm` for the reverse direction.",
+   "issue": "`minimalPrimes_map_of_ringEquiv` and `minimalPrimes_map_iff` manually reprove preservation of minimal primes under a ring equivalence.",
+   "line": 80
+  },
+  {
+   "evidence": "PR lines 271-274 are exactly domain transport; Mathlib provides `MulEquiv.isDomain` and `MulEquiv.isDomain_iff` at `mathlib/Mathlib/Algebra/Ring/Equiv.lean:969` and `:975`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Delete the helper and inline `e.symm.toMulEquiv.isDomain _` or use `e.toMulEquiv.isDomain_iff`; at line 379 use the stalk equivalence's `symm.toMulEquiv.isDomain _` directly.",
+   "issue": "`isDomain_of_ringEquiv` is a local wrapper for Mathlib's domain transfer across multiplicative equivalences.",
+   "line": 271
+  },
+  {
+   "evidence": "PR lines 277-291 prove `s = \u22c3 i, s \u2229 U i` by hand; Mathlib has `IsOpenCover.iUnion_inter` at `mathlib/Mathlib/Topology/Sets/OpenCover.lean:55`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Use `TopologicalSpace.IsOpenCover.iUnion_inter`: package the affine ranges as an `IsOpenCover`, rewrite `s` by `\u2190 cover.iUnion_inter s`, then apply `isOpen_iUnion` to the local openness hypotheses.",
+   "issue": "`isOpen_of_open_cover` rederives the standard open-cover decomposition of a set.",
+   "line": 277
+  }
+ ],
+ "head_sha": "f176854e985ffd42779670de1b20cbab21d3bfde",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "7f6130ff55cbb809f0584b7c7336314458100645bcea95d630e3971d2cb1c962",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T174313Z-893-reuse-3dc199",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T17:43:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still rederives several pieces of Mathlib API instead of reusing the located minimal-prime, domain-transfer, and open-cover lemmas.",
+ "transcript_blob": "e1b741d10f23ff1082c5eb7411ab6145e17b7fd39a7718d908f07a74ee0afc31",
+ "usage": {
+  "cached_input_tokens": 345728,
+  "input_tokens": 426018,
+  "output_tokens": 4743,
+  "reasoning_output_tokens": 1958
+ },
+ "verdict": "request_changes"
+}

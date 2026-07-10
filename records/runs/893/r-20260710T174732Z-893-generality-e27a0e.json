@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.361217,
+   "returncode": 0,
+   "secs": 55.5,
+   "usage": {
+    "cached_input_tokens": 98304,
+    "input_tokens": 144463,
+    "output_tokens": 2709,
+    "reasoning_output_tokens": 1270
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.361217,
+ "dedupe_key": "TauCetiProject/TauCeti|893|f176854e985ffd42779670de1b20cbab21d3bfde|generality|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "diff_sha256": "4258544d0105f653da652fd18746d06b27e012f2a1fa85d3e7e5ca4cd3c58f3e",
+ "duration_s": 55.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hit at lines 466-470 shows `_hDisj`; lines 482-488 use only `hOpen`, closedness of components, and `IsClopen.eq_univ`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Change the signature to `[ConnectedSpace \u03b1] (hOpen : \u2200 c : irreducibleComponents \u03b1, IsOpen (c : Set \u03b1)) : IrreducibleSpace \u03b1` and update the final theorem to pass only `hOpen`.",
+   "issue": "`irreducible_of_connected_of_disjoint_components` has an explicitly unused `_hDisj` hypothesis, so callers must prove disjointness even though the proof only uses connectedness and openness of irreducible components.",
+   "line": 468
+  },
+  {
+   "evidence": "Line 328 sets `hX : (irreducibleComponents \u03b1).Finite := NoetherianSpace.finite_irreducibleComponents`, and line 349 uses only `hX.sdiff`; Mathlib's `closure_sUnion_irreducibleComponents_sdiff_singleton` similarly takes finite components directly.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Replace `[NoetherianSpace \u03b1]` with an explicit `hFinite : (irreducibleComponents \u03b1).Finite`; derive the Noetherian special case separately where needed.",
+   "issue": "`isOpen_irreducibleComponents_of_pairwise_disjoint` assumes `[NoetherianSpace \u03b1]`, but the proof only needs `(irreducibleComponents \u03b1).Finite`.",
+   "line": 325
+  }
+ ],
+ "head_sha": "f176854e985ffd42779670de1b20cbab21d3bfde",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a3ec4b0ed32dd762093eb9d93ef2e1b1692e1600ffc4530bea4b3feae8bc2aea",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T174732Z-893-generality-e27a0e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T17:47:32Z",
+ "submitted_by": "kim-em",
+ "summary": "Two public topological/API lemmas carry hypotheses above the natural Mathlib level. Remove the unused disjointness assumption and state the finite-component argument using finiteness directly rather than `NoetherianSpace`.",
+ "transcript_blob": "1289299a1250f845be88fabbd877418bb4d629051341bd29106a884f3d48ffae",
+ "usage": {
+  "cached_input_tokens": 98304,
+  "input_tokens": 144463,
+  "output_tokens": 2709,
+  "reasoning_output_tokens": 1270
+ },
+ "verdict": "request_changes"
+}
