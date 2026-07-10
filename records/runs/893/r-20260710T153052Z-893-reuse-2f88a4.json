@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.513192,
+   "returncode": 0,
+   "secs": 91.8,
+   "usage": {
+    "cached_input_tokens": 237184,
+    "input_tokens": 290130,
+    "output_tokens": 4329,
+    "reasoning_output_tokens": 1571
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.513192,
+ "dedupe_key": "TauCetiProject/TauCeti|893|8dabef958369c7e3bcd45a8201989554363016bb|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "32d2d46d3007e248f58769b5233b262e7f92cffe08778383cbc01cd4d0399c57",
+ "diff_sha256": "32d2d46d3007e248f58769b5233b262e7f92cffe08778383cbc01cd4d0399c57",
+ "duration_s": 91.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR line 174 defines `minimalPrimesEquivIrreducibleComponents`; grep found `mathlib/Mathlib/RingTheory/Spectrum/Prime/Topology.lean:1261: protected def _root_.minimalPrimes.equivIrreducibleComponents : minimalPrimes R \u2243o (irreducibleComponents <| PrimeSpectrum R)\u1d52\u1d48`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Delete this definition and use `minimalPrimes.equivIrreducibleComponents R` (taking the underlying equivalence/order-dual wrapper as needed); then replace `my_equiv_apply`/`mem_my_equiv_iff` by unfolding that existing equivalence together with `mem_zeroLocus`.",
+   "issue": "`minimalPrimesEquivIrreducibleComponents` duplicates Mathlib's existing equivalence between minimal primes and irreducible components of `Spec R`.",
+   "line": 174
+  },
+  {
+   "evidence": "PR line 277 defines `isDomain_of_ringEquiv`; grep found `mathlib/Mathlib/Algebra/Ring/Equiv.lean:975: theorem isDomain_iff {A B : Type*} [Semiring A] [Semiring B] (e : A \u2243* B) : IsDomain A \u2194 IsDomain B`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Delete it and use Mathlib's `MulEquiv.isDomain_iff`, e.g. `(e.toMulEquiv.isDomain_iff).mp inferInstance` for the direction used at line 401.",
+   "issue": "`isDomain_of_ringEquiv` reproves preservation of `IsDomain` under a ring equivalence.",
+   "line": 277
+  },
+  {
+   "evidence": "PR lines 95-127 define the map/iff/equiv stack; grep found `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:161: lemma Ideal.minimalPrimes_map_of_surjective` and line 151 `theorem Ideal.comap_minimalPrimes_eq_of_surjective`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Base these uses on Mathlib's surjective map/comap minimal-prime API (`Ideal.minimalPrimes_map_of_surjective` and `Ideal.comap_minimalPrimes_eq_of_surjective`) with `e.surjective`/`e.symm.surjective`, or keep the construction private if only local glue remains necessary.",
+   "issue": "`minimalPrimes_map_of_ringEquiv`, `minimalPrimes_map_iff`, and `minimalPrimes_equiv_of_ringEquiv` rederive minimal-prime transport under an isomorphism from lower-level ideal arguments.",
+   "line": 95
+  }
+ ],
+ "head_sha": "8dabef958369c7e3bcd45a8201989554363016bb",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "abee1ffb1cbfaa7511b49fdb375b4086515983085f59bbd6795816550639e8b2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T153052Z-893-reuse-2f88a4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T15:30:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds public helper declarations that duplicate existing Mathlib API, including a direct replacement for the minimal-prime/irreducible-component equivalence. Replace the local wrappers with the Mathlib declarations instead of maintaining parallel APIs.",
+ "transcript_blob": "070531b332236878911284231e929cb899e12bf4fe5c197026417e542b0b57b8",
+ "usage": {
+  "cached_input_tokens": 237184,
+  "input_tokens": 290130,
+  "output_tokens": 4329,
+  "reasoning_output_tokens": 1571
+ },
+ "verdict": "block"
+}
