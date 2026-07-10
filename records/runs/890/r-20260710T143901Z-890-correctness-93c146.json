@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.417338,
+   "returncode": 0,
+   "secs": 67.1,
+   "usage": {
+    "cached_input_tokens": 206976,
+    "input_tokens": 252142,
+    "output_tokens": 2934,
+    "reasoning_output_tokens": 1497
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "cost_estimated": true,
+ "cost_usd": 0.417338,
+ "dedupe_key": "TauCetiProject/TauCeti|890|ec8a422c182482e22591486c4fe4ce5e3f26d148|correctness|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "6e24a64f06e5cb5ead45fe6e4acafa3ad41f1c2236121d04cb4c5d947bcda2bd",
+ "diff_sha256": "6e24a64f06e5cb5ead45fe6e4acafa3ad41f1c2236121d04cb4c5d947bcda2bd",
+ "duration_s": 67.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 51 and 120 set only `NonUnitalNonAssocSemiring C` and `Coalgebra R C`; lines 122-125 call the result the diagonal coaction over a bialgebra, while Mathlib defines `Bialgebra` as extending both `Algebra R A` and `Coalgebra R A` with compatibility laws in `Mathlib/RingTheory/Bialgebra/Basic.lean:57`.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Require the actual bialgebra structure for the coaction-facing declarations, e.g. `[Semiring C] [Bialgebra R C]` (or rename/segregate these as raw maps and avoid calling them coactions until the bialgebra section).",
+   "issue": "`tensorCoact` and `tensorCoact_natural` are exported as the tensor-product coaction under only `[Coalgebra R C]` plus `[NonUnitalNonAssocSemiring C]`, so multiplication need not be compatible with the coalgebra; outside a bialgebra this map is just a raw formula, not the mathematically justified tensor-comodule coaction.",
+   "line": 125
+  }
+ ],
+ "head_sha": "ec8a422c182482e22591486c4fe4ce5e3f26d148",
+ "merge_base_sha": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 890,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d20d0be5b922ca6385280ae9a262cd94d61f9d03f510bcd71faacb0cf4813894",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T143901Z-890-correctness-93c146",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T14:39:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The diagonal tensor coaction is stated under hypotheses too weak for the advertised bialgebra construction: it is available for an arbitrary coalgebra with an unrelated bilinear multiplication, so the declaration name/docs overstate its mathematical status.",
+ "transcript_blob": "89d6fae679733df4572d3653e38784517f4a91041ec7e254ddfb4848f7eed3d7",
+ "usage": {
+  "cached_input_tokens": 206976,
+  "input_tokens": 252142,
+  "output_tokens": 2934,
+  "reasoning_output_tokens": 1497
+ },
+ "verdict": "block"
+}
