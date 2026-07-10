@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5382170000000001,
+   "returncode": 0,
+   "secs": 78.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 30288,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 30288,
+    "cache_read_input_tokens": 159280,
+    "inference_geo": "not_available",
+    "input_tokens": 1464,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4182,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4182,
+      "cache_read_input_tokens": 42117,
+      "input_tokens": 2,
+      "output_tokens": 2431,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5596,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5fd75a0b3eae756265ca13eee220cf7ae4564c7f",
+ "cost_usd": 0.538217,
+ "dedupe_key": "TauCetiProject/TauCeti|876|cc941a7e5c7eb046f2925760462a2011526ce3f9|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "57d0bde3d516decf3a22cc62c64c36124efc119bfd744abc9554026f35b43881",
+ "diff_sha256": "57d0bde3d516decf3a22cc62c64c36124efc119bfd744abc9554026f35b43881",
+ "duration_s": 78.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: AbelJacobiSum.lean:48-50 and AbelJacobiQuotient.lean:49-51 are byte-identical; single_eq_zsmul_ofPoint added at WeilDivisor.lean:104; sole uses at AbelJacobiSum.lean:123 and AbelJacobiQuotient.lean:140.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/AbelJacobiSum.lean",
+   "fix": "Delete both private wrappers and rewrite the single call site in each file with the public lemma directly: `rw [single_eq_zsmul_ofPoint n x, ...]` (matches `Finsupp.single x n`).",
+   "issue": "`private lemma zsmul_ofPoint_eq_single (n x) : n \u2022 ofPoint x = Finsupp.single x n := (single_eq_zsmul_ofPoint x n).symm` is a trivial `.symm` restatement of the new public `single_eq_zsmul_ofPoint`, and it is duplicated identically in AbelJacobiQuotient.lean:49. Each is used exactly once (`rw [\u2190 zsmul_ofPoint_eq_single n x, ...]`).",
+   "line": 48
+  }
+ ],
+ "head_sha": "cc941a7e5c7eb046f2925760462a2011526ce3f9",
+ "merge_base_sha": "835a1bf437b6e705048b3d8a3020834e4bd633ee",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 876,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "320cd064d920b417e4953962b74b1198589ddcfc3cfdd95447fffd9b9838472c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T044442Z-876-reuse-01cbaf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T04:44:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR net-reduces duplication and the DegreeZeroGenerators content is new. The only issue is a residual private wrapper `zsmul_ofPoint_eq_single` that restates the now-shared public lemma and is still duplicated verbatim across two files.",
+ "transcript_blob": "5d4e271e5062f0fbdbb680fbc774241cb39af368a9a6cf17265b30fa71f09d73",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 30288,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 30288,
+  "cache_read_input_tokens": 159280,
+  "inference_geo": "not_available",
+  "input_tokens": 1464,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4182,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4182,
+    "cache_read_input_tokens": 42117,
+    "input_tokens": 2,
+    "output_tokens": 2431,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5596,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
