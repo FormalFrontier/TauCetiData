@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.696027,
+   "returncode": 0,
+   "secs": 90.9,
+   "usage": {
+    "cached_input_tokens": 415744,
+    "input_tokens": 488931,
+    "output_tokens": 4074,
+    "reasoning_output_tokens": 1650
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a249888c358ea0f7ec6ea0ed27103c400d1ea27",
+ "cost_estimated": true,
+ "cost_usd": 0.696027,
+ "dedupe_key": "TauCetiProject/TauCeti|893|22be9aa66d973dec6f2dd95d29443efd40af296c|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "9c2a7eaa51f963cdf9d5f8fcf8e6925150d3c0cf348bf72f1b1c9617250fe7ac",
+ "diff_sha256": "9c2a7eaa51f963cdf9d5f8fcf8e6925150d3c0cf348bf72f1b1c9617250fe7ac",
+ "duration_s": 90.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The body is exactly line 162; Mathlib has `protected def _root_.minimalPrimes.equivIrreducibleComponents` at `mathlib/Mathlib/RingTheory/Spectrum/Prime/Topology.lean:1261`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Remove this declaration and use `(minimalPrimes.equivIrreducibleComponents R).toEquiv.trans OrderDual.ofDual` directly where needed.",
+   "issue": "`minimalPrimesEquivIrreducibleComponents` is a public thin wrapper around Mathlib's existing minimal-prime/component equivalence.",
+   "line": 160
+  },
+  {
+   "evidence": "Mathlib provides `Function.Injective.isDomain` at `mathlib/Mathlib/Algebra/Ring/Hom/InjSurj.lean:23`; the PR proof at lines 253-270 reconstructs nontriviality and no-zero-divisors manually.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Replace the proof with Mathlib's injective-hom transfer, e.g. use `e.symm.injective.isDomain (e.symm : B \u2192+* A)` and delete the hand proof.",
+   "issue": "`isDomain_of_ringEquiv` manually reproves domain transfer across an isomorphism.",
+   "line": 253
+  },
+  {
+   "evidence": "`isOpen_irreducibleComponents_of_stalks_domain` at lines 362-365 proves the same conclusion from just `hStalks`; the lemma at lines 463-507 adds an unused redundant disjointness route.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedReduced.lean",
+   "fix": "Delete this lemma and replace its use at line 543 with `exact isOpen_irreducibleComponents_of_stalks_domain hStalks c`.",
+   "issue": "`isOpen_irreducible_component_of_disjoint` duplicates the earlier stronger theorem `isOpen_irreducibleComponents_of_stalks_domain`.",
+   "line": 463
+  }
+ ],
+ "head_sha": "22be9aa66d973dec6f2dd95d29443efd40af296c",
+ "merge_base_sha": "a4f6237ad43d16e3591f183dd90ac044c4691fb1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "953f608fa6c6c520c47804eba3a0bbf640cd71b9b1892d51b7017e76817c3da0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T161849Z-893-reuse-1385ed",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T16:18:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds duplicated API/proofs instead of reusing located Mathlib and earlier TauCeti declarations.",
+ "transcript_blob": "447dbc73db651ab448dd54988b3c8b5c87146aa5da32e349b055e3fef704f6db",
+ "usage": {
+  "cached_input_tokens": 415744,
+  "input_tokens": 488931,
+  "output_tokens": 4074,
+  "reasoning_output_tokens": 1650
+ },
+ "verdict": "block"
+}
