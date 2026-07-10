@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.505026,
+   "returncode": 0,
+   "secs": 89.8,
+   "usage": {
+    "cached_input_tokens": 171392,
+    "input_tokens": 231342,
+    "output_tokens": 3986,
+    "reasoning_output_tokens": 1975
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "cost_estimated": true,
+ "cost_usd": 0.505026,
+ "dedupe_key": "TauCetiProject/TauCeti|868|4e65beba2cbcddbeb087757fe989e09d7a995d12|correctness|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "ba48dba3ccaece08651be5b782cb22c65fa07ca195c62f1d1a3161be5c87cacf",
+ "diff_sha256": "ba48dba3ccaece08651be5b782cb22c65fa07ca195c62f1d1a3161be5c87cacf",
+ "duration_s": 89.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 50-53 list only `hg : IntervalIntegrable g volume a b`, `hR`, and `hw`; Mathlib `intervalIntegral.integral_undef` at `mathlib/Mathlib/MeasureTheory/Integral/IntervalIntegral/Basic.lean:708` shows non-interval-integrable interval integrals are defined as `0`.",
+   "file": "TauCeti/Analysis/Contour/CurveIntegralBound.lean",
+   "fix": "Add a real prerequisite, e.g. an `AEStronglyMeasurable` assumption for the kernel/product plus a proof of product interval-integrability from the bound, or require enough regularity such as `ContinuousOn \u03b3 (uIcc a b)` in applications and state/prove the Cauchy integrand is `IntervalIntegrable`.",
+   "issue": "`norm_integral_inv_sub_mul_le` assumes only `IntervalIntegrable g` and a pointwise bound on an arbitrary `\u03b3`; this does not imply `(fun t \u21a6 (\u03b3 t - w)\u207b\u00b9 * g t)` is measurable or interval-integrable, so the conclusion may just bound the totalized `0` value of a non-integrable interval integral.",
+   "line": 50
+  },
+  {
+   "evidence": "Lines 105-112 call the shared lemma using only `hR` and `hg`; nearby existing code proves this prerequisite separately under continuity, e.g. `cauchy_integrand_intervalIntegrable` in `DixonFunctionDiff.lean:56-60` and `h_num_int.continuousOn_mul (h2_kernel_continuousOn ...)` in `DixonH2Diff.lean:110`.",
+   "file": "TauCeti/Analysis/Contour/DixonH2Bound.lean",
+   "fix": "Require/prove the Cauchy integrand is interval-integrable, or add `h\u03b3_cont : ContinuousOn \u03b3 (uIcc a b)` and use the continuous bounded kernel times the integrable numerator before applying the bound.",
+   "issue": "`dixonH2_norm_le_of_integrable` and hence `dixonH2_tendsto_zero_of_integrable` inherit the same gap: integrability of `f (\u03b3 \u00b7) * deriv \u03b3` plus bounded `\u03b3` does not make `f (\u03b3 t) / (\u03b3 t - w) * deriv \u03b3 t` a genuine interval-integrable Cauchy integrand for arbitrary `\u03b3`.",
+   "line": 105
+  }
+ ],
+ "head_sha": "4e65beba2cbcddbeb087757fe989e09d7a995d12",
+ "merge_base_sha": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 868,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "69fc7a950468c294037e7ca9dc1cd03ef8450bd00336e021a900434bb055a414",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T010817Z-868-correctness-51cc3c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T01:08:17Z",
+ "submitted_by": "kim-em",
+ "summary": "The new L\u00b9 decay statements omit the prerequisite that the Cauchy integrand is measurable/interval-integrable, so they can prove decay of Lean's totalized undefined integral rather than the intended analytic integral.",
+ "transcript_blob": "84ccf7666c4115dc4a976623221e12b36574f1ed2a2de42b14a82708ccad2801",
+ "usage": {
+  "cached_input_tokens": 171392,
+  "input_tokens": 231342,
+  "output_tokens": 3986,
+  "reasoning_output_tokens": 1975
+ },
+ "verdict": "block"
+}
