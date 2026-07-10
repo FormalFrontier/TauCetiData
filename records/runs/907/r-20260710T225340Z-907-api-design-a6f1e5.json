@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.405152,
+   "returncode": 0,
+   "secs": 75.0,
+   "usage": {
+    "cached_input_tokens": 204544,
+    "input_tokens": 244060,
+    "output_tokens": 3510,
+    "reasoning_output_tokens": 1794
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "cost_estimated": true,
+ "cost_usd": 0.405152,
+ "dedupe_key": "TauCetiProject/TauCeti|907|085e508a985ade5a09cf3143a222e7f5e5a2375f|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "0dd1c5a7d9693b7fea28c2c59c73a9de44b994cdd2d4ecfdac923a98d6411908",
+ "diff_sha256": "0dd1c5a7d9693b7fea28c2c59c73a9de44b994cdd2d4ecfdac923a98d6411908",
+ "duration_s": 75.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`nl` shows `@[expose, implicit_reducible]` at line 312 and `@[expose] noncomputable def tensor` at line 337; the same file has `TensorProduct_coact` at line 325, `tensor_toLinearMap` at line 351, and `tensor_tmul` at line 364.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Remove `@[expose]` from both definitions and keep the public characterization lemmas as the supported API.",
+   "issue": "`Comodule.TensorProduct` and `Comodule.Hom.tensor` are marked `@[expose]`, exposing their structure bodies even though the observable data is already exported by `TensorProduct_coact`, `tensor_toLinearMap`, and `tensor_tmul`.",
+   "line": 312
+  },
+  {
+   "evidence": "`rg -n \"theorem tensor_(toLinearMap|tmul|id|comp)|def tensor\" ...` returns only `def tensor`, `tensor_toLinearMap`, and `tensor_tmul`; there are no `tensor_id` or `tensor_comp` lemmas.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Add `@[simp]` lemmas for tensoring identities and tensoring composites, e.g. `tensor (Hom.id ...) (Hom.id ...) = Hom.id ...` and `tensor (Hom.comp f\u2082 f\u2081) (Hom.comp g\u2082 g\u2081) = Hom.comp (tensor f\u2082 g\u2082) (tensor f\u2081 g\u2081)`.",
+   "issue": "`Comodule.Hom.tensor` lacks characteristic interaction lemmas with the existing morphism operations `Hom.id` and `Hom.comp`, so later functor/category code must reprove basic tensor functor laws from extensionality.",
+   "line": 337
+  }
+ ],
+ "head_sha": "085e508a985ade5a09cf3143a222e7f5e5a2375f",
+ "merge_base_sha": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 907,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5221f0d750bcf1d53faf730c1732034cf86ca903c05789a773ee354d15bf884a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T225340Z-907-api-design-a6f1e5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T22:53:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The new tensor-product surface exposes implementation bodies that are already characterized by public lemmas, and the morphism tensor API is missing the functorial simp lemmas consumers need for the next categorical layer.",
+ "transcript_blob": "92b959b4dfe75689b7000c8e083c0d8d9a2185e2a187a887e002165db7243684",
+ "usage": {
+  "cached_input_tokens": 204544,
+  "input_tokens": 244060,
+  "output_tokens": 3510,
+  "reasoning_output_tokens": 1794
+ },
+ "verdict": "request_changes"
+}
