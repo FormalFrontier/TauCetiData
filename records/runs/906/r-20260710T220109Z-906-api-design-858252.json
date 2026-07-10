@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.540016,
+   "returncode": 0,
+   "secs": 53.8,
+   "usage": {
+    "cached_input_tokens": 133632,
+    "input_tokens": 213836,
+    "output_tokens": 2406,
+    "reasoning_output_tokens": 937
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "cost_estimated": true,
+ "cost_usd": 0.540016,
+ "dedupe_key": "TauCetiProject/TauCeti|906|b91724d5aa9392314ba8ba62c95f58d8c28cf1a7|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "d95293be7b073eef13c6cec9fd6440d63873ce38f334d1e0f18785a227626cc3",
+ "diff_sha256": "d95293be7b073eef13c6cec9fd6440d63873ce38f334d1e0f18785a227626cc3",
+ "duration_s": 53.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: lines 7-9 are all `public import`; the new theorem statements at lines 61, 99, 107, and 114 mention only `IsCompletelyMonotone`, while `Closure` is used only in the proof at line 116 via `.pow`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Reciprocal.lean",
+   "fix": "Publicly import only the declarations needed in theorem statements, e.g. `TauCeti.Analysis.CompletelyMonotone.Basic`, and make `Closure`, `WithinZpow`, and `ContDiff.Operations` plain private imports for the proofs.",
+   "issue": "The module publicly re-exports proof-only dependencies (`Closure`, `WithinZpow`, and `ContDiff.Operations`), so importing the reciprocal theorem also exposes unrelated closure and calculus APIs.",
+   "line": 7
+  },
+  {
+   "evidence": "grep hits: roadmap Part B acceptance/building-block area is lines 173-195; PR file docs at lines 16-17 and 41-42 describe `(a + t)^{-k}`, but the only exposed power theorem is line 115: `IsCompletelyMonotone (fun t => ((a + t) ^ k)\u207b\u00b9)`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Reciprocal.lean",
+   "fix": "Add the zpow characteristic theorem, e.g. `IsCompletelyMonotone (fun t => (a + t) ^ (-(k : \u2124)))`, proved by rewriting with `zpow_neg`/`zpow_natCast`, and keep the inverse-of-nat-power form as a restatement if desired.",
+   "issue": "The public power theorem exposes only `fun t => ((a + t) ^ k)\u207b\u00b9`, but the PR/roadmap-facing API advertises integer powers `t \u21a6 (a + t)^{-k}`; downstream users with zpow goals cannot use the named building block without an extra bridge theorem.",
+   "line": 114
+  }
+ ],
+ "head_sha": "b91724d5aa9392314ba8ba62c95f58d8c28cf1a7",
+ "merge_base_sha": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 906,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "749b5e7e520afbbfed4a261c143726bf982ec3d339e9aa562ed4a1ae4a5cb111",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T220109Z-906-api-design-858252",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T22:01:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The new reciprocal facts are useful, but the exposed module surface is too broad and the advertised integer-power form is not actually part of the public API.",
+ "transcript_blob": "877bbbd68ca792c75091cd56f7514dfaf885c895e8abd5ba3c4ac5d9742aa62d",
+ "usage": {
+  "cached_input_tokens": 133632,
+  "input_tokens": 213836,
+  "output_tokens": 2406,
+  "reasoning_output_tokens": 937
+ },
+ "verdict": "request_changes"
+}
