@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.228307,
+   "returncode": 0,
+   "secs": 43.0,
+   "usage": {
+    "cached_input_tokens": 52864,
+    "input_tokens": 83123,
+    "output_tokens": 1686,
+    "reasoning_output_tokens": 633
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "cost_estimated": true,
+ "cost_usd": 0.228307,
+ "dedupe_key": "TauCetiProject/TauCeti|889|1eb9019def1b27fc22c7bb5b46be9aa1c38342c8|api-design|gpt-5.5|fb0698ac514a62c5|production|6",
+ "diff_blob": "eef7c7cc6466f69e02a957a89b49e0f6e45c7fdf9d23c7af618ac35cfad34269",
+ "diff_sha256": "eef7c7cc6466f69e02a957a89b49e0f6e45c7fdf9d23c7af618ac35cfad34269",
+ "duration_s": 43.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows the adjacent product API keeps the additive bridge private (`ElementaryTwoQuotientProd.lean:100`, `:163`) and exposes the linear equivalence without `@[expose]` (`:117`, `:181`).",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotientZMod.lean",
+   "fix": "Make the range theorem and additive equivalence private, remove `@[expose]` from the linear equivalence, and expose only characteristic lemmas needed by users.",
+   "issue": "The public surface leaks implementation helpers: `range_lsmul_two_additive_multiplicative_zmod_two_toAddSubgroup_eq_bot` and the additive bridge at line 70 are only used to build the linear equivalence, and both equivalence bodies are marked `@[expose]` despite consumers using the mk/card/rank API.",
+   "line": 61
+  },
+  {
+   "evidence": "The file provides `elementaryTwoQuotientMultiplicativeZModTwoLinearEquiv_mk` at lines 89-105, while the parallel product/pi APIs include both forward and inverse simp lemmas (`ElementaryTwoQuotientProd.lean:123-136`, `:186-198`).",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotientZMod.lean",
+   "fix": "Add a `[simp]` inverse formula, e.g. `(elementaryTwoQuotientMultiplicativeZModTwoLinearEquiv).symm z = elementaryTwoQuotientMk (Multiplicative.ofAdd z)`.",
+   "issue": "The linear equivalence has only the forward representative formula; users cannot simplify the inverse map without unfolding the definition.",
+   "line": 89
+  }
+ ],
+ "head_sha": "1eb9019def1b27fc22c7bb5b46be9aa1c38342c8",
+ "merge_base_sha": "c031db448834d35ef2275cfeaf54785bd3163982",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 889,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "632d0dbe8367b949488d75b8a52a63c3e65b12a7f6c0c439a549ce295bfe8a33",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 6,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T130510Z-889-api-design-63c78c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T13:05:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The new computation exposes quotient-model construction details and leaves the main equivalence without the inverse characteristic lemma used by adjacent API.",
+ "transcript_blob": "a8fdc9aa1f5896f8389e66c2a69029d8cf5a66355dbf4e956fed6ff48133f764",
+ "usage": {
+  "cached_input_tokens": 52864,
+  "input_tokens": 83123,
+  "output_tokens": 1686,
+  "reasoning_output_tokens": 633
+ },
+ "verdict": "request_changes"
+}
