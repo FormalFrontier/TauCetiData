@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.328118,
+   "returncode": 0,
+   "secs": 66.9,
+   "usage": {
+    "cached_input_tokens": 63616,
+    "input_tokens": 103864,
+    "output_tokens": 3169,
+    "reasoning_output_tokens": 1708
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "cost_estimated": true,
+ "cost_usd": 0.328118,
+ "dedupe_key": "TauCetiProject/TauCeti|869|cb88e9c8426278abc5b326117fcaba1bcb885137|api-design|gpt-5.5|fb0698ac514a62c5|production|2",
+ "diff_blob": "71661c1d159fd65944336f9cfc68898ef64e0a8a5561feacf0b3d5927ae65430",
+ "diff_sha256": "71661c1d159fd65944336f9cfc68898ef64e0a8a5561feacf0b3d5927ae65430",
+ "duration_s": 66.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: `FundamentalGroupProduct.lean:88:@[expose] def FundamentalGroup.prodMulEquivFst` and `FundamentalGroupProduct.lean:109:@[expose] def FundamentalGroup.prodMulEquivSnd`; the same file provides `[simp]` `prodMulEquivFst_apply`, `prodMulEquivFst_symm_apply`, `prodMulEquivSnd_apply`, and `prodMulEquivSnd_symm_apply`.",
+   "file": "TauCeti/AlgebraicTopology/FundamentalGroupProduct.lean",
+   "fix": "Remove `@[expose]` from both projection equivalences and keep/adjust the characteristic lemmas so downstream users do not rely on unfolding the bodies.",
+   "issue": "`FundamentalGroup.prodMulEquivFst` and `FundamentalGroup.prodMulEquivSnd` are marked `@[expose]`, exposing their `prodMulEquiv.trans MulEquiv.prodUnique/uniqueProd` implementations even though the public API already gives `*_apply` and `*_symm_apply`.",
+   "line": 88
+  },
+  {
+   "evidence": "grep hit `CylinderFundamentalGroup.lean:54:@[expose] def zeroLift`; existing `CircleFundamentalGroup.lean` defines `fundamentalGroupMulEquiv_zero` with `\u27e80, by simp\u27e9` and no public exposed lift helper.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/CylinderFundamentalGroup.lean",
+   "fix": "Make this helper private or remove `@[expose]`; if the name remains public, characterize it only through `zeroLift_coe` rather than exposing its constructor body.",
+   "issue": "`AddCircle.zeroLift` is a public `@[expose]` helper solely for the standard lift of `0`, adding a new exposed body where the existing circle API uses the literal lift `\u27e80, by simp\u27e9` plus public characterization lemmas.",
+   "line": 54
+  },
+  {
+   "evidence": "PR lines 98 and 215 define the cylinder inverse-monodromy lemmas without attributes, while `CircleFundamentalGroup.lean:224` has `@[simp] lemma fundamentalGroupMulEquiv_symm_monodromy` and `CircleFundamentalGroup.lean:303` has `@[simp] lemma UnitAddCircle.fundamentalGroupMulEquiv_symm_monodromy`; line 87 gives the analogous projection normal form without `@[simp]`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/CylinderFundamentalGroup.lean",
+   "fix": "Add `@[simp]` to those non-looping normal-form lemmas, or provide an explicit reason and replacement simp lemma if these forms are not intended as automation API.",
+   "issue": "The new inverse-characterization lemmas are missing the normal-form simp annotations used by the circle API: `cylinderFundamentalGroupMulEquiv_symm_monodromy` and `UnitAddCircle.cylinderFundamentalGroupMulEquiv_symm_monodromy` should simplify monodromy of the inverse, and `cylinderFundamentalGroupMulEquiv_symm_fst` should simplify the projected inverse loop.",
+   "line": 98
+  }
+ ],
+ "head_sha": "cb88e9c8426278abc5b326117fcaba1bcb885137",
+ "merge_base_sha": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 869,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b09b4ece7bb17dd17f9087793c3436c679233ea848d3cfb977aceb44b1709334",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T021216Z-869-api-design-f163f9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T02:12:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes implementation bodies that are already characterized by public lemmas, and it misses the expected simp annotations on the inverse-monodromy/projection API for the new cylinder equivalences.",
+ "transcript_blob": "89b69030ea72192b5e8ff095355e611e2417ea931fe7a7fbae963abb54b73c2c",
+ "usage": {
+  "cached_input_tokens": 63616,
+  "input_tokens": 103864,
+  "output_tokens": 3169,
+  "reasoning_output_tokens": 1708
+ },
+ "verdict": "request_changes"
+}
