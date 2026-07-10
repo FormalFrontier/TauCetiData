@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.631256,
+   "returncode": 0,
+   "secs": 89.2,
+   "usage": {
+    "cached_input_tokens": 255232,
+    "input_tokens": 332932,
+    "output_tokens": 3838,
+    "reasoning_output_tokens": 1960
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "36353045d7874660e8080ff273929343660d33de",
+ "cost_estimated": true,
+ "cost_usd": 0.631256,
+ "dedupe_key": "TauCetiProject/TauCeti|885|45bdbf932975a51d57681d9d09279bc21fbe94a8|placement|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "b580f2c15cf40ebfb6417859b19d757e306c6586326a9af8a4b1f2c22fd4ffbe",
+ "diff_sha256": "b580f2c15cf40ebfb6417859b19d757e306c6586326a9af8a4b1f2c22fd4ffbe",
+ "duration_s": 89.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`DegreeImage.lean:7` imports `TauCeti.AlgebraicGeometry.WeilDivisor.Principal`, while the declarations at `DegreeImage.lean:70`, `:83`, and `:91` use only `weightedDegree`, `degree`, `ofPoint`, and `degree_ofPoint` from the base Weil-divisor API.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/DegreeImage.lean",
+   "fix": "Move these three lemmas to `TauCeti.AlgebraicGeometry.WeilDivisor` near `weightedDegree`/`degree`, or to an earlier degree-range file importing only the base Weil-divisor module, and have `DegreeImage` import that earlier file.",
+   "issue": "`weightedDegree_range`, `degree_surjective`, and `degree_range_eq_top` are plain `WeilDivisor`/degree facts but live in a file that publicly imports `Principal`, so users need the principal-divisor/class-group layer for basic degree-map API.",
+   "line": 7
+  },
+  {
+   "evidence": "The only body references in `DegreeImageSplitting.lean:51-77` are `weightedDegreeClass_surjective`, `degreeSection`, `weightedDegreeClass_degreeSection_of_weight_one`, `weightedDegreeClass`, `picZero`, and quotient-group API; `rg` finds `weightedDegreeClass_range_eq_top` only in docstrings at lines 24 and 50.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/DegreeImageSplitting.lean",
+   "fix": "Remove the `public import TauCeti.AlgebraicGeometry.WeilDivisor.DegreeImage` line, or rewrite the corollaries so they genuinely specialize/reuse the `DegreeImage` API.",
+   "issue": "`DegreeImageSplitting` publicly imports `DegreeImage`, but its executable declarations do not use any declaration from `DegreeImage`; this reexports the whole general degree-image/quotient API for weight-one corollaries that only depend on `DegreeSplitting`.",
+   "line": 7
+  }
+ ],
+ "head_sha": "45bdbf932975a51d57681d9d09279bc21fbe94a8",
+ "merge_base_sha": "36353045d7874660e8080ff273929343660d33de",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 885,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3263c471d00ee01329ff4799eec47fcb574d088c73aea8043461ac513199c8f7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T095422Z-885-placement-255930",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T09:54:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The general class-group degree-image material is now separated from the weight-one splitting layer, but the placement/import surface still has avoidable dependency issues. The base Weil-divisor range lemmas are hidden behind `Principal`, and the splitting specialization publicly imports `DegreeImage` without using its API.",
+ "transcript_blob": "cd5f69529cdc80b69720d89eebe5d8feef991a7c7a913277b14ed748fbfbff6f",
+ "usage": {
+  "cached_input_tokens": 255232,
+  "input_tokens": 332932,
+  "output_tokens": 3838,
+  "reasoning_output_tokens": 1960
+ },
+ "verdict": "request_changes"
+}
