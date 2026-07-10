@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.346941,
+   "returncode": 0,
+   "secs": 70.4,
+   "usage": {
+    "cached_input_tokens": 113152,
+    "input_tokens": 154041,
+    "output_tokens": 2864,
+    "reasoning_output_tokens": 1434
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "cost_estimated": true,
+ "cost_usd": 0.346941,
+ "dedupe_key": "TauCetiProject/TauCeti|868|98cae412599c52ad3eef0bfbccc448ffcf6d714d|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "df4255db78a3dde7de8faa92b2847234c223dfe83be04acc68d4603600ef62a1",
+ "diff_sha256": "df4255db78a3dde7de8faa92b2847234c223dfe83be04acc68d4603600ef62a1",
+ "duration_s": 70.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"dixonH2_norm_le|hM\" code/TauCeti/Analysis/Contour` shows only `DixonH2Bound.lean:55:theorem dixonH2_norm_le ... (hg : IntervalIntegrable ...)` and no remaining `hM` wrapper.",
+   "file": "TauCeti/Analysis/Contour/DixonH2Bound.lean",
+   "fix": "Keep the L\u00b9 theorem under a new name or add a compatibility theorem with the old uniform-bound statement/name deriving `\u2264 M / (\u2016w\u2016 - R) * |b - a|`.",
+   "issue": "`dixonH2_norm_le`'s public signature was changed from the uniform `M` bound to an `IntervalIntegrable`/L\u00b9 bound, so existing users with only `hM : \u2200 t \u2208 uIcc a b, \u2016f (\u03b3 t) * deriv \u03b3 t\u2016 \u2264 M` lose the old theorem and cannot call the new one without separately proving integrability.",
+   "line": 55
+  },
+  {
+   "evidence": "`rg -n \"dixonH2_tendsto_zero|hM\" code/TauCeti/Analysis/Contour` shows only `DixonH2Bound.lean:66:theorem dixonH2_tendsto_zero ... (hg : IntervalIntegrable ...)` and no uniform-bound variant.",
+   "file": "TauCeti/Analysis/Contour/DixonH2Bound.lean",
+   "fix": "Retain the old `hM`-based tendsto theorem as a corollary, or rename the new L\u00b9 version and keep the old name for compatibility.",
+   "issue": "`dixonH2_tendsto_zero` likewise drops the exported uniform-bound form and now requires `IntervalIntegrable (fun t \u21a6 f (\u03b3 t) * deriv \u03b3 t)`, breaking callers of the old public decay-at-infinity theorem.",
+   "line": 66
+  }
+ ],
+ "head_sha": "98cae412599c52ad3eef0bfbccc448ffcf6d714d",
+ "merge_base_sha": "61d2222ce4b7bad212e6c56348a16fbd9b583f7c",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 868,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "15d91a77613834ee2cd6825f7e7559eab636e2ee39bac6afe54861dc3670d85c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T001941Z-868-api-design-b9ce75",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T00:19:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The new L\u00b9 decay API is useful, but this PR removes the previously exported uniform-bound entry points instead of preserving them as compatibility corollaries.",
+ "transcript_blob": "a1f7f4262329b23126ac3531975e4c336c3eb624b16e733d5e84887cb179e882",
+ "usage": {
+  "cached_input_tokens": 113152,
+  "input_tokens": 154041,
+  "output_tokens": 2864,
+  "reasoning_output_tokens": 1434
+ },
+ "verdict": "request_changes"
+}
