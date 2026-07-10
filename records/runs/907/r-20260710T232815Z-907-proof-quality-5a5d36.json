@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9627374999999999,
+   "returncode": 0,
+   "secs": 143.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40752,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40752,
+    "cache_read_input_tokens": 577213,
+    "inference_geo": "not_available",
+    "input_tokens": 3340,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 438,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 438,
+      "cache_read_input_tokens": 56325,
+      "input_tokens": 2,
+      "output_tokens": 3274,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9572,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "cost_usd": 0.962737,
+ "dedupe_key": "TauCetiProject/TauCeti|907|5dcc4117ef297a75d72dc0deabbdfaafcb2130e3|proof-quality|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "f969f12814379d240ec531a59d56cef3c063cc17b3dd68ae6d98cfbf5f64bc3b",
+ "diff_sha256": "f969f12814379d240ec531a59d56cef3c063cc17b3dd68ae6d98cfbf5f64bc3b",
+ "duration_s": 143.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 417 and 453 use `change ... .toLinearMap (x\u2081 + x\u2082) = ...` with no comment; Mathlib exposes `TensorProduct.map_id` and `TensorProduct.map_comp` (Map.lean:136, :110).",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Prefer reducing to `.toLinearMap` equality and closing with the existing `tensor_toLinearMap` simp lemma plus `TensorProduct.map_id` (line 136 of Mathlib/LinearAlgebra/TensorProduct/Map.lean); the manual `induction`/`change`/`congrArg\u2082 (\u00b7+\u00b7)` reproves additivity of `TensorProduct.map` inline. If a `change` is genuinely needed, add a comment stating why.",
+   "issue": "Undocumented `change` bridging the `Hom` FunLike coercion to `.toLinearMap` so that `map_add` fires (the `Hom` FunLike has no AddMonoidHomClass). The rubric requires any `change`/`show` to carry a comment explaining why the goal is otherwise unreachable. Same defect at line 453 in tensor_comp_aux.",
+   "line": "417"
+  },
+  {
+   "evidence": "tensor_id_aux (line 407) and tensor_comp_aux (line 437) both induct over `x` and hand-combine the add case; Mathlib `TensorProduct.map_comp` (Map.lean:110) and `map_id` (Map.lean:136) supply these directly.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Discharge both via the already-proven `tensor_toLinearMap` (LHS `.toLinearMap = TensorProduct.map f g`) and `TensorProduct.map_id` / `TensorProduct.map_comp`, eliminating the bespoke induction.",
+   "issue": "tensor_id_aux and tensor_comp_aux reinvent additivity of `TensorProduct.map` by hand (`induction` + `congrArg\u2082 (fun a b => a + b)`) rather than reusing `TensorProduct.map_id`/`TensorProduct.map_comp`, which state exactly these facts at the linear-map level.",
+   "line": "412"
+  }
+ ],
+ "head_sha": "5dcc4117ef297a75d72dc0deabbdfaafcb2130e3",
+ "merge_base_sha": "d87755db3700c3d3e0d5e7a27932b44ff601aaa3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 907,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1ad6d802f55fa35b14f55bcc8c6979e41f439a6bb6e42eec319cc4e57d39a8b9",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T232815Z-907-proof-quality-5a5d36",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T23:28:15Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs of the tensor-product laws are well-factored and robust. However, tensor_id_aux and tensor_comp_aux use an undocumented `change` across the Hom/toLinearMap coercion and hand-reprove additivity, instead of reducing to the existing tensor_toLinearMap simp lemma and Mathlib's TensorProduct.map_id / TensorProduct.map_comp.",
+ "transcript_blob": "ef3b0cb2b993c2506d303a8b8c03f0f067c04bf5cc73a47b5db73b40b2eb1909",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40752,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40752,
+  "cache_read_input_tokens": 577213,
+  "inference_geo": "not_available",
+  "input_tokens": 3340,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 438,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 438,
+    "cache_read_input_tokens": 56325,
+    "input_tokens": 2,
+    "output_tokens": 3274,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9572,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
