@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.442286,
+   "returncode": 0,
+   "secs": 55.6,
+   "usage": {
+    "cached_input_tokens": 141312,
+    "input_tokens": 201772,
+    "output_tokens": 2311,
+    "reasoning_output_tokens": 895
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1bd7df62369cdd2496d850a7dfdde2c3a9810451",
+ "cost_estimated": true,
+ "cost_usd": 0.442286,
+ "dedupe_key": "TauCetiProject/TauCeti|886|9fa4d2737a80bdeb9f0fcb5183fb7c60e902ab70|api-design|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "fb57916c5eccb49eae75a06db06a730d87ed645d1a861a5ef959f728ed97050e",
+ "diff_sha256": "fb57916c5eccb49eae75a06db06a730d87ed645d1a861a5ef959f728ed97050e",
+ "duration_s": 55.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"fractionalIdealDivisor\" code/TauCeti/AlgebraicGeometry/WeilDivisor` shows only the forward apply lemma at lines 140-142 and no `.symm`/inverse characterization; the canonical product appears only inside `fractionalIdealDivisor_surjective` at lines 118 and 122.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FractionalIdealDivisor.lean",
+   "fix": "Define the equivalence with an explicit inverse, or add a characteristic lemma such as `fractionalIdealDivisorAddEquiv_symm_apply`/a `Units.val` version proving the inverse is `D.prod fun v e => (v.asIdeal : FractionalIdeal R\u2070 K) ^ e`, with a simp normal form if usable.",
+   "issue": "`fractionalIdealDivisorAddEquiv` is built with `AddEquiv.ofBijective`, so its `.symm` is a choice inverse; the docstring says the inverse sends `D` to `\u220f_v v^(D v)`, but no public lemma states that canonical formula.",
+   "line": 134
+  },
+  {
+   "evidence": "Line 48 is `@[expose] public section`; the file already provides `coeff_fractionalIdealDivisor` at lines 88-92 and `fractionalIdealDivisorAddEquiv_apply` at lines 140-142 as the intended forward API.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/FractionalIdealDivisor.lean",
+   "fix": "Replace `@[expose] public section` with `public section`; keep bodies hidden and add any missing characteristic lemmas needed for downstream use instead of relying on unfolding.",
+   "issue": "The whole public section is marked `@[expose]`, exposing bodies for the map, equivalence, and proof lemmas even though consumers have coefficient/principal/point/effective lemmas and should not depend on definitional unfolding.",
+   "line": 48
+  }
+ ],
+ "head_sha": "9fa4d2737a80bdeb9f0fcb5183fb7c60e902ab70",
+ "merge_base_sha": "36353045d7874660e8080ff273929343660d33de",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 886,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "19ce557d281e1adae1dfc194b5d15f6b591d9f064374acbfd8f9d831939a501a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260710T074835Z-886-api-design-4b7aba",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-10T07:48:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The forward divisor map has a coefficient API, but the exposed equivalence does not characterize its inverse, and the file exposes implementation bodies wholesale. Those are public-interface issues for later consumers of the Cartier/Weil dictionary.",
+ "transcript_blob": "a170b21ca0f953fb94ffc43e1c53f59a8d49abb0b3b9147a1694d4703052690e",
+ "usage": {
+  "cached_input_tokens": 141312,
+  "input_tokens": 201772,
+  "output_tokens": 2311,
+  "reasoning_output_tokens": 895
+ },
+ "verdict": "request_changes"
+}
