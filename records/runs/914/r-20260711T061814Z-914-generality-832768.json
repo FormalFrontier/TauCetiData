@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.394189,
+   "returncode": 0,
+   "secs": 50.4,
+   "usage": {
+    "cached_input_tokens": 109568,
+    "input_tokens": 163667,
+    "output_tokens": 2297,
+    "reasoning_output_tokens": 659
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1a66a06d7cc67f415818c9ca9126d4f2d2e965d4",
+ "cost_estimated": true,
+ "cost_usd": 0.394189,
+ "dedupe_key": "TauCetiProject/TauCeti|914|99293c12cd60bfaeed0e4e3d77179e684f89a17d|generality|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "3197e688f174757df87e7bf6189f04b5bc5c352d17fd931c9e96ed50cf824803",
+ "diff_sha256": "3197e688f174757df87e7bf6189f04b5bc5c352d17fd931c9e96ed50cf824803",
+ "duration_s": 50.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`EnergyLowerBounds.lean:154` has `min_lam_mass_mul_norm_sq_le_energyIntegrand_zero_drift_self {A : Matrix n n \u211d} ... : min lam c\u2080 * \u2016U\u2016 ^ 2 \u2264 energyIntegrand A 0 c\u2080 U U`, while this PR proves only `ShiftedLaplacianEnergy.lean:60` with `(1 : Matrix n n \u211d)` and `min 1 (m x)`.",
+   "file": "TauCeti/Analysis/PDE/ShiftedLaplacianEnergy.lean",
+   "fix": "First add an integrated theorem for `energyFormIntegral \u03bc a (fun _ => 0) c U U` from a.e. `lam * \u2016\u03be\u2016 ^ 2 \u2264 \u03be \u2b1d\u1d65 (a x *\u1d65 \u03be)` and a.e. `0 \u2264 c x`, concluding `\u222b min lam (c x) * \u2016U x\u2016 ^ 2 \u2264 ...`; derive the shifted-Laplacian lemmas from it.",
+   "issue": "`integral_min_one_mass_mul_norm_sq_le_energyFormIntegral_one_zero_mass_self` is a special integrated case of the existing pointwise zero-drift bound, fixing `a = 1` and `lam = 1` instead of exposing the natural integrated theorem.",
+   "line": 60
+  },
+  {
+   "evidence": "`ShiftedLaplacianEnergy.lean:73`, `:83`, and `:100` all specialize to `(fun _ => (1 : Matrix n n \u211d))`; the nearby pointwise theorem at `EnergyLowerBounds.lean:154` already abstracts over `A` and a lower quadratic bound, and `UniformEllipticity.lean:507` confirms the standard nonnegative quadratic-form projection for uniformly elliptic fields.",
+   "file": "TauCeti/Analysis/PDE/ShiftedLaplacianEnergy.lean",
+   "fix": "State a general `energyFormIntegral_zero_drift_self_nonneg` under a.e. quadratic-form nonnegativity of `a` and a.e. `0 \u2264 c x`, then keep `one_zero_mass`, constant-mass, and zero-mass lemmas only as corollaries if useful.",
+   "issue": "The nonnegativity lemmas are likewise specialized to the identity principal coefficient, although nonnegativity follows at the same integrated level for any zero-drift coefficient field with an a.e. nonnegative quadratic form and nonnegative mass.",
+   "line": 73
+  }
+ ],
+ "head_sha": "99293c12cd60bfaeed0e4e3d77179e684f89a17d",
+ "merge_base_sha": "1a66a06d7cc67f415818c9ca9126d4f2d2e965d4",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 914,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "de6355c4248224f0792823a05e4a927612e5723b41017af8f13a827c12506e07",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T061814Z-914-generality-832768",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T06:18:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The integrated lower-bound API is under-generalized: it packages only the shifted-Laplacian specialization even though the adjacent pointwise API already has the natural zero-drift arbitrary-principal theorem.",
+ "transcript_blob": "4b7e5325a300a2d2208dd17d7b3af3e9df864c9541b484a50f06764f55a075f5",
+ "usage": {
+  "cached_input_tokens": 109568,
+  "input_tokens": 163667,
+  "output_tokens": 2297,
+  "reasoning_output_tokens": 659
+ },
+ "verdict": "request_changes"
+}
