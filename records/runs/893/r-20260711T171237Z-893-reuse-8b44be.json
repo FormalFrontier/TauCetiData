@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.388133,
+   "returncode": 0,
+   "secs": 50.5,
+   "usage": {
+    "cached_input_tokens": 121856,
+    "input_tokens": 173581,
+    "output_tokens": 2286,
+    "reasoning_output_tokens": 551
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0c70accf71cf8085ca7661cc7cbf7dd6c2bca7be",
+ "cost_estimated": true,
+ "cost_usd": 0.388133,
+ "dedupe_key": "TauCetiProject/TauCeti|893|a13190a6150bea7bbd51deb82430225be4b38639|reuse|gpt-5.5|fb0698ac514a62c5|production|8",
+ "diff_blob": "7825aec797af181611dab8208b210c0a3394a65cb62b1371363516ef2a430d22",
+ "diff_sha256": "7825aec797af181611dab8208b210c0a3394a65cb62b1371363516ef2a430d22",
+ "duration_s": 50.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Topology/Sets/Closeds.lean:527-539` defines the same open-embedding order iso with `map f h.continuous` i.e. `closure (f '' T)` and inverse `f \u207b\u00b9' V`; the PR repeats these maps and inverse proofs at lines 41-91.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Use `TopologicalSpace.IrreducibleCloseds.orderIsoOfIsOpenEmbedding` and convert to `irreducibleComponents` via `IrreducibleCloseds.orderIsoSubtype'`/maximal subtypes instead of reproving the closure-image/preimage inverse maps.",
+   "issue": "`closure_image_mem_irreducibleComponents` and `irreducibleComponents_containing_equiv_of_isOpenEmbedding` manually rebuild open-embedding transport of irreducible closed sets/components.",
+   "line": 41
+  },
+  {
+   "evidence": "`mathlib/Mathlib/RingTheory/Ideal/Maps.lean:1252-1267` gives `RingEquiv.idealComapOrderIso`, `mathlib/Mathlib/RingTheory/Localization/AtPrime/Basic.lean:149-153` gives the prime-spectrum interval iso, and `mathlib/Mathlib/Order/Minimal.lean:537-543` gives `OrderIso.mapSetOfMinimal`; the PR reimplements these transports at lines 136-189.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Construct these equivalences from `RingEquiv.idealComapOrderIso`/`OrderIso.mapSetOfMinimal` for ring equivalences, and from `IsLocalization.AtPrime.primeSpectrumOrderIso` plus `OrderIso.mapSetOfMinimal` for localization at `p`; keep `minimalPrimes.equivIrreducibleComponents` only for the final component correspondence.",
+   "issue": "`minimalPrimes_equiv_of_ringEquiv` and `minimalPrimesEquivMinimalPrimesLe` rebuild minimal-prime transport from irreducible components, localization disjointness, and subtype plumbing.",
+   "line": 136
+  }
+ ],
+ "head_sha": "a13190a6150bea7bbd51deb82430225be4b38639",
+ "merge_base_sha": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "83e6940b768b2803bb47a7475df3b133a4d795ccb5c588a57382b60eeb3e19ac",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 8,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T171237Z-893-reuse-8b44be",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T17:12:37Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR proves new end theorems, but several private transport constructions rederive existing Mathlib order-isomorphism machinery. Replace the local scaffolding with the located Mathlib APIs before adding this file.",
+ "transcript_blob": "27ca5d1b231330de24b501d8bc570b84e44796798495aea1db0e466fdd2d37ba",
+ "usage": {
+  "cached_input_tokens": 121856,
+  "input_tokens": 173581,
+  "output_tokens": 2286,
+  "reasoning_output_tokens": 551
+ },
+ "verdict": "request_changes"
+}
