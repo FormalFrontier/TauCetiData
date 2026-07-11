@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.331939,
+   "returncode": 0,
+   "secs": 55.4,
+   "usage": {
+    "cached_input_tokens": 71168,
+    "input_tokens": 114659,
+    "output_tokens": 2630,
+    "reasoning_output_tokens": 1066
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "74fd38c43b0459169ef27cd0b1d5ac6ab15c0311",
+ "cost_estimated": true,
+ "cost_usd": 0.331939,
+ "dedupe_key": "TauCetiProject/TauCeti|910|dbd5411149ad47df99d251b801172429a07c29f8|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "99a34b46a768b6f1142963ed62a85d172fd4be6a9054e3179391e55ced994038",
+ "diff_sha256": "99a34b46a768b6f1142963ed62a85d172fd4be6a9054e3179391e55ced994038",
+ "duration_s": 55.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 101-111 prove only `rw [windingNumber_affine ..., hzero]` / `rw [windingNumber_affine_preimage ..., hzero]`; the located replacements are `windingNumber_affine` at lines 72-80 and `windingNumber_affine_preimage` at lines 84-97.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberAffine.lean",
+   "fix": "Remove these declarations; callers can use `rw [windingNumber_affine ..., hzero]` or `rw [windingNumber_affine_preimage ..., hzero]` directly.",
+   "issue": "`windingNumber_eq_zero_affine` and `windingNumber_eq_zero_affine_preimage` are public one-line zero wrappers around the preceding equalities, duplicating the rewrite API.",
+   "line": 101
+  },
+  {
+   "evidence": "`IsNullHomologous.const_mul` is at `WindingNumberScale.lean:98-107`, `IsNullHomologous.translate` is at `WindingNumberTranslate.lean:62-71`; the PR repeats the same complement argument at lines 117-128.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberAffine.lean",
+   "fix": "Replace the manual proof with the existing API, e.g. `simpa [Set.image_image, Function.comp_def] using (h.const_mul hc).translate d`.",
+   "issue": "`IsNullHomologous.affine` redoes the complement-preimage proof already provided compositionally by `IsNullHomologous.const_mul` and `IsNullHomologous.translate`.",
+   "line": 115
+  }
+ ],
+ "head_sha": "dbd5411149ad47df99d251b801172429a07c29f8",
+ "merge_base_sha": "74fd38c43b0459169ef27cd0b1d5ac6ab15c0311",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 910,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a6b5acf4a907586059c5fd07d23ff68934e63b494ea3f8b83c8e16be36a5e642",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T023248Z-910-reuse-19517a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T02:32:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The affine winding statements are not direct duplicates of a single existing declaration, but parts of the PR rederive or expose thin wrappers over already-located scale/translation API.",
+ "transcript_blob": "8b3c529a89674f622e2ecfea0699d14e7eee484c5f6c7423c283a36583ba300c",
+ "usage": {
+  "cached_input_tokens": 71168,
+  "input_tokens": 114659,
+  "output_tokens": 2630,
+  "reasoning_output_tokens": 1066
+ },
+ "verdict": "request_changes"
+}
