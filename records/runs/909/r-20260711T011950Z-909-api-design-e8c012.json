@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7970904999999999,
+   "returncode": 0,
+   "secs": 215.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 32274,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 32274,
+    "cache_read_input_tokens": 122049,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4330,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4330,
+      "cache_read_input_tokens": 43836,
+      "input_tokens": 2,
+      "output_tokens": 15515,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16227,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a32d42c0dba4a695722c3e2d68363bce73b683df",
+ "cost_usd": 0.79709,
+ "dedupe_key": "TauCetiProject/TauCeti|909|729c07021451cba03b43c88d7ad397ed36dffb86|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "669f3675a56bfd8432c876dc6d80c4670c234894af4839984fb00306f5d82614",
+ "diff_sha256": "669f3675a56bfd8432c876dc6d80c4670c234894af4839984fb00306f5d82614",
+ "duration_s": 215.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Rubric: \"we can avoid making lemmas rely on defeq downstream by using := (rfl) instead of := rfl.\" All four bodies are literally `rfl` (L62, L215, L233, L238).",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Induced.lean",
+   "fix": "Use `:= (rfl)` on these four lemmas so consumers rewrite through the stated API rather than relying on definitional unfolding.",
+   "issue": "The characteristic lemmas proved by `rfl` (`induced_coact` L215, `subtypeLinear_apply` L62, `subtype_toLinearMap` L233, `subtype_apply` L238) are `:= rfl`, so downstream proofs can close these goals by defeq and bypass the named lemmas.",
+   "line": "215"
+  },
+  {
+   "evidence": "L57 `@[expose] def subtypeLinear`, L224 `@[expose] noncomputable def subtype`; L64-66 uses `Subtype.val_injective` against `\u21d1N.subtypeLinear`; L22-26 `## Main declarations` lists only `inducedCoact`, `instComodule`, `subtype`.",
+   "file": "TauCeti/Algebra/Coalgebra/Subcomodule/Induced.lean",
+   "fix": "Drop `@[expose]` on both. If later kernel/finite-dimensional work needs injectivity of the inclusion (as the docstring anticipates), add `subtype_injective`/`subtypeLinear_injective` as lemmas instead of exposing the body to recover `Subtype.val_injective` by defeq.",
+   "issue": "`subtypeLinear` (L57) and `subtype` (L224) are `@[expose]`, but no consumer in this PR must unfold or compute them; `subtypeLinear_apply`, `subtype_apply`, and `subtype_toLinearMap` already characterize them. `subtypeLinear` is not even listed in `## Main declarations`. The only defeq the exposed body enables downstream is `\u21d1subtypeLinear = Subtype.val` (for injectivity).",
+   "line": "57"
+  }
+ ],
+ "head_sha": "729c07021451cba03b43c88d7ad397ed36dffb86",
+ "merge_base_sha": "a32d42c0dba4a695722c3e2d68363bce73b683df",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 909,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a2774d3a4b93db195fe17bf91fef61da61bbbb6801b75cb5f3324f7a55b19074",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T011950Z-909-api-design-e8c012",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T01:19:50Z",
+ "submitted_by": "kim-em",
+ "summary": "Characteristic API is complete and correctly annotated, but the rfl-proven characteristic lemmas use bare `:= rfl` and two definitional wrappers are `@[expose]` with no consumer needing their bodies; both let downstream bypass the stated interface via defeq.",
+ "transcript_blob": "fe50e4b8cbb1fa109edebcfb934f5758db070273cd3f2a557dee603b42e662a5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32274,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 32274,
+  "cache_read_input_tokens": 122049,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4330,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4330,
+    "cache_read_input_tokens": 43836,
+    "input_tokens": 2,
+    "output_tokens": 15515,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16227,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
