@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.388915,
+   "returncode": 0,
+   "secs": 62.1,
+   "usage": {
+    "cached_input_tokens": 150400,
+    "input_tokens": 195101,
+    "output_tokens": 3007,
+    "reasoning_output_tokens": 1149
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "cost_estimated": true,
+ "cost_usd": 0.388915,
+ "dedupe_key": "TauCetiProject/TauCeti|893|c730b009f45b0331a615cd4b748b9bfd6f687be0|reuse|gpt-5.5|fb0698ac514a62c5|production|5",
+ "diff_blob": "62ecb34ccd95d378d6d0df520c084f41894fadd3c70fe7324cb8610277211ba9",
+ "diff_sha256": "62ecb34ccd95d378d6d0df520c084f41894fadd3c70fe7324cb8610277211ba9",
+ "duration_s": 62.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR lines 167-197 define an equivalence via `vanishingIdeal`; Mathlib has `minimalPrimes.equivIrreducibleComponents` at `mathlib/Mathlib/RingTheory/Spectrum/Prime/Topology.lean:1261` plus `vanishingIdeal_irreducibleComponents` at `:1270`, `zeroLocus_minimalPrimes` at `:1277`, and `vanishingIdeal_mem_minimalPrimes` at `:1286`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Delete this equivalence and use `(minimalPrimes.equivIrreducibleComponents (R := R)).toEquiv.symm` for the bijection; for value/predicate facts use `PrimeSpectrum.vanishingIdeal_irreducibleComponents`, `PrimeSpectrum.zeroLocus_minimalPrimes`, and `PrimeSpectrum.vanishingIdeal_mem_minimalPrimes` rather than rebuilding injectivity/surjectivity.",
+   "issue": "`vanishingIdealEquiv` reconstructs the Mathlib bijection between minimal primes and irreducible components of `Spec R`.",
+   "line": 167
+  },
+  {
+   "evidence": "PR lines 128-160 repeatedly rewrite with `IsLocalization.minimalPrimes_map`, `map_under`, and `under_map_of_isPrime_disjoint`; Mathlib states the minimal-prime correspondence directly at `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:181`, and the prime localization order iso at `mathlib/Mathlib/RingTheory/Localization/Ideal.lean:244`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Refactor this helper to use Mathlib\u2019s `IsLocalization.minimalPrimes_map` equality for membership transport, together with `IsLocalization.orderIsoOfPrime` or `under_map_of_isPrime_disjoint` only for the disjointness/order side, instead of maintaining a parallel equivalence proof.",
+   "issue": "`minimalPrimesEquivMinimalPrimesLe` hand-builds the localization minimal-prime correspondence using `under_map`/`map_under`.",
+   "line": 128
+  }
+ ],
+ "head_sha": "c730b009f45b0331a615cd4b748b9bfd6f687be0",
+ "merge_base_sha": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8cc177591780706d07858d2e7269525306e137986f24398c7f7c3a9cd801a848",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T131447Z-893-reuse-1443a3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T13:14:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still redefines existing Mathlib correspondences for minimal primes and irreducible components instead of reusing the located API. The Spec irreducible-component equivalence is a direct replacement of a Mathlib declaration; the localization correspondence should be refactored onto Mathlib\u2019s set/order correspondences.",
+ "transcript_blob": "24f434906afd72a11916e4347637274d3923e65cf5db99f2a99cc2e765ae5a37",
+ "usage": {
+  "cached_input_tokens": 150400,
+  "input_tokens": 195101,
+  "output_tokens": 3007,
+  "reasoning_output_tokens": 1149
+ },
+ "verdict": "block"
+}
