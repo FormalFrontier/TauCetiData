@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.151624,
+   "returncode": 0,
+   "secs": 32.5,
+   "usage": {
+    "cached_input_tokens": 48768,
+    "input_tokens": 65168,
+    "output_tokens": 1508,
+    "reasoning_output_tokens": 311
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "cost_estimated": true,
+ "cost_usd": 0.151624,
+ "dedupe_key": "TauCetiProject/TauCeti|913|248457cea879c706451e1bcfd0bd862bbd7f8712|reuse|gpt-5.5|fb0698ac514a62c5|production|3",
+ "diff_blob": "980da4a69e56ef4eb922fedc66c5a3b357c88533c4bd9666063619b95d3ad800",
+ "diff_sha256": "980da4a69e56ef4eb922fedc66c5a3b357c88533c4bd9666063619b95d3ad800",
+ "duration_s": 32.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: `revFiltration_apply` at `TauCeti/Probability/Martingale/Reverse.lean:71` states `(revFiltration ... N) n = \ud835\udd3d (N - n)`, while the new lemma at `Reverse.lean:79` proves the zero-level iInf by `simp [revFiltration_apply]`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Do not add this public lemma; callers can use `simp [MeasureTheory.revFiltration_apply]` or `simpa only [MeasureTheory.revFiltration_apply, tsub_zero]` at the use site.",
+   "issue": "`iInf_revFiltration_zero` is a composite restatement of the existing `[simp]` lemma `MeasureTheory.revFiltration_apply`; its proof is exactly `simp [revFiltration_apply]`.",
+   "line": 79
+  },
+  {
+   "evidence": "grep hits: new theorem at `TailReverseFiltration.lean:28`; replacement normal form `tailProcess_eq_iInf_tailFamily` at `TauCeti/Probability/Process/Tail.lean:59`; simplifier `MeasureTheory.revFiltration_apply` at `TauCeti/Probability/Martingale/Reverse.lean:71`.",
+   "file": "TauCeti/Probability/Process/TailReverseFiltration.lean",
+   "fix": "Remove this theorem and use the existing `tailProcess_eq_iInf_tailFamily X` with `simpa only [MeasureTheory.revFiltration_apply, tsub_zero]` when the reverse-filtration spelling is needed.",
+   "issue": "`tailProcess_eq_iInf_revFiltration` duplicates `tailProcess_eq_iInf_tailFamily` after simplifying the reverse filtration at level zero.",
+   "line": 28
+  }
+ ],
+ "head_sha": "248457cea879c706451e1bcfd0bd862bbd7f8712",
+ "merge_base_sha": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 913,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "a5666fa0c455f5c85989c06d4814a29477afe27e7976b8a0dc26404fce88216c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T041332Z-913-reuse-722ff0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T04:13:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds only adapter lemmas whose right-hand sides reduce immediately to existing normal forms via the existing reverse-filtration simp lemma.",
+ "transcript_blob": "0c24b157d7e5a9fe40421674c5c1b0c24dacdb597774f948f821fdb7c0b82ec1",
+ "usage": {
+  "cached_input_tokens": 48768,
+  "input_tokens": 65168,
+  "output_tokens": 1508,
+  "reasoning_output_tokens": 311
+ },
+ "verdict": "request_changes"
+}
