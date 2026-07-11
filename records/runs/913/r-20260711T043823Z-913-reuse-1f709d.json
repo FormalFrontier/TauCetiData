@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.182786,
+   "returncode": 0,
+   "secs": 38.7,
+   "usage": {
+    "cached_input_tokens": 52352,
+    "input_tokens": 72844,
+    "output_tokens": 1805,
+    "reasoning_output_tokens": 584
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "cost_estimated": true,
+ "cost_usd": 0.182786,
+ "dedupe_key": "TauCetiProject/TauCeti|913|24867fc1344323e1bc3a4a41a1ea83dbee7e5d86|reuse|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "0fd31188bf098b5251bbfe62bc076493a396c1736c9fc13cb4e1dad67cb342f9",
+ "diff_sha256": "0fd31188bf098b5251bbfe62bc076493a396c1736c9fc13cb4e1dad67cb342f9",
+ "duration_s": 38.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: `revFiltration_apply` at `TauCeti/Probability/Martingale/Reverse.lean:71` states `(revFiltration ... N) n = \ud835\udd3d (N - n)`, and the new lemma at `Reverse.lean:79` proves `(\u2a05 N, (revFiltration ... N) 0) = \u2a05 N, \ud835\udd3d N` by `simp [revFiltration_apply]`.",
+   "file": "TauCeti/Probability/Martingale/Reverse.lean",
+   "fix": "Remove `iInf_revFiltration_zero`; use `simp [MeasureTheory.revFiltration_apply]` at call sites instead.",
+   "issue": "`MeasureTheory.iInf_revFiltration_zero` is a composite restatement of existing `MeasureTheory.revFiltration_apply`; its proof is exactly `simp [revFiltration_apply]`, so it adds duplicate generic API.",
+   "line": 79
+  },
+  {
+   "evidence": "grep hits: `tailProcess_eq_iInf_tailFamily` at `TauCeti/Probability/Process/Tail.lean:59`; `revFiltration_apply` at `TauCeti/Probability/Martingale/Reverse.lean:71`; current proof at `TailReverseFiltration.lean:35` is `rw [tailProcess_eq_iInf_tailFamily, MeasureTheory.iInf_revFiltration_zero]`.",
+   "file": "TauCeti/Probability/Process/TailReverseFiltration.lean",
+   "fix": "After removing `MeasureTheory.iInf_revFiltration_zero`, prove the theorem with `rw [tailProcess_eq_iInf_tailFamily]` followed by `simp [MeasureTheory.revFiltration_apply]` or equivalent.",
+   "issue": "The proof of `tailProcess_eq_iInf_revFiltration_zero` depends on the duplicate helper instead of reusing the existing normal-form API directly.",
+   "line": 35
+  }
+ ],
+ "head_sha": "24867fc1344323e1bc3a4a41a1ea83dbee7e5d86",
+ "merge_base_sha": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 913,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "83c055dbbe8e07c107abb53184859b69ec05f5dc9036b6a27252892977f85523",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T043823Z-913-reuse-1f709d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T04:38:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still adds a generic helper whose statement is just the zero case of the existing reverse-filtration simp lemma under an `iInf`. The roadmap-named tail theorem can be kept, but it should not introduce or depend on this duplicate generic API.",
+ "transcript_blob": "146b0d81eb2eda8406c754d463e7f69299795db827bb30a6fa94db1e01982b7e",
+ "usage": {
+  "cached_input_tokens": 52352,
+  "input_tokens": 72844,
+  "output_tokens": 1805,
+  "reasoning_output_tokens": 584
+ },
+ "verdict": "request_changes"
+}
