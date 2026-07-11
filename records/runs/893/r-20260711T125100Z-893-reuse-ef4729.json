@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.28037,
+   "returncode": 0,
+   "secs": 43.2,
+   "usage": {
+    "cached_input_tokens": 72320,
+    "input_tokens": 108976,
+    "output_tokens": 2031,
+    "reasoning_output_tokens": 544
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "cost_estimated": true,
+ "cost_usd": 0.28037,
+ "dedupe_key": "TauCetiProject/TauCeti|893|3305c1a7282e15a91698a1fe4b2ca1f889a83002|reuse|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "4f7add22524391ca4325792f809c547a823f1486b72824b9e3ae84cf7922dd2b",
+ "diff_sha256": "4f7add22524391ca4325792f809c547a823f1486b72824b9e3ae84cf7922dd2b",
+ "duration_s": 43.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PR lines 90-108 define the transport by `Ideal.map e.toRingHom`; Mathlib has the underlying public transport lemmas at `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:151` and `:161`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Avoid the local equivalence; transport through `Ideal.minimalPrimes_map_of_surjective`/`Ideal.comap_minimalPrimes_eq_of_surjective` at the use sites, or upstream a general ring-equivalence API if an `Equiv` is really needed.",
+   "issue": "`minimalPrimes_equiv_of_ringEquiv` builds a local minimal-prime transport equivalence from ideal-map plumbing.",
+   "line": 90
+  },
+  {
+   "evidence": "PR lines 125-155 are mostly rewrites with `IsLocalization.minimalPrimes_map`; Mathlib states the correspondence at `mathlib/Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:181`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Refactor this construction to use `IsLocalization.minimalPrimes_map` directly, deriving only the needed subtype restriction `q.val \u2264 p.asIdeal` from disjointness with `p.asIdeal.primeCompl`.",
+   "issue": "`minimalPrimesEquivMinimalPrimesLe` hand-builds the localization minimal-prime correspondence using `under_map`/`map_under`.",
+   "line": 125
+  },
+  {
+   "evidence": "PR lines 162-192 define a bijection via `vanishingIdeal`; Mathlib already provides `minimalPrimes.equivIrreducibleComponents` at `mathlib/Mathlib/RingTheory/Spectrum/Prime/Topology.lean:1261`, with `vanishingIdeal_irreducibleComponents` at `:1270` and `zeroLocus_minimalPrimes` at `:1277`.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Use `minimalPrimes.equivIrreducibleComponents R` (with `.toEquiv`, `.symm`, and order-dual wrappers as needed) plus the existing API lemmas for values, rather than maintaining a private cast-free copy.",
+   "issue": "`vanishingIdealEquiv` reconstructs Mathlib's minimal-prime/irreducible-component correspondence for `Spec R`.",
+   "line": 162
+  }
+ ],
+ "head_sha": "3305c1a7282e15a91698a1fe4b2ca1f889a83002",
+ "merge_base_sha": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0f3a586aa6e15848ef190e6f8f208f0c5cb40051eb0da48d11bb6c9e9ef9d32e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T125100Z-893-reuse-ef4729",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T12:51:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR still maintains private copies of existing Mathlib minimal-prime transport and Spec irreducible-component API. These are fixable by refactoring onto the located Mathlib lemmas/order isomorphism instead of keeping local duplicate equivalences.",
+ "transcript_blob": "adcbbd50476ebe7e45ff595ead62511bebd012248ffc56465306aab2f3bc706f",
+ "usage": {
+  "cached_input_tokens": 72320,
+  "input_tokens": 108976,
+  "output_tokens": 2031,
+  "reasoning_output_tokens": 544
+ },
+ "verdict": "request_changes"
+}

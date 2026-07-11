@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.345587,
+   "returncode": 0,
+   "secs": 45.5,
+   "usage": {
+    "cached_input_tokens": 113664,
+    "input_tokens": 159073,
+    "output_tokens": 2057,
+    "reasoning_output_tokens": 703
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "cost_estimated": true,
+ "cost_usd": 0.345587,
+ "dedupe_key": "TauCetiProject/TauCeti|893|3305c1a7282e15a91698a1fe4b2ca1f889a83002|proof-quality|gpt-5.5|fb0698ac514a62c5|production|4",
+ "diff_blob": "4f7add22524391ca4325792f809c547a823f1486b72824b9e3ae84cf7922dd2b",
+ "diff_sha256": "4f7add22524391ca4325792f809c547a823f1486b72824b9e3ae84cf7922dd2b",
+ "duration_s": 45.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"\\bchange\\b\"` reports lines 131, 138, 146; Mathlib defines `Ideal.minimalPrimes`/`minimalPrimes` as abbrevs in `Mathlib/RingTheory/Ideal/MinimalPrime/Basic.lean:56-64` and provides `IsLocalization.minimalPrimes_map` in `Mathlib/RingTheory/Ideal/MinimalPrime/Localization.lean:181-182`, so depending directly on the abbrev unfolding here is an unstable proof-quality issue.",
+   "file": "TauCeti/AlgebraicGeometry/IrreducibleOfConnectedDomainStalk.lean",
+   "fix": "Replace these `change` steps with explicit rewrite/helper lemmas around `IsLocalization.minimalPrimes_map`, `Set.mem_preimage`, and `Ideal.under_def`, or add a focused local lemma documenting and isolating the unavoidable conversion.",
+   "issue": "`minimalPrimesEquivMinimalPrimesLe` uses `change` at lines 131, 138, and 146 to force goals into Mathlib\u2019s current definitional shape for `minimalPrimes` and `Ideal.under`; the adjacent comments say what is being unfolded, but not why the proof cannot be written by rewriting/API lemmas.",
+   "line": 131
+  }
+ ],
+ "head_sha": "3305c1a7282e15a91698a1fe4b2ca1f889a83002",
+ "merge_base_sha": "188a28a8437658c693c61df01f5935c1eac4f915",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 893,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2e18cffa5d5fe1e90fa27a1ab02f5696945f30daf804478273ceadb305d531d4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T125754Z-893-proof-quality-c6c4b3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T12:57:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs are mostly factored, but the localization/minimal-prime equivalence relies on undocumented definitional conversions through `change`. Those conversions expose Mathlib\u2019s internal representation of `minimalPrimes`/`Ideal.under`, making this proof brittle under harmless API refactors.",
+ "transcript_blob": "5b4398fb9325603bdd1d71e539843d2f2c451e63fe2524b6f4347b960f84ff47",
+ "usage": {
+  "cached_input_tokens": 113664,
+  "input_tokens": 159073,
+  "output_tokens": 2057,
+  "reasoning_output_tokens": 703
+ },
+ "verdict": "request_changes"
+}
