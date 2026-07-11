@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.196061,
+   "returncode": 0,
+   "secs": 46.0,
+   "usage": {
+    "cached_input_tokens": 52352,
+    "input_tokens": 73471,
+    "output_tokens": 2143,
+    "reasoning_output_tokens": 843
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "cost_estimated": true,
+ "cost_usd": 0.196061,
+ "dedupe_key": "TauCetiProject/TauCeti|913|1260f847262ecd513259eb1095724595735757e4|reuse|gpt-5.5|fb0698ac514a62c5|production|1",
+ "diff_blob": "60a7922ef6c53a00e13825f743e93892d64f23ef070444832da95c4f085573c2",
+ "diff_sha256": "60a7922ef6c53a00e13825f743e93892d64f23ef070444832da95c4f085573c2",
+ "duration_s": 46.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TailReverseFiltration.lean:38` is exactly that call; existing replacement is `MeasureTheory.revFiltration` at `TauCeti/Probability/Martingale/Reverse.lean:46` with its level lemma `revFiltration_apply` at line 69.",
+   "file": "TauCeti/Probability/Process/TailReverseFiltration.lean",
+   "fix": "Remove `tailReverseFiltration` and use `MeasureTheory.revFiltration (tailFamily X) (tailFamily_antitone X) (fun n => tailFamily_le_ambient n fun k _ => hX k) N` directly at call sites.",
+   "issue": "`tailReverseFiltration` is a thin public wrapper around the already existing `MeasureTheory.revFiltration` with `\ud835\udd3d := tailFamily X`.",
+   "line": 35
+  },
+  {
+   "evidence": "New lines 43, 50, and 57 all unfold to `tailFamily X (N - n)`; existing `MeasureTheory.revFiltration_apply` states `(revFiltration \ud835\udd3d h_antitone h_le N) n = \ud835\udd3d (N - n)` at `TauCeti/Probability/Martingale/Reverse.lean:69`.",
+   "file": "TauCeti/Probability/Process/TailReverseFiltration.lean",
+   "fix": "Delete these restatements; prove consumers with `simp only [MeasureTheory.revFiltration_apply]` or plain `simp` after expanding the direct `revFiltration` call.",
+   "issue": "`tailReverseFiltration_apply`, `tailReverseFiltration_zero`, and `tailReverseFiltration_self` are only specializations of the existing `MeasureTheory.revFiltration_apply` plus `simp` on `N - 0` and `N - N`.",
+   "line": 43
+  },
+  {
+   "evidence": "Existing `tailProcess_eq_iInf_tailFamily` is at `TauCeti/Probability/Process/Tail.lean:59` and `tailProcess_le_tailFamily` at line 94; the new proofs at lines 69 and 87 are exactly `simp [tailProcess_eq_iInf_tailFamily]` and `iInf_le _ N` through the wrapper.",
+   "file": "TauCeti/Probability/Process/TailReverseFiltration.lean",
+   "fix": "Keep only a roadmap lemma if needed, stated directly with `MeasureTheory.revFiltration`, and prove it from `tailProcess_eq_iInf_tailFamily` and `MeasureTheory.revFiltration_apply`; use `tailProcess_le_tailFamily X N` directly for the bound and measurability corollary.",
+   "issue": "`tailProcess_eq_iInf_tailReverseFiltration_zero`, `tailProcess_eq_iInf_revFiltration`, `tailProcess_le_tailReverseFiltration_zero`, and `Measurable.tailReverseFiltration_zero` repackage existing `tailProcess_eq_iInf_tailFamily` / `tailProcess_le_tailFamily` through the duplicated wrapper.",
+   "line": 66
+  }
+ ],
+ "head_sha": "1260f847262ecd513259eb1095724595735757e4",
+ "merge_base_sha": "7eb9d4c17ed2d371027b7bab081b80aa83092f51",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 913,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "be53079172c0c303e0fe10ba372b01f5881d0fa7fa529bfcf817762951c63d1a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260711T035607Z-913-reuse-845fc1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-11T03:56:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds a process-specific parallel API whose core declaration is exactly the existing generic reverse-filtration API specialized to `tailFamily`. The remaining public lemmas mostly restate existing `revFiltration` and tail-family facts through that wrapper.",
+ "transcript_blob": "a9c6c95edf2eeb1f69874a9ce3719ea08acee329e150fe1210191d5639db5e24",
+ "usage": {
+  "cached_input_tokens": 52352,
+  "input_tokens": 73471,
+  "output_tokens": 2143,
+  "reasoning_output_tokens": 843
+ },
+ "verdict": "block"
+}
