@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8238335,
+   "returncode": 0,
+   "secs": 163.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 42561,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 42561,
+    "cache_read_input_tokens": 187661,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6583,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6583,
+      "cache_read_input_tokens": 51963,
+      "input_tokens": 2,
+      "output_tokens": 1098,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11741,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4bfa59059deb7f01cb9b79048fea369794c3690e",
+ "cost_usd": 0.823833,
+ "dedupe_key": "TauCetiProject/TauCeti|940|22cdb7fa65f513c4c87e430ec007883c381d7803|generality|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "e2c47b9127911063612f01a295a0ddb15a803b09fbaa45df47a412485b59e49d",
+ "diff_sha256": "e2c47b9127911063612f01a295a0ddb15a803b09fbaa45df47a412485b59e49d",
+ "duration_s": 163.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Only use is line 232 with a = t\u2080 - r constant; grep shows no other h_slit_L application.",
+   "file": "TauCeti/Analysis/Contour/PerWindowCPV.lean",
+   "fix": "Weaken to the used form `h_slit_L : \u2200 b, t\u2080 - r \u2264 b \u2192 b < t\u2080 \u2192 (\u03b3 b - s) / (\u03b3 (t\u2080 - r) - s) \u2208 Complex.slitPlane` (fixed lower anchor, mirroring how h_slit_minus anchors at \u03b3 (t\u2080 - r)).",
+   "issue": "h_slit_L quantifies over the anchor `a` (\u2200 a b, ...), but the proof only ever instantiates it with the fixed anchor a = t\u2080 - r (line 232: `h_slit_L (t\u2080 - r) t ...`). The extra \u2200 a makes the hypothesis strictly stronger than the proof requires \u2014 unlike h_slit_R, whose anchor `\u03c4R \u03b5` genuinely varies (line 237).",
+   "line": "166"
+  },
+  {
+   "evidence": "h\u03b3_meas used only at line 179 \u2192 intervalIntegrable_inv_sub_truncated; the split lemma (WindowSplitting.lean:127) takes no measurability hypothesis, and all target intervals lie in the window covered by h\u03b3_cont.",
+   "file": "TauCeti/Analysis/Contour/PerWindowCPV.lean",
+   "fix": "Drop h\u03b3_meas and derive the measurability needed by the integrability helper from h\u03b3_cont (restrict intervalIntegrable_inv_sub_truncated to take a ContinuousOn/AEStronglyMeasurable-on-window witness).",
+   "issue": "h\u03b3_meas : Measurable \u03b3 (global) is stronger than needed. It is only used at line 179 to supply integrability of the truncated integrand over sub-intervals of the window, all contained in Icc (t\u2080-r) (t\u2080+r), where h\u03b3_cont already yields (ae-strong) measurability. The global hypothesis is redundant given h\u03b3_cont.",
+   "line": "152"
+  }
+ ],
+ "head_sha": "22cdb7fa65f513c4c87e430ec007883c381d7803",
+ "merge_base_sha": "4bfa59059deb7f01cb9b79048fea369794c3690e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 940,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e7d89a6c15d651bcd98f59e5505cc25c3ea9929d72da344f3cb946f56fa3990b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T134646Z-940-generality-5de449",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T13:46:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The left slit-plane hypothesis is quantified over an anchor variable the proof never varies, making it stronger than needed; the global measurability hypothesis duplicates what the window continuity already gives.",
+ "transcript_blob": "7e40c96888c9ee9fff2aff15814752126df1951f2c5f02e21591f2944d4c593e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 42561,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 42561,
+  "cache_read_input_tokens": 187661,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6583,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6583,
+    "cache_read_input_tokens": 51963,
+    "input_tokens": 2,
+    "output_tokens": 1098,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11741,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
