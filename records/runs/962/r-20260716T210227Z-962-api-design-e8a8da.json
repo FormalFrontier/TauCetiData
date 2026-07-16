@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.4893995,
+   "returncode": 0,
+   "secs": 95.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 24458,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 24458,
+    "cache_read_input_tokens": 152271,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 997,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 997,
+      "cache_read_input_tokens": 39446,
+      "input_tokens": 2,
+      "output_tokens": 2765,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6473,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4f625c9ed7e90f78f30e543bd6d1631ff1575427",
+ "cost_usd": 0.489399,
+ "dedupe_key": "TauCetiProject/TauCeti|962|e3db4634f58898134f2dce0b759fe4fa2a2c43b0|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "c7b470f2a993f9dffdcef7fdd0fecf059503a3eb8cebc509d336cb317916e692",
+ "diff_sha256": "c7b470f2a993f9dffdcef7fdd0fecf059503a3eb8cebc509d336cb317916e692",
+ "duration_s": 95.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for re_inv_mul in TauCeti/ hits only lines 21/31/61 of this file (docstrings + defn), never a proof; roadmap README lines 125-135 name only (x \u1e8f \u2212 y \u1e8b)/(x\u00b2+y\u00b2).",
+   "file": "TauCeti/Analysis/Contour/WindingRealIntegral.lean",
+   "fix": "Make re_inv_mul `private`, or drop it, until a named consumer needs it.",
+   "issue": "re_inv_mul is exposed (and listed as a main result) but used nowhere \u2014 it appears only in its own docstring/definition. It is the dual of im_inv_mul; the file never develops the real-part side (the vanishing comes from integrality, not re_inv_mul) and the roadmap's Prop 2.3 real formula uses only the imaginary-part integrand.",
+   "line": "61"
+  },
+  {
+   "evidence": "im_inv_mul used only at line 115 inside the main proof; no external use.",
+   "file": "TauCeti/Analysis/Contour/WindingRealIntegral.lean",
+   "fix": "Make im_inv_mul `private` unless the separate on-curve/crossing form is a committed consumer that must reuse it.",
+   "issue": "im_inv_mul is a generic (z\u207b\u00b9*v).im identity used only internally to rewrite the integrand; no downstream consumer of windingNumber_eq_real_integral_of_closed needs it. It is an implementation helper exposed as a main result.",
+   "line": "54"
+  }
+ ],
+ "head_sha": "e3db4634f58898134f2dce0b759fe4fa2a2c43b0",
+ "merge_base_sha": "4f625c9ed7e90f78f30e543bd6d1631ff1575427",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 962,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0246ec81e3e216ac227066f25de8ec98e3c0eda51a74fe48a8e072ce6029da88",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T210227Z-962-api-design-e8a8da",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T21:02:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem is a legitimate roadmap product with a fine surface, but the file over-exposes helper lemmas: re_inv_mul is an unused dual form, and im_inv_mul is an internal helper. Constrain the surface to what is actually consumed.",
+ "transcript_blob": "b93e230ce3d738faaf0e179740bd7b43cc25ca15d0781623d6ec2e189880b91b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 24458,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 24458,
+  "cache_read_input_tokens": 152271,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 997,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 997,
+    "cache_read_input_tokens": 39446,
+    "input_tokens": 2,
+    "output_tokens": 2765,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6473,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
