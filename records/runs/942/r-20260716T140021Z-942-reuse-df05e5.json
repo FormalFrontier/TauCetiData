@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8913755,
+   "returncode": 0,
+   "secs": 159.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 47698,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 47698,
+    "cache_read_input_tokens": 227219,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6270,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6270,
+      "cache_read_input_tokens": 57413,
+      "input_tokens": 2,
+      "output_tokens": 5044,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11822,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1385959d1c7e767b4c8f2705c1bbafee20e1e69f",
+ "cost_usd": 0.891375,
+ "dedupe_key": "TauCetiProject/TauCeti|942|0699f719030cdead4f21dd5f501a079da12f901f|reuse|claude-opus-4-8|fb0698ac514a62c5|production|3",
+ "diff_blob": "5d498d9e70c8b36ed06602410f8f42f2433f6d6277c3b181f6c4c5f6ab2dabfa",
+ "diff_sha256": "5d498d9e70c8b36ed06602410f8f42f2433f6d6277c3b181f6c4c5f6ab2dabfa",
+ "duration_s": 159.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PiecewiseC1On.lean:170-177 already proves differentiability off breakpoints for piecewise-C\u00b9 curves; CrossingFiniteness.lean:204-205 obtains hpieces from the immersion and keeps only (\u2026).1 (DifferentiableAt), dropping the non-vanishing derivWithin \u2260 0.",
+   "file": "TauCeti/Analysis/Contour/CrossingFiniteness.lean",
+   "fix": "For the LogDerivFTC discharge, use h.isPiecewiseC1On.exists_countable_differentiableAt directly. The finset form is only needed by eventually_differentiableAt (a Finset is closed); since IsPiecewiseC1On already exposes a Finset breakpoint set (exists_breakpoints), add the finset differentiability lemma to IsPiecewiseC1On and make the immersion version a one-line delegation via h.isPiecewiseC1On.",
+   "issue": "exists_finset_differentiableAt discharges differentiability off a finite set but uses no immersion structure; its stated consumer (the countable-exception hypothesis hP : P.Countable of integral_inv_sub_mul_deriv_eq_log, LogDerivFTC.lean:92-94) is already met by IsPiecewiseC1On.exists_countable_differentiableAt (PiecewiseC1On.lean:170) via IsPwC1ImmersionOn.isPiecewiseC1On (PwC1ImmersionOn.lean:123). The proof re-derives differentiability through the immersion-only deriv_ne_zero_off_breakpoints (line 77, which requires the non-vanishing clause) and discards it with .1.",
+   "line": "202"
+  },
+  {
+   "evidence": "The proof (lines 211-216) uses only exists_finset_differentiableAt and finiteness/closedness of the breakpoint set; no non-vanishing-derivative hypothesis appears.",
+   "file": "TauCeti/Analysis/Contour/CrossingFiniteness.lean",
+   "fix": "Lift eventually_differentiableAt / _right / _left to IsPiecewiseC1On (using its Finset breakpoint witness) and have the immersion inherit them via isPiecewiseC1On, so differentiability lives once at the weakest predicate.",
+   "issue": "eventually_differentiableAt (and its _right/_left corollaries, lines 219/225) are likewise stated only for immersions but their content is piecewise-C\u00b9; they cannot be reused for a non-immersion piecewise-C\u00b9 curve and form a parallel API alongside the existing piecewise-C\u00b9 differentiability lemma.",
+   "line": "209"
+  }
+ ],
+ "head_sha": "0699f719030cdead4f21dd5f501a079da12f901f",
+ "merge_base_sha": "4bfa59059deb7f01cb9b79048fea369794c3690e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 942,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "df8ea99a35b30a75611d68dd4a89f16febbd7e25c428267527b0e2a91b19ccd0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T140021Z-942-reuse-df05e5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T14:00:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The four new differentiability lemmas use no immersion-specific content (non-vanishing tangent); they are immersion-specialized restatements of piecewise-C\u00b9 differentiability facts that already exist as IsPiecewiseC1On.exists_countable_differentiableAt, re-derived through the immersion-only deriv_ne_zero_off_breakpoints instead of reusing the existing API.",
+ "transcript_blob": "7acf914744677f0fd0ccea136dfc573332bbf797557ef4256bae822c1306babc",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47698,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 47698,
+  "cache_read_input_tokens": 227219,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6270,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6270,
+    "cache_read_input_tokens": 57413,
+    "input_tokens": 2,
+    "output_tokens": 5044,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11822,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
