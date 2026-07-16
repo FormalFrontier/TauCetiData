@@ -1,0 +1,131 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.505532,
+   "returncode": 0,
+   "secs": 82.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 27439,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 27439,
+    "cache_read_input_tokens": 94940,
+    "inference_geo": "not_available",
+    "input_tokens": 6,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2143,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2143,
+      "cache_read_input_tokens": 41281,
+      "input_tokens": 2,
+      "output_tokens": 3490,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6717,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "10cbbf775772e749f6254bc242894feccb30602b",
+ "cost_usd": 0.505532,
+ "dedupe_key": "TauCetiProject/TauCeti|923|be55fb6ee7f800e912040676b93c8e0344528953|naming|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "e102f40166c2e07d464b56425095c4530b3469fab5c9eb038dd66688402373fe",
+ "diff_sha256": "e102f40166c2e07d464b56425095c4530b3469fab5c9eb038dd66688402373fe",
+ "duration_s": 82.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "def is `orthogonalProjectionComplex` (line 82); lemmas at lines 141 and 156 use `orthogonalProjection`; grep of ./mathlib shows `orthogonalProjection` is an existing Mathlib decl.",
+   "file": "TauCeti/Analysis/Contour/ChordTangentBound.lean",
+   "fix": "Rename to `norm_orthogonalProjectionComplex_shortfall_le` / `norm_orthogonalProjectionComplex_sub_target_eq` (matching the def).",
+   "issue": "`norm_orthogonalProjection_shortfall_le` and `norm_orthogonalProjection_minus_target_eq` name their subject `orthogonalProjection`, but the definition is `orthogonalProjectionComplex`; the `_`-separated segment must correspond to the actual def name. Worse, `orthogonalProjection` is itself a Mathlib declaration (Mathlib/Geometry/Euclidean/Projection.lean, InnerProductSpace) that this file's docstring says it deliberately does not use \u2014 so the name is actively misleading.",
+   "line": "141"
+  },
+  {
+   "evidence": "grep `shortfall` in ./mathlib: 0 matches; naming doc: names describe conclusions in standard terminology.",
+   "file": "TauCeti/Analysis/Contour/ChordTangentBound.lean",
+   "fix": "Name from the conclusion, e.g. `real_sqrt_shortfall_le` \u2192 `sub_sqrt_le` (`\u03b5 - \u221a(\u03b5\u00b2-\u03b4\u00b2) \u2264 \u03b4\u00b2/\u03b5`); rename the projection lemma to a `sub_..._le` form on `\u2016w\u2016 - \u2016proj\u2016`.",
+   "issue": "`shortfall` is nonstandard terminology (0 occurrences in Mathlib) and describes an informal notion rather than the conclusion. Affects `real_sqrt_shortfall_le` and `norm_orthogonalProjection_shortfall_le`.",
+   "line": "127"
+  },
+  {
+   "evidence": "naming-conventions dictionary: `-` binary \u2192 `sub`; `_minus_` in Mathlib appears only in a few nonconforming legacy names.",
+   "file": "TauCeti/Analysis/Contour/ChordTangentBound.lean",
+   "fix": "Use `sub`: `...Complex_sub_target_eq`.",
+   "issue": "`norm_orthogonalProjection_minus_target_eq` uses `minus` for the binary `-`; the naming dictionary maps `-` (binary) to `sub`.",
+   "line": "156"
+  },
+  {
+   "evidence": "grep `pythagoras` in ./mathlib: 0 matches.",
+   "file": "TauCeti/Analysis/Contour/ChordTangentBound.lean",
+   "fix": "Name from the conclusion, e.g. `norm_orthogonalProjectionComplex_sq_add_norm_tangentDeviation_sq`, or a documented `_pythagoras` only if precedent is cited.",
+   "issue": "`orthogonal_pythagoras` names the theorem by an eponym rather than its conclusion; `pythagoras` is not standard Mathlib terminology (0 occurrences). Mathlib states this shape as `norm_add_sq`-style conclusion names.",
+   "line": "102"
+  }
+ ],
+ "head_sha": "be55fb6ee7f800e912040676b93c8e0344528953",
+ "merge_base_sha": "10cbbf775772e749f6254bc242894feccb30602b",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 923,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e8817670605432ba08343740f25285d590ce16fbb705267e93f5489cf68dc7be",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T071906Z-923-naming-8a2508",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T07:19:06Z",
+ "submitted_by": "kim-em",
+ "summary": "Names are largely descriptive but several lemmas reference the wrong subject: they say `orthogonalProjection` (a distinct Mathlib def this file deliberately avoids) instead of the actual definition `orthogonalProjectionComplex`, and use nonstandard `shortfall`/`minus` terminology.",
+ "transcript_blob": "37fbb7d9ecfcbbb720c711eace3d939ad7824644c240548c7d18bd9297480796",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 27439,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 27439,
+  "cache_read_input_tokens": 94940,
+  "inference_geo": "not_available",
+  "input_tokens": 6,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2143,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2143,
+    "cache_read_input_tokens": 41281,
+    "input_tokens": 2,
+    "output_tokens": 3490,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6717,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
