@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.770086,
+   "returncode": 0,
+   "secs": 137.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 37959,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 37959,
+    "cache_read_input_tokens": 244194,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 303,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 303,
+      "cache_read_input_tokens": 53641,
+      "input_tokens": 2,
+      "output_tokens": 2700,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10274,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4bfa59059deb7f01cb9b79048fea369794c3690e",
+ "cost_usd": 0.770086,
+ "dedupe_key": "TauCetiProject/TauCeti|940|44c0acc373e203c77f93c5589e39a5836a9a03ca|generality|claude-opus-4-8|fb0698ac514a62c5|production|2",
+ "diff_blob": "893e8c6899b37235e14876d83bedbbb02c4b7e0bb5a08e83763a3feef257d4a2",
+ "diff_sha256": "893e8c6899b37235e14876d83bedbbb02c4b7e0bb5a08e83763a3feef257d4a2",
+ "duration_s": 137.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/.../Complex/Basic.lean:663 `zero_notMem_slitPlane`; arg_annular_quotient_tendsto_right already does exactly this derivation (ChordQuotientAsymptotics.lean:217-219 `have hL : L \u2260 0 := \u2026 div_zero \u2026 zero_notMem_slitPlane`).",
+   "file": "TauCeti/Analysis/Contour/PerWindowCPV.lean",
+   "fix": "Drop hL_R and hL_L from the signature and derive them internally, e.g. `have hL_R : L_R \u2260 0 := fun h0 => Complex.zero_notMem_slitPlane (by rw [h0, div_zero] at h_slit_plus; exact h_slit_plus)` and analogously for L_L via neg_zero/zero_div.",
+   "issue": "hL_R : L_R \u2260 0 is redundant. h_slit_plus : (\u03b3 (t\u2080+r) - s)/L_R \u2208 slitPlane already forces L_R \u2260 0, since L_R = 0 gives (\u2026)/0 = 0 \u2209 slitPlane (Complex.zero_notMem_slitPlane). Likewise hL_L : L_L \u2260 0 is implied by h_slit_minus : (-L_L)/(\u03b3 (t\u2080-r) - s) \u2208 slitPlane (L_L = 0 \u21d2 -L_L = 0 \u21d2 0/\u2026 = 0 \u2209 slitPlane).",
+   "line": "171"
+  },
+  {
+   "evidence": "PerWindowCPV.lean:119-137 uses hl/hu only to restrict window hypotheses to [l,u]; LogDerivFTC.lean:92-96 takes hypotheses on uIcc a b directly.",
+   "file": "TauCeti/Analysis/Contour/PerWindowCPV.lean",
+   "fix": "State it directly on [l,u]: ContinuousOn \u03b3 (Icc l u), \u2200 t \u2208 Ioo l u \\ P, DifferentiableAt, IntervalIntegrable (deriv \u03b3) l u; drop t\u2080, r, hl, hu, hlu. Callers already have the window facts and can restrict.",
+   "issue": "annular_log_diff_window assumes h\u03b3_cont/h\u03b3_diffP/hderiv_int over the whole window [t\u2080-r, t\u2080+r] (via t\u2080, r, hl, hu) but only integrates over [l,u] \u2286 window; the wrapped integral_inv_sub_mul_deriv_eq_log takes its hypotheses on the integration interval itself (LogDerivFTC.lean:92-96). Stronger than necessary.",
+   "line": "109"
+  }
+ ],
+ "head_sha": "44c0acc373e203c77f93c5589e39a5836a9a03ca",
+ "merge_base_sha": "4bfa59059deb7f01cb9b79048fea369794c3690e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 940,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "4220ca0969683c6b5942da099c65b4915680d7dd005a5d4bf4352f74031060e3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T141600Z-940-generality-1b50e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T14:16:00Z",
+ "submitted_by": "kim-em",
+ "summary": "Two hypotheses of the public theorem (hL_R, hL_L) are redundant: each is implied by the corresponding slit-plane hypothesis and should be derived internally rather than assumed.",
+ "transcript_blob": "440261f2b83357206fb8e1ee916072226301762add8e1ff52848bcac2582759f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 37959,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 37959,
+  "cache_read_input_tokens": 244194,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 303,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 303,
+    "cache_read_input_tokens": 53641,
+    "input_tokens": 2,
+    "output_tokens": 2700,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10274,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
