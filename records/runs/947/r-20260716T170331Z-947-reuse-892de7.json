@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.658662,
+   "returncode": 0,
+   "secs": 82.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43056,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43056,
+    "cache_read_input_tokens": 140152,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7229,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7229,
+      "cache_read_input_tokens": 51812,
+      "input_tokens": 2,
+      "output_tokens": 1275,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5892,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "878b06e94495bf7fbabf61071c87d7c78082f702",
+ "cost_usd": 0.658662,
+ "dedupe_key": "TauCetiProject/TauCeti|947|be27b7bcbb983cad488f4203ee76c8236fc2dbe9|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "e3525483fcdede0bf2ab2f23d5c44706f4d0fb0a42d884acc6045726d20257fa",
+ "diff_sha256": "e3525483fcdede0bf2ab2f23d5c44706f4d0fb0a42d884acc6045726d20257fa",
+ "duration_s": 82.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 168\u2013172 vs 228\u2013232 are identical except the value slot; both re-derive the same window integrability from `h_int_tr`, `h_lo`, `h_hi`.",
+   "file": "TauCeti/Analysis/Contour/CrossingPVAggregation.lean",
+   "fix": "Extract a private lemma, e.g. `hasCauchyPVAt_window (hr_pos) (h_int_tr) (h_lo_t : a < t - r) (h_hi_t : t + r \u2264 b) (hab) (h_tendsto : Tendsto (truncated window \u222b) (\ud835\udcdd[>] 0) (\ud835\udcdd v)) : HasCauchyPVAt \u03b3 (t-r) (t+r) g s v`, and call it from both public theorems (with `v := (h_win t h).choose` resp. `\u03a6 (\u03b3 (t+r)) - \u03a6 (\u03b3 (t-r))`).",
+   "issue": "The per-window `HasCauchyPVAt` construction \u2014 `mem_sort` translation, `hasCauchyPVAt_iff.mpr`, and the integrability clause (`filter_upwards \u2026 (h_int_tr \u03b5 h\u03b5).mono_set \u2026 Icc_subset_Icc (by linarith [h_lo t h_mem]) (h_hi t h_mem)`) \u2014 is duplicated verbatim between `cauchyPVExistsAt_of_perWindow_tendsto` (lines 167\u2013172) and `hasCauchyPVAt_of_perWindow_boundary_tendsto` (lines 227\u2013232), differing only in the window value/tendsto argument.",
+   "line": "167"
+  }
+ ],
+ "head_sha": "be27b7bcbb983cad488f4203ee76c8236fc2dbe9",
+ "merge_base_sha": "878b06e94495bf7fbabf61071c87d7c78082f702",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 947,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f7e7ee1881322b7173e082d5e714e645134ad478c5033e5388447600514a7d86",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T170331Z-947-reuse-892de7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T17:03:31Z",
+ "submitted_by": "kim-em",
+ "summary": "Good refactor: the shared `hasCauchyPVAt_along_sorted` induction removes the old duplicated aggregation, and the telescoping theorem is genuinely new. One residual near-clone: the per-window HasCauchyPVAt construction is repeated verbatim in both public theorems and should be factored into a private helper.",
+ "transcript_blob": "0b1777919f7616ff60becd7d7123ba0ed04e6db66fdcb656bc7d5c0963f0edb8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43056,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43056,
+  "cache_read_input_tokens": 140152,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7229,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7229,
+    "cache_read_input_tokens": 51812,
+    "input_tokens": 2,
+    "output_tokens": 1275,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5892,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
