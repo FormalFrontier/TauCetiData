@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6973904999999999,
+   "returncode": 0,
+   "secs": 125.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40279,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40279,
+    "cache_read_input_tokens": 135013,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5285,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5285,
+      "cache_read_input_tokens": 50979,
+      "input_tokens": 2,
+      "output_tokens": 1090,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8746,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "878b06e94495bf7fbabf61071c87d7c78082f702",
+ "cost_usd": 0.69739,
+ "dedupe_key": "TauCetiProject/TauCeti|947|de49aa2a0a04f9084eb73b85b1a8526ccb54ca2f|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "14b7512fd7c4f3fc2477d8800e5fe070719e83af2929f6da889366f3981f3495",
+ "diff_sha256": "14b7512fd7c4f3fc2477d8800e5fe070719e83af2929f6da889366f3981f3495",
+ "duration_s": 125.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 101\u2013144 (existence cons case) vs 211\u2013259 (telescoping cons case) share h_head_lo/h_head_hi (105\u2013106 vs 214\u2013215), h_rest_above (107\u2013112 vs 216\u2013221), the IH recursion arguments incl. the off-window \u27e8m,hm_pos,\u2026\u27e9 block (132\u2013143 vs 245\u2013256), and the concat assembly (144 vs 257). Both are invoked only from their sibling public theorems (166, 282); the shared plumbing lemma hasCauchyPVAt_of_dist_lower_bound is already reused, but the recursion is not.",
+   "file": "TauCeti/Analysis/Contour/CrossingPVAggregation.lean",
+   "fix": "Factor one private induction that walks the sorted list once and returns a value-tracked `HasCauchyPVAt \u03b3 a b g s (piece-integrals + window-values)` \u2014 parameterized over a window-value function `w : \u211d \u2192 \u2102` with `h_win : \u2200 t \u2208 sorted, HasCauchyPVAt \u03b3 (t-r)(t+r) g s (w t)`, reusing hasCauchyPVAt_of_dist_lower_bound for the pieces. Derive cauchyPVExistsAt_of_perWindow_tendsto by choosing w from the \u2203 hypotheses and applying CauchyPVExistsAt.intro; derive hasCauchyPVAt_of_perWindow_boundary_tendsto by setting w t = \u03a6(\u03b3(t+r))-\u03a6(\u03b3(t-r)), rewriting the piece integrals via h_plain_eq, and telescoping.",
+   "issue": "hasCauchyPVAt_telescoping_along_sorted (179\u2013259) is a structural near-clone of cauchyPVExistsAt_along_sorted (78\u2013144): identical `induction sorted`, identical h_head_lo/h_head_hi/h_rest_above disjointness bookkeeping, identical off-window distance threading into the recursive call and the mono_set window-integrability block, and the same (h_left.concat h_window).concat h_rest assembly. The only new content is value tracking (h_plain_eq rewrites, h_ne/h_ne_left, the telescoping `ring`). The recursion machinery is duplicated, not reused.",
+   "line": "179"
+  }
+ ],
+ "head_sha": "de49aa2a0a04f9084eb73b85b1a8526ccb54ca2f",
+ "merge_base_sha": "878b06e94495bf7fbabf61071c87d7c78082f702",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 947,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3f2982616e98fb2fab971d2b2edd1f33fea8267b6d68a5937c2f27c9e900e4a6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T164326Z-947-reuse-d878e9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T16:43:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The new private induction hasCauchyPVAt_telescoping_along_sorted re-derives the entire recursion scaffolding of the existing cauchyPVExistsAt_along_sorted; only the value tracking is new. Factor a shared decomposition lemma both public theorems consume.",
+ "transcript_blob": "d2b6c58477738bbe167ec28d4f3fd33067da352d2623a884a130240876ff3e16",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40279,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40279,
+  "cache_read_input_tokens": 135013,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5285,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5285,
+    "cache_read_input_tokens": 50979,
+    "input_tokens": 2,
+    "output_tokens": 1090,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8746,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
