@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8666070000000001,
+   "returncode": 0,
+   "secs": 135.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 45491,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 45491,
+    "cache_read_input_tokens": 336904,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5076,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5076,
+      "cache_read_input_tokens": 56400,
+      "input_tokens": 1,
+      "output_tokens": 3485,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9389,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f28779645011c0f8f9f0cb1423261d0a7b6a3d12",
+ "cost_usd": 0.866607,
+ "dedupe_key": "TauCetiProject/TauCeti|946|d0c5df5085ea1e1b10143c9c63e2e76bdb722b0f|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "f730a962ae0ce796f84ff28d3e29a0161075bd24aa96ebfbe7cd72c9a042735f",
+ "diff_sha256": "f730a962ae0ce796f84ff28d3e29a0161075bd24aa96ebfbe7cd72c9a042735f",
+ "duration_s": 135.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "CauchyPrincipalValue.lean:317 `theorem HasCauchyPVAt.concat ... (h_ab : HasCauchyPVAt \u03b3 a b f z\u2080 L\u2081) (h_bc : HasCauchyPVAt \u03b3 b c f z\u2080 L\u2082) : HasCauchyPVAt \u03b3 a c f z\u2080 (L\u2081 + L\u2082)`, whose proof body is `hab_int.trans hbc_int` and `intervalIntegral.integral_add_adjacent_intervals` \u2014 the same steps re-done at lines 130-136 of the new file. (`HasCauchyPVAt.of_avoidance` at :303 is not directly usable for the between-pieces since it needs `ContinuousOn \u03b3`, so the distance-based `eventually_truncated_integral_const` helper is legitimately new.)",
+   "file": "TauCeti/Analysis/Contour/CrossingPVAggregation.lean",
+   "fix": "Carry `HasCauchyPVAt` (not a bare `Tendsto`) through the induction: build the between-piece witness `HasCauchyPVAt \u03b3 a (t-r) g s _` from `eventually_truncated_integral_const` + `h_int_tr`, the window witness `HasCauchyPVAt \u03b3 (t-r) (t+r) g s v_t` from `h_win` + `h_int_tr`, get the tail witness from the IH, and combine with `HasCauchyPVAt.concat`. This removes `h_split`, both `integral_add_adjacent_intervals` calls, and the closing `filter_upwards` integrability step.",
+   "issue": "`tendsto_truncated_integral_along_sorted` re-derives adjacent-interval aggregation by hand: `h_split` splits `[a,b]` into three pieces with two `intervalIntegral.integral_add_adjacent_intervals` calls (lines 130-136) and then adds the three limits, and the final theorem separately re-proves integrability over `[a,b]` (lines 170-172). This is exactly what `HasCauchyPVAt.concat` (CauchyPrincipalValue.lean:317) already packages: it combines two `HasCauchyPVAt` on adjacent intervals into one on the union, handling both the integral splitting and integrability internally.",
+   "line": 121
+  },
+  {
+   "evidence": "CauchyPrincipalValue.lean:125 `def CauchyPVExistsAt (\u03b3) (a b) (f) (z\u2080) : Prop := \u2203 L : \u2102, HasCauchyPVAt \u03b3 a b f z\u2080 L` and :135 `CauchyPVExistsAt.intro`.",
+   "file": "TauCeti/Analysis/Contour/CrossingPVAggregation.lean",
+   "fix": "State the conclusion as `CauchyPVExistsAt \u03b3 a b g s` and close with `CauchyPVExistsAt.intro`, so consumers get the project's canonical predicate directly.",
+   "issue": "The conclusion `\u2203 L : \u2102, HasCauchyPVAt \u03b3 a b g s L` re-spells the existing named abbreviation `CauchyPVExistsAt \u03b3 a b g s` (CauchyPrincipalValue.lean:125), which is defined for precisely this shape and has an `.intro` constructor.",
+   "line": 158
+  }
+ ],
+ "head_sha": "d0c5df5085ea1e1b10143c9c63e2e76bdb722b0f",
+ "merge_base_sha": "73231d9ffdd0199a06fab7588844b4e695384587",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 946,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "080c397c9697e0022001ce069a36e2eb139a6201affc51035fa0f90fa6587b9b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T151142Z-946-reuse-e0750e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T15:11:42Z",
+ "submitted_by": "kim-em",
+ "summary": "New material (per-window aggregation, distance-based avoidance helper) is genuinely new, but the private induction re-derives the located `HasCauchyPVAt.concat` by hand via raw `intervalIntegral.integral_add_adjacent_intervals`, and the theorem re-spells the existing `CauchyPVExistsAt` predicate instead of reusing it.",
+ "transcript_blob": "7a017a448ed7042c3962907e77b1cdbcc56fef39c73466118aa7c3ec9bc4f1ae",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45491,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 45491,
+  "cache_read_input_tokens": 336904,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5076,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5076,
+    "cache_read_input_tokens": 56400,
+    "input_tokens": 1,
+    "output_tokens": 3485,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9389,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
