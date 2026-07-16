@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.44080549999999996,
+   "returncode": 0,
+   "secs": 85.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 23764,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 23764,
+    "cache_read_input_tokens": 77863,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5541,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5541,
+      "cache_read_input_tokens": 34208,
+      "input_tokens": 2,
+      "output_tokens": 1512,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6259,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5aac8b4f12c0eb1c3d064a921190bdac06418266",
+ "cost_usd": 0.440805,
+ "dedupe_key": "TauCetiProject/TauCeti|954|0e80bd78dedf18f39d3a253cd40320610a80c006|generality|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "9fc5ee6543ada0e342986001ae12370b808461feedef91bc9ff3f43c78f3b0c8",
+ "diff_sha256": "9fc5ee6543ada0e342986001ae12370b808461feedef91bc9ff3f43c78f3b0c8",
+ "duration_s": 85.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 297: `have h0 := (hg.continuousAt.tendsto.mul h_pow)...` is the only use of hg; no other invocation of analyticity in either declaration.",
+   "file": "TauCeti/Analysis/Contour/MeromorphicLaurent.lean",
+   "fix": "Weaken the hypothesis to `hg : ContinuousAt g s` in both the helper and the public engine (proof unchanged: use `hg.tendsto.mul h_pow`). AnalyticAt callers still supply this via `.continuousAt`.",
+   "issue": "laurent_coeff_eq_zero_of_eventuallyEq_analytic (public engine) and its helper coeff_top_eq_zero_of_eventuallyEq_analytic (line 262) assume `AnalyticAt \u2102 g s`, but analyticity is only ever used via `hg.continuousAt` (line 297). The result \u2014 a finite principal part equal to g near s is zero \u2014 holds for any g continuous (indeed with a limit) at s.",
+   "line": "304"
+  },
+  {
+   "evidence": "Line 365: `laurent_coeff_eq_zero_of_eventuallyEq_analytic (hh.sub hg) h_diff ...` is the only use of hg/hh.",
+   "file": "TauCeti/Analysis/Contour/MeromorphicLaurent.lean",
+   "fix": "Weaken to `hg hh : ContinuousAt`, replacing `hh.sub hg` with `ContinuousAt.sub`; the meromorphic wrapper laurent_coeff_eq_meromorphicPolarCoeffAt still passes analytic parts via `.continuousAt`.",
+   "issue": "laurent_coeff_unique assumes `hg hh : AnalyticAt` for both remainders but uses them only through `hh.sub hg` (line 365) into the zero-lemma; continuity suffices.",
+   "line": "344"
+  }
+ ],
+ "head_sha": "0e80bd78dedf18f39d3a253cd40320610a80c006",
+ "merge_base_sha": "355272989492f96a449a082df3b2582fd45599ac",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 954,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f9489ead793ce060a5d36af75827bec6e68ef240130e3d712d10e4fabd34c936",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T184649Z-954-generality-ae7eef",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T18:46:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The uniqueness engine and its helpers carry AnalyticAt remainder hypotheses that the proofs use only through continuity; the natural level is ContinuousAt, which strictly widens reuse and keeps every current caller valid.",
+ "transcript_blob": "6b0de3d1b62f6f611b824a567cd638497561dc52338919fcbe342f2a48cd6ff0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 23764,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 23764,
+  "cache_read_input_tokens": 77863,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5541,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5541,
+    "cache_read_input_tokens": 34208,
+    "input_tokens": 2,
+    "output_tokens": 1512,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6259,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
