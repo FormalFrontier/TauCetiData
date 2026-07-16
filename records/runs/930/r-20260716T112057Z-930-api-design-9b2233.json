@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6345455,
+   "returncode": 0,
+   "secs": 140.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 32768,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 32768,
+    "cache_read_input_tokens": 47525,
+    "inference_geo": "not_available",
+    "input_tokens": 3,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 17213,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 17213,
+      "cache_read_input_tokens": 31540,
+      "input_tokens": 1,
+      "output_tokens": 10420,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10902,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "79a912f0de414b57140ea9aaf096deb2a0a73b16",
+ "cost_usd": 0.634545,
+ "dedupe_key": "TauCetiProject/TauCeti|930|4afa7852e54e04c8a60012787eb2e642a4bc55b4|api-design|claude-opus-4-8|fb0698ac514a62c5|production|2",
+ "diff_blob": "c4f1148d500ca25db9f9207ae28dadcce007fd686b8c1b071e2d26f0a69e7e5e",
+ "diff_sha256": "c4f1148d500ca25db9f9207ae28dadcce007fd686b8c1b071e2d26f0a69e7e5e",
+ "duration_s": 140.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "MeromorphicLaurent.lean:197 `def meromorphicPolarPartAt ... := ` has no @[expose]; its API is meromorphicPolarPartAt_eq_sum (line 218).",
+   "file": "TauCeti/Analysis/Contour/PolarPartDecomposition.lean",
+   "fix": "Drop @[expose]; consumers use meromorphicPolarPartTotal_eq. Internal uses are all within-module `unfold`, unaffected.",
+   "issue": "meromorphicPolarPartTotal is @[expose] though its unfolding lemma meromorphicPolarPartTotal_eq (line 110) is present; the sibling meromorphicPolarPartAt (MeromorphicLaurent.lean:197) and every other def in that file are unexposed and rely on such lemmas.",
+   "line": "105"
+  },
+  {
+   "evidence": "Accessor lemmas at lines 250, 254, 258, 263 cover every data field; removing @[expose] leaves only within-module rfl/unfold uses, which do not require cross-module exposure.",
+   "file": "TauCeti/Analysis/Contour/PolarPartDecomposition.lean",
+   "fix": "Drop @[expose]; rely on the accessor lemmas (order=1 at simple poles follows propositionally via ofMeromorphic_order + meromorphicPolarOrderAt_eq_one). If a field must reduce definitionally for a later consumer, add a targeted `:= (rfl)` lemma instead of exposing the whole body.",
+   "issue": "ofMeromorphic is @[expose], leaking the constructor body downstream, but all four data fields have accessor lemmas (ofMeromorphic_order/coeff/polarPart lines 250-259, ofMeromorphic_analyticRemainder line 263), so no consumer needs the body.",
+   "line": "208"
+  }
+ ],
+ "head_sha": "4afa7852e54e04c8a60012787eb2e642a4bc55b4",
+ "merge_base_sha": "79a912f0de414b57140ea9aaf096deb2a0a73b16",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 930,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e593434a8dcfea8d1696b226eb9df1f177cf18e4ad9b2e39c4e0524b7d409598",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260716T112057Z-930-api-design-9b2233",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-16T11:20:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior API-completeness findings are resolved. Remaining issue: both new defs carry unnecessary @[expose] though a complete characteristic API now covers them, contradicting the file's own unexposed-body-plus-lemma convention.",
+ "transcript_blob": "e955569eacfa0f6e07307aa1db79afdf4ee3432216a731029ffb8c6d7ca48fbc",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32768,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 32768,
+  "cache_read_input_tokens": 47525,
+  "inference_geo": "not_available",
+  "input_tokens": 3,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17213,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 17213,
+    "cache_read_input_tokens": 31540,
+    "input_tokens": 1,
+    "output_tokens": 10420,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10902,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
