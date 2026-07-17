@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.560275,
+   "returncode": 0,
+   "secs": 100.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 26994,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 26994,
+    "cache_read_input_tokens": 240190,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2000,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2000,
+      "cache_read_input_tokens": 41076,
+      "input_tokens": 2,
+      "output_tokens": 2998,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6519,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bd8caaab1df9b50db03f02c13f49143547279c29",
+ "cost_usd": 0.560275,
+ "dedupe_key": "TauCetiProject/TauCeti|983|84d1cfac91d3b7a13e9eea028405f9d4c83cd2d3|proof-quality|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "e0cfbd65f27967be33f76e587d15af590a5d5305710e3a505550e0c00b3d320c",
+ "diff_sha256": "e0cfbd65f27967be33f76e587d15af590a5d5305710e3a505550e0c00b3d320c",
+ "duration_s": 100.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/GroupTheory/QuotientGroup/Defs.lean:415 `congr_mk' \u2026 : congr G' H' e he (mk' G' x) = mk' H' (e x) := rfl`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/DedekindClassGroup.lean",
+   "fix": "Replace the `show \u2026 from rfl` block with `rw [\u2190 QuotientAddGroup.congr_mk']`.",
+   "issue": "The `rw [show (QuotientAddGroup.mk' \u2026) \u2026 = (QuotientAddGroup.congr \u2026) (QuotientAddGroup.mk' \u2026) from rfl]` hand-rolls, via definitional equality, the reverse of `QuotientAddGroup.congr_mk'`, which is a named lemma.",
+   "line": "99"
+  },
+  {
+   "evidence": "Lines 105\u2013106 and 108\u2013110: `change (MulEquiv.toAdditive (ClassGroup.equiv K)).symm \u2026 = _` and `change Additive.ofMul (\u2026) = \u2026`, both undocumented.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/DedekindClassGroup.lean",
+   "fix": "Drive the wrapper unfolding with explicit lemmas (`MulEquiv.toAdditive_apply_symm_apply`, `MonoidHom.coe_toAdditive`, `Additive.ofMul`/`toMul` equations) or, if a `change` is genuinely required, add a comment stating why no rewrite closes it.",
+   "issue": "Two `change` tactics (lines 105\u2013106 and 108\u2013110) reshape the goal across `MulEquiv.toAdditive`/`Additive.ofMul` wrappers with no comment explaining why the goal cannot be reached by rewriting. The rubric flags any `change`/`show` used without documenting why a rewrite is unavailable.",
+   "line": "105"
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/TypeTags/Basic.lean:128 `ofMul_toMul (x : Additive \u03b1) : ofMul x.toMul = x := rfl`.",
+   "file": "TauCeti/AlgebraicGeometry/WeilDivisor/DedekindClassGroup.lean",
+   "fix": "Use `rw [Additive.ofMul_toMul, \u2190 fractionalIdealDivisorAddEquiv_apply, AddEquiv.apply_symm_apply]`.",
+   "issue": "`rw [show Additive.ofMul (Additive.toMul \u2026) = \u2026 from rfl, \u2026]` reproduces `Additive.ofMul_toMul` by hand via defeq.",
+   "line": "136"
+  }
+ ],
+ "head_sha": "84d1cfac91d3b7a13e9eea028405f9d4c83cd2d3",
+ "merge_base_sha": "bd8caaab1df9b50db03f02c13f49143547279c29",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 983,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d8a4d48cd7b584fcb350959521a1b536f7120053c3c9f5391b479b2d08cd6a38",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260717T234403Z-983-proof-quality-b80b7c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-17T23:44:03Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly clean, but the main characterizing lemma reproduces existing Mathlib lemmas via undocumented `show \u2026 from rfl` and `change` steps that rest on cross-wrapper definitional equality. Cite the named lemmas instead, or document why they don't apply.",
+ "transcript_blob": "e5252a3a1443f39ee05cdbb4c72ea2e271e51a73b1f33a7eb1be127069acfda6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 26994,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 26994,
+  "cache_read_input_tokens": 240190,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2000,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2000,
+    "cache_read_input_tokens": 41076,
+    "input_tokens": 2,
+    "output_tokens": 2998,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6519,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
