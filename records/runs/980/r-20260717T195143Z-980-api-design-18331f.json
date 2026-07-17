@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9542485,
+   "returncode": 0,
+   "secs": 227.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38457,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38457,
+    "cache_read_input_tokens": 375025,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5049,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5049,
+      "cache_read_input_tokens": 49490,
+      "input_tokens": 1,
+      "output_tokens": 2772,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15039,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c170fdeaa5542677ff03be04722570d1be82deac",
+ "cost_usd": 0.954249,
+ "dedupe_key": "TauCetiProject/TauCeti|980|4c66650f538931c80c1ad4fc365669f563148a88|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "502e92ab834a2beecd7c23ecda231130faba3c7bd1e845fa92b2a729557812f8",
+ "diff_sha256": "502e92ab834a2beecd7c23ecda231130faba3c7bd1e845fa92b2a729557812f8",
+ "duration_s": 227.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 60 `@[expose] def PoincareDisc : Type := Complex.UnitDisc`; all uses (equivs, instance, dist_eq, isometry lemmas) are in-module and never require the body downstream.",
+   "file": "TauCeti/Analysis/Complex/Conformal/PoincareMetricSpace.lean",
+   "fix": "Drop `@[expose]`; keep the type opaque and characterize it only through the equivs and `dist_eq`. Re-add only if a specific later-stage consumer must unfold it (then justify).",
+   "issue": "`@[expose] def PoincareDisc` exposes the type-synonym body across module boundaries. No consumer needs to unfold `PoincareDisc`: the interface is fully characterized by the equivs, `dist_eq`, and the round-trip simp lemmas, all elaborated in-module. Exposing the body lets downstream defeq/`dsimp`/`unfold` collapse `PoincareDisc` back to `Complex.UnitDisc`, undermining the separation the synonym exists to provide.",
+   "line": "60"
+  },
+  {
+   "evidence": "Lines 65, 68; the `rfl` lemmas at lines 71-76 and the isometry lemmas at 106-127 are all in-module and do not rely on cross-module body visibility.",
+   "file": "TauCeti/Analysis/Complex/Conformal/PoincareMetricSpace.lean",
+   "fix": "Drop `@[expose]` from both equiv definitions; keep the public signatures. The round-trip simp lemmas remain provable by `rfl` in-module.",
+   "issue": "`@[expose]` on `Complex.UnitDisc.toPoincare` and `PoincareDisc.toUnitDisc` (line 68) exposes their `Equiv.refl`/`.symm` bodies. Consumers use these as bundled maps characterized by `toUnitDisc_toPoincare`/`toPoincare_toUnitDisc` (simp) and `dist_eq`; the bodies are not needed and their exposure is coupled to exposing `PoincareDisc`.",
+   "line": "65"
+  },
+  {
+   "evidence": "Line 79 lemma is referenced only at lines 88-92 inside the instance.",
+   "file": "TauCeti/Analysis/Complex/Conformal/PoincareMetricSpace.lean",
+   "fix": "Make it `private` unless a downstream consumer is intended.",
+   "issue": "`coe_mem_ball` is a `public` implementation helper whose sole use is building `instMetricSpace`; it exposes no roadmap product.",
+   "line": "79"
+  }
+ ],
+ "head_sha": "4c66650f538931c80c1ad4fc365669f563148a88",
+ "merge_base_sha": "c170fdeaa5542677ff03be04722570d1be82deac",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 980,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9c3f16718efd466bb3b67cc16fa1487a2c06faa380b9436286c2e4a7d4f0662d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260717T195143Z-980-api-design-18331f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-17T19:51:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic metric API is complete and correctly annotated, but three implementation bodies are exposed with no consumer that requires unfolding, contradicting the type synonym's own design of bridging views via equivalences rather than defeq.",
+ "transcript_blob": "87c69e620c04bdc652503de0fb304e578804d211e2a2e06bc00b9329b9db11d5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38457,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38457,
+  "cache_read_input_tokens": 375025,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5049,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5049,
+    "cache_read_input_tokens": 49490,
+    "input_tokens": 1,
+    "output_tokens": 2772,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15039,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
