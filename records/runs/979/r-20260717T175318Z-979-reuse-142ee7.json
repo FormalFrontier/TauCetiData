@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.489211,
+   "returncode": 0,
+   "secs": 125.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 20057,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 20057,
+    "cache_read_input_tokens": 160032,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3503,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3503,
+      "cache_read_input_tokens": 32539,
+      "input_tokens": 2,
+      "output_tokens": 3062,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8080,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "851a19cf84523479067603ddc0b5f72a07f7c838",
+ "cost_usd": 0.489211,
+ "dedupe_key": "TauCetiProject/TauCeti|979|071a18ddaac603ad7d17703b0a725798642c3b53|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "e01c8ab40826d0fb2d36b9497ea8be963c8477af820a6fd5acae58ebbde3021d",
+ "diff_sha256": "e01c8ab40826d0fb2d36b9497ea8be963c8477af820a6fd5acae58ebbde3021d",
+ "duration_s": 125.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "HermiteFunctionLp.lean:31-35 `private lemma inner_algebraMap_algebraMap ... := by simp [RCLike.inner_apply, RCLike.conj_ofReal, map_mul, mul_comm]` vs HermiteFunctionOrthonormal.lean:74-77 same body verbatim.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionOrthonormal.lean",
+   "fix": "Drop `private` from `inner_algebraMap_algebraMap` in HermiteFunctionLp.lean (make it a shared/protected lemma), delete `inner_ofReal_ofReal`, and reuse `inner_algebraMap_algebraMap` in `inner_hermiteFunctionLp`.",
+   "issue": "Private `inner_ofReal_ofReal (a b) : inner \ud835\udd5c (algebraMap \u211d \ud835\udd5c a) (algebraMap \u211d \ud835\udd5c b) = algebraMap \u211d \ud835\udd5c (a*b)` is identical in statement and proof to the existing private `inner_algebraMap_algebraMap` in TauCeti/Analysis/SpecialFunctions/HermiteFunctionLp.lean:31, which this file already imports.",
+   "line": "74"
+  },
+  {
+   "evidence": "grep of `inner_hermiteFunctionLp_zero_zero|norm_hermiteFunctionLp_zero|integral_hermiteFunction_zero_mul_self` across TauCeti/ shows only self-references in HermiteFunctionLp.lean/HermiteFunctionMemLp.lean; PR description itself states these are the n=0 special cases.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteFunctionOrthonormal.lean",
+   "fix": "Consolidate: relocate the now-redundant zeroth-mode normalization lemmas into this downstream file as one-line corollaries of the general results (e.g. `by simpa using inner_hermiteFunctionLp (\ud835\udd5c:=\ud835\udd5c) 0 0`), or remove them, so the Kronecker-delta fact is proved once.",
+   "issue": "The general `inner_hermiteFunctionLp` / `orthonormal_hermiteFunctionLp` / `integral_hermiteFunction_mul_hermiteFunction` fully subsume the pre-existing special cases `inner_hermiteFunctionLp_zero_zero`, `norm_hermiteFunctionLp_zero` (=orthonormal unit-vector), and `integral_hermiteFunction_zero_mul_self`, which grep shows have no consumers other than each other's proofs \u2014 leaving parallel APIs proving the same \u03b4-fact.",
+   "line": "102"
+  }
+ ],
+ "head_sha": "071a18ddaac603ad7d17703b0a725798642c3b53",
+ "merge_base_sha": "851a19cf84523479067603ddc0b5f72a07f7c838",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 979,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "849eb73fa9c34efae567b5a2c14233a343d24a2a85fd9f29d822dbc326e87a2f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260717T175318Z-979-reuse-142ee7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-17T17:53:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The new file re-declares a private inner-product lemma that already exists byte-for-byte in the imported HermiteFunctionLp.lean, and its general results silently supersede pre-existing zeroth-mode lemmas that now have no consumers.",
+ "transcript_blob": "50059b0f88261815d22dbcd8ce0f71600ff6a02f3e8da4aea0f8ccf95e05c723",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 20057,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 20057,
+  "cache_read_input_tokens": 160032,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3503,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3503,
+    "cache_read_input_tokens": 32539,
+    "input_tokens": 2,
+    "output_tokens": 3062,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8080,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
