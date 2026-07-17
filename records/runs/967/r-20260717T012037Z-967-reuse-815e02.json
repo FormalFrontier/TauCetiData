@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9292849999999999,
+   "returncode": 0,
+   "secs": 150.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38269,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38269,
+    "cache_read_input_tokens": 609856,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3655,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3655,
+      "cache_read_input_tokens": 50599,
+      "input_tokens": 2,
+      "output_tokens": 1385,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9365,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7c6a51b402ba9bff961d3ba8d4859517003fca3d",
+ "cost_usd": 0.929285,
+ "dedupe_key": "TauCetiProject/TauCeti|967|a0cff9421a4f4c89a97d2542ac6a56bb40c7a15a|reuse|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "40ecbb4ba01e35d3c3f2248279b968a0b43bb34bbe9bc8d5a999c5d547b0fcee",
+ "diff_sha256": "40ecbb4ba01e35d3c3f2248279b968a0b43bb34bbe9bc8d5a999c5d547b0fcee",
+ "duration_s": 150.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib CircleMap.lean:44 `theorem circleMap_ne_mem_ball (hw : w \u2208 ball c R) (\u03b8) : circleMap c R \u03b8 \u2260 w`; `hw : dist w c < R` is `mem_ball.mpr hw : w \u2208 ball c R`.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberCircle.lean",
+   "fix": "Replace the whole `havoid` block with `have havoid : \u2200 \u03b8, circleMap c R \u03b8 \u2260 w := fun \u03b8 => circleMap_ne_mem_ball (mem_ball.mpr hw) \u03b8`; `hR` then only needs to survive for any remaining use.",
+   "issue": "The `havoid` block reproves Mathlib's `circleMap_ne_mem_ball {c R w} (hw : w \u2208 ball c R) (\u03b8) : circleMap c R \u03b8 \u2260 w` (Mathlib/Analysis/SpecialFunctions/Complex/CircleMap.lean:44) via a manual `circleMap_mem_sphere'`/`abs_of_nonneg`/`linarith` argument.",
+   "line": "118"
+  },
+  {
+   "evidence": "Mathlib CircleMap.lean:56 `circleMap_mem_closedBall`; identical 6-line `hd`/`linarith` block appears at lines 120-124 and 153-157.",
+   "file": "TauCeti/Analysis/Contour/WindingNumberCircle.lean",
+   "fix": "Use `fun \u03b8 => ne_of_mem_of_not_mem (circleMap_mem_closedBall c hR \u03b8) (fun h => absurd (mem_closedBall.mp h) (not_le.mpr hw))` (with `w`/`c` order via `dist_comm`), avoiding the repeated `circleMap_mem_sphere'`/`abs_of_nonneg`/`linarith` scaffold.",
+   "issue": "The exterior `havoid` duplicates the same manual sphere/dist computation; a point off the closed disc is avoided by any point of the sphere. Mathlib supplies `circleMap_mem_closedBall (c) (hR) (\u03b8) : circleMap c R \u03b8 \u2208 closedBall c R` (CircleMap.lean:56).",
+   "line": "151"
+  }
+ ],
+ "head_sha": "a0cff9421a4f4c89a97d2542ac6a56bb40c7a15a",
+ "merge_base_sha": "6a7ccced2ae932511207ac6441e162aaa540a4a2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 967,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e37317886f02c9d8b6fc2d35be834ff5bb37f6dcd355c3a4390fc66524ab3ebc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260717T012037Z-967-reuse-815e02",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-17T01:20:37Z",
+ "submitted_by": "kim-em",
+ "summary": "Mathematics reuses existing API appropriately and the exterior kernel integral is genuinely new. But the interior avoidance proof reproves Mathlib's circleMap_ne_mem_ball, and the exterior one duplicates the same manual sphere/dist plumbing that circleMap_mem_closedBall provides.",
+ "transcript_blob": "9d5c2d13902890afc4ced2d2d4863ac568ee2f0d5dad5b31477592186e91fc81",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38269,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38269,
+  "cache_read_input_tokens": 609856,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3655,
+    "cache_read_input_tokens": 50599,
+    "input_tokens": 2,
+    "output_tokens": 1385,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9365,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
