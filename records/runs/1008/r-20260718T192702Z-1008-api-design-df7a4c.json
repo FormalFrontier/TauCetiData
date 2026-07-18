@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.61276,
+   "returncode": 0,
+   "secs": 78.4,
+   "usage": {
+    "cached_input_tokens": 348160,
+    "input_tokens": 416012,
+    "output_tokens": 3314,
+    "reasoning_output_tokens": 1047
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "cost_estimated": true,
+ "cost_usd": 0.61276,
+ "dedupe_key": "TauCetiProject/TauCeti|1008|f280026e642b383ca036bbe4c692972a487b7b1d|api-design|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "2facb86cd6405f51a0cbfab79a4b84d8261bf4a125dab29423a405332ad2cf79",
+ "diff_sha256": "2facb86cd6405f51a0cbfab79a4b84d8261bf4a125dab29423a405332ad2cf79",
+ "duration_s": 78.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Lp.lean:84` has only `energyFormLp_one_zero_mass_apply`; the existing raw layer has the missing diagonal form at `Integrated/EnergyForm.lean:379`, and Mathlib coercivity consumes `B u u` directly at `Analysis/Normed/Operator/NormedSpace.lean:319`.",
+   "file": "TauCeti/Analysis/PDE/EnergyForm/Lp.lean",
+   "fix": "Add diagonal characteristic lemmas such as `energyFormLp_one_zero_zero_self` and `energyFormLp_one_zero_mass_self` rewriting to integrals of `\u2016(U x).2\u2016 ^ 2` and `\u2016(U x).2\u2016 ^ 2 + c * (U x).1 ^ 2`, with normal-form simp annotations if they are intended to rewrite models.",
+   "issue": "The shifted/Dirichlet L\u00b2 API only gives two-argument integral formulas, so coercivity users must unfold/specialize and then reprove the diagonal normal form for `energyFormLp \u03bc 1 0 c U U`.",
+   "line": 84
+  },
+  {
+   "evidence": "`Lp.lean:102` and `Lp.lean:110` are only argument-commutation lemmas; the pointwise layer exposes `energyIntegrand_zero_drift_flip_eq_of_isSymm` at `SymmetricEnergy.lean:83`, and the raw-integral layer exposes bundled symmetry at `Integrated/SymmetricEnergy.lean:94` and `:144`.",
+   "file": "TauCeti/Analysis/PDE/EnergyForm/Lp.lean",
+   "fix": "Add bundled lemmas mirroring the lower layers, e.g. `@[simp] energyFormLp_zero_drift_flip_eq_of_isSymm` and a shifted-Laplacian specialization `energyFormLp_one_zero_mass_flip_eq`, proved by `ContinuousLinearMap.ext` from the comm lemmas.",
+   "issue": "Symmetry is exposed only as pointwise equality on arguments, not as a bundled bilinear-form equality, so consumers needing a symmetric continuous form cannot rewrite `(energyFormLp \u03bc A 0 c).flip`.",
+   "line": 102
+  }
+ ],
+ "head_sha": "f280026e642b383ca036bbe4c692972a487b7b1d",
+ "merge_base_sha": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1008,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a4d1bbf04082e5185cc87c0a0d3af9a2647ef2678710afa09515bd5e080682ac",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T192702Z-1008-api-design-df7a4c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T19:27:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The new L\u00b2 energy form exposes the core integral characterization, but its public API is not yet characteristic enough for the weak-form/Lax-Milgram handoff: it drops diagonal normal forms and bundled symmetry lemmas already present at the pointwise and raw-integral layers.",
+ "transcript_blob": "82afc77ff7425ad4d4fa437515a3a0aafbb292a164d7a98933386078db16b2a9",
+ "usage": {
+  "cached_input_tokens": 348160,
+  "input_tokens": 416012,
+  "output_tokens": 3314,
+  "reasoning_output_tokens": 1047
+ },
+ "verdict": "request_changes"
+}
