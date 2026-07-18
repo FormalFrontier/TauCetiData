@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.886275,
+   "returncode": 0,
+   "secs": 158.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48681,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48681,
+    "cache_read_input_tokens": 125614,
+    "inference_geo": "not_available",
+    "input_tokens": 6,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5476,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5476,
+      "cache_read_input_tokens": 59287,
+      "input_tokens": 2,
+      "output_tokens": 1466,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12399,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "de524bae67a0edadb804133a77a5eba54518e292",
+ "cost_usd": 0.886275,
+ "dedupe_key": "TauCetiProject/TauCeti|993|b02a2292fe022a9bb29e0436b2003ff6be9ae774|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "eb877f01e2a025817b1d62c4fd465a20f6291adc138f31e179cec2c78b159fc5",
+ "diff_sha256": "eb877f01e2a025817b1d62c4fd465a20f6291adc138f31e179cec2c78b159fc5",
+ "duration_s": 158.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep in BasedPath.lean: the only occurrences of `BasedPath.initialSegmentFamily`/`\u03b3.initialSegmentFamily` are its own defining lines 251\u2013280; every use site (509, 288) is `Path.initialSegmentFamily`. grep across ./code finds no other reference.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/BasedPath.lean",
+   "fix": "Delete the `BasedPath.initialSegmentFamily` block (def + five lemmas). If a later roadmap stage genuinely needs it, reintroduce it then, non-`@[expose]` and only as needed.",
+   "issue": "`@[expose] public def BasedPath.initialSegmentFamily` and its lemmas `initialSegmentFamily_zero`, `initialSegmentFamily_one`, `toPath_initialSegmentFamily`, `endpoint_initialSegmentFamily`, `continuous_initialSegmentFamily` (lines 251\u2013280) are dead: no consumer references them. `append`/`continuous_append_initialSegmentFamily`/`joinedIn_preimage_of_append` all use `Path.initialSegmentFamily \u03b4` directly (lines 288, 293, 509). This is unused public surface, including an unnecessary `@[expose]` on the def and five dead `@[simp]` lemmas added to the global simp set.",
+   "line": "251"
+  },
+  {
+   "evidence": "All call sites of these declarations are within BasedPath.lean (grep lines 288/293/375/510); no downstream module references them.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/BasedPath.lean",
+   "fix": "Drop `public` from these helpers (leave them module-private) unless a later roadmap stage needs them; keep only the endpoint/component results public.",
+   "issue": "`Path.truncateOfLE_range_subset_preimage` (line 200), `Path.initialSegmentFamily` + `continuous_initialSegmentFamily_uncurry` + `initialSegmentFamily_apply/zero/one` (lines 216\u2013240), and `BasedPath.continuous_append_initialSegmentFamily` (line 286) are `public` but consumed only inside this file (lines 288, 293, 375, 510). Exposed as generic `Path`-namespace API they enlarge the public surface with implementation scaffolding not required by the roadmap products (`isOpen_pathComponent_preimage`, `pathComponent_preimage_saturated`).",
+   "line": "200"
+  }
+ ],
+ "head_sha": "b02a2292fe022a9bb29e0436b2003ff6be9ae774",
+ "merge_base_sha": "de524bae67a0edadb804133a77a5eba54518e292",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 993,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "60a2192efb9cb8075f6441ae567ea1290700cd50f8d8806e32cdae51f04f43ab",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260718T101042Z-993-api-design-f58a90",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T10:10:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The entire BasedPath.initialSegmentFamily wrapper and its five lemmas are exposed (one @[expose] def plus public/@[simp] lemmas) but never used \u2014 the real machinery uses Path.initialSegmentFamily throughout. Several Path/continuity scaffolding lemmas are also public despite being used only inside this file.",
+ "transcript_blob": "be5b3a1c56cd76430f277cfe678bb48c08bc0749462cea96c3e2ed7622468e19",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48681,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48681,
+  "cache_read_input_tokens": 125614,
+  "inference_geo": "not_available",
+  "input_tokens": 6,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5476,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5476,
+    "cache_read_input_tokens": 59287,
+    "input_tokens": 2,
+    "output_tokens": 1466,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12399,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
