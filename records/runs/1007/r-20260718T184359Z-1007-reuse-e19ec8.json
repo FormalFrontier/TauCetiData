@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.596838,
+   "returncode": 0,
+   "secs": 66.2,
+   "usage": {
+    "cached_input_tokens": 226176,
+    "input_tokens": 304908,
+    "output_tokens": 3003,
+    "reasoning_output_tokens": 1169
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "cost_estimated": true,
+ "cost_usd": 0.596838,
+ "dedupe_key": "TauCetiProject/TauCeti|1007|dd3af81c93b79f1efb2c7be5ea0921c11d8ac50c|reuse|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "0754dd73bf2506aa28e9f88ada52b9ee60b1eb4822d978d606f84b6d6c1e01f3",
+ "diff_sha256": "0754dd73bf2506aa28e9f88ada52b9ee60b1eb4822d978d606f84b6d6c1e01f3",
+ "duration_s": 66.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` hits: `mathlib/Mathlib/Algebra/Polynomial/Sequence.lean:90 lemma span_degreeLT`, `:161 lemma span_degreeLE`, `:167 protected lemma span`; PR lines 57-73 are direct `exact`/`rw` applications of these lemmas.",
+   "file": "TauCeti/RingTheory/Polynomial/Chebyshev/Basis.lean",
+   "fix": "Delete these wrappers or keep them private at the use site; use `(chebyshevTsequence R).span_degreeLT`, `(chebyshevTsequence R).span`, and `(chebyshevTsequence R).span_degreeLE` with `fun n _ => isUnit_leadingCoeff_T n`.",
+   "issue": "`span_T_Iio`, `span_range_T`, and `mem_span_T_Iic` are public Chebyshev-specialized restatements of Mathlib's `Polynomial.Sequence.span_degreeLT`, protected `Polynomial.Sequence.span`, and `Polynomial.Sequence.span_degreeLE`.",
+   "line": 57
+  },
+  {
+   "evidence": "`rg` hits: `mathlib/Mathlib/LinearAlgebra/Span/Basic.lean:139 lemma linearMap_eq_zero_iff_of_span_eq_top` and `:840 theorem ext_on_range`; PR lines 79-97 reprove these by `chebyshevTBasis.ext`.",
+   "file": "TauCeti/RingTheory/Polynomial/Chebyshev/Basis.lean",
+   "fix": "Use Mathlib directly, e.g. `LinearMap.ext_on_range ((chebyshevTsequence R).span isUnit_leadingCoeff_T) h` for equality, and `Submodule.linearMap_eq_zero_iff_of_span_eq_top L ((chebyshevTsequence R).span isUnit_leadingCoeff_T)` for the zero-map form.",
+   "issue": "`linearMap_eq_zero_of_forall_map_T_eq_zero`, `LinearMap.map_eq_zero_of_forall_map_T_eq_zero`, and `linearMap_ext_T` duplicate existing span/ext API for maps determined by a spanning range.",
+   "line": 79
+  }
+ ],
+ "head_sha": "dd3af81c93b79f1efb2c7be5ea0921c11d8ac50c",
+ "merge_base_sha": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1007,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b1f47ce6b66d6f2fb6170327d42d525cadcf042b86d30e337694cd28f0ccea83",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T184359Z-1007-reuse-e19ec8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T18:43:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds Chebyshev-specific public aliases for generic Mathlib span and linear-map extensionality API. Keep only genuinely new packaging, and use the located Mathlib lemmas directly instead of parallel wrappers.",
+ "transcript_blob": "48f9afe230e8a24a07652431f00ec6c08c0267ddc0cb21c0c246f531398211ee",
+ "usage": {
+  "cached_input_tokens": 226176,
+  "input_tokens": 304908,
+  "output_tokens": 3003,
+  "reasoning_output_tokens": 1169
+ },
+ "verdict": "request_changes"
+}
