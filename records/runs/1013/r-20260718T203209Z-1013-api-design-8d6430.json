@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.396451,
+   "returncode": 0,
+   "secs": 54.2,
+   "usage": {
+    "cached_input_tokens": 118272,
+    "input_tokens": 170003,
+    "output_tokens": 2622,
+    "reasoning_output_tokens": 1076
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_estimated": true,
+ "cost_usd": 0.396451,
+ "dedupe_key": "TauCetiProject/TauCeti|1013|2b0613e5c1e7bc95225ce08f70c3cc170c4031f0|api-design|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "bae2ba567dbccc2749bbe18e6b0e86934cb33a0228e4ed83eb351b31d9695d21",
+ "diff_sha256": "bae2ba567dbccc2749bbe18e6b0e86934cb33a0228e4ed83eb351b31d9695d21",
+ "duration_s": 54.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`@[expose] def toGrp` appears at lines 46-48 and is used only to define the category instance at line 52; the public morphism accessors start at lines 62 and 94.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Make `toGrp` private or at least remove `@[expose]`; keep consumers on `Hom.toOverHom`, `Hom.toSchemeHom`, and the preservation lemmas instead.",
+   "issue": "`AbelianVariety.toGrp` is an exposed implementation bridge for the induced category, not a roadmap-facing operation on abelian varieties.",
+   "line": 46
+  },
+  {
+   "evidence": "The only hits for `mk'` are the constructor at lines 56-59; the file has id/comp/toScheme lemmas but no `mk'` projection lemma.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Add `[simp]` lemmas such as `Hom.toOverHom_mk' : Hom.toOverHom (Hom.mk' f one_f mul_f) = f` and the corresponding `toSchemeHom` restatement.",
+   "issue": "`Hom.mk'` has no characteristic lemma identifying the underlying over/scheme morphism of the constructed homomorphism, so downstream users cannot use the constructor without unfolding the wrapper.",
+   "line": 56
+  },
+  {
+   "evidence": "`Hom.ext_toSchemeHom` is declared without attributes at lines 116-120; Mathlib registers `Grp.hom_ext` with `@[... (attr := ext)]` in `Mathlib/CategoryTheory/Monoidal/Grp.lean:120`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Annotate `Hom.ext_toSchemeHom` with `@[ext]`, matching the underlying `Grp.hom_ext` API.",
+   "issue": "The extensionality lemma is not registered as an ext lemma, so uniqueness/equality proofs for the universal property will not be available through `ext`.",
+   "line": 116
+  }
+ ],
+ "head_sha": "2b0613e5c1e7bc95225ce08f70c3cc170c4031f0",
+ "merge_base_sha": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1013,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ef12be4c90b98ff8b84ee409998b00bfba20156461d03ea46949ac95334089ba",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T203209Z-1013-api-design-8d6430",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T20:32:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The new hom type has the right shape, but its public API still forces downstream users toward implementation details and leaves the constructor under-characterized.",
+ "transcript_blob": "2322eb756720d2744bfc885d3d217922eeaeb91ffb18afa75d1987d4bb1c129b",
+ "usage": {
+  "cached_input_tokens": 118272,
+  "input_tokens": 170003,
+  "output_tokens": 2622,
+  "reasoning_output_tokens": 1076
+ },
+ "verdict": "request_changes"
+}
