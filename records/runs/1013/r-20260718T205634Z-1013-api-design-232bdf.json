@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.363941,
+   "returncode": 0,
+   "secs": 81.7,
+   "usage": {
+    "cached_input_tokens": 143232,
+    "input_tokens": 177817,
+    "output_tokens": 3980,
+    "reasoning_output_tokens": 2358
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_estimated": true,
+ "cost_usd": 0.363941,
+ "dedupe_key": "TauCetiProject/TauCeti|1013|1e9a7cfe3d454b634b0b0e414fbcec939dca64fa|api-design|gpt-5.5|0e86c8aad121a07b|production|2",
+ "diff_blob": "ee7304b5ac8a49489a6c1dfc2951ecb6f4258ddd48decd47457a0cf0da2ce556",
+ "diff_sha256": "ee7304b5ac8a49489a6c1dfc2951ecb6f4258ddd48decd47457a0cf0da2ce556",
+ "duration_s": 81.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`@[expose] def Hom.mk'` at lines 52-56, while `Hom.toOverHom_mk'` and `Hom.toSchemeHom_mk'` at lines 75-112 already provide the needed API without unfolding the body.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Remove `@[expose]` from `Hom.mk'`; keep `Hom.toOverHom_mk'`/`Hom.toSchemeHom_mk'` as the public way to use the constructor, adding more characteristic lemmas if consumers need them.",
+   "issue": "`Hom.mk'` exposes its body, leaking the nested induced-category/`Grp.homMk''` implementation as part of the public interface even though projection lemmas now characterize the constructor.",
+   "line": 52
+  },
+  {
+   "evidence": "Lines 83-93 declare `@[reassoc] lemma Hom.one_hom` and `@[reassoc] lemma Hom.mul_hom`; Mathlib registers the wrapped lemmas with `attribute ... (attr := reassoc (attr := simp)) IsMonHom.one_hom IsMonHom.mul_hom` in `Mathlib/CategoryTheory/Monoidal/Mon.lean:216`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Register both wrapper lemmas with the equivalent of `@[reassoc (attr := simp)]`/`@[simp, reassoc]` so `simp` normalizes unit and multiplication preservation through `AbelianVariety.Hom`.",
+   "issue": "`Hom.one_hom` and `Hom.mul_hom` are characteristic normal-form lemmas for the new hom type but are only marked `@[reassoc]`, so the public wrapper does not carry the `simp` automation that the underlying `IsMonHom` API provides.",
+   "line": 83
+  }
+ ],
+ "head_sha": "1e9a7cfe3d454b634b0b0e414fbcec939dca64fa",
+ "merge_base_sha": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1013,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e1329fea2bf305a560be1dc6954b31c5408c5497bfea9026ebda37f4b412401c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T205634Z-1013-api-design-232bdf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T20:56:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The homomorphism surface is mostly characterized now, but it still exposes an implementation body and leaves core preservation lemmas under-annotated for the public API.",
+ "transcript_blob": "1669bfa9b8d65d81660697d0ab0e983a37e7997ce406f114c40665cc85b683c2",
+ "usage": {
+  "cached_input_tokens": 143232,
+  "input_tokens": 177817,
+  "output_tokens": 3980,
+  "reasoning_output_tokens": 2358
+ },
+ "verdict": "request_changes"
+}
