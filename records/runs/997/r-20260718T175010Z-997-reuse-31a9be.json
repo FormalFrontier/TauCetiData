@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.480235,
+   "returncode": 0,
+   "secs": 78.9,
+   "usage": {
+    "cached_input_tokens": 236160,
+    "input_tokens": 286829,
+    "output_tokens": 3627,
+    "reasoning_output_tokens": 1480
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4300f08befc858621f91d3777fbf4175f84cc0e2",
+ "cost_estimated": true,
+ "cost_usd": 0.480235,
+ "dedupe_key": "TauCetiProject/TauCeti|997|8b2d3e8c4da79c05f1b3c95377eaf34288791420|reuse|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "780195b9930c44a18699ec005423867786a1b12ea547b06b675cee4e0631512d",
+ "diff_sha256": "780195b9930c44a18699ec005423867786a1b12ea547b06b675cee4e0631512d",
+ "duration_s": 78.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/NumberTheory/Multiquadratic/Galois/Basic.lean:202` has `theorem aut_mul_self_eq_one ... : \u03c3 * \u03c3 = 1`; the new proof is only `rw [pow_two]; exact aut_mul_self_eq_one hroot \u03c3`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Galois/Exponent.lean",
+   "fix": "Remove it and use `by simpa [pow_two] using aut_mul_self_eq_one hroot \u03c3` at call sites.",
+   "issue": "`aut_pow_two_eq_one` is exactly the existing `aut_mul_self_eq_one` restated through `pow_two`, so it duplicates a public TauCeti theorem.",
+   "line": 61
+  },
+  {
+   "evidence": "`Basic.lean:222` already uses exactly this pattern inside `aut_commute`, and Mathlib provides `orderOf_dvd_of_pow_eq_one` at `Mathlib/GroupTheory/OrderOfElement.lean:270`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Galois/Exponent.lean",
+   "fix": "Remove it and use `orderOf_dvd_of_pow_eq_one (by simpa [pow_two] using aut_mul_self_eq_one hroot \u03c3)` directly where needed.",
+   "issue": "`orderOf_aut_dvd_two` is another public specialization of the same existing involution fact plus Mathlib's generic `orderOf_dvd_of_pow_eq_one`.",
+   "line": 68
+  },
+  {
+   "evidence": "Mathlib has `orderOf_eq_prime` at `Mathlib/GroupTheory/OrderOfElement.lean:536`; the new proof manually splits `Nat.dvd_prime Nat.prime_two` after the duplicated `orderOf_aut_dvd_two`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Galois/Exponent.lean",
+   "fix": "Remove it or prove any local need with `orderOf_eq_prime (by simpa [pow_two] using aut_mul_self_eq_one hroot \u03c3) h\u03c3`.",
+   "issue": "`orderOf_aut_eq_two_of_ne_one` reimplements Mathlib's prime-order API for the special prime `2`.",
+   "line": 74
+  }
+ ],
+ "head_sha": "8b2d3e8c4da79c05f1b3c95377eaf34288791420",
+ "merge_base_sha": "6b75f1d1c6cf06a1031b635569ca5e8b5d8cc850",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 997,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "55eba54a1c559522837d0bc0b5955c5c50de2c3620cede0f23cdc02a2c7de62c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T175010Z-997-reuse-31a9be",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T17:50:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds public thin wrappers for facts already present in TauCeti/Mathlib instead of reusing them.",
+ "transcript_blob": "bfa03c19bdb32d1abde3664001fa24216c92cf3e34673d9aff4842522f0b5b03",
+ "usage": {
+  "cached_input_tokens": 236160,
+  "input_tokens": 286829,
+  "output_tokens": 3627,
+  "reasoning_output_tokens": 1480
+ },
+ "verdict": "block"
+}
