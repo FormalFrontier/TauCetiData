@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.38084,
+   "returncode": 0,
+   "secs": 71.8,
+   "usage": {
+    "cached_input_tokens": 84480,
+    "input_tokens": 131734,
+    "output_tokens": 3411,
+    "reasoning_output_tokens": 2069
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "cost_estimated": true,
+ "cost_usd": 0.38084,
+ "dedupe_key": "TauCetiProject/TauCeti|1007|4fbe5198a81675f96b56a71b08fdc9c8737dcd87|generality|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "7fd2f71c6172a0a54723496af9a8c299e1253e2d53754b2fe4229858bc68d2ae",
+ "diff_sha256": "7fd2f71c6172a0a54723496af9a8c299e1253e2d53754b2fe4229858bc68d2ae",
+ "duration_s": 71.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The local signatures are real-only at lines 47, 58, 62, 67, 77, 85, and 91, while Mathlib exposes `chebyshevTsequence [IsDomain R] [NeZero (2 : R)]` at `Mathlib/RingTheory/Polynomial/Chebyshev.lean:260` and the generic `Polynomial.Sequence.basis/span_degreeLT/span_degreeLE/span` API at `Mathlib/Algebra/Polynomial/Sequence.lean:90`, `:161`, `:167`, and `:201`.",
+   "file": "TauCeti/RingTheory/Polynomial/Chebyshev/Basis.lean",
+   "fix": "Generalize the declarations, e.g. over `[Field R] [NeZero (2 : R)]` or more generally `[Ring R] [IsDomain R] [NeZero (2 : R)]` with `IsUnit (2 : R)`, replacing `\u211d[X] \u2192\u2097[\u211d] M` by `R[X] \u2192\u2097[R] M`; keep real corollaries only if consumers need those exact names.",
+   "issue": "`chebyshevTBasis` and the follow-on lemmas `chebyshevTBasis_apply`, `span_T_Iio`, `span_range_T`, `mem_span_T_Iic`, `linearMap_eq_zero_of_forall_map_T_eq_zero`, `LinearMap.map_eq_zero_of_forall_map_T_eq_zero`, and `linearMap_ext_T` are all fixed to `\u211d`, although nothing in this algebraic file uses order, topology, or analysis.",
+   "line": 47
+  }
+ ],
+ "head_sha": "4fbe5198a81675f96b56a71b08fdc9c8737dcd87",
+ "merge_base_sha": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1007,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f32728422a3829bbb7795aae36873491bcf52f03511def1355a377fd02f5b1a3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T183115Z-1007-generality-9e998e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T18:31:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The new API is artificially specialized to `\u211d` even though the underlying Chebyshev and polynomial-sequence machinery is coefficient-generic. State the algebraic basis/span/extensionality results at the generic coefficient-ring level and derive the real use case from them.",
+ "transcript_blob": "6f457db0376e78a138bcddf634ea121cf07e69caed6ae2aeb83e024efe401165",
+ "usage": {
+  "cached_input_tokens": 84480,
+  "input_tokens": 131734,
+  "output_tokens": 3411,
+  "reasoning_output_tokens": 2069
+ },
+ "verdict": "request_changes"
+}
