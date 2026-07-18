@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.622931,
+   "returncode": 0,
+   "secs": 88.3,
+   "usage": {
+    "cached_input_tokens": 280192,
+    "input_tokens": 352591,
+    "output_tokens": 4028,
+    "reasoning_output_tokens": 1491
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "cost_estimated": true,
+ "cost_usd": 0.622931,
+ "dedupe_key": "TauCetiProject/TauCeti|1008|0f50f10aa35b95b3aebbb447c2bcdf2207dbcd5b|api-design|gpt-5.5|0e86c8aad121a07b|production|2",
+ "diff_blob": "037baa7a3e2cd9f03027ea23923271163c218c870ffae2523fdacc7822e2d9c8",
+ "diff_sha256": "037baa7a3e2cd9f03027ea23923271163c218c870ffae2523fdacc7822e2d9c8",
+ "duration_s": 88.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg energyFormLp_.*coefficientSymmetricPart code/TauCeti/Analysis/PDE` has no hits, while the existing characteristic APIs are `energyIntegrand_coefficientSymmetricPart_self`/`...zero_drift_apply` at `SymmetricEnergy.lean:101,112` and `energyFormIntegral_coefficientSymmetricPart_self`/`...zero_drift_apply` at `Integrated/SymmetricEnergy.lean:154,165`.",
+   "file": "TauCeti/Analysis/PDE/EnergyForm/Lp.lean",
+   "fix": "Add L\u00b2 counterparts such as `@[simp] energyFormLp_coefficientSymmetricPart_self` and `energyFormLp_coefficientSymmetricPart_zero_drift_apply` (plus the bundled flip specialization if desired).",
+   "issue": "The L\u00b2 symmetry API has transpose/isSymm lemmas but no `coefficientSymmetricPart` lemmas, so users cannot rewrite the diagonal form or the zero-drift symmetric-part form without unfolding `energyFormLp`.",
+   "line": 117
+  }
+ ],
+ "head_sha": "0f50f10aa35b95b3aebbb447c2bcdf2207dbcd5b",
+ "merge_base_sha": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1008,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8405a36012eafa17bb784c99ebc348289beb41072303c332ba2cf3fe2b68887b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T195316Z-1008-api-design-011008",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T19:53:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The L\u00b2 form now exposes the core integral, diagonal, and bundled symmetry lemmas, but its symmetry API omits the symmetric-part characteristic facts already present at the pointwise and raw-integral layers. Consumers of the weak-form handoff would have to unfold `energyFormLp` to prove standard reductions involving `coefficientSymmetricPart`.",
+ "transcript_blob": "b2022720609f374513677e37a3e5115bdcd6360a1f846f20d1ce3a87a1ad0af9",
+ "usage": {
+  "cached_input_tokens": 280192,
+  "input_tokens": 352591,
+  "output_tokens": 4028,
+  "reasoning_output_tokens": 1491
+ },
+ "verdict": "request_changes"
+}
