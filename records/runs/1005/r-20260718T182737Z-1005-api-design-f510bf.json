@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.347579,
+   "returncode": 0,
+   "secs": 60.1,
+   "usage": {
+    "cached_input_tokens": 177408,
+    "input_tokens": 212875,
+    "output_tokens": 2718,
+    "reasoning_output_tokens": 971
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "cost_estimated": true,
+ "cost_usd": 0.347579,
+ "dedupe_key": "TauCetiProject/TauCeti|1005|2dd85af66532556a620401fbe7a7b247d8ca9fa3|api-design|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "19388bc54e2304bbdd480aa75f999de622c78806a9fc6c809b66592cb032a9a7",
+ "diff_sha256": "19388bc54e2304bbdd480aa75f999de622c78806a9fc6c809b66592cb032a9a7",
+ "duration_s": 60.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep shows `realOperator_mem_domain` at lines 72-76 and only the NNReal commutation theorem `generator_map` at lines 62-68; `Basic.lean` exposes `realOperator` as public API (`def realOperator` at line 118).",
+   "file": "TauCeti/Analysis/Semigroups/GeneratorInvariance.lean",
+   "fix": "Add the parallel real-time theorem, proved by rewriting through `Real.coe_toNNReal`/`S.realOperator_coe` and applying `S.generator_map`.",
+   "issue": "`realOperator_mem_domain` gives the real-time shim only half of the roadmap API: users with `s : \u211d` and `0 \u2264 s` can prove `S.realOperator s x \u2208 S.domain`, but there is no real-time commutation lemma for `A (S.realOperator s x) = S.realOperator s (A x)`.",
+   "line": 72
+  },
+  {
+   "evidence": "`Defs.lean` currently imports only `Resolvent` and `BoundedGenerator` at lines 7-8, while `GeneratorInvariance.lean` is a separate new module and no grep hit imports it elsewhere.",
+   "file": "TauCeti/Analysis/Semigroups/Defs.lean",
+   "fix": "Add `public import TauCeti.Analysis.Semigroups.GeneratorInvariance` to `Defs.lean`.",
+   "issue": "The new generator invariance API is not re-exported by the semigroup umbrella module, so downstream files importing `TauCeti.Analysis.Semigroups.Defs` do not see the roadmap-facing lemmas.",
+   "line": 7
+  }
+ ],
+ "head_sha": "2dd85af66532556a620401fbe7a7b247d8ca9fa3",
+ "merge_base_sha": "fe22a870deed982b208dc7fbf57dae3232f0fea9",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1005,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3b479cd8cedfe17e943a3b7d7c53cd23b9dff4b376d30c221f4d98ccc44c56c9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T182737Z-1005-api-design-f510bf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T18:27:37Z",
+ "submitted_by": "kim-em",
+ "summary": "The native NNReal lemmas are in scope, but the public API is incomplete for the existing real-time shim and is not re-exported through the semigroup umbrella module.",
+ "transcript_blob": "7aed3fee1e601a77ba902fd5dbbfe9fb80a176c8d84981df5e28db2a7fc31931",
+ "usage": {
+  "cached_input_tokens": 177408,
+  "input_tokens": 212875,
+  "output_tokens": 2718,
+  "reasoning_output_tokens": 971
+ },
+ "verdict": "request_changes"
+}
