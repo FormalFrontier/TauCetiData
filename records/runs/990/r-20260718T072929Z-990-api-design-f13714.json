@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7411424999999999,
+   "returncode": 0,
+   "secs": 83.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48182,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48182,
+    "cache_read_input_tokens": 186483,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4369,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4369,
+      "cache_read_input_tokens": 59895,
+      "input_tokens": 2,
+      "output_tokens": 1475,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5507,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f52b18e1574fac0de92d7d017745a4945665457b",
+ "cost_usd": 0.741142,
+ "dedupe_key": "TauCetiProject/TauCeti|990|dea7dab4cdd0f606450d9d754ee0f4264f3c0f6e|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "08741f12f9fea8e9c0ea3ff5bfe0e2c3260fb30e231853fd9e536d02fc10bc2e",
+ "diff_sha256": "08741f12f9fea8e9c0ea3ff5bfe0e2c3260fb30e231853fd9e536d02fc10bc2e",
+ "duration_s": 83.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 32 `public structure IntervalPartition (n : \u2115)`; the four `public` product theorems (lines 607, 627/641, 649, 667) mention no `IntervalPartition` in their signatures. PR description claims it is 'now non-public'.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Remove `public` from `structure IntervalPartition` (keep it module-local). Its uses \u2014 `exists_partition_with_property`, `exists_pathHomotopyTrivial_tube`, the paste/tube lemmas \u2014 are all non-public and can still see it.",
+   "issue": "`IntervalPartition` is a proof-local partition structure but is exposed with `public structure`. It is used only inside non-public helper theorems in this module and appears in no public signature; exposing it re-publishes the internal tube representation (the exact api-design round-4 finding the PR claims to have addressed).",
+   "line": "32"
+  },
+  {
+   "evidence": "Line 58 `public structure TubeData (X : Type*) [TopologicalSpace X] (n : \u2115)`; `exists_isOpen_mem_subset_setOf_homotopic` (line 607) uses `T_data`/`toSet`/`isOpen` internally but returns `\u2203 T : Set (Path x y), ...` with no `TubeData` in the type.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean",
+   "fix": "Remove `public` from `structure TubeData`. This matches the stated public surface (only the four Stage-0.1 product lemmas).",
+   "issue": "`TubeData` is proof-local tube data but is exposed with `public structure`. It is constructed and consumed only by non-public theorems (`exists_pathHomotopyTrivial_tube`, `TubeData.toSet`, `TubeData.isOpen`, `tube_subset_homotopy_class`) and appears in no public signature.",
+   "line": "58"
+  }
+ ],
+ "head_sha": "dea7dab4cdd0f606450d9d754ee0f4264f3c0f6e",
+ "merge_base_sha": "f52b18e1574fac0de92d7d017745a4945665457b",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 990,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "837a4bce21e84b790c6ceb9281caed4098779eee719aa56f8e2f8b212690efe0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260718T072929Z-990-api-design-f13714",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T07:29:29Z",
+ "submitted_by": "kim-em",
+ "summary": "The proof-local scaffolding structures `IntervalPartition` and `TubeData` are still declared `public`, contradicting the PR's own claim that they were made module-private. They are internal tube-argument data and appear in no product-API signature.",
+ "transcript_blob": "66b08fd2233b9f99d748ec6e5b5d4e03e1ea7ac791c8e094dcb3f1d8d2601b37",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48182,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48182,
+  "cache_read_input_tokens": 186483,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4369,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4369,
+    "cache_read_input_tokens": 59895,
+    "input_tokens": 2,
+    "output_tokens": 1475,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5507,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
