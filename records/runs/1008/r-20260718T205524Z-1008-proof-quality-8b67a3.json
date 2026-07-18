@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.227036,
+   "returncode": 0,
+   "secs": 28.0,
+   "usage": {
+    "cached_input_tokens": 36992,
+    "input_tokens": 71464,
+    "output_tokens": 1206,
+    "reasoning_output_tokens": 240
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "cost_estimated": true,
+ "cost_usd": 0.227036,
+ "dedupe_key": "TauCetiProject/TauCeti|1008|ff1eb2d2209814e8a7dd0fd31a2f52f9588e8f4d|proof-quality|gpt-5.5|0e86c8aad121a07b|production|4",
+ "diff_blob": "6da21a2610af1f63358de63a2f0133a38dee55e15f34895dde434611ba21b490",
+ "diff_sha256": "6da21a2610af1f63358de63a2f0133a38dee55e15f34895dde434611ba21b490",
+ "duration_s": 28.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"show \\\\(fun x =>\" TauCeti/Analysis/PDE/EnergyForm/Lp.lean` reports line 139; nearby integrated proof factors the same step as `have hpoint` at `TauCeti/Analysis/PDE/Integrated/SymmetricEnergy.lean:173`.",
+   "file": "TauCeti/Analysis/PDE/EnergyForm/Lp.lean",
+   "fix": "Replace the inline `show` with a named pointwise/function equality such as `have hpoint : ... := by funext x; exact ...; rw [hpoint]`, matching `TauCeti/Analysis/PDE/Integrated/SymmetricEnergy.lean:173`, or add a short comment explaining why an explicit function equality is required here.",
+   "issue": "`energyFormLp_coefficientSymmetricPart_zero_drift_apply` rewrites through `rw [show (fun x => ...) = ... by ...]` without documenting why this `show` step is needed, obscuring the function-level equality used before `integral_add`.",
+   "line": 139
+  }
+ ],
+ "head_sha": "ff1eb2d2209814e8a7dd0fd31a2f52f9588e8f4d",
+ "merge_base_sha": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1008,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3805cdac74140da4d321eee96a8f1bdddd0b259f502b4fc07752f8348afadd79",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T205524Z-1008-proof-quality-8b67a3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T20:55:24Z",
+ "submitted_by": "kim-em",
+ "summary": "One proof uses an undocumented `show` cast to rewrite a function under the integral, which the proof-quality rubric treats as brittle/opaque. The rest of the new proofs delegate cleanly to named pointwise lemmas.",
+ "transcript_blob": "8c90d24e5cb81263b825a14e4936ae345ba280840df95a437d8b7f659266185d",
+ "usage": {
+  "cached_input_tokens": 36992,
+  "input_tokens": 71464,
+  "output_tokens": 1206,
+  "reasoning_output_tokens": 240
+ },
+ "verdict": "request_changes"
+}
