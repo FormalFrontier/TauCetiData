@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.389453,
+   "returncode": 0,
+   "secs": 46.4,
+   "usage": {
+    "cached_input_tokens": 63616,
+    "input_tokens": 122497,
+    "output_tokens": 2108,
+    "reasoning_output_tokens": 993
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_estimated": true,
+ "cost_usd": 0.389453,
+ "dedupe_key": "TauCetiProject/TauCeti|1010|0db3adad3de3f06ca951cd12ed8a9e8f650f7f1d|reuse|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "1cdb8b840554c3f8ea38136e9d7d7b27a35eb37354739352b46b70baf6681345",
+ "diff_sha256": "1cdb8b840554c3f8ea38136e9d7d7b27a35eb37354739352b46b70baf6681345",
+ "duration_s": 46.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"lower_ne_upper|lower_ssubset_upper\"` shows line 61 is exactly `h.lower_ssubset_upper.ne`, with the source field at line 52.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/ElementaryCollapse.lean",
+   "fix": "Delete `lower_ne_upper` and use `h.lower_ssubset_upper.ne` at call sites.",
+   "issue": "`IsFreePair.lower_ne_upper` duplicates the existing proof `h.lower_ssubset_upper.ne`; this adds a parallel public API for the same fact.",
+   "line": 61
+  },
+  {
+   "evidence": "`rg -n \"ElementaryCollapsesTo\"` shows the definition `\u2203 (\u03c3 \u03c4 : Finset \u03b9), IsFreePair K \u03c3 \u03c4 \u2227 L = deletion K \u03c3` at lines 98-99 and the theorem repeats that statement at lines 102-105 with proof `Iff.rfl`.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/ElementaryCollapse.lean",
+   "fix": "Delete `elementaryCollapsesTo_iff` and unfold/rewrite with `ElementaryCollapsesTo` where needed.",
+   "issue": "`elementaryCollapsesTo_iff` is definitionally identical to `ElementaryCollapsesTo`; the theorem is just `Iff.rfl` over the definition at lines 98-99.",
+   "line": 102
+  }
+ ],
+ "head_sha": "0db3adad3de3f06ca951cd12ed8a9e8f650f7f1d",
+ "merge_base_sha": "c5a711c6d99e3db7436925bb6bbe770b0f4b9a58",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1010,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6dddfc3554236ffee16fea97de02fa58be4d0550ea6a5bfbbda7ffb3e245ee97",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260718T214705Z-1010-reuse-942e9c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T21:47:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The collapse API is not duplicating Mathlib's simplicial-complex development, but the new file exposes a couple of public declarations that are just restatements of already available projections/definitions. Remove the thin wrappers and use the existing field/definition directly.",
+ "transcript_blob": "a839c2087b8f0b8e8598f7c2a3cfee49d3ade9b1321f92c594a98b089c58d258",
+ "usage": {
+  "cached_input_tokens": 63616,
+  "input_tokens": 122497,
+  "output_tokens": 2108,
+  "reasoning_output_tokens": 993
+ },
+ "verdict": "request_changes"
+}
