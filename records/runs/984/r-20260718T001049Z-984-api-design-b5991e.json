@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.425557,
+   "returncode": 0,
+   "secs": 90.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 21597,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 21597,
+    "cache_read_input_tokens": 81024,
+    "inference_geo": "not_available",
+    "input_tokens": 6,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1474,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1474,
+      "cache_read_input_tokens": 36205,
+      "input_tokens": 2,
+      "output_tokens": 1709,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6432,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1cad44ebb2954a7b5da8987f8d000c9f8d5069da",
+ "cost_usd": 0.425557,
+ "dedupe_key": "TauCetiProject/TauCeti|984|c544a25a05e8bdf96e8bbbbe00ce756b858690dc|api-design|claude-opus-4-8|fb0698ac514a62c5|production|1",
+ "diff_blob": "52a02c61226b8d17cece8941f5563a07959193f64b27386b560decaa8e704d53",
+ "diff_sha256": "52a02c61226b8d17cece8941f5563a07959193f64b27386b560decaa8e704d53",
+ "duration_s": 90.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 74: `@[expose] noncomputable def index (T : E \u2192L[\ud835\udd5c] F) : \u2124 := (T : E \u2192\u2097[\ud835\udd5c] F).index`; line 76 already provides `lemma index_def (T) : index T = (T : E \u2192\u2097[\ud835\udd5c] F).index := rfl`.",
+   "file": "TauCeti/Analysis/Fredholm/Basic.lean",
+   "fix": "Drop `@[expose]` from `index`; keep `index_def` as the characteristic restatement. In-file term proofs like `index_eq_finrank_sub := LinearMap.index_eq_finrank_sub` still elaborate since the body stays transparent within the module.",
+   "issue": "`index` is marked `@[expose]`, exposing its body (`(T : E \u2192\u2097[\ud835\udd5c] F).index`) to importers. No consumer needs to unfold it: the defining equation is already given by `index_def`, and it is `noncomputable` so there is nothing to compute. This is over-exposure per the project convention (cf. `Probability/Process/Tail.lean` and `Martingale/Reverse.lean`, whose bodies are deliberately not exposed with a `_def` lemma as the API).",
+   "line": "74"
+  }
+ ],
+ "head_sha": "c544a25a05e8bdf96e8bbbbe00ce756b858690dc",
+ "merge_base_sha": "bd8caaab1df9b50db03f02c13f49143547279c29",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 984,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0fe0897cbc141b383a42289714a380e9ae1dbf3222471509744ed5750fe15233",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "ae2d4da00d5bc80d331cd023fd264283ed5f3b5d",
+ "rubrics_version": "fb0698ac514a62c5",
+ "run_id": "r-20260718T001049Z-984-api-design-b5991e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-18T00:10:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API for IsFredholm and index is complete and the simp annotations are correct, but the index definition is gratuitously @[expose]d even though its defining equation is already provided as index_def, over-exposing the body to downstream modules.",
+ "transcript_blob": "3270ca6a05cf0ea57793b38228c584254e454f431eb388780560116ceae021fe",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 21597,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 21597,
+  "cache_read_input_tokens": 81024,
+  "inference_geo": "not_available",
+  "input_tokens": 6,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1474,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1474,
+    "cache_read_input_tokens": 36205,
+    "input_tokens": 2,
+    "output_tokens": 1709,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6432,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
