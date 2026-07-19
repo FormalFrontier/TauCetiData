@@ -1,0 +1,64 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.290777,
+   "returncode": 0,
+   "secs": 48.1,
+   "usage": {
+    "cached_input_tokens": 95744,
+    "input_tokens": 131041,
+    "output_tokens": 2214,
+    "reasoning_output_tokens": 830
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b103177941dfbbdd1b13ef72ecb85171c21635a6",
+ "cost_estimated": true,
+ "cost_usd": 0.290777,
+ "dedupe_key": "TauCetiProject/TauCeti|1016|0bcde575d86da8a3bd5f06c5fd3fadbf3498c703|generality|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "2b860a0878e34c4f09839794d40b316a403b1b3e14a6ce7603026919c2c49242",
+ "diff_sha256": "2b860a0878e34c4f09839794d40b316a403b1b3e14a6ce7603026919c2c49242",
+ "duration_s": 48.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`OrbitDerivative.lean:107` sets `y : S.domain := \u27e8S.realOperator t x, ...\u27e9` and the proof only uses `y` plus the semigroup law for `s \u2265 t`; nearby `Invariance.lean:72` already exposes `realOperator_mem_domain` as `{x : X} (hx : x \u2208 S.domain)`, showing the stronger hypothesis is just one way to supply membership of the evolved point.",
+   "file": "TauCeti/Analysis/Semigroups/Generator/OrbitDerivative.lean",
+   "fix": "Generalize the base theorem to `{x : X} {t : \u211d} (ht : 0 \u2264 t) (hxt : S.realOperator t x \u2208 S.domain)` with derivative `S.generator \u27e8S.realOperator t x, ...\u27e9`; derive the current `x : S.domain` statements using `S.realOperator_mem_domain ht x.property`, and keep `realOperator_hasDerivWithinAt_map_generator` as the domain-vector specialization.",
+   "issue": "`realOperator_hasDerivWithinAt` and the derived differentiability/derivWithin API require `(x : S.domain)`, but the theorem with derivative `A (S t x)` only needs the evolved point `S.realOperator t x` to be in `S.domain`.",
+   "line": 102
+  }
+ ],
+ "head_sha": "0bcde575d86da8a3bd5f06c5fd3fadbf3498c703",
+ "merge_base_sha": "2fcd6ef3b130d166a76ab34d3aa2734938f28720",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1016,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "85c0e5e269708149b099e91792b0e02c704bad0a3d44ef06417369cbff89337e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T044322Z-1016-generality-41416b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T04:43:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The new right-derivative API is under-general at the main `A (S t x)` level: it assumes `x \u2208 D(A)` where only `S(t)x \u2208 D(A)` is needed. Keep the `S(t) A x` specialization, but prove the local evolved-point statement first and derive the domain-vector versions from invariance.",
+ "transcript_blob": "6041fa5c1c081c35a383d5708f15652b3d9df6f30d7b7aca93e92a05b3028f9c",
+ "usage": {
+  "cached_input_tokens": 95744,
+  "input_tokens": 131041,
+  "output_tokens": 2214,
+  "reasoning_output_tokens": 830
+ },
+ "verdict": "request_changes"
+}
