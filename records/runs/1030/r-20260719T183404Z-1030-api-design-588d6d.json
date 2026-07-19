@@ -1,0 +1,131 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6368185,
+   "returncode": 0,
+   "secs": 89.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 41170,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 41170,
+    "cache_read_input_tokens": 73827,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5595,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5595,
+      "cache_read_input_tokens": 41663,
+      "input_tokens": 2,
+      "output_tokens": 4798,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7282,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7524c830b40167c4258577a1eb853845338e132c",
+ "cost_usd": 0.636818,
+ "dedupe_key": "TauCetiProject/TauCeti|1030|28963b34702a19ad5653bce17df87134ec735fed|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "74589af76e7608cad9ab5377c84e134d8d1bca253a13924864fea6e2d7eeaf73",
+ "diff_sha256": "74589af76e7608cad9ab5377c84e134d8d1bca253a13924864fea6e2d7eeaf73",
+ "duration_s": 89.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/AlgebraicGeometry/Geometrically/Integral.lean:40 `class GeometricallyIntegral (f : X \u27f6 Y) : Prop`; lines 66-79 register `instance`s for base change, pullback.fst/snd, fibers. Basic.lean:135 `[GeometricallyIntegral G.hom]`.",
+   "file": "TauCeti/AlgebraicGeometry/GeometricallyIntegral.lean",
+   "fix": "Declare it as `instance geometricallyIntegral_id (X : Scheme.{u}) : GeometricallyIntegral (\ud835\udfd9 X)`, and then build `trivial` via `ofGeometricallyIntegral (\ud835\udfd9_ (Over (Spec (.of K))))` if it typechecks.",
+   "issue": "`GeometricallyIntegral` is a class (`Mathlib/AlgebraicGeometry/Geometrically/Integral.lean:40`) and every neighbouring fact there is registered as an `instance`. Stating this as a plain `theorem` means instance search never finds it, so `AbelianVariety.trivial` must bypass the existing `ofGeometricallyIntegral` constructor (which takes `[GeometricallyIntegral G.hom]`) and fill the field by hand.",
+   "line": 37
+  },
+  {
+   "evidence": "Trivial.lean:56-58 docstring \"Its structure morphism to `Spec K` is the identity\"; no `trivial_hom` exists (grep for `toOver.hom` in the file returns nothing).",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Trivial.lean",
+   "fix": "Add `@[simp] lemma trivial_hom : (trivial K).toOver.hom = \ud835\udfd9 (Spec (.of K)) := (rfl)` and drop `@[expose]` from `trivial`; `trivial_toOver`/`trivial_toScheme` are proved in-module and do not need it.",
+   "issue": "`trivial` is `@[expose]`d, but the characteristic fact its own docstring advertises \u2014 that the structure morphism is `\ud835\udfd9 (Spec K)` \u2014 has no lemma. A consumer needing `(trivial K).toOver.hom = \ud835\udfd9 _` (e.g. to apply an `IsProper`/`GeometricallyIntegral` lemma about identities) must unfold the body. That is a body exposed for want of API.",
+   "line": 58
+  },
+  {
+   "evidence": "Trivial.lean:65 `:= rfl` vs Trivial.lean:69 `(rfl)`; Basic.lean:145, 200 `(rfl)`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Trivial.lean",
+   "fix": "Change to `:= (rfl)`.",
+   "issue": "`trivial_toOver` is proved by bare `rfl`, letting downstream proofs rely on the definitional equality; the very next lemma and every analogous lemma in `Basic.lean` use the `(rfl)` form.",
+   "line": 65
+  },
+  {
+   "evidence": "Hom.lean:90-97 `toOverHom_mk'` and Hom.lean:127-132 `toSchemeHom_mk'` are both `@[simp]`; Trivial.lean provides only `toOverHom_toTrivial`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Trivial.lean",
+   "fix": "Add `@[simp] lemma toSchemeHom_toTrivial (A : AbelianVariety K) : Hom.toSchemeHom (toTrivial A) = (toUnit A.toOver).left`, mirroring `Hom.toSchemeHom_mk'`.",
+   "issue": "Only the `toOverHom` half of the `toTrivial` API is given. `Hom.ext` is stated in terms of `Hom.toSchemeHom` (Hom.lean:157), so equality goals about `toTrivial` reduce to `toSchemeHom`, and `Hom.lean` develops both forms for `mk'`.",
+   "line": 90
+  }
+ ],
+ "head_sha": "28963b34702a19ad5653bce17df87134ec735fed",
+ "merge_base_sha": "e68591088393ad432ce4acebaf7b1002656a4def",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1030,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5a9c3067aa0f900b4eccba5941abe6e8df9508ef83000f44446365d75016acf9",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T183404Z-1030-api-design-588d6d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T18:34:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The trivial abelian variety exposes its body while omitting the lemma that its structure morphism is the identity, and geometricallyIntegral_id is a plain theorem for a class-valued property so instance search cannot use it. Minor gaps in the rfl idiom and in the toSchemeHom half of the toTrivial API.",
+ "transcript_blob": "97fcc97118d8807707a3b61bede6d2163189c9aeebec51f28ffb9582953d603c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 41170,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 41170,
+  "cache_read_input_tokens": 73827,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5595,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5595,
+    "cache_read_input_tokens": 41663,
+    "input_tokens": 2,
+    "output_tokens": 4798,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7282,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
