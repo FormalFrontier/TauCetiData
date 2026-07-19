@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7402765,
+   "returncode": 0,
+   "secs": 114.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43955,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43955,
+    "cache_read_input_tokens": 160651,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3626,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3626,
+      "cache_read_input_tokens": 46262,
+      "input_tokens": 2,
+      "output_tokens": 2513,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8564,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.740277,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|6a611023947a55e05d834325802b1de512087a74|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "diff_sha256": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "duration_s": 114.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`\u222b x in (0:\u211d)..t, f (max x 0)` for `t \u2264 0` is `-\u222b x in t..0, f 0 = t * f 0`; no lemma in the file states this, and the body is not exposed.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Add `bernsteinPrimitive_of_nonpos {t : \u211d} (ht : t \u2264 0) : bernsteinPrimitive c f t = c + t * f 0` (needs `f` continuous on `Ici 0`), or an `EqOn`-based uniqueness lemma pinning the function on all of \u211d.",
+   "issue": "`bernsteinPrimitive` is public without `@[expose]` (unlike `IsCompletelyMonotone`, which is `@[expose] def` at CompletelyMonotone/Basic.lean:74), and the only value lemmas are `bernsteinPrimitive_zero` and `bernsteinPrimitive_eq` (`0 \u2264 t`). Nothing characterizes `t < 0`, where the `max` extension makes the value `c + t * f 0`. A consumer therefore cannot prove any equation between `bernsteinPrimitive c f` and another function, so the definition is not extensionally determined by its API.",
+   "line": 46
+  },
+  {
+   "evidence": "grep for `IsBernsteinFunction` shows no `congr` lemma anywhere in the repo; `IsCompletelyMonotone.congr` and `IsCompletelyMonotoneOnIoi.congr` (line 304) exist and are used by this very PR at Integral.lean:118.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Add `IsBernsteinFunction.congr (hf : IsBernsteinFunction f) (h : Set.EqOn g f (Ici 0)) : IsBernsteinFunction g` to `Bernstein/Basic.lean` (all four clauses are within-`Ici 0`/`Ioi 0`, so it is provable, mirroring `IsCompletelyMonotone.congr` at CompletelyMonotone/Basic.lean:168), then restate `isBernsteinFunction_integral` about `fun t \u21a6 \u222b x in (0:\u211d)..t, f x`.",
+   "issue": "`isBernsteinFunction_integral` is documented as \"the primitive vanishing at the origin\" and named for the integral, but its statement is just `IsBernsteinFunction (bernsteinPrimitive 0 f)` \u2014 a `le_rfl` instance of the previous theorem that adds no content and never mentions `\u222b x in 0..t, f x`. The form a consumer actually meets, `IsBernsteinFunction (fun t \u21a6 \u222b x in (0:\u211d)..t, f x)`, is not derivable from the exposed API because `IsBernsteinFunction` has no congruence lemma.",
+   "line": 124
+  },
+  {
+   "evidence": "Bernstein/Basic.lean:86, 90, 94, 104 all use `@[grind \u2192]`/`@[grind =>]`; Integral.lean:51 and 86 have none, and only `bernsteinPrimitive_zero` is `@[simp]`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Annotate `deriv_bernsteinPrimitive` with `@[grind =>]` (and `bernsteinPrimitive_eq` likewise) so `grind` can discharge derivative and value side goals about the primitive.",
+   "issue": "`deriv_bernsteinPrimitive` and `bernsteinPrimitive_eq` are the characteristic lemmas of the new definition but carry no automation annotation, while every accessor in `Bernstein/Basic.lean` (`contDiffOn`, `nonneg`, `deriv_nonneg`, `deriv_isCompletelyMonotoneOnIoi`) carries `@[grind]`.",
+   "line": 86
+  }
+ ],
+ "head_sha": "6a611023947a55e05d834325802b1de512087a74",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c36ff1245e81799b76fb9899bdec1335b9f451c4d02cbe327367d5c80cf8152",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T070555Z-1023-api-design-d4bd78",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:05:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `bernsteinPrimitive` is exposed as a public non-`@[expose]` definition whose value is pinned by lemmas only on `[0, \u221e)`, so downstream cannot determine or rewrite the function it denotes off the half-line; and `isBernsteinFunction_integral` is named for the integral but is a `le_rfl` specialization that never states the integral form, which is unavailable because `IsBernsteinFunction` has no `congr`/EqOn lemma. Characteristic lemmas also carry no automation annotations, unlike every sibling in `Bernstein/Basic.lean`.",
+ "transcript_blob": "7685f18a7cb7df35950f51e7afd67a64946963d34e9a10ad8d8d5a4b394937fa",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43955,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43955,
+  "cache_read_input_tokens": 160651,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3626,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3626,
+    "cache_read_input_tokens": 46262,
+    "input_tokens": 2,
+    "output_tokens": 2513,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8564,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

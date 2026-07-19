@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6568769999999999,
+   "returncode": 0,
+   "secs": 98.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 35481,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 35481,
+    "cache_read_input_tokens": 237616,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1583,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1583,
+      "cache_read_input_tokens": 40299,
+      "input_tokens": 2,
+      "output_tokens": 3932,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7090,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.656877,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|6a611023947a55e05d834325802b1de512087a74|generality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "diff_sha256": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "duration_s": 98.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diff lines 96-120: the only `hf.` projections used are `contDiffOn.continuousOn`, `nonneg`, `isCompletelyMonotoneOnIoi`, and `contDiffOn.mono Ioi_subset_Ici_self`; the last is implied by `IsCompletelyMonotoneOnIoi.contDiffOn` (Basic.lean:283). `IsCompletelyMonotone.isCompletelyMonotoneOnIoi` at Basic.lean:330 confirms the hypothesis is strictly stronger.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "State it as `theorem IsCompletelyMonotoneOnIoi.isBernsteinFunction_bernsteinPrimitive (hf : IsCompletelyMonotoneOnIoi f) (hcont : ContinuousOn f (Ici 0)) {c : \u211d} (hc : 0 \u2264 c)`, and derive the current `IsCompletelyMonotone` version (and `isBernsteinFunction_integral`) as one-line corollaries via `hf.isCompletelyMonotoneOnIoi` and `hf.contDiffOn.continuousOn`. Nonnegativity at the endpoint comes from `IsCompletelyMonotoneOnIoi.nonneg` on `Ioi` plus `integral_nonneg_of_ae_restrict` (or a limit through `hcont`).",
+   "issue": "`isBernsteinFunction_bernsteinPrimitive` assumes `IsCompletelyMonotone f` (smooth up to 0), but the proof only ever uses `hf.contDiffOn.continuousOn`, `hf.nonneg`, and `hf.isCompletelyMonotoneOnIoi`. The Ici-class is a genuine strengthening \u2014 `Basic.lean` lines 22-25 explicitly note it excludes Laplace transforms such as `t \u21a6 \u222b\u2080^\u221e e^{-xt}(1+x)\u207b\u00b2dx` \u2014 so the theorem misses the generic completely monotone function, including anything produced by the Bernstein\u2013Widder representation (which yields only `IsCompletelyMonotoneOnIoi`).",
+   "line": 96
+  },
+  {
+   "evidence": "Bernstein/Basic.lean docstring lists `isBernsteinFunction_const` and `IsBernsteinFunction.add`; in the diff `hasDerivAt_bernsteinPrimitive` handles `c` solely via `.const_add c` and `deriv_bernsteinPrimitive`/`bernsteinPrimitive_eq` carry `{c : \u211d}` without using it.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Define `bernsteinPrimitive f t := \u222b x in (0:\u211d)..t, f (max x 0)` and state the `c`-version as a corollary using the existing `IsBernsteinFunction.add`/`isBernsteinFunction_const` closure lemmas, or at least drop `c` from the three derivative/value lemmas.",
+   "issue": "The initial value `c` is a parameter of the definition itself, so it propagates as a never-used argument through `bernsteinPrimitive_eq`, `hasDerivAt_bernsteinPrimitive`, and `deriv_bernsteinPrimitive` (in all three it is inert \u2014 the derivative and the `max`-congruence do not see it). `bernsteinPrimitive c f = (fun _ => c) + bernsteinPrimitive 0 f` is already obtainable from `isBernsteinFunction_const` and `IsBernsteinFunction.add`.",
+   "line": 46
+  }
+ ],
+ "head_sha": "6a611023947a55e05d834325802b1de512087a74",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "67e70c7aeaaa6501df816227bd57d678027fc5635b981ef7a67d08ae0590c2da",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T070750Z-1023-generality-4b8059",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:07:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem is stated for the strictly stronger closed-half-line class `IsCompletelyMonotone` although its proof only uses continuity on `[0,\u221e)` plus `IsCompletelyMonotoneOnIoi`; that excludes exactly the standard Bernstein-theory examples the project's own docstring names. The `c` parameter is also baked into the definition rather than derived from existing closure lemmas.",
+ "transcript_blob": "6da293e786d773d2882623f88a9e9fd4b8ac8cf9e836c0fec29e9e28506dded2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 35481,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 35481,
+  "cache_read_input_tokens": 237616,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1583,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1583,
+    "cache_read_input_tokens": 40299,
+    "input_tokens": 2,
+    "output_tokens": 3932,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7090,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

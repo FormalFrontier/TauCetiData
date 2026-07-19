@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.628393,
+   "returncode": 0,
+   "secs": 60.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 47655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 47655,
+    "cache_read_input_tokens": 32164,
+    "inference_geo": "not_available",
+    "input_tokens": 4,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 28210,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 28210,
+      "cache_read_input_tokens": 16082,
+      "input_tokens": 2,
+      "output_tokens": 2368,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 4881,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.628393,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|6a611023947a55e05d834325802b1de512087a74|naming|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "diff_sha256": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "duration_s": 60.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Integral.lean:96 `theorem isBernsteinFunction_bernsteinPrimitive \u2026 IsBernsteinFunction (bernsteinPrimitive c f)` vs Integral.lean:124-125 `theorem isBernsteinFunction_integral \u2026 IsBernsteinFunction (bernsteinPrimitive 0 f)`; grep shows `integral_neg_iteratedDerivWithin_one_Ici_eq_sub`, `integral_Ioi_neg_iteratedDerivWithin_one` in CompletelyMonotone/Integral.lean use `integral` for genuine integrals.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Rename to `isBernsteinFunction_bernsteinPrimitive_zero`.",
+   "issue": "`isBernsteinFunction_integral` states `IsBernsteinFunction (bernsteinPrimitive 0 f)`, but its name says `integral`, not the term actually in the conclusion; its general form one declaration above is `isBernsteinFunction_bernsteinPrimitive`, so the two names for the same object diverge. `integral_*` names are already used in `TauCeti/Analysis/CompletelyMonotone/Integral.lean` for actual interval integrals.",
+   "line": 124
+  },
+  {
+   "evidence": "Integral.lean:46-47 `noncomputable def bernsteinPrimitive (c : \u211d) (f : \u211d \u2192 \u211d) (t : \u211d) : \u211d := c + \u222b x in (0:\u211d)..t, f (max x 0)` \u2014 no hypothesis on `f` or `c`; Integral.lean:68-70 `hasDerivAt_bernsteinPrimitive` requires only `ContinuousOn f (Ici 0)`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Name the construction for what it is, e.g. `primitiveIci c f` or `halfLinePrimitive`, and rename the derived lemmas to match; keep `IsBernsteinFunction` only in the conclusions that actually establish it.",
+   "issue": "`bernsteinPrimitive (c f t)` is defined for arbitrary `f : \u211d \u2192 \u211d` and arbitrary `c`, so the name advertises a property the object does not have \u2014 nothing about `c + \u222b\u2080\u1d57 f (max x 0)` is Bernstein until `hf : IsCompletelyMonotone f` and `0 \u2264 c` are supplied. All the value/derivative lemmas (`bernsteinPrimitive_zero`, `hasDerivAt_bernsteinPrimitive`, `deriv_bernsteinPrimitive`) hold for any continuous `f` and inherit the misleading name.",
+   "line": 46
+  },
+  {
+   "evidence": "Integral.lean:51-52 `theorem bernsteinPrimitive_eq {\u2026} (ht : 0 \u2264 t) : bernsteinPrimitive c f t = c + \u222b x in (0:\u211d)..t, f x` vs the definition at Integral.lean:47; the addendum reserves `_def` for `foo = <its definition>`, which this is not.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Rename to describe the right-hand side and the hypothesis, e.g. `bernsteinPrimitive_eq_add_integral_of_nonneg` (or `\u2026_of_nonneg`).",
+   "issue": "`bernsteinPrimitive_eq` reads as the definitional-unfolding lemma, but the definitional right-hand side is `c + \u222b\u2080\u1d57 f (max x 0)`; this lemma states the different, hypothesis-gated equality `c + \u222b\u2080\u1d57 f` for `0 \u2264 t`.",
+   "line": 51
+  }
+ ],
+ "head_sha": "6a611023947a55e05d834325802b1de512087a74",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "637eb4fad74037e3f6cb1e4afc4ab7aa583f0358583603433cfbee37e2d4388c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T071007Z-1023-naming-f8e27e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:10:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The construction and its lemmas are named after a property (\"Bernstein\") that the definition does not carry, and the c = 0 corollary breaks the naming symmetry with its own general form by calling itself `_integral`.",
+ "transcript_blob": "28668251c84bd2526bd45482c5039dad4ffddd7fe531b15c992232bf6d052821",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47655,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 47655,
+  "cache_read_input_tokens": 32164,
+  "inference_geo": "not_available",
+  "input_tokens": 4,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 28210,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 28210,
+    "cache_read_input_tokens": 16082,
+    "input_tokens": 2,
+    "output_tokens": 2368,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 4881,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

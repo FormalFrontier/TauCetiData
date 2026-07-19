@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5371165000000001,
+   "returncode": 0,
+   "secs": 64.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 35847,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 35847,
+    "cache_read_input_tokens": 110379,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1103,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1103,
+      "cache_read_input_tokens": 40883,
+      "input_tokens": 2,
+      "output_tokens": 2990,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 4692,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.537117,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|6a611023947a55e05d834325802b1de512087a74|proof-quality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "diff_sha256": "fe72819ea9bc86342c0fd65716df2f840cb31a95f5d1544ba0bdfb0bf1aba41b",
+ "duration_s": 64.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 71-75: `convert hf.comp_continuous (continuous_id.max continuous_const) (fun x \u21a6 mem_Ici.mpr (le_max_right x 0)) using 1; ext x; rfl` \u2014 identical text at lines 99-102 with `hf.contDiffOn.continuousOn` in place of `hf`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Factor out a private lemma, e.g. `theorem continuous_comp_max_zero (hf : ContinuousOn f (Ici 0)) : Continuous fun x : \u211d \u21a6 f (max x 0)`, and call it from both sites (and reuse it for the `intervalIntegrable`/`continuous_primitive` arguments).",
+   "issue": "The `have hintegrand : Continuous (fun x : \u211d \u21a6 f (max x 0))` proof at lines 98-102 is byte-identical to `hcontinuous` at lines 71-75 (only the source of the `ContinuousOn f (Ici 0)` term differs). Repeated substantive reasoning that is itself a reusable fact.",
+   "line": 98
+  },
+  {
+   "evidence": "Line 77 `change ...` followed by line 78 `simpa only [bernsteinPrimitive, max_eq_left ht] using`; after the `change` the goal contains no `bernsteinPrimitive` occurrence for the simp lemma to rewrite.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Drop the `change` and rely on `simpa only [bernsteinPrimitive, max_eq_left ht] using ...`; if the `change` is genuinely required, delete `bernsteinPrimitive` from the simp set and replace the comment with the actual reason.",
+   "issue": "`change HasDerivAt (fun u \u21a6 c + \u222b x in (0:\u211d)..u, f (max x 0)) (f t) t` is a defeq step whose comment is inaccurate: the FTC lemma is supplied through `simpa ... using`, so it is never matched against the goal, and line 78 already includes `bernsteinPrimitive` in the `simp only` set, which unfolds the goal itself. One of the two is dead.",
+   "line": 77
+  },
+  {
+   "evidence": "`ContinuousOn.comp_continuous` in mathlib/Mathlib/Topology/ContinuousOn.lean:525 concludes `Continuous (g \u2218 f)`, whereas the goal is stated as `Continuous fun x \u21a6 f (max x 0)`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Replace with an explicit rewrite, e.g. `simpa [Function.comp_def] using hf.comp_continuous (continuous_id'.max continuous_const) ...`, or use `fun_prop`.",
+   "issue": "`convert ... using 1; ext x; rfl` (also at lines 99-102) discharges `(fun x \u21a6 f (max x 0)) = f \u2218 (fun x \u21a6 max x 0)` \u2014 and `max (id x) 0 = max x 0` from `continuous_id.max` \u2014 by accidental definitional unfolding of `Function.comp`/`id`, which is exactly the fragile defeq reliance the proof should name explicitly.",
+   "line": 72
+  }
+ ],
+ "head_sha": "6a611023947a55e05d834325802b1de512087a74",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "aa4ceed1804c84771a9c42eb94aafdda3efd06c764fe69cfe77d85f6590be105",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T071207Z-1023-proof-quality-ac7d24",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:12:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is fine but the two main proofs duplicate an identical continuity argument verbatim and both close it with a convert-on-defeq; one proof also carries a change step whose justifying comment does not match what the tactic does.",
+ "transcript_blob": "75b32b762c01147d07c6b06ce888078583565a7150a88a07126b63842668e641",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 35847,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 35847,
+  "cache_read_input_tokens": 110379,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1103,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1103,
+    "cache_read_input_tokens": 40883,
+    "input_tokens": 2,
+    "output_tokens": 2990,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 4692,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
