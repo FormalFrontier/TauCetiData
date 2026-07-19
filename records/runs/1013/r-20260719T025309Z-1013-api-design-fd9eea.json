@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7932969999999999,
+   "returncode": 0,
+   "secs": 96.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46106,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46106,
+    "cache_read_input_tokens": 301240,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2410,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2410,
+      "cache_read_input_tokens": 48381,
+      "input_tokens": 1,
+      "output_tokens": 2272,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6969,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_usd": 0.793297,
+ "dedupe_key": "TauCetiProject/TauCeti|1013|390ecd8e0f2a48952f2d3b5924302b3f172ded60|api-design|claude-opus-4-8|0e86c8aad121a07b|production|5",
+ "diff_blob": "428309cd60f9c20345379432ead3a966afbac28553fd456752788e393036b76b",
+ "diff_sha256": "428309cd60f9c20345379432ead3a966afbac28553fd456752788e393036b76b",
+ "duration_s": 96.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n \"IsMonHom\" Mathlib/CategoryTheory/Monoidal/Mon.lean` shows line 567 `instance {M N : Mon C} (f : M \u27f6 N) : IsMonHom f.hom := f.isMonHom_hom`; Grp.lean:325 `theorem inv_hom [GrpObj A] [GrpObj B] (f : A \u27f6 B) [IsMonHom f]`. No `IsMonHom` instance for `toOverHom` occurs in the diff.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Add `instance {A B : AbelianVariety K} (f : A \u27f6 B) : IsMonHom (Hom.toOverHom f) := inferInstanceAs (IsMonHom (f.hom.hom.hom.hom))` (Mathlib already provides `instance {M N : Mon C} (f : M \u27f6 N) : IsMonHom f.hom`, Mon.lean:567). `Hom.one_hom`/`mul_hom`/`inv_hom` then follow from the Mathlib simp lemmas and can be dropped or kept as thin restatements.",
+   "issue": "No `instance : IsMonHom (Hom.toOverHom f)` is registered. Mathlib's entire group-object morphism API is parameterized by `[IsMonHom f]` (`GrpObj.inv_hom` at Mathlib/CategoryTheory/Monoidal/Grp.lean:325, `instIsMonHomComp`, `IsMonHom (f \u2297\u2098 g)`, `Grp.ofHom`, `Mon.ofHom`), so a downstream consumer holding `f : A \u27f6 B` cannot apply any of it to `toOverHom f`; the PR only hand-restates three of those lemmas (`one_hom`, `mul_hom`, `inv_hom`) and stops there.",
+   "line": 102
+  },
+  {
+   "evidence": "`grep -rn \"toOverHom_def\" code/TauCeti` returns only Hom.lean lines 96, 104, 112, 119, 160 \u2014 no consumer outside the file.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Mark it `private`; it is used only inside this file (lines 104, 112, 119, 160).",
+   "issue": "`Hom.toOverHom_def : Hom.toOverHom f = f.hom.hom.hom.hom` is public. Its RHS is nothing but the four-layer induced-category/`CommGrp`/`Grp`/`Mon` wrapper encoding \u2014 implementation detail, not a characterization in terms of the file's API \u2014 and publishing it invites downstream proofs to reason about that encoding, which the docstring itself says should not happen (\"other proofs should go through it rather than unfolding the wrappers again\").",
+   "line": 96
+  }
+ ],
+ "head_sha": "390ecd8e0f2a48952f2d3b5924302b3f172ded60",
+ "merge_base_sha": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1013,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "d35df63691bafcae0c889d79e22402eb5296aa2dce9cc93127e70c7e4cc58b27",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T025309Z-1013-api-design-fd9eea",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T02:53:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The homomorphism API hand-restates three Mathlib `IsMonHom` lemmas for `toOverHom` but never registers the `IsMonHom` instance that would give consumers the rest of Mathlib's group-object morphism API, and it publicly exposes the raw induced-category encoding via `toOverHom_def`.",
+ "transcript_blob": "31bc96e9f355f253ae077c8cce6ab9b6e8d52cd2a58899ec613d1f33295bee26",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46106,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46106,
+  "cache_read_input_tokens": 301240,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2410,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2410,
+    "cache_read_input_tokens": 48381,
+    "input_tokens": 1,
+    "output_tokens": 2272,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6969,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
