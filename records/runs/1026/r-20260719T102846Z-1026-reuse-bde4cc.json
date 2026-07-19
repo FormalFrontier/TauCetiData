@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.510782,
+   "returncode": 0,
+   "secs": 51.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 35527,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 35527,
+    "cache_read_input_tokens": 105126,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2925,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2925,
+      "cache_read_input_tokens": 40646,
+      "input_tokens": 2,
+      "output_tokens": 2061,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 3929,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "cost_usd": 0.510782,
+ "dedupe_key": "TauCetiProject/TauCeti|1026|e1ffda4c89e0cdd42e4bd5e412d5eaa1c72b736b|reuse|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "4b04f97befb36227a2bf57bfdadd45e56a0811d6fdf46e8ba6291b4cfb37b9ea",
+ "diff_sha256": "4b04f97befb36227a2bf57bfdadd45e56a0811d6fdf46e8ba6291b4cfb37b9ea",
+ "duration_s": 51.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/MeasureTheory/Function/LpSeminorm/Basic.lean:549 `theorem MemLp.of_bound [IsFiniteMeasure \u03bc] {f : \u03b1 \u2192 E} (hf : AEStronglyMeasurable f \u03bc) (C : \u211d) (hfC : \u2200\u1d50 x \u2202\u03bc, \u2016f x\u2016 \u2264 C) : MemLp f p \u03bc`; the new proof body is exactly that call.",
+   "file": "TauCeti/Probability/Exchangeability/L2/BoundedObservable.lean",
+   "fix": "Delete the lemma and inline `MemLp.of_bound (hf.comp_aemeasurable (hX i)).aestronglyMeasurable C (ae_of_all \u03bc fun \u03c9 => hf_bound (X i \u03c9))` at the single use site (line 59), or keep nothing at all.",
+   "issue": "`memLp_comp_process_of_bound` is `MeasureTheory.MemLp.of_bound` applied under `\u2200 i` \u2014 its whole proof is one `exact`. It also weakens the Mathlib lemma: `hf : Measurable f` instead of a.e.-strong-measurability of the composite, and `\u2200 x, \u2016f x\u2016 \u2264 C` instead of Mathlib's a.e. bound. Nothing about processes or exchangeability is used.",
+   "line": 36
+  },
+  {
+   "evidence": "code/TauCeti/Probability/Exchangeability/L2/Covariance.lean:112-119 already states and proves the same conjunction; code/TauCeti/Probability/Exchangeability/Map.lean:74 already provides `Contractable.map_values`. Grep for `covariance_structure_map_values_of_bound` in `code/TauCeti` returns only its own definition.",
+   "file": "TauCeti/Probability/Exchangeability/L2/BoundedObservable.lean",
+   "fix": "Drop the file, or \u2014 if the roadmap item genuinely needs a recorded worked example \u2014 keep only this lemma and inline the `MemLp.of_bound` step, dropping `memLp_comp_process_of_bound`.",
+   "issue": "`Contractable.covariance_structure_map_values_of_bound` restates `contractable_covariance_structure` for the mapped process; its entire proof is `hX_contractable.map_values hf hX_meas` fed into that lemma. It is a specialization with no consumers in the repo, and the \u2227-bundle is copied verbatim from the existing statement.",
+   "line": 47
+  }
+ ],
+ "head_sha": "e1ffda4c89e0cdd42e4bd5e412d5eaa1c72b736b",
+ "merge_base_sha": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1026,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "90e1a380fc7f260ea365ef7a5345a05167356503125d95fc00d94ebda1b0f633",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T102846Z-1026-reuse-bde4cc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T10:28:46Z",
+ "submitted_by": "kim-em",
+ "summary": "Both declarations are thin wrappers: `memLp_comp_process_of_bound` is a per-index restatement of Mathlib's `MemLp.of_bound` with strictly stronger hypotheses, and `Contractable.covariance_structure_map_values_of_bound` is a three-line composition of `Contractable.map_values` and `contractable_covariance_structure` with no new content and no consumers.",
+ "transcript_blob": "4a6e92843354939a7eda3f19592769b7bbe5b417a7e06c13a8cb0b8f183893ae",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 35527,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 35527,
+  "cache_read_input_tokens": 105126,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2925,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2925,
+    "cache_read_input_tokens": 40646,
+    "input_tokens": 2,
+    "output_tokens": 2061,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 3929,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
