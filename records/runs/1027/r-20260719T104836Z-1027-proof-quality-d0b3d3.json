@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6262825,
+   "returncode": 0,
+   "secs": 96.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 37131,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 37131,
+    "cache_read_input_tokens": 139027,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4144,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4144,
+      "cache_read_input_tokens": 49069,
+      "input_tokens": 2,
+      "output_tokens": 2193,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7029,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "cost_usd": 0.626282,
+ "dedupe_key": "TauCetiProject/TauCeti|1027|7fd16a8ced8cade45ffd83f6fe88183fa06a39b9|proof-quality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "48e5356f78f64b5d80193fa07754ab65cf086b57caeb8f4881aae0990fb4da21",
+ "diff_sha256": "48e5356f78f64b5d80193fa07754ab65cf086b57caeb8f4881aae0990fb4da21",
+ "duration_s": 96.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for id_toLinearMap/comp_toLinearMap in TauCeti/ returns only the unrelated ComoduleCat bundled versions (Cat.lean:177,183); no such lemma exists for Comodule.Hom, so the defeq is inlined at lines 426-427 and 440-441.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "fix": "Add `@[simp] theorem Hom.id_toLinearMap : (id R C M).toLinearMap = LinearMap.id := rfl` and `@[simp] theorem Hom.comp_toLinearMap : (g.comp f).toLinearMap = g.toLinearMap \u2218\u2097 f.toLinearMap := rfl` to the Hom API in Comodule/Basic.lean (mirroring the existing `coe_toLinearMap`), then rewrite with those named lemmas here instead of `show \u2026 from rfl`.",
+   "issue": "tensorMap_id (lines 426-427) and tensorMap_comp (lines 440-441) each use inline `show (id R C M).toLinearMap = LinearMap.id from rfl` / `show (f'.comp f).toLinearMap = f'.toLinearMap \u2218\u2097 f.toLinearMap from rfl`. These rest on unfolding the `Hom.toLinearMap` projection of `id`/`comp` \u2014 an undocumented definitional equality across the Hom wrapper \u2014 and inline a reusable fact instead of naming it.",
+   "line": 426
+  }
+ ],
+ "head_sha": "7fd16a8ced8cade45ffd83f6fe88183fa06a39b9",
+ "merge_base_sha": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1027,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4b10399c9f242203328bd564acd3cdd0bbc9fbbaa1463ca71bc958ea3453ed40",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T104836Z-1027-proof-quality-d0b3d3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T10:48:36Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are generally robust (ext + induction + simp) and well-commented. The exception: tensorMap_id and tensorMap_comp rely on inline `show (\u2026).toLinearMap = \u2026 from rfl` to unfold the Hom.toLinearMap projection of `id`/`comp`, an undocumented defeq that also hides a reusable API fact.",
+ "transcript_blob": "faae914dd1b04e94ca2611c2a9b08adac10fc6c7e7263ef24efdc9147c2a0d2d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 37131,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 37131,
+  "cache_read_input_tokens": 139027,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4144,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4144,
+    "cache_read_input_tokens": 49069,
+    "input_tokens": 2,
+    "output_tokens": 2193,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7029,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
