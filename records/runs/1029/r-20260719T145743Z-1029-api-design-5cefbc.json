@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.43923000000000006,
+   "returncode": 0,
+   "secs": 112.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18010,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 18010,
+    "cache_read_input_tokens": 108436,
+    "inference_geo": "not_available",
+    "input_tokens": 8,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 413,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 413,
+      "cache_read_input_tokens": 33679,
+      "input_tokens": 2,
+      "output_tokens": 1241,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7945,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5944670995216ed9004d856c18e1f17c57c6f691",
+ "cost_usd": 0.43923,
+ "dedupe_key": "TauCetiProject/TauCeti|1029|589b42d227c2ea02a4f01ebffde33f18b2a75cc9|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "34bed5a082a3890b501243f9eeff4eccb91039b67b1bd527c7d0e51ec8be95eb",
+ "diff_sha256": "34bed5a082a3890b501243f9eeff4eccb91039b67b1bd527c7d0e51ec8be95eb",
+ "duration_s": 112.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "pathTowardZero_apply/cubeCollapseComplement_apply/cubeCollapseCoord_apply are public @[simp] rfl-lemmas giving the value on any input; the file's own _apply proofs (same module) do not require exposure.",
+   "file": "TauCeti/Topology/Homotopy/Cube.lean",
+   "fix": "Drop @[expose] on all three defs (lines 43, 88, 103); consumers use the *_apply lemmas.",
+   "issue": "@[expose] on pathTowardZero, cubeCollapseComplement, and cubeCollapseCoord exposes their bodies downstream, but each has a public _apply lemma that fully characterizes it, so no consumer needs to unfold or compute.",
+   "line": "43"
+  },
+  {
+   "evidence": "grep for pathTowardZero|cubeCollapse across the repo matches only Cube.lean; both collapse defs appear solely in the h1/h2 steps of isPathConnected_cubeBoundary.",
+   "file": "TauCeti/Topology/Homotopy/Cube.lean",
+   "fix": "Mark both defs and their _apply lemmas `private` (the public theorem's proof may still reference private declarations in the same module).",
+   "issue": "cubeCollapseComplement and cubeCollapseCoord (and their _apply lemmas) are implementation helpers referenced only inside isPathConnected_cubeBoundary; they are not roadmap products and have no downstream consumers, yet are public API.",
+   "line": "88"
+  }
+ ],
+ "head_sha": "589b42d227c2ea02a4f01ebffde33f18b2a75cc9",
+ "merge_base_sha": "5944670995216ed9004d856c18e1f17c57c6f691",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1029,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fe8130e4aeae8fe8a767af35c623cda68fa4ab318fea2cb94a405d0d7b743371",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T145743Z-1029-api-design-5cefbc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T14:57:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The connectedness results and their characteristic API are complete, but the surface over-exposes internal path constructions: three defs carry needless @[expose], and two are single-use helpers that should be private.",
+ "transcript_blob": "2c6ba7c585484f983619105e9ecb5d377ff347a83bdcd9bb78a21c7617fd3f49",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18010,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 18010,
+  "cache_read_input_tokens": 108436,
+  "inference_geo": "not_available",
+  "input_tokens": 8,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 413,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 413,
+    "cache_read_input_tokens": 33679,
+    "input_tokens": 2,
+    "output_tokens": 1241,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7945,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
