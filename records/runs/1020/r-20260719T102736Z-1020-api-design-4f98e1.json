@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8895544999999998,
+   "returncode": 0,
+   "secs": 153.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 42777,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 42777,
+    "cache_read_input_tokens": 340383,
+    "inference_geo": "not_available",
+    "input_tokens": 19,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2559,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2559,
+      "cache_read_input_tokens": 44701,
+      "input_tokens": 2,
+      "output_tokens": 4364,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11374,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "cost_usd": 0.889554,
+ "dedupe_key": "TauCetiProject/TauCeti|1020|bc1429c199a39615091fa5f8909ac3500bfac123|api-design|claude-opus-4-8|0e86c8aad121a07b|production|3",
+ "diff_blob": "84629f3cecdc1f40b661c1893ce92373b9ce4c74a62b11959b80c74e70d1df28",
+ "diff_sha256": "84629f3cecdc1f40b661c1893ce92373b9ce4c74a62b11959b80c74e70d1df28",
+ "duration_s": 153.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Statement at line 71-77 binds `{K L : Type*}`; `L` appears only in the RHS `ClassGroup.mk L ...`. All three in-file uses must write it by hand: `mulEquiv_mk (K := FractionRing R) (L := FractionRing T)` (mulEquiv_trans), and likewise in `mulEquiv_refl`. Mathlib's analogues `ClassGroup.equiv_mk (K' : Type*)` (Basic.lean:207) and `FractionalIdeal.ringEquivOfRingEquiv_trans_apply (M : Type*)` (Operations.lean:993) take the target explicitly.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Make `L` explicit \u2014 `theorem mulEquiv_mk (L : Type*) [Field L] [Algebra S L] [IsFractionRing S L] ...` \u2014 matching `ClassGroup.equiv_mk (K' : Type*)` and `ClassGroup.mk_canonicalEquiv (K' : Type*)`.",
+   "issue": "In `mulEquiv_mk`, `L` (and its `Field`/`Algebra`/`IsFractionRing` instances) is implicit but occurs only on the right-hand side, so `rw [mulEquiv_mk]` leaves it as a metavariable; the target fraction field is never inferable.",
+   "line": 71
+  },
+  {
+   "evidence": "Line 46 `private theorem mulEquiv_mk_fractionRing`; Mathlib `noncomputable def ClassGroup.mulEquiv` carries `@[simps!]` (Basic.lean:459-460), whose generated `ClassGroup.mulEquiv_apply` is a simp lemma and is used at line 56 of this file.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Make the `FractionRing`-specialized computation public and `@[simp]` (LHS `mulEquiv f (mk (FractionRing R) I)` is fully determined), keeping the general `mulEquiv_mk` as the `rw`-form.",
+   "issue": "No public lemma lets `simp` compute `ClassGroup.mulEquiv f (ClassGroup.mk _ I)`: `mulEquiv_mk` cannot be `@[simp]` (see above) and the only fully-determined form, `mulEquiv_mk_fractionRing`, is `private`. A consumer running `simp` on such a term instead hits Mathlib's `@[simps!]`-generated `ClassGroup.mulEquiv_apply`, which unfolds into the `ClassGroup.equiv`/`QuotientGroup.congr` composite \u2014 exactly the unfolding this file exists to prevent.",
+   "line": 46
+  },
+  {
+   "evidence": "`ClassGroup.mk0` (Basic.lean:253) and `ClassGroup.mk_mk0` (Basic.lean:257) are the standard entry points for classes of integral ideals; grep of Mathlib's FractionalIdeal files shows only `ringEquivOfRingEquiv_{apply,apply_val,trans,trans_apply,refl,spanSingleton}` (Operations.lean:971-1005) \u2014 no `coeIdeal` interaction.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Add `mulEquiv_mk0 [IsDedekindDomain R] [IsDedekindDomain S] (f : R \u2243+* S) (I : (Ideal R)\u2070) : mulEquiv f (ClassGroup.mk0 I) = ClassGroup.mk0 \u27e8Ideal.map f I, _\u27e9`, via `ClassGroup.mk_mk0` plus a `ringEquivOfRingEquiv_coeIdeal` step.",
+   "issue": "The stated consumer \u2014 the genus-field argument that `I \u00b7 \u03c3I` is principal \u2014 works with nonzero integral ideals, i.e. `ClassGroup.mk0`, but the file provides no computation of `mulEquiv f (ClassGroup.mk0 I)`, and there is no lemma relating `FractionalIdeal.ringEquivOfRingEquiv f` to `Ideal.map f` on coerced integral ideals, so the bridge must be rebuilt downstream.",
+   "line": 0
+  }
+ ],
+ "head_sha": "bc1429c199a39615091fa5f8909ac3500bfac123",
+ "merge_base_sha": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1020,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "550ec0888a6598c1aed0929532c626cd034b9a5cfe42b73390a7a426ea356641",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T102736Z-1020-api-design-4f98e1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T10:27:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The functorial laws and their pointwise forms are complete and correctly annotated, but the headline characteristic lemma `mulEquiv_mk` has an undeterminable implicit type argument and no simp-usable specialization, so consumers cannot actually compute with the new API without named arguments or falling back to Mathlib's raw `mulEquiv_apply` unfolding.",
+ "transcript_blob": "f28fbe43456d13b3e9801d5f8289af9f9fa1efbde08c4cee419e35cb087e604b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 42777,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 42777,
+  "cache_read_input_tokens": 340383,
+  "inference_geo": "not_available",
+  "input_tokens": 19,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2559,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2559,
+    "cache_read_input_tokens": 44701,
+    "input_tokens": 2,
+    "output_tokens": 4364,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11374,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
