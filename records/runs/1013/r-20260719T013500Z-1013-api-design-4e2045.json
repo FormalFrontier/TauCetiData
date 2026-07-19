@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.320151,
+   "returncode": 0,
+   "secs": 58.6,
+   "usage": {
+    "cached_input_tokens": 138112,
+    "input_tokens": 173061,
+    "output_tokens": 2545,
+    "reasoning_output_tokens": 729
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_estimated": true,
+ "cost_usd": 0.320151,
+ "dedupe_key": "TauCetiProject/TauCeti|1013|32b18ff558dbf1a5bc7057d88bb51677a88a7ccf|api-design|gpt-5.5|0e86c8aad121a07b|production|4",
+ "diff_blob": "a2708bafbc5e755d3f95046e32c2308ebae72e65569deb69977b42ea442f891b",
+ "diff_sha256": "a2708bafbc5e755d3f95046e32c2308ebae72e65569deb69977b42ea442f891b",
+ "duration_s": 58.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `@[expose] noncomputable def Hom.toOverFunctor` at line 58, with public characteristic lemmas `Hom.toOverHom_id`, `Hom.toOverHom_comp`, and `Hom.toOverHom_mk'` immediately following.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Remove `@[expose]`; if downstream needs computation, add targeted lemmas rather than making the functor body unfoldable.",
+   "issue": "`Hom.toOverFunctor` is marked `@[expose]`, exposing the induced-category/`CommGrp.forget` implementation even though the public API already provides `Hom.toOverHom`, id/comp, constructor, and extensionality lemmas.",
+   "line": 58
+  },
+  {
+   "evidence": "`rg` shows line 135 has only `@[reassoc]`; Mathlib\u2019s `Over.w` is tagged `@[reassoc (attr := simp)]` in `Mathlib/CategoryTheory/Comma/Over/Basic.lean:72`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom.lean",
+   "fix": "Change the annotation to `@[reassoc (attr := simp)]`, matching the underlying `Over.w` normal form.",
+   "issue": "`Hom.toSchemeHom_comp_hom` restates the over-base compatibility but is only tagged `@[reassoc]`, so the abelian-variety API name will not participate in simp normalization.",
+   "line": 135
+  }
+ ],
+ "head_sha": "32b18ff558dbf1a5bc7057d88bb51677a88a7ccf",
+ "merge_base_sha": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1013,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2ea97788a6cea83d4a9c73c1b8dc63c7eb4c287a126d774512076d86b754a002",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T013500Z-1013-api-design-4e2045",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T01:35:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The homomorphism API still exposes implementation details and leaves one characteristic compatibility lemma out of simp normal form.",
+ "transcript_blob": "94fe1098b490146ebfd77c6fd089a63d8d7b80865dc6920093b8d65d3396023c",
+ "usage": {
+  "cached_input_tokens": 138112,
+  "input_tokens": 173061,
+  "output_tokens": 2545,
+  "reasoning_output_tokens": 729
+ },
+ "verdict": "request_changes"
+}
