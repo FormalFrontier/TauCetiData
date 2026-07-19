@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.105464,
+   "returncode": 0,
+   "secs": 171.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 44107,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 44107,
+    "cache_read_input_tokens": 731890,
+    "inference_geo": "not_available",
+    "input_tokens": 38,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2077,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2077,
+      "cache_read_input_tokens": 48657,
+      "input_tokens": 2,
+      "output_tokens": 2540,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11704,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "cost_usd": 1.105464,
+ "dedupe_key": "TauCetiProject/TauCeti|1032|b0dad2f343ac3218e36e93a1c7aba8c00426e312|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "86d92b5675bc08a4fb60cf40424e3c2ba93f0dc6fe774b202750ee260dccd030",
+ "diff_sha256": "86d92b5675bc08a4fb60cf40424e3c2ba93f0dc6fe774b202750ee260dccd030",
+ "duration_s": 171.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Analysis/Bochner/FourierConvention.lean:82-95 supplies both forms, its docstring stating the kernel version exists for 'avoiding any explicit choice of involution on the domain'; TauCeti/Analysis/Bochner/CharFun/PositiveDefinite.lean:52 gives the underlying `charFun_isPositiveDefiniteKernel`. Grep for `instance.*StarAddMonoid` in TauCeti returns only the private `BCRPoint` wrapper.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Gaussian.lean",
+   "fix": "Add the involution-free kernel form, e.g. `theorem isPositiveDefiniteKernel_gaussian (hc : 0 \u2264 c) : IsPositiveDefiniteKernel fun a b : V => Complex.exp (-(c * \u2016a - b\u2016 ^ 2 : \u211d))`, proved from `charFun_isPositiveDefiniteKernel` composed with the `\u221a(2c)` scaling \u2014 exactly as `fourierConventionCharFun_isPositiveDefiniteKernel` is proved. Keep the `hstar` form alongside it.",
+   "issue": "`isPositiveDefinite_gaussian` and `isPositiveDefinite_exp_neg_normSq` require `[StarAddMonoid V]` with `hstar : \u2200 x, star x = -x`. Canonical star instances on `\u211d`, `EuclideanSpace \u211d (Fin n)`, and Pi types are the identity, so `hstar` is false there and no consumer can discharge it without manufacturing a diamond-inducing instance. The acceptance example is unusable as stated.",
+   "line": 70
+  },
+  {
+   "evidence": "Grep shows no use of `continuous_charFun_and_isPositiveDefinite_of_star_eq_neg` (the analogous paired lemma) anywhere outside its defining file either; `continuous_gaussian` at line 59 is closed by `fun_prop` alone.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Gaussian.lean",
+   "fix": "Drop `continuous_gaussian_and_isPositiveDefinite` and `continuous_exp_neg_normSq`; keep `continuous_gaussian` plus the two positive-definiteness statements.",
+   "issue": "`continuous_gaussian_and_isPositiveDefinite` is `\u27e8continuous_gaussian, isPositiveDefinite_gaussian\u27e9` verbatim, with no consumer, and it is not mirrored at `c = 1`; `continuous_exp_neg_normSq` is likewise a `simpa` specialization that `fun_prop` proves directly. Three ways to state continuity of one function.",
+   "line": 93
+  }
+ ],
+ "head_sha": "b0dad2f343ac3218e36e93a1c7aba8c00426e312",
+ "merge_base_sha": "0a8ed0464c2e879b6c4bfcec7635387146c117db",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1032,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "65f010e5b186a703aad337c20b9cbc180c6e35c312745f280793e63a47d4cc2b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T181651Z-1032-api-design-e36561",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T18:16:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The Gaussian's positive-definiteness is exposed only in the `hstar : \u2200 x, star x = -x` form, which no concrete inner-product space instantiates; the repo's own precedent (FourierConvention.lean) pairs that form with an instance-free `IsPositiveDefiniteKernel` statement, and this file omits it. One redundant packaging lemma should also go.",
+ "transcript_blob": "5931022eb0255a1d654c9a3f4a40cde521b5cd5a0a3a48568b9565f55a369fec",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 44107,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 44107,
+  "cache_read_input_tokens": 731890,
+  "inference_geo": "not_available",
+  "input_tokens": 38,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2077,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2077,
+    "cache_read_input_tokens": 48657,
+    "input_tokens": 2,
+    "output_tokens": 2540,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11704,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

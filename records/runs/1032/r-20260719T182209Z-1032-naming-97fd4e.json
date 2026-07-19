@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9136875,
+   "returncode": 0,
+   "secs": 136.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 52065,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 52065,
+    "cache_read_input_tokens": 248173,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1979,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1979,
+      "cache_read_input_tokens": 47427,
+      "input_tokens": 1,
+      "output_tokens": 1321,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10231,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "cost_usd": 0.913687,
+ "dedupe_key": "TauCetiProject/TauCeti|1032|b0dad2f343ac3218e36e93a1c7aba8c00426e312|naming|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "86d92b5675bc08a4fb60cf40424e3c2ba93f0dc6fe774b202750ee260dccd030",
+ "diff_sha256": "86d92b5675bc08a4fb60cf40424e3c2ba93f0dc6fe774b202750ee260dccd030",
+ "duration_s": 136.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Analysis/SpecialFunctions/Gaussian/FourierTransform.lean:330-331 `theorem integral_cexp_neg_mul_sq_norm (hb : 0 < b.re) : \u222b v : V, cexp (-b * \u2016v\u2016 ^ 2) = \u2026` \u2014 same expression, `sq_norm` + `cexp`. That `normSq` is a different function is witnessed by the bridge lemma mathlib/Mathlib/Analysis/Complex/Norm.lean:147 `lemma normSq_eq_norm_sq (z : \u2102) : normSq z = \u2016z\u2016 ^ 2`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Gaussian.lean",
+   "fix": "Rename to `isPositiveDefinite_cexp_neg_sq_norm` and `continuous_cexp_neg_sq_norm`.",
+   "issue": "`isPositiveDefinite_exp_neg_normSq` (and `continuous_exp_neg_normSq`, line 108) name `\u2016a\u2016 ^ 2` as `normSq`, but `normSq` is a distinct Mathlib definition (`Complex.normSq`, `RCLike.normSq`, `PreInnerProductSpace.Core.normSq = re \u27eax, x\u27eb`), not `\u2016\u00b7\u2016 ^ 2`; Mathlib spells `\u2016v\u2016 ^ 2` as `sq_norm` in names. `exp` also under-specifies `Complex.exp`, which Mathlib names `cexp`.",
+   "line": 101
+  },
+  {
+   "evidence": "mathlib/Mathlib/Analysis/SpecialFunctions/Gaussian/GaussianIntegral.lean:228 `theorem integral_gaussian (b : \u211d) : \u222b x : \u211d, exp (-b * x ^ 2) = \u221a(\u03c0 / b)` (1-D real) vs FourierTransform.lean:330 `integral_cexp_neg_mul_sq_norm` over `V` (this PR's setting).",
+   "file": "TauCeti/Analysis/PositiveDefinite/Gaussian.lean",
+   "fix": "Rename to `continuous_cexp_neg_mul_sq_norm` and `isPositiveDefinite_cexp_neg_mul_sq_norm`, making the `c = 1` names their `mul`-free specialisations.",
+   "issue": "`continuous_gaussian` and `isPositiveDefinite_gaussian` (line 69) use the bare descriptor `gaussian` for `Complex.exp (-(c * \u2016a\u2016 ^ 2))` on a finite-dimensional inner-product space. Mathlib uses `gaussian` for the one-dimensional real case (`integral_gaussian : \u222b x : \u211d, exp (-b * x ^ 2)`) and `cexp_neg_mul_sq_norm` for precisely this setting. Combined with finding 1, the same function family gets two unrelated descriptors within one file.",
+   "line": 59
+  }
+ ],
+ "head_sha": "b0dad2f343ac3218e36e93a1c7aba8c00426e312",
+ "merge_base_sha": "0a8ed0464c2e879b6c4bfcec7635387146c117db",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1032,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b74fc0997e16916635aa22a6f4485d2054b6c1b5e6923aeba45684e48f1668b0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T182209Z-1032-naming-97fd4e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T18:22:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The `c = 1` lemmas use `normSq` for `\u2016a\u2016 ^ 2` and bare `exp` for `Complex.exp`, both of which conflict with Mathlib's naming for this exact expression; the general lemmas use a third, vaguer descriptor (`gaussian`) for the same function, so one file names one function family two incompatible ways.",
+ "transcript_blob": "0504773f2f77e87198de84626cc40e1f5ce6809a8c8e9f608875c211fddbe371",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 52065,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 52065,
+  "cache_read_input_tokens": 248173,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1979,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1979,
+    "cache_read_input_tokens": 47427,
+    "input_tokens": 1,
+    "output_tokens": 1321,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10231,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
