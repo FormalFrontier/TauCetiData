@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5591139999999999,
+   "returncode": 0,
+   "secs": 74.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 34890,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 34890,
+    "cache_read_input_tokens": 100446,
+    "inference_geo": "not_available",
+    "input_tokens": 8,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 343,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 343,
+      "cache_read_input_tokens": 37303,
+      "input_tokens": 2,
+      "output_tokens": 4090,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6032,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "cost_usd": 0.559114,
+ "dedupe_key": "TauCetiProject/TauCeti|1033|8f4e21363b1d169876cbc47c2bd84b2a3661000e|documentation|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "d99ef2072d68af424dfea1a3c6a93bec3921e9a54fd78cf0d23962c24e44828a",
+ "diff_sha256": "d99ef2072d68af424dfea1a3c6a93bec3921e9a54fd78cf0d23962c24e44828a",
+ "duration_s": 74.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Statement lines: `(h\u03c6 : \u2200 t \u2208 Set.uIcc c d, HasDerivAt \u03c6 (\u03c6' t) t)`, `(h\u03b3 : \u2200 u \u2208 \u03c6 '' Set.uIcc c d, DifferentiableAt \u211d \u03b3 u)`; `HasDerivAt` is the `\ud835\udcdd t` filter version, not `HasDerivWithinAt`.",
+   "file": "TauCeti/Analysis/Contour/Curve/Reparam.lean",
+   "fix": "Say \"\u03c6 has derivative `\u03c6' t` at each `t \u2208 [[c, d]]` in the ambient sense (not merely within the interval), with `\u03c6'` continuous there\", and likewise for `\u03b3` on the image; or keep \"C\u00b9\" but add one sentence that the derivatives are ambient `HasDerivAt`/`DifferentiableAt`, as the module docstring already hints for `deriv \u03b3`.",
+   "issue": "The docstring of `integral_deriv_smul_comp_reparam` says \"If `\u03c6` is `C\u00b9` on `[[c, d]]`, the curve `\u03b3` is `C\u00b9` on the swept image\", but the hypotheses are `\u2200 t \u2208 uIcc c d, HasDerivAt \u03c6 (\u03c6' t) t` and `\u2200 u \u2208 \u03c6 '' uIcc c d, DifferentiableAt \u211d \u03b3 u` \u2014 ambient two-sided derivatives, strictly stronger than `ContDiffOn \u211d 1` on those sets. A reader with genuine C\u00b9-on-the-interval data cannot apply the lemma. Same mischaracterization in `windingNumber_comp_reparam` (\"A `C\u00b9` change of parameter `\u03c6`\"), `windingNumber_comp_reparam_affine`, `IsNullHomologous.comp_reparam` (\"any `C\u00b9` reparametrization\"), and both module docstrings (\"precomposed with a `C\u00b9` change of parameter\").",
+   "line": 89
+  },
+  {
+   "evidence": "`(h\u03c6 : \u2200 t \u2208 Set.uIcc c d, HasDerivAt \u03c6 (\u03c6' t) t)` and `(h\u03c6' : ContinuousOn \u03c6' (Set.uIcc c d))` in the same statement.",
+   "file": "TauCeti/Analysis/Contour/Winding/Number/Reparam.lean",
+   "fix": "Reword to \"The hypotheses on `\u03b3` are stated on the swept image `\u03c6 '' [[c, d]]`, which contains `[[\u03c6 c, \u03c6 d]]` \u2026\".",
+   "issue": "`windingNumber_comp_reparam`'s docstring claims \"All hypotheses are stated on the swept image `\u03c6 '' [[c, d]]`\", but `h\u03c6` and `h\u03c6'` are stated on `[[c, d]]`; only the `\u03b3`-side hypotheses are on the image.",
+   "line": 51
+  }
+ ],
+ "head_sha": "8f4e21363b1d169876cbc47c2bd84b2a3661000e",
+ "merge_base_sha": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1033,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3e911eb71c49ff8e08e3f4215c8300cf1587b01109c126d9c3a71f0cbc0ddefe",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T190824Z-1033-documentation-262836",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T19:08:24Z",
+ "submitted_by": "kim-em",
+ "summary": "Both files are well documented structurally, but several docstrings describe the regularity hypotheses as \"C\u00b9 on [[c, d]]\" / \"C\u00b9 on the image\" when the statements actually demand ambient pointwise `HasDerivAt`/`DifferentiableAt`, and one docstring misstates where the hypotheses live.",
+ "transcript_blob": "82c68b28676dbeb035bbf5055611973b5e8106403c200071940bd4fc05465a3c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34890,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 34890,
+  "cache_read_input_tokens": 100446,
+  "inference_geo": "not_available",
+  "input_tokens": 8,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 343,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 343,
+    "cache_read_input_tokens": 37303,
+    "input_tokens": 2,
+    "output_tokens": 4090,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6032,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

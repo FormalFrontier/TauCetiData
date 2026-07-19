@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.001928,
+   "returncode": 0,
+   "secs": 116.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59519,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59519,
+    "cache_read_input_tokens": 349692,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1742,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1742,
+      "cache_read_input_tokens": 50784,
+      "input_tokens": 2,
+      "output_tokens": 2363,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8595,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "cost_usd": 1.001928,
+ "dedupe_key": "TauCetiProject/TauCeti|1033|8f4e21363b1d169876cbc47c2bd84b2a3661000e|naming|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "d99ef2072d68af424dfea1a3c6a93bec3921e9a54fd78cf0d23962c24e44828a",
+ "diff_sha256": "d99ef2072d68af424dfea1a3c6a93bec3921e9a54fd78cf0d23962c24e44828a",
+ "duration_s": 116.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Affine.lean:79 `theorem windingNumber_affine (hc : c \u2260 0) : windingNumber (fun t => c * \u03b3 t + d) a b (c * z\u2080 + d) = windingNumber \u03b3 a b z\u2080`; mathlib/Mathlib/MeasureTheory/Integral/IntervalIntegral/Basic.lean:967 `theorem integral_comp_mul_add`.",
+   "file": "TauCeti/Analysis/Contour/Winding/Number/Reparam.lean",
+   "fix": "Rename to `windingNumber_comp_mul_add`, matching Mathlib's naming for precomposition with `x \u21a6 c * x + d`.",
+   "issue": "`windingNumber_comp_reparam_affine` uses `affine` for a change of *parameter*, but `windingNumber_affine` already exists in the same `TauCeti.Contour` namespace for a change of *target* (`fun t => c * \u03b3 t + d`). The two are unrelated statements with near-identical names.",
+   "line": 112
+  },
+  {
+   "evidence": "Affine.lean:44 `variable {\u03b3 : \u211d \u2192 \u2102} {a b : \u211d} {z\u2080 z c d : \u2102}`; same `a b` endpoint convention in Translate.lean:50, Scale.lean:81, Reverse.lean:51, Concat.lean:71. Named-argument passing across these files (Affine.lean:84 `(a := a) (b := b)`) makes the inversion error-prone.",
+   "file": "TauCeti/Analysis/Contour/Winding/Number/Reparam.lean",
+   "fix": "Use `a b : \u211d` for the parameter interval in both new files, and rename `\u03b1 \u03b2` to e.g. `r s` (or `c d` once the endpoints are freed) in `windingNumber_comp_reparam_affine`.",
+   "issue": "`{c d : \u211d}` names the parameter endpoints, but across `Winding/Number/` the endpoints are `a b : \u211d` and `c d : \u2102` are the affine/scaling coefficients; the same clash appears in Curve/Reparam.lean:58. The affine lemma additionally uses `{\u03b1 \u03b2 : \u211d}` for scalars while `\u03b3` denotes the curve, against the convention reserving `\u03b1 \u03b2 \u03b3` for generic types.",
+   "line": 57
+  }
+ ],
+ "head_sha": "8f4e21363b1d169876cbc47c2bd84b2a3661000e",
+ "merge_base_sha": "52c215ad3f8d3c1bc2caa6af9bec5e4af4f78732",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1033,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7c836207767ced6ec68662a1f57f6bf9f8eff1060f4ab3f49a3781b54fc5654c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T190628Z-1033-naming-a4f8b7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T19:06:28Z",
+ "submitted_by": "kim-em",
+ "summary": "Names are otherwise conclusion-describing and correctly scoped, but the affine special case reuses `affine` for a parameter change while `windingNumber_affine` in the same namespace means a target change, and the new files rename the parameter endpoints from the sibling-standard `a b` to `c d`, which already mean complex affine coefficients in this namespace.",
+ "transcript_blob": "14692b7a1d84785a6156fed0de47fe94d0f5253e7e5e73213b04bcdf804adb34",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59519,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59519,
+  "cache_read_input_tokens": 349692,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1742,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1742,
+    "cache_read_input_tokens": 50784,
+    "input_tokens": 2,
+    "output_tokens": 2363,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8595,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
