@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6794534999999999,
+   "returncode": 0,
+   "secs": 87.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 34590,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 34590,
+    "cache_read_input_tokens": 321445,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3215,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3215,
+      "cache_read_input_tokens": 38539,
+      "input_tokens": 2,
+      "output_tokens": 1516,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6705,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "cost_usd": 0.679453,
+ "dedupe_key": "TauCetiProject/TauCeti|1020|c08accb760533d8a86b27399752c641536c3a3bf|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "3657fd6ed668343c5622e76bc5a9fd0362f5197cde1358fbdfcc57c41259c1a0",
+ "diff_sha256": "3657fd6ed668343c5622e76bc5a9fd0362f5197cde1358fbdfcc57c41259c1a0",
+ "duration_s": 87.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Every proof in the file re-does this unfolding by hand \u2014 lines 44-50, 59-65 each chain `ClassGroup.induction`, `ClassGroup.equiv_mk`, `QuotientGroup.congr_mk'`, `Units.ext`. That repeated boilerplate is exactly the missing characteristic lemma.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Add `mulEquiv_mk (f : R \u2243+* S) (I : (FractionalIdeal R\u2070 (FractionRing R))\u02e3) : ClassGroup.mulEquiv f (ClassGroup.mk _ I) = ClassGroup.mk _ (Units.mapEquiv (FractionalIdeal.ringEquivOfRingEquiv _ _ f) I)` as `@[simp]`, and (for the Dedekind `I \u00b7 \u03c3I` step downstream) the corresponding `mulEquiv_mk0`.",
+   "issue": "No lemma computes `ClassGroup.mulEquiv f (ClassGroup.mk (FractionRing R) I)`, although the docstring (line 19) states the point is to \"compute it on ideal classes\". Consumers are left with Mathlib's `@[simps!]`-generated `mulEquiv_apply`, which unfolds to `QuotientGroup.congr`/`canonicalEquiv` machinery rather than a class-level statement.",
+   "line": 0
+  },
+  {
+   "evidence": "grep of mathlib/Mathlib/RingTheory/ClassGroup/Basic.lean shows no hand-written `mulEquiv_apply`/`mulEquiv_symm_apply`; only `@[simps!]` at line 459, which generates lemmas whose LHS is an application, not a bare `MulEquiv`.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Mark `mulEquiv_trans` and `mulEquiv_symm` `@[simp]`, matching `mulEquiv_refl`.",
+   "issue": "`mulEquiv_trans` (line 54) and `mulEquiv_symm` (line 76) are not `@[simp]` while the parallel `mulEquiv_refl` (line 39) is. The docstrings at lines 67-70 and 86-89 justify withholding `simp` only for the *applied* forms, whose LHS the `simps!`-generated `mulEquiv_apply`/`mulEquiv_symm_apply` already own; the unapplied equalities `mulEquiv (f.trans g) = \u2026` and `(mulEquiv f).symm = \u2026` are not reachable by those lemmas and are terminating rewrites to a normal form.",
+   "line": 54
+  },
+  {
+   "evidence": "Lines 71-73 and 90-92 establish the pointwise-companion pattern; line 39's lemma has none.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Add `mulEquiv_refl_apply (x : ClassGroup R) : ClassGroup.mulEquiv (RingEquiv.refl R) x = x := DFunLike.congr_fun mulEquiv_refl x`.",
+   "issue": "Pointwise forms are supplied for `trans` (line 71) and `symm` (line 90) but not for `refl`, so the most common consumer shape `ClassGroup.mulEquiv (RingEquiv.refl R) x = x` requires a manual `DFunLike.congr_fun`.",
+   "line": 39
+  }
+ ],
+ "head_sha": "c08accb760533d8a86b27399752c641536c3a3bf",
+ "merge_base_sha": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1020,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "973efa8a4d2d432b0341f594a6a5c4bc1558bfa643df91c4252f6d52c299ce6f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T072313Z-1020-api-design-afd82c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:23:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The functorial laws are the right surface, but the file omits the characteristic lemma computing `mulEquiv f` on `ClassGroup.mk` \u2014 the very thing the module docstring says it needs \u2014 and the `@[simp]` annotations are inconsistent across the three laws.",
+ "transcript_blob": "b418eaa1aa880c9f90b795ad9b39fe16b6bd55c4ea01522a891bbcfbb005ada0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 34590,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 34590,
+  "cache_read_input_tokens": 321445,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3215,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3215,
+    "cache_read_input_tokens": 38539,
+    "input_tokens": 2,
+    "output_tokens": 1516,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6705,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5722824999999999,
+   "returncode": 0,
+   "secs": 80.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 32784,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 32784,
+    "cache_read_input_tokens": 191565,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2520,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2520,
+      "cache_read_input_tokens": 37639,
+      "input_tokens": 2,
+      "output_tokens": 1393,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5745,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "cost_usd": 0.572282,
+ "dedupe_key": "TauCetiProject/TauCeti|1020|c08accb760533d8a86b27399752c641536c3a3bf|proof-quality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "3657fd6ed668343c5622e76bc5a9fd0362f5197cde1358fbdfcc57c41259c1a0",
+ "diff_sha256": "3657fd6ed668343c5622e76bc5a9fd0362f5197cde1358fbdfcc57c41259c1a0",
+ "duration_s": 80.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`@[simps!]` on `ClassGroup.mulEquiv` (mathlib/Mathlib/RingTheory/ClassGroup/Basic.lean:459) only generates the `equiv`/`QuotientGroup.congr` unfolding; `grep -n 'mulEquiv_mk' mathlib/Mathlib/RingTheory/ClassGroup/Basic.lean` returns nothing, so the `mk`-level computation exists nowhere. The file's own docstring (line 19) says the roadmap needs to \"compute it on ideal classes\" \u2014 that is precisely this lemma, and it is not exported.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Extract a `@[simp] theorem ClassGroup.mulEquiv_mk (f : R \u2243+* S) (I : (FractionalIdeal R\u2070 (FractionRing R))\u02e3)` stating that equation, prove it once, and reduce both proofs to `induction` + `mulEquiv_mk` + the corresponding `ringEquivOfRingEquiv_{refl,trans_apply}`.",
+   "issue": "`mulEquiv_refl` (lines 44-50) and `mulEquiv_trans` (lines 59-65) each re-derive the same missing fact inline: `ClassGroup.mulEquiv f (ClassGroup.mk (FractionRing R) I) = ClassGroup.mk (FractionRing S) (Units.mapEquiv (FractionalIdeal.ringEquivOfRingEquiv _ _ f) I)`. Each does it differently (`rw [mulEquiv_apply]` + `(ClassGroup.equiv _).injective` + `apply_symm_apply` vs. `simp only [mulEquiv_apply, equiv_mk, QuotientGroup.congr_mk']`), so the reason the proofs work is obscured and neither route is reusable.",
+   "line": 39
+  },
+  {
+   "evidence": "Line 48 `congr 1` vs. line 61 `apply congrArg (QuotientGroup.mk' (toPrincipalIdeal T (FractionRing T)).range)` \u2014 the same step, done robustly in one proof and heuristically in the other.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Use the explicit form the author already uses at line 61: `apply congrArg (QuotientGroup.mk' (toPrincipalIdeal R (FractionRing R)).range)`.",
+   "issue": "`congr 1` is used to reduce `QuotientGroup.mk' _ a = QuotientGroup.mk' _ b` to `a = b`; `congr` splits goals heuristically and can produce `HEq` side goals when the surrounding instances or the `mk'` signature shift.",
+   "line": 48
+  }
+ ],
+ "head_sha": "c08accb760533d8a86b27399752c641536c3a3bf",
+ "merge_base_sha": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1020,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c8156e4639ed1379c272a0e8072d461e6966a8e4326f4737d16b894108d59ae3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T072859Z-1020-proof-quality-540b38",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:28:59Z",
+ "submitted_by": "kim-em",
+ "summary": "Both substantive proofs (`mulEquiv_refl`, `mulEquiv_trans`) open by re-deriving the same unexposed computation of `ClassGroup.mulEquiv` on a class `ClassGroup.mk K I`, by two different ad-hoc routes; that shared fact should be a named lemma. A minor inconsistency: the same quotient-congruence step uses fragile `congr 1` in one proof and explicit `congrArg` in the other.",
+ "transcript_blob": "19ae9c8b57d2020525cda71447bfecf97909254eed402d933687cd424d3f8a81",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 32784,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 32784,
+  "cache_read_input_tokens": 191565,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2520,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2520,
+    "cache_read_input_tokens": 37639,
+    "input_tokens": 2,
+    "output_tokens": 1393,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5745,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
