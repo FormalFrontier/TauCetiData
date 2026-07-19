@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.887709,
+   "returncode": 0,
+   "secs": 158.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40899,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40899,
+    "cache_read_input_tokens": 390102,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 939,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 939,
+      "cache_read_input_tokens": 44996,
+      "input_tokens": 2,
+      "output_tokens": 2043,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11065,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "cost_usd": 0.887709,
+ "dedupe_key": "TauCetiProject/TauCeti|1011|00c6fb921ff6ad1a7cf825e1359580b05ab806d7|api-design|claude-opus-4-8|0e86c8aad121a07b|production|9",
+ "diff_blob": "eb7972d1abdd948d869d7f5dc396d444474eaf20675192661510dd110388650b",
+ "diff_sha256": "eb7972d1abdd948d869d7f5dc396d444474eaf20675192661510dd110388650b",
+ "duration_s": 158.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"preimage_const_add_smul_ball\"` \u2192 hits only at Ball.lean:61 and its own proof at :64; the sole cross-file use is `preimage_smul_vadd_ball_norm` at Harmonic/Ball.lean:50. `Real.norm_eq_abs` is `@[simp]` at mathlib/Mathlib/Analysis/Normed/Group/Real.lean:55-56, so `|c|` is normal form while Harmonic/Ball.lean:49 states `\u2016c\u2016 * r`.",
+   "file": "TauCeti/Analysis/Normed/Module/Ball.lean",
+   "fix": "Either drop the specialization and let the torsor form plus that bridge be the sole surface, or make it actually usable \u2014 state it and the harmonic radius consistently (`|c| * r`, the simp normal form) and consume it at `Harmonic/Ball.lean:50`; if kept, add the matching real-scalar `closedBall`/`sphere` forms so mean-value consumers on `Metric.sphere x r` are not left with only the `+\u1d65` shape.",
+   "issue": "`preimage_const_add_smul_ball` is exposed `@[simp]` with no consumer in the repo (`rg` finds only its own definition), and it cannot serve its natural call site: it states radius `|c| * r` while `harmonicOnNhd_comp_const_add_smul_ball_radius_iff` states `\u2016c\u2016 * r`, so `Harmonic/Ball.lean:50-52` reaches past it to the torsor form and pays a `simpa only [vadd_eq_add, add_comm]` bridge instead.",
+   "line": 61
+  }
+ ],
+ "head_sha": "00c6fb921ff6ad1a7cf825e1359580b05ab806d7",
+ "merge_base_sha": "d84bc312f1ffa39752d8b19eeea1b09f683b5562",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1011,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "253c8d8a085e6dc7e1f02b7d61e7f0de3e7a11386bfc428f28fc48f914890824",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 9,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T024609Z-1011-api-design-7ef1de",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T02:46:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The torsor-level preimage API is the right characteristic form and the prior membership finding is withdrawn. But the real-scalar specialization `preimage_const_add_smul_ball` is public, `@[simp]`, and has zero consumers \u2014 orphaned by this PR, and unusable at its natural call site because of a `|c|` vs `\u2016c\u2016` radius mismatch.",
+ "transcript_blob": "30ae186f04f5e5b86169c57b0a6291503b696d5dcdc1554856c30e19d55a145b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40899,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40899,
+  "cache_read_input_tokens": 390102,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 939,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 939,
+    "cache_read_input_tokens": 44996,
+    "input_tokens": 2,
+    "output_tokens": 2043,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11065,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
