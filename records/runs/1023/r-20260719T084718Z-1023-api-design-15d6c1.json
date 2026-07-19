@@ -1,0 +1,110 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.917676,
+   "returncode": 0,
+   "secs": 187.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43797,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43797,
+    "cache_read_input_tokens": 259632,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1929,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1929,
+      "cache_read_input_tokens": 57950,
+      "input_tokens": 1,
+      "output_tokens": 4410,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13591,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.917676,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|f1bc467887788616148d9544f8a5d50640d938ac|api-design|claude-opus-4-8|0e86c8aad121a07b|production|4",
+ "diff_blob": "b0b64954a4378dd8cd73f86ceb2af438e9df7499cea8deafffe77fdb8383bb0e",
+ "diff_sha256": "b0b64954a4378dd8cd73f86ceb2af438e9df7499cea8deafffe77fdb8383bb0e",
+ "duration_s": 187.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The author's contested reply tested removal while retaining `:= rfl`; the rubric flags the `:= (rfl)` idiom, and the codebase already ships non-exposed defs with `by rfl` defining equations: TimeReversal.lean:38,44 (`def revProcess` \u2026 `revProcess_apply \u2026 := by rfl`, no @[expose]) and Reverse.lean:57,65 (`noncomputable def revCEFinite` \u2026 `revCEFinite_apply \u2026 := by rfl`, no @[expose]), both module + public section.",
+   "file": "TauCeti/Analysis/Calculus/HalfLinePrimitive.lean",
+   "fix": "Drop `@[expose]` from `halfLinePrimitive` and prove `halfLinePrimitive_def` with `:= by rfl` (or `:= (rfl)`), keeping the body hidden.",
+   "issue": "`halfLinePrimitive` is `@[expose]`d, but no downstream consumer unfolds its body (Integral.lean uses only halfLinePrimitive_def and the value/derivative lemmas). The exposure is forced solely by the bare `:= rfl` proof of `halfLinePrimitive_def` at line 49, leaking the `f (max x 0)` integrand to defeq downstream.",
+   "line": "43"
+  }
+ ],
+ "head_sha": "f1bc467887788616148d9544f8a5d50640d938ac",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e0f9ad7d8e7f1353e9f1c73bc5fae5a9dfcd02fe6cf323addd03e1150a36f79a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T084718Z-1023-api-design-15d6c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T08:47:18Z",
+ "submitted_by": "kim-em",
+ "summary": "Public surface and characteristic API are minimal, complete, and correctly annotated, and IsBernsteinFunction stays unexposed via isBernsteinFunction_iff. The one issue is the avoidable @[expose] on halfLinePrimitive: switching halfLinePrimitive_def from `:= rfl` to `:= by rfl`/`:= (rfl)` lets the body stay hidden, matching in-repo precedent.",
+ "transcript_blob": "dd3239598ed8e2ab3473de8ca9e2ee8f8395d63c6824efc9005c55dcefb03e50",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43797,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43797,
+  "cache_read_input_tokens": 259632,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1929,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1929,
+    "cache_read_input_tokens": 57950,
+    "input_tokens": 1,
+    "output_tokens": 4410,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13591,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
