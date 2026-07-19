@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.642569,
+   "returncode": 0,
+   "secs": 96.4,
+   "usage": {
+    "cached_input_tokens": 304128,
+    "input_tokens": 376603,
+    "output_tokens": 4271,
+    "reasoning_output_tokens": 1673
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "cost_estimated": true,
+ "cost_usd": 0.642569,
+ "dedupe_key": "TauCetiProject/TauCeti|1020|f9e712976f6916ac23ef036ad06626795823f1e6|api-design|gpt-5.5|0e86c8aad121a07b|production|2",
+ "diff_blob": "3d9993aef50e025ee8f84cd3554228c5d3ae7f2e8a83a78baea54593abfa9018",
+ "diff_sha256": "3d9993aef50e025ee8f84cd3554228c5d3ae7f2e8a83a78baea54593abfa9018",
+ "duration_s": 96.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep hits: lines 89, 96, and 115 define the pointwise laws without `@[simp]`; analogous quotient API marks `elementaryTwoQuotientCongr_refl_apply` and `elementaryTwoQuotientCongr_trans_apply` as `@[simp]` at `TauCeti/Algebra/Group/ElementaryTwoQuotient/Basic.lean:251,256` and the class-group wrapper at `TauCeti/NumberTheory/ClassGroup/ElementaryTwoQuotient.lean:144,149`.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Mark these pointwise forms `@[simp]` (renaming `mulEquiv_symm_apply'` if needed to avoid the generated Mathlib name) or provide equivalently named `@[simp]` normal-form wrappers.",
+   "issue": "The public pointwise characteristic laws `mulEquiv_trans_apply`, `mulEquiv_refl_apply`, and `mulEquiv_symm_apply'` are deliberately not `@[simp]`, so normal class-group action expressions are not exposed as simplifier normal forms.",
+   "line": 89
+  },
+  {
+   "evidence": "Line 123 declares `@[expose] noncomputable def mulEquivHom`; line 129 provides the intended computation lemma `@[simp] theorem mulEquivHom_apply ... := rfl`, so exposing the definition body is unnecessary public surface.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Remove `@[expose]` from `mulEquivHom` and keep/extend characteristic lemmas such as `mulEquivHom_apply` and pointwise simp forms for computation.",
+   "issue": "`mulEquivHom` exposes its body even though the public API already supplies `mulEquivHom_apply`; downstream consumers should not need to unfold the bundled hom to use the action.",
+   "line": 123
+  }
+ ],
+ "head_sha": "f9e712976f6916ac23ef036ad06626795823f1e6",
+ "merge_base_sha": "16a83b314b4631a57d0837ddb29fa059e5867822",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1020,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "62be8d60e4c099453dfc8793354d6edf35c381316fbfcff9b24a3c6767e73a64",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T075407Z-1020-api-design-4aee98",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:54:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface still exposes implementation details and withholds automation from the pointwise functorial normal forms consumers need for class-group actions.",
+ "transcript_blob": "15e5927807023615d9069382a1e6e66ce1490035a058bc457bfce05f1958828d",
+ "usage": {
+  "cached_input_tokens": 304128,
+  "input_tokens": 376603,
+  "output_tokens": 4271,
+  "reasoning_output_tokens": 1673
+ },
+ "verdict": "request_changes"
+}
