@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.700102,
+   "returncode": 0,
+   "secs": 89.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46379,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46379,
+    "cache_read_input_tokens": 121006,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3369,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3369,
+      "cache_read_input_tokens": 46272,
+      "input_tokens": 2,
+      "output_tokens": 3365,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6696,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.700102,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|ed5a5b9066a52d00da4806aa635793b59b15dad9|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "5e49aabe62a259de61f738eea4f72b5441238ee8ec2637df13358c03b74c8f7e",
+ "diff_sha256": "5e49aabe62a259de61f738eea4f72b5441238ee8ec2637df13358c03b74c8f7e",
+ "duration_s": 89.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`def halfLinePrimitive` at line 58 with no `@[expose]`; grep of the file shows the only equations are the two half-line-conditional ones.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Add `theorem halfLinePrimitive_def (f : \u211d \u2192 \u211d) (t : \u211d) : halfLinePrimitive f t = \u222b x in (0:\u211d)..t, f (max x 0) := (rfl)` and use it in place of the `rw [halfLinePrimitive]` unfoldings.",
+   "issue": "`halfLinePrimitive`'s body is not `@[expose]`d (correct) but no unconditional defining equation is exported: only `halfLinePrimitive_eq_integral_of_nonneg` and `halfLinePrimitive_of_nonpos`. In-file proofs unfold with `rw [halfLinePrimitive]` (lines 73, 81, 91, 137), which downstream files cannot do.",
+   "line": 58
+  },
+  {
+   "evidence": "Line 128\u2013129 `have hcontinuous : ContinuousOn (halfLinePrimitive f) (Ici 0) := ...`; grep for `continuous_primitive` in Integral.lean returns nothing.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Promote it to a named lemma `continuous_halfLinePrimitive (hf : ContinuousOn f (Ici 0)) : Continuous (halfLinePrimitive f)` \u2014 the `max` extension makes it continuous on all of \u211d \u2014 and use it in the `have`.",
+   "issue": "Continuity of `halfLinePrimitive f` is derived only inside a `have` in `isBernsteinFunction_halfLinePrimitive`. It needs nothing beyond `ContinuousOn f (Ici 0)`, yet a consumer can only recover it via `IsBernsteinFunction.continuousOn`, i.e. by supplying complete monotonicity it does not need. (The PR description claims reuse of `intervalIntegral.continuous_primitive`; it appears nowhere in the file.)",
+   "line": 128
+  },
+  {
+   "evidence": "Lines 146\u2013148 prove the specialization from `isBernsteinFunction_const` + `.add` + `.congr`; `Basic.lean` lines 139\u2013160 contain `add`/`smul` but no `const_add`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Add `IsBernsteinFunction.const_add (hf) (hc : 0 \u2264 c) : IsBernsteinFunction (fun t \u21a6 c + f t)` to `Basic.lean` next to `add`/`smul`, drop the two specialized `const_add_halfLinePrimitive` wrappers, or else also state the integral-form const-add so the doc matches the API.",
+   "issue": "`isBernsteinFunction_const_add_halfLinePrimitive` (and its `IsCompletelyMonotone` twin, line 168) is just `isBernsteinFunction_const.add \u2026 |>.congr rfl`; the reusable general lemma `IsBernsteinFunction.const_add` is missing from `Basic.lean`. Meanwhile the module doc (line 19) promises `t \u21a6 c + \u222b\u2080\u1d57 f` is Bernstein, but no lemma states the const-add case in integral form.",
+   "line": 144
+  }
+ ],
+ "head_sha": "ed5a5b9066a52d00da4806aa635793b59b15dad9",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9c874eb713bdfe580eb9143c3d43526e98b3cd9d250a19e29364609605774229",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T073318Z-1023-api-design-a1deba",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:33:18Z",
+ "submitted_by": "kim-em",
+ "summary": "`isBernsteinFunction_iff` and `IsBernsteinFunction.congr` are the right additions, but `halfLinePrimitive` ships without its defining equation or a standalone continuity lemma, so consumers cannot reason about it except through the full Bernstein conclusion. The const-add variants also duplicate `add` without a general closure lemma.",
+ "transcript_blob": "a2ff6f863bb9f5e7b852c3004d9ae5cb7c32f8e943219a124781b375c6d4e9a4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46379,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46379,
+  "cache_read_input_tokens": 121006,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3369,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3369,
+    "cache_read_input_tokens": 46272,
+    "input_tokens": 2,
+    "output_tokens": 3365,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6696,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8102759999999999,
+   "returncode": 0,
+   "secs": 112.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 49391,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 49391,
+    "cache_read_input_tokens": 175044,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2778,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2778,
+      "cache_read_input_tokens": 50343,
+      "input_tokens": 2,
+      "output_tokens": 2340,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8830,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "cost_usd": 0.810276,
+ "dedupe_key": "TauCetiProject/TauCeti|1023|ed5a5b9066a52d00da4806aa635793b59b15dad9|generality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "5e49aabe62a259de61f738eea4f72b5441238ee8ec2637df13358c03b74c8f7e",
+ "diff_sha256": "5e49aabe62a259de61f738eea4f72b5441238ee8ec2637df13358c03b74c8f7e",
+ "duration_s": 112.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Integral.lean:147-148 is `((isBernsteinFunction_const hc).add (hf.isBernsteinFunction_halfLinePrimitive hcont)).congr fun _ _ \u21a6 rfl` \u2014 `halfLinePrimitive` appears only as the argument. `isBernsteinFunction_const` (Basic.lean:165) and `IsBernsteinFunction.add` (Basic.lean:140) already exist; `grep -rn \"const_add\" TauCeti/Analysis/CompletelyMonotone/` shows no Bernstein `const_add`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Add `IsBernsteinFunction.const_add (hf : IsBernsteinFunction f) {c : \u211d} (hc : 0 \u2264 c) : IsBernsteinFunction (fun t => c + f t)` to Bernstein/Basic.lean next to `add`/`smul`, with the same body, and delete both primitive-specific variants; callers write `(hf.isBernsteinFunction_halfLinePrimitive hcont).const_add hc`.",
+   "issue": "`isBernsteinFunction_const_add_halfLinePrimitive` (and its `IsCompletelyMonotone` twin at line 168) proves a special case of a general fact: `c + g` is Bernstein for any Bernstein `g` and `c \u2265 0`. The proof uses no property of `halfLinePrimitive`.",
+   "line": 144
+  },
+  {
+   "evidence": "Basic.lean:65-66: \"The open-half-line derivative condition is the standard one and permits boundary singularities such as the right derivative of `sqrt` at `0`\"; Basic.lean:26-27 repeats that the definition \"includes standard examples whose right derivative blows up at `0`\". `IsBernsteinFunction` (Basic.lean:67-69) requires only `ContinuousOn f (Ici 0)` and `ContDiffOn \u211d \u221e f (Ioi 0)`, never differentiability at `0`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "State the Bernstein results with `ContinuousOn f (Ioi 0)` (free from `hf.contDiffOn`) plus `\u2200 T, 0 < T \u2192 IntegrableOn f (Ioc 0 T)`, defining the primitive as `\u222b x in Ioc 0 t, f x`; establish `HasDerivAt` only on `Ioi 0` (all `IsBernsteinFunction` needs) and continuity at `0` from dominated convergence. Keep the current `ContinuousOn f (Ici 0)` statements as corollaries if desired.",
+   "issue": "`ContinuousOn f (Ici 0)` is stronger than the result needs and excludes the motivating case. `f = fun x => x ^ (-1/2 : \u211d)` is completely monotone on `(0,\u221e)` and integrable at `0`, with primitive `2\u221at` a Bernstein function, but is not continuous on `Ici 0`, so this theorem cannot reach it. The `f (max x 0)` definition forces the excess hypothesis by demanding a two-sided derivative at `0`, which `IsBernsteinFunction` never requires.",
+   "line": 151
+  },
+  {
+   "evidence": "Integral.lean:121 \u2014 `(hcont 0 self_mem_Ici).tendsto.mono_left ...` is the sole use of `hcont`; the `0 < t` branch (line 118) uses only `hf.nonneg`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Integral.lean",
+   "fix": "Weaken to `(hcont : ContinuousWithinAt f (Ici 0) 0)` and replace `hcont 0 self_mem_Ici` with `hcont`; call sites pass `hcont 0 self_mem_Ici`.",
+   "issue": "`nonneg_of_continuousOn` assumes `ContinuousOn f (Ici 0)` but the proof only ever uses continuity within `Ici 0` at the single point `0`.",
+   "line": 115
+  }
+ ],
+ "head_sha": "ed5a5b9066a52d00da4806aa635793b59b15dad9",
+ "merge_base_sha": "aebcc390c85d41dca88d2b3e99f069e8803bc2d2",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1023,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f8b0111a17d64339b3980cf24b2e7e4359ae20268bf99481225ba23de96759ce",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T073447Z-1023-generality-fb4783",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T07:34:47Z",
+ "submitted_by": "kim-em",
+ "summary": "Two `const_add` lemmas are special cases of a general Bernstein closure fact that is one line and belongs in Basic.lean, and the `ContinuousOn f (Ici 0)` hypothesis is stronger than the mathematics needs \u2014 it excludes `t \u21a6 2\u221at`, the boundary-singularity example the predicate was explicitly designed to admit.",
+ "transcript_blob": "56474d87a2215481725f5da15d5751d885df6bee323ac43cc1db7408665ced3d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 49391,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 49391,
+  "cache_read_input_tokens": 175044,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2778,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2778,
+    "cache_read_input_tokens": 50343,
+    "input_tokens": 2,
+    "output_tokens": 2340,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8830,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
