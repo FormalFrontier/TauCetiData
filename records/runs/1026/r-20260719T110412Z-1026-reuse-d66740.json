@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.559763,
+   "returncode": 0,
+   "secs": 174.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 17372,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 17372,
+    "cache_read_input_tokens": 103128,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 991,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 991,
+      "cache_read_input_tokens": 32463,
+      "input_tokens": 2,
+      "output_tokens": 10947,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13121,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "cost_usd": 0.559763,
+ "dedupe_key": "TauCetiProject/TauCeti|1026|31c8e502eedeaab27331386fe0616eb66354956c|reuse|claude-opus-4-8|0e86c8aad121a07b|production|2",
+ "diff_blob": "f82f2aea79aad8f8c258504d759b751e3b00c971497e723c86806af9822f80b3",
+ "diff_sha256": "f82f2aea79aad8f8c258504d759b751e3b00c971497e723c86806af9822f80b3",
+ "duration_s": 174.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/.../LpSeminorm/Basic.lean:549 `MemLp.of_bound (hf : AEStronglyMeasurable f \u03bc) (C) (hfC : \u2200\u1d50 x \u2202\u03bc, \u2016f x\u2016 \u2264 C)`; body at BoundedMemLp.lean:39-40 is exactly that call. Grep for `memLp_comp_of_bound` finds only its def and the single use at BoundedObservable.lean:66.",
+   "file": "TauCeti/MeasureTheory/Function/BoundedMemLp.lean",
+   "fix": "Drop the lemma and inline the one call site: `MemLp.of_bound ((hf.comp_aemeasurable (hX_meas i)).aestronglyMeasurable) C (...)`. If a general single-map utility is genuinely wanted for reuse, keep it but note it has no consumer outside this PR.",
+   "issue": "`memLp_comp_of_bound` is a thin wrapper over `MemLp.of_bound`; its whole body is `MemLp.of_bound (hf.comp_aemeasurable hg).aestronglyMeasurable C hbound` \u2014 only standard measurability glue. Its sole consumer is `covariance_structure_comp_of_bound`.",
+   "line": "36"
+  },
+  {
+   "evidence": "code/TauCeti/Probability/Exchangeability/L2/Covariance.lean:112-119 already states/proves the identical `\u2227`-bundle; Map.lean:74 provides `Contractable.map_values`. Consumer chain confirmed at BoundedObservable.lean:65.",
+   "file": "TauCeti/Probability/Exchangeability/L2/BoundedObservable.lean",
+   "fix": "Inline into `covariance_structure_comp_of_bound`, collapsing the PR to the single roadmap deliverable that directly composes `map_values` + `contractable_covariance_structure`. Keep it only if a general (non-bounded) L\u00b2 consumer is intended, in which case state that rationale.",
+   "issue": "`covariance_structure_comp` restates the `contractable_covariance_structure` conjunction verbatim for the mapped process; its entire proof is `contractable_covariance_structure (hX_contractable.map_values hf hX_meas) hL2`. Its only consumer is `covariance_structure_comp_of_bound` in the same PR.",
+   "line": "44"
+  }
+ ],
+ "head_sha": "31c8e502eedeaab27331386fe0616eb66354956c",
+ "merge_base_sha": "827bf172af811f09fafc34733d9a88682e5376ef",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1026,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "ced98f211029261cbd438406990a4f13e10fce0e5dc3b5f8bb6bb737a15c79c7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T110412Z-1026-reuse-d66740",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T11:04:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The deliverable `covariance_structure_comp_of_bound` correctly reuses `MemLp.of_bound`, `Contractable.map_values`, and `contractable_covariance_structure`, but the two intermediate public lemmas are one-line compositions each consumed only by the next step toward that single leaf. The prior strictly-stronger-hypotheses / no-consumer objections are resolved.",
+ "transcript_blob": "2de7c8ff346d23ed9981b3e91344c03cf9bc9340f2dce6fc2eea9f4cadac18ab",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 17372,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 17372,
+  "cache_read_input_tokens": 103128,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 991,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 991,
+    "cache_read_input_tokens": 32463,
+    "input_tokens": 2,
+    "output_tokens": 10947,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13121,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
