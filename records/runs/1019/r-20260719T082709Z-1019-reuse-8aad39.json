@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.281868,
+   "returncode": 0,
+   "secs": 42.9,
+   "usage": {
+    "cached_input_tokens": 63616,
+    "input_tokens": 102084,
+    "output_tokens": 1924,
+    "reasoning_output_tokens": 774
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fa3b233050645c0a9dad8c739efadd94f9264c0b",
+ "cost_estimated": true,
+ "cost_usd": 0.281868,
+ "dedupe_key": "TauCetiProject/TauCeti|1019|8e6f731981ba2ed3e1e3a42d7ec8c4a028005267|reuse|gpt-5.5|0e86c8aad121a07b|production|5",
+ "diff_blob": "f1ba8ccd01a27c727614a2b7a98a07897a9fc7211a59f0317b82da1112302894",
+ "diff_sha256": "f1ba8ccd01a27c727614a2b7a98a07897a9fc7211a59f0317b82da1112302894",
+ "duration_s": 42.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` shows `map_continuousMap_const_apply_eq_one` at lines 150-153 proves `map (ContinuousMap.const X y) rfl a = 1`; lines 221-225 prove the same pointwise fact again inside `MonoidHom.ext`.",
+   "file": "TauCeti/Topology/Homotopy/HomotopyGroup/Map.lean",
+   "fix": "After `ext a`, use `exact map_continuousMap_const_apply_eq_one (x := x) y a` (or the equivalent one-liner) rather than rewriting through `map_continuousMap_const_apply` and `HomotopyGroup.one_def` again.",
+   "issue": "`mapHom_continuousMap_const_eq_one` reproves the pointwise constant-map-to-one result instead of using `map_continuousMap_const_apply_eq_one`.",
+   "line": 224
+  },
+  {
+   "evidence": "`rg` shows `map_apply_eq_one_of_subsingleton` at lines 158-161 proves `map f hf a = 1`; lines 230-234 redo the reduction through `f = ContinuousMap.const X y` before applying the constant-map hom lemma.",
+   "file": "TauCeti/Topology/Homotopy/HomotopyGroup/Map.lean",
+   "fix": "Prove it pointwise with `ext a; exact map_apply_eq_one_of_subsingleton f hf a`, reusing the existing lemma instead of redoing `Subsingleton.elim` and constant-map reduction.",
+   "issue": "`mapHom_eq_one_of_subsingleton` repeats the subsingleton-to-constant reduction already packaged by `map_apply_eq_one_of_subsingleton`.",
+   "line": 232
+  }
+ ],
+ "head_sha": "8e6f731981ba2ed3e1e3a42d7ec8c4a028005267",
+ "merge_base_sha": "b67da70503cce70409ec594ca6cd68442ef600e1",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1019,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "c9ab9a0bd19ad9ba67f7fabd4530c89dd8d08fb8d26e478647da88494cbb1545",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260719T082709Z-1019-reuse-8aad39",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-19T08:27:09Z",
+ "submitted_by": "kim-em",
+ "summary": "No new public declaration is directly replaced by an existing Mathlib or TauCeti declaration, but two new proofs rederive lemmas introduced earlier in the same diff.",
+ "transcript_blob": "fd5774454c6bf7779d6ef9ff485dd1b69e74bde0eff7f8577fc80363f423108b",
+ "usage": {
+  "cached_input_tokens": 63616,
+  "input_tokens": 102084,
+  "output_tokens": 1924,
+  "reasoning_output_tokens": 774
+ },
+ "verdict": "request_changes"
+}
