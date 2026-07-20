@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6843005,
+   "returncode": 0,
+   "secs": 141.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 31357,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 31357,
+    "cache_read_input_tokens": 184005,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3120,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3120,
+      "cache_read_input_tokens": 44319,
+      "input_tokens": 1,
+      "output_tokens": 6066,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10520,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "cost_usd": 0.6843,
+ "dedupe_key": "TauCetiProject/TauCeti|1046|c90d7a3d92ce5a01e988a30d443892bb2d1164e5|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "25cc3eed2baeddbfd0b205d90a979de5e5fb3a55f57eb976cbbd6fb8f5491033",
+ "diff_sha256": "25cc3eed2baeddbfd0b205d90a979de5e5fb3a55f57eb976cbbd6fb8f5491033",
+ "duration_s": 141.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The new `IsTotallyReal` (Basic.lean:35, no `@[expose]`) is constructed and consumed across modules purely via `(isTotallyReal_iff _ _).2 (...)` in Lagrangian/TotallyReal.lean:93-95; all `IsMaximalTotallyReal` consumers (Symplectic/Finrank.lean:94, Symplectic/TotallyReal.lean:48-60) use accessors or `rw`+`exact`, never a defeq unfold.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Basic.lean",
+   "fix": "Drop `@[expose]` from `IsMaximalTotallyReal`, matching the parallel `IsTotallyReal` def which has no `@[expose]`.",
+   "issue": "`IsMaximalTotallyReal` is `@[expose] def`, exposing its `IsCompl` body downstream, but no consumer unfolds it: every use goes through `isMaximalTotallyReal_iff` and the accessors (`isCompl`, `disjoint`, `two_mul_finrank_eq`, etc.). This is an over-exposed body kept where the characteristic API already suffices.",
+   "line": "44"
+  },
+  {
+   "evidence": "`not_isMaximalTotallyReal_of_odd_finrank` body is `fun hL => (Nat.not_odd_iff_even.2 (hL.even_finrank hJ)) h` \u2014 a one-line consequence of `even_finrank`; no consumer grep hit outside the file.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Drop it, or keep only if a downstream target needs the non-existence phrasing; otherwise let `even_finrank` stand.",
+   "issue": "`not_isMaximalTotallyReal_of_odd_finrank` is a speculative public lemma with no roadmap consumer; its content is already delivered by `even_finrank` (odd finrank \u21d2 \u00acEven \u21d2 no maximal subspace), so it duplicates existing API.",
+   "line": "108"
+  }
+ ],
+ "head_sha": "c90d7a3d92ce5a01e988a30d443892bb2d1164e5",
+ "merge_base_sha": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1046,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "389b7e3fea821a876d7d3037d6df37ef0ac80bce1bdf0cd805806b84354756ff",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T102307Z-1046-api-design-2a6071",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T10:23:07Z",
+ "submitted_by": "kim-em",
+ "summary": "Characteristic API for both predicates is complete and correctly annotated, and bodies are otherwise hidden. Two API points: an unnecessary `@[expose]` on `IsMaximalTotallyReal`, and a redundant public corollary.",
+ "transcript_blob": "cf519f9a97f7f75893c697dfd5f7c6c3aa419009afda5a922e192d8b678801a8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 31357,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 31357,
+  "cache_read_input_tokens": 184005,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3120,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3120,
+    "cache_read_input_tokens": 44319,
+    "input_tokens": 1,
+    "output_tokens": 6066,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10520,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
