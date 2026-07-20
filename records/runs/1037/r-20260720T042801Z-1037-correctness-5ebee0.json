@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8337794999999999,
+   "returncode": 0,
+   "secs": 111.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 47685,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 47685,
+    "cache_read_input_tokens": 238273,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1784,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1784,
+      "cache_read_input_tokens": 44923,
+      "input_tokens": 2,
+      "output_tokens": 2003,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9037,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "cost_usd": 0.833779,
+ "dedupe_key": "TauCetiProject/TauCeti|1037|7b7469edcc654e64dc627cbe5fdfe3379eeda4ab|correctness|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "diff_sha256": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "duration_s": 111.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n 'integral_hermite' code/TauCeti/Analysis/SpecialFunctions/Hermite/Orthogonality.lean \u2192 lines 137, 165 with identical `if m = n then (n.factorial : \u211d) * Real.sqrt (2 * \u03c0) else 0` / `then (n.factorial : \u211d) else 0` right-hand sides. The PR description's claim \"The content is not in `main`\" is contradicted by this file.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Drop the duplicated theorems and keep only the genuinely new material (`hermite\u211d` and the `eval`-shaped bridge lemma), stated on top of the existing `TauCeti.integral_hermite_mul_hermite_*`.",
+   "issue": "`TauCeti.Hermite.integral_hermite_mul_hermite_mul_gaussian` and `\u2026_gaussianReal` are statement-for-statement duplicates of `TauCeti.integral_hermite_mul_hermite_mul_gaussian` (Hermite/Orthogonality.lean:137) and `TauCeti.integral_hermite_mul_hermite_gaussianReal` (:165), already in main. Only the extra `Hermite` namespace prevents a clash, so CI stays green.",
+   "line": 0
+  },
+  {
+   "evidence": "grep -n 'integrable_eval_mul_gaussianEnvelope' code/TauCeti/Probability/Distributions/Gaussian/PolynomialMemLp.lean:65; grep -n 'integrable_aeval_mul_gaussian' code/TauCeti/Analysis/SpecialFunctions/Hermite/Orthogonality.lean:53",
+   "file": "TauCeti/Analysis/SpecialFunctions/GaussianPolynomialIntegrable.lean",
+   "fix": "Reuse the existing lemmas; if the general `a > 0` form is wanted, add it as a strengthening in the existing file rather than a parallel namespace.",
+   "issue": "`Polynomial.integrable_eval_mul_gaussian` / `integrable_aeval_mul_gaussian` duplicate existing main API: `TauCeti.integrable_eval_mul_gaussianEnvelope` (PolynomialMemLp.lean:65) at \u03bc=0, w=1 is the same statement, and `TauCeti.integrable_aeval_mul_gaussian` (Hermite/Orthogonality.lean:53) is literally the \u2124[X] version.",
+   "line": 0
+  },
+  {
+   "evidence": "Identical body `rw [aeval_def, eval\u2082_eq_eval_map, algebraMap_int_eq]` appears in both new files.",
+   "file": "TauCeti/Analysis/SpecialFunctions/GaussianPolynomialIntegrable.lean",
+   "fix": "Define it once (Hermite/Real.lean, or better reuse Mathlib's `Polynomial.eval_map`/`aeval_def` directly) and import.",
+   "issue": "`eval_map_intCast` is defined identically in two new files (also Hermite/Real.lean:33), both `private` with the same proof.",
+   "line": 43
+  }
+ ],
+ "head_sha": "7b7469edcc654e64dc627cbe5fdfe3379eeda4ab",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1037,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fb1abc9be2ba7d8f043ae5f9b4b2b3fe8467ab9bd67d5ea2aa66187c2d27511c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T042801Z-1037-correctness-5ebee0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T04:28:01Z",
+ "submitted_by": "kim-em",
+ "summary": "Every new statement is mathematically faithful \u2014 the probabilists' Hermite/Gaussian pairing, the \u221a(2\u03c0) and n! constants, and the measure-vs-density normalisation all check out against Mathlib. However, the PR's central premise is false: the A1 results already exist verbatim in main, so this lands duplicate declarations.",
+ "transcript_blob": "e961f119e6f4365d3bd50819525f1afcdda3caf41031af200deb40dce9abff16",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47685,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 47685,
+  "cache_read_input_tokens": 238273,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1784,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1784,
+    "cache_read_input_tokens": 44923,
+    "input_tokens": 2,
+    "output_tokens": 2003,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9037,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

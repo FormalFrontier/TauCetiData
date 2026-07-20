@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5954120000000003,
+   "returncode": 0,
+   "secs": 211.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 88552,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 88552,
+    "cache_read_input_tokens": 541862,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2730,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2730,
+      "cache_read_input_tokens": 78796,
+      "input_tokens": 2,
+      "output_tokens": 3164,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16872,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "64fcdaf7f5e0c34da168a1a84c0b4aa89d15c743",
+ "cost_usd": 1.595412,
+ "dedupe_key": "TauCetiProject/TauCeti|1039|aadbbb4e5806f4d7742e34b2199666cc6b7d348a|generality|claude-opus-4-8|0e86c8aad121a07b|production|2",
+ "diff_blob": "af8629b5cc5d3ee9cde94ea6579ef3d80dbe8d9872d4df4ac4ebf4b7de38317d",
+ "diff_sha256": "af8629b5cc5d3ee9cde94ea6579ef3d80dbe8d9872d4df4ac4ebf4b7de38317d",
+ "duration_s": 211.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/RingTheory/Frobenius.lean:54 `def AlgHom.IsArithFrobAt (\u03c6 : S \u2192\u2090[R] S) (Q : Ideal S) : Prop := \u2200 x, \u03c6 x - x ^ Nat.card (R \u29f8 Q.under R) \u2208 Q` and :181 `abbrev IsArithFrobAt ... (\u03c3 : M) (Q : Ideal S) : Prop := (MulSemiringAction.toAlgHom R S \u03c3).IsArithFrobAt Q` \u2014 neither requires primality; Mathlib adds `[Q.IsPrime]` only per-lemma where used (`mem_stabilizer` :192, `comap_eq`, `localize`). Ideal/Over.lean:125 `class LiesOver` requires none either. natCard_quotient_under (line 56) declares only `[Q.LiesOver (span {(p : \u2124)})]`.",
+   "file": "TauCeti/NumberTheory/LegendreSymbol/Frobenius.lean",
+   "fix": "Drop `[Q.IsPrime]` from `AlgHom.IsArithFrobAt.apply_sqrt` (line 68) and `IsArithFrobAt.smul_sqrt` (line 148), then from `TauCeti.NumberField.isArithFrobAt_apply_sqrt` (NumberField/Frobenius.lean:80) and `isArithFrobAt_multiquadratic_eq_one_iff` (Multiquadratic/Frobenius.lean:64), whose proofs only forward to it. Keep it on `exists_isArithFrobAt` and `exists_isArithFrobAt_multiquadratic`, which genuinely use it (`Ring.DimensionLEOne.maximalOfPrime hQ \u2039Q.IsPrime\u203a`). Also amend the docstrings/module doc, which say \"Q a prime of S\" and attribute the sign separation to Q.",
+   "issue": "`[Q.IsPrime]` is unused in `AlgHom.IsArithFrobAt.apply_sqrt`. The proof uses only ideal operations (`Q.mul_mem_right`, `Q.add_mem`, `Q.neg_mem`), `natCard_quotient_under` (which declares only `[Q.LiesOver ...]`), and `mul_eq_zero` \u2014 i.e. `IsDomain S`, not primality of `Q`. In `hsep` the primality invoked is `hpint : Prime (p : \u2124)`, not `Q`. The same unused instance is threaded through three downstream declarations, so callers must produce a `Q.IsPrime` instance to compute a Frobenius image on a square root.",
+   "line": 68
+  },
+  {
+   "evidence": "NumberField/Frobenius.lean:86-92 `have hact : \u2200 y : \ud835\udcde K, algebraMap (\ud835\udcde K) K (\u03c3 \u2022 y) = \u03c3 (algebraMap (\ud835\udcde K) K y)` with `hgal : galRestrict \u2124 \u211a K (\ud835\udcde K) \u03c3 y = \u03c3 \u2022 y`; MultiquadraticSplitting.lean:130-137 `have hgal : \u2200 x : \ud835\udcde K, galRestrict \u2124 \u211a K (\ud835\udcde K) \u03c3 x = \u03c3 \u2022 x` / `have hact : \u2200 x : \ud835\udcde K, algebraMap (\ud835\udcde K) K (\u03c3 \u2022 x) = \u03c3 (algebraMap (\ud835\udcde K) K x)` \u2014 same statement, same three-step proof.",
+   "file": "TauCeti/NumberTheory/NumberField/Frobenius.lean",
+   "fix": "Extract it once as a public lemma, e.g. `algebraMap_smul (\u03c3 : K \u2243\u2090[\u211a] K) (y : \ud835\udcde K) : algebraMap (\ud835\udcde K) K (\u03c3 \u2022 y) = \u03c3 (algebraMap (\ud835\udcde K) K y)`, next to `integralSqrt` in NumberField/IntegralSqrt.lean (or in NumberField/Frobenius.lean), and use it from both files.",
+   "issue": "The `hgal`/`hact` block (Galois action on `\ud835\udcde K` is compatible with `algebraMap (\ud835\udcde K) K`) is proved inline here and again verbatim at MultiquadraticSplitting.lean:130-137, both via `galRestrict`/`algebraMap_galRestrict_apply`/`integralClosure.coe_smul`. This is one general fact duplicated, in a PR that already extracts three other shared helpers (`integralSqrt`, `algEquiv_eq_one_of_adjoin_eq_top`, `algebraMap_int_mem_iff_dvd_of_liesOver`) into shared files and edits both call sites.",
+   "line": 86
+  }
+ ],
+ "head_sha": "aadbbb4e5806f4d7742e34b2199666cc6b7d348a",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1039,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "fb83edcbc91f2b1138e6d14c2b99203d94d4364f4941f19af4436fe1a2008296",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T043839Z-1039-generality-2becc1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T04:38:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior round's family-packaging finding is resolved (isArithFrobAt_apply_sqrt now takes a single {x : K} {d : \u2124}). Remaining: the [Q.IsPrime] instance argument is unused in the four square-root lemmas \u2014 the sign separation is carried by IsDomain S, not by primality of Q \u2014 and the Galois-action compatibility block is proved inline twice.",
+ "transcript_blob": "de0433284d60027c7aa490f2d2d9b17a6a7b3276c082a8eefc36fab85f46fab7",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 88552,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 88552,
+  "cache_read_input_tokens": 541862,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2730,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2730,
+    "cache_read_input_tokens": 78796,
+    "input_tokens": 2,
+    "output_tokens": 3164,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16872,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,131 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.077292,
+   "returncode": 0,
+   "secs": 114.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62886,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62886,
+    "cache_read_input_tokens": 463162,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2451,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2451,
+      "cache_read_input_tokens": 59423,
+      "input_tokens": 2,
+      "output_tokens": 2902,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8183,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "64fcdaf7f5e0c34da168a1a84c0b4aa89d15c743",
+ "cost_usd": 1.077292,
+ "dedupe_key": "TauCetiProject/TauCeti|1039|1f5078979028800af13327618848f17103310ec1|reuse|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "088d21ef9b00692345c9768956c75bde6417cff871edfd29412a47b38602059e",
+ "diff_sha256": "088d21ef9b00692345c9768956c75bde6417cff871edfd29412a47b38602059e",
+ "duration_s": 114.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n 'monic_X_pow_sub_C' MultiquadraticSplitting.lean:43 vs Frobenius.lean:57; ringGen_sq proof at MultiquadraticSplitting.lean:64-66 vs hxsq at Frobenius.lean:78-81.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Frobenius.lean",
+   "fix": "Make `mq_isIntegral_gen`, `ringGen`, `algebraMap_ringGen`, `ringGen_sq` non-private (or move them to a shared file both import) and use them here; delete `isIntegral_of_sq_intCast` and the local repackaging.",
+   "issue": "`isIntegral_of_sq_intCast` is a verbatim clone of `mq_isIntegral_gen` (MultiquadraticSplitting.lean:40-44): same monic witness `X^2 - C d`, same `monic_X_pow_sub_C` / `eval\u2082_sub, eval\u2082_X_pow, eval\u2082_C` proof. The `set x : \ud835\udcde K := \u27e8r i, _\u27e9` and `hxsq` that follow likewise re-derive `ringGen` (line 47) and `ringGen_sq` (line 62, same `FaithfulSMul.algebraMap_injective` + `map_pow` + `IsScalarTower.algebraMap_apply` proof).",
+   "line": 55
+  },
+  {
+   "evidence": "MultiquadraticSplitting.lean:71-74 and LegendreSymbol/Frobenius.lean:51-55 are the same two lines.",
+   "file": "TauCeti/NumberTheory/LegendreSymbol/Frobenius.lean",
+   "fix": "Keep one copy in the general `S` form of this file, make it public, and have MultiquadraticSplitting use it (its `a`-general form is the one to keep); drop the other.",
+   "issue": "`algebraMap_int_mem_iff_dvd` duplicates `algebraMap_int_mem_iff_dvd_of_liesOver` (MultiquadraticSplitting.lean:71-74) \u2014 identical statement modulo `a := (p:\u2124)` and the base ring, with the identical proof term `(Ideal.mem_of_liesOver Q (span {a}) m).symm.trans Ideal.mem_span_singleton`. Two private copies of one fact now exist.",
+   "line": 51
+  },
+  {
+   "evidence": "grep -rn 'adjoin_induction' TauCeti \u2192 only MultiquadraticSplitting.lean:241 and Multiquadratic/Frobenius.lean:134, with identical case bodies.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Frobenius.lean",
+   "fix": "Factor out one lemma `\u03c3 = 1` from `(\u2200 i, \u03c3 (r i) = r i)` + `adjoin \u211a (Set.range r) = \u22a4`, and call it from both sites; implement it with `IntermediateField.algHom_ext_of_eq_adjoin`, as in Galois/Group.lean:77 and Galois/Basic.lean:207.",
+   "issue": "The `AlgEquiv.ext` + `IntermediateField.adjoin_induction` block (lines 128-140) is copied verbatim \u2014 same five cases, same tactics \u2014 from `stabilizer_eq_bot_of_forall_legendreSym_eq_one` (MultiquadraticSplitting.lean:237-246). Both also bypass the idiom already used twice in this repo.",
+   "line": 130
+  },
+  {
+   "evidence": "grep -rn 'exists_isArithFrobAt' code/TauCeti \u2192 only TauCeti/NumberTheory/NumberField/Frobenius.lean; Mathlib `arithFrobAt`/`IsArithFrobAt.arithFrobAt` already give the element for `[Q.IsPrime] [Finite (S \u29f8 Q)]`.",
+   "file": "TauCeti/NumberTheory/NumberField/Frobenius.lean",
+   "fix": "Drop this file, or at minimum drop `exists_isArithFrobAt` and keep only what a consumer actually needs (the `Q \u2260 \u22a5` derivation from `LiesOver (span {p})`), stated once and used.",
+   "issue": "`exists_isArithFrobAt` is a one-line wrapper around Mathlib's `IsArithFrobAt.exists_of_isInvariant` (Mathlib/RingTheory/Frobenius.lean:219), and Mathlib additionally supplies the chosen element `arithFrobAt R G Q` with `IsArithFrobAt.arithFrobAt` (ibid. 258-263). Neither wrapper has any consumer in the repo \u2014 grep for `exists_isArithFrobAt` finds only this file.",
+   "line": 41
+  }
+ ],
+ "head_sha": "1f5078979028800af13327618848f17103310ec1",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1039,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bf631d11a4d72e1a3716c5acb72e61d3324b8a686c57642d7a66b70d33adb689",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T034842Z-1039-reuse-722420",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T03:48:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Multiquadratic/Frobenius.lean re-derives four helpers that MultiquadraticSplitting.lean already has (integrality of \u221ad, its packaging in \ud835\udcde K, the squaring identity, the liesOver-membership criterion) and copies its adjoin-induction block verbatim; NumberField/Frobenius.lean adds unused thin wrappers over Mathlib's existence API. The genuinely new content (the Legendre-sign computation) is fine.",
+ "transcript_blob": "45947efaff3b58530f2a6d28812554447af5730b416ccc29873a314874dce199",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62886,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62886,
+  "cache_read_input_tokens": 463162,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2451,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2451,
+    "cache_read_input_tokens": 59423,
+    "input_tokens": 2,
+    "output_tokens": 2902,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8183,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

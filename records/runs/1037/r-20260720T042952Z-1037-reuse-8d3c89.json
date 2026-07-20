@@ -1,0 +1,138 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9219674999999999,
+   "returncode": 0,
+   "secs": 102.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 52374,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 52374,
+    "cache_read_input_tokens": 366485,
+    "inference_geo": "not_available",
+    "input_tokens": 19,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1175,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1175,
+      "cache_read_input_tokens": 50046,
+      "input_tokens": 2,
+      "output_tokens": 3247,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8118,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "cost_usd": 0.921967,
+ "dedupe_key": "TauCetiProject/TauCeti|1037|7b7469edcc654e64dc627cbe5fdfe3379eeda4ab|reuse|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "diff_sha256": "f6681046d3b98c912dc45d29d2172269a359b8f9bdbca5c9ebbf7d3253d98269",
+ "duration_s": 102.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n in TauCeti/Analysis/SpecialFunctions/Hermite/Orthogonality.lean: lines 137 and 165; docstrings there also cite \"milestone A1 of the OrthogonalL2Bases roadmap\".",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Drop HermiteGaussian.lean. If downstream needs the `hermite\u211d`-eval-shaped density form, add only `integral_hermite\u211d_mul_hermite\u211d_mul_gaussianPDFReal` on top of the existing theorem, in the existing file.",
+   "issue": "`TauCeti.Hermite.integral_hermite_mul_hermite_mul_gaussian` and `TauCeti.Hermite.integral_hermite_mul_hermite_gaussianReal` are verbatim restatements of existing `TauCeti.integral_hermite_mul_hermite_mul_gaussian` (Orthogonality.lean:137) and `TauCeti.integral_hermite_mul_hermite_gaussianReal` (Orthogonality.lean:165), same `aeval`/`hermite`/`e^{-x\u00b2/2}` and `gaussianReal 0 1` forms, same `if m = n then n! * \u221a(2\u03c0) / n!` values.",
+   "line": 0
+  },
+  {
+   "evidence": "Declaration list of Orthogonality.lean shows all five with the same statements.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Delete these; reuse the public `TauCeti.integral_aeval_mul_hermite_succ` and the private helpers already in Orthogonality.lean (making them public there if needed).",
+   "issue": "The entire proof scaffolding is a re-derivation of the existing one: `integral_aeval_mul_hermite_succ` (Orthogonality.lean:80), `integral_aeval_mul_hermite` (:112), `integral_gaussian_half` (:121), the swap step `comm` (= `integral_hermite_swap`, :130), and the pdf rewrite `hpdf` (= `gaussianPDFReal_zero_one`, :156).",
+   "line": 96
+  },
+  {
+   "evidence": "PolynomialMemLp.lean:65 `integrable_eval_mul_gaussianEnvelope (\u03bc : \u211d) (q : \u211d[X]) {w : \u211d\u22650} (hw : w \u2260 0) : Integrable (fun x => q.eval x * Real.exp (-(x - \u03bc)^2 / (2 * w)))`; Orthogonality.lean:53 proves the \u2124[X] version from exactly that lemma.",
+   "file": "TauCeti/Analysis/SpecialFunctions/GaussianPolynomialIntegrable.lean",
+   "fix": "Delete the file; derive any needed `a > 0` form as a one-line corollary of `integrable_eval_mul_gaussianEnvelope 0 q (w := \u27e81/(2a), _\u27e9)` in PolynomialMemLp.lean.",
+   "issue": "`Polynomial.integrable_aeval_mul_gaussian` restates `TauCeti.integrable_aeval_mul_gaussian` (Orthogonality.lean:53), and `integrable_eval_mul_gaussian` / `integrable_eval_mul_exp_neg_mul_sq` restate `TauCeti.integrable_eval_mul_gaussianEnvelope` (PolynomialMemLp.lean:65), which already gives polynomial\u00d7`exp(-(x-\u03bc)\u00b2/(2v))` integrability for every positive variance \u2014 the `a > 0` case is `v = 1/(2a)`, `\u03bc = 0`. `integrable_eval_mul_exp_neg_sq` (:82) is the analogous existing corollary.",
+   "line": 0
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Polynomial/AlgebraMap.lean:277 `@[simp] lemma eval_map_algebraMap (P : R[X]) (b : B) : (map (algebraMap R B) P).eval b = aeval b P`.",
+   "file": "TauCeti/RingTheory/Polynomial/Hermite/Real.lean",
+   "fix": "Delete both copies; use `Polynomial.eval_map_algebraMap` (rewriting with `algebraMap_int_eq`), and let `eval_hermite\u211d` be `by simp [hermite\u211d_def]`.",
+   "issue": "`eval_map_intCast` is defined identically twice in this PR (Real.lean:26 and GaussianPolynomialIntegrable.lean:47), and both duplicate Mathlib's `@[simp] Polynomial.eval_map_algebraMap` modulo `algebraMap_int_eq`. `eval_hermite\u211d`/`aeval_hermite\u211d` are then instances of that same simp lemma.",
+   "line": 26
+  },
+  {
+   "evidence": "mathlib/Mathlib/RingTheory/Polynomial/Hermite/Gaussian.lean: `deriv_gaussian_eq_hermite_mul_gaussian (n) (x) : deriv^[n] (fun y => Real.exp (-(y^2/2))) x = (-1)^n * aeval x (hermite n) * Real.exp (-(x^2/2))`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/HermiteGaussian.lean",
+   "fix": "Reuse the existing TauCeti step, or obtain it from `Mathlib/RingTheory/Polynomial/Hermite/Gaussian.lean`'s `deriv_gaussian_eq_hermite_mul_gaussian` at `n` and `n+1`.",
+   "issue": "`hasDerivAt_hermite_mul_gaussian` re-derives the Rodrigues step already available from Mathlib's `Polynomial.deriv_gaussian_eq_hermite_mul_gaussian`, and duplicates the existing `aeval_derivative_hermite`-based step in Orthogonality.lean:62.",
+   "line": 60
+  }
+ ],
+ "head_sha": "7b7469edcc654e64dc627cbe5fdfe3379eeda4ab",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1037,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a8d67c42b0a3bc8415e2cc36426f1d114a373062872e2cd301a1c668513ad81a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T042952Z-1037-reuse-8d3c89",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T04:29:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The A1 orthogonality content already exists on main in TauCeti/Analysis/SpecialFunctions/Hermite/Orthogonality.lean with statement-for-statement identical theorems, and the new integrability file re-derives TauCeti/Probability/Distributions/Gaussian/PolynomialMemLp.lean. The PR description's claim that \"the content is not in main\" is false for this checkout.",
+ "transcript_blob": "8b55e982ed7e30a70d994d54b260f4f01e6273e2fc28f70caa39def00f789056",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 52374,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 52374,
+  "cache_read_input_tokens": 366485,
+  "inference_geo": "not_available",
+  "input_tokens": 19,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1175,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1175,
+    "cache_read_input_tokens": 50046,
+    "input_tokens": 2,
+    "output_tokens": 3247,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8118,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}

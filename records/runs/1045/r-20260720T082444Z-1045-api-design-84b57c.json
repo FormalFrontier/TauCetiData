@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6421615,
+   "returncode": 0,
+   "secs": 75.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 45428,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 45428,
+    "cache_read_input_tokens": 69839,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10665,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10665,
+      "cache_read_input_tokens": 37675,
+      "input_tokens": 2,
+      "output_tokens": 5378,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5773,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "cost_usd": 0.642162,
+ "dedupe_key": "TauCetiProject/TauCeti|1045|12da21259cbff15201b2657a161b97d4d6d2ce71|api-design|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "1085cdbf11549e259cb86b232cce548cf38e984419badf999bca657a89be2aaa",
+ "diff_sha256": "1085cdbf11549e259cb86b232cce548cf38e984419badf999bca657a89be2aaa",
+ "duration_s": 75.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep shows only `isFundamentalDiscriminant_prod_oddPrimeDiscriminant` (line 131) and `isFundamentalDiscriminant_mul_prod_oddPrimeDiscriminant` (line 149); both are stated in terms of `oddPrimeDiscriminant (p i)` for an explicit `p : \u03b9 \u2192 \u2115`, not in terms of `IsPrimeDiscriminant`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/FundamentalDiscriminant.lean",
+   "fix": "Add `isFundamentalDiscriminant_prod_of_pairwise_isCoprime : (\u2200 i \u2208 s, IsPrimeDiscriminant (D i)) \u2192 (pairwise coprime on s) \u2192 IsFundamentalDiscriminant (\u220f i \u2208 s, D i)`, proved by the at-most-one-even normalisation the docstring describes; or drop the claim from the docstring.",
+   "issue": "The docstring claims the two theorems \"cover every product of pairwise coprime prime discriminants\", but no lemma states this. A consumer with a family `D : \u03b9 \u2192 \u2124` of `IsPrimeDiscriminant` values, pairwise coprime, cannot conclude `IsFundamentalDiscriminant (\u220f i \u2208 s, D i)` without redoing the even/odd split by hand \u2014 the exact bookkeeping this file is meant to package.",
+   "line": 143
+  },
+  {
+   "evidence": "Lines 55-57 define the branch as `\u2203 m, D = 4 * m \u2227 ...`; the only lemmas about it in the file are `ne_zero` (72) and `mod_four_eq_zero_or_one` (76), neither of which exposes `m`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/FundamentalDiscriminant.lean",
+   "fix": "Add `IsFundamentalDiscriminant.squarefree_div_four` and `IsFundamentalDiscriminant.div_four_mod_four` (or a single `isFundamentalDiscriminant_iff_of_mod_four_eq_zero` characterising the branch in terms of `D / 4`, which is canonically determined since `D = 4 * m` pins `m`). Also add the first-branch accessor `IsFundamentalDiscriminant.squarefree` under `D % 4 = 1`.",
+   "issue": "The `4 * m` branch has no elimination API. `mod_four_eq_zero_or_one` gives `D % 4 = 0`, but nothing then recovers the witness: there is no lemma yielding `Squarefree (D / 4)` or `D / 4 % 4 = 2 \u2228 D / 4 % 4 = 3` from that. Every consumer of the even branch must `rcases` the raw definitional disjunction, i.e. unfold the definition.",
+   "line": 76
+  },
+  {
+   "evidence": "Line 110: `\u00ac (2 : \u2124) \u2223 \u220f i \u2208 s, oddPrimeDiscriminant (p i)`; sole use is `hQ2` at line 156.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/FundamentalDiscriminant.lean",
+   "fix": "State it as `Odd (\u220f i \u2208 s, oddPrimeDiscriminant (p i))` (deriving the `\u00ac 2 \u2223` form via `Int.odd_iff_not_even`/`Int.two_dvd_ne_zero`), or rename to `not_two_dvd_prod_oddPrimeDiscriminant`. If no later stage needs it, make it `private` \u2014 it is used once, at line 156.",
+   "issue": "`odd_prod_oddPrimeDiscriminant` is named for `Odd` but its statement is `\u00ac (2 : \u2124) \u2223 \u220f ...`. A public name that promises one predicate and delivers another is a misleading interface; the docstring \"A product of odd prime discriminants is odd\" reinforces the mismatch.",
+   "line": 109
+  }
+ ],
+ "head_sha": "12da21259cbff15201b2657a161b97d4d6d2ce71",
+ "merge_base_sha": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1045,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "88c004cc056373cc5da8e8e5bbd75e604686f27771bc0bd7447315793fe38bf9",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T082444Z-1045-api-design-84b57c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T08:24:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The exposed surface is minimal and bodies are unexposed, but the characteristic API is incomplete: the headline claim that the two theorems cover every product of pairwise coprime prime discriminants has no corresponding lemma, the even branch has no elimination lemma, and one public lemma's name does not match its statement.",
+ "transcript_blob": "9aaeaddf16aafcd85ba5146fbb37b5e29b8eeb3856048e192787a52e6f5a8b08",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45428,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 45428,
+  "cache_read_input_tokens": 69839,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10665,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10665,
+    "cache_read_input_tokens": 37675,
+    "input_tokens": 2,
+    "output_tokens": 5378,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5773,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

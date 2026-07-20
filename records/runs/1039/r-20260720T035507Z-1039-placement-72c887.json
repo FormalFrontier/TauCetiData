@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7429315,
+   "returncode": 0,
+   "secs": 92.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48045,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48045,
+    "cache_read_input_tokens": 155091,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1747,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1747,
+      "cache_read_input_tokens": 45525,
+      "input_tokens": 2,
+      "output_tokens": 1975,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6916,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "64fcdaf7f5e0c34da168a1a84c0b4aa89d15c743",
+ "cost_usd": 0.742931,
+ "dedupe_key": "TauCetiProject/TauCeti|1039|1f5078979028800af13327618848f17103310ec1|placement|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "088d21ef9b00692345c9768956c75bde6417cff871edfd29412a47b38602059e",
+ "diff_sha256": "088d21ef9b00692345c9768956c75bde6417cff871edfd29412a47b38602059e",
+ "duration_s": 92.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Hypotheses are `d : \u03b9 \u2192 \u2124`, `r : \u03b9 \u2192 K`, `hr`, `{i : \u03b9}`, `hd : \u00ac (p:\u2124) \u2223 d i`; nothing constrains the family (no `htop`, no independence, no `Finite \u03b9`). Contrast `Multiquadratic/MultiquadraticSplitting.lean:251` `ncard_primesOver_multiquadratic_iff`, whose statement is genuinely about the whole family.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Frobenius.lean",
+   "fix": "State the single-element form (`{x : K} (hx : x ^ 2 = algebraMap \u2124 K d)`) in `TauCeti/NumberTheory/NumberField/Frobenius.lean`, and keep only the family specialization plus `isArithFrobAt_eq_one_iff` (which genuinely uses `adjoin \u211a (Set.range r) = \u22a4`) in Multiquadratic/.",
+   "issue": "`isArithFrobAt_apply_sqrt` has no multiquadratic hypothesis \u2014 it says only that a Frobenius at Q sends any x : K with x\u00b2 = d to legendreSym p d \u2022 x; the `\u03b9`-indexed family is cosmetic (each `i` is handled independently), and the namespace is already `TauCeti.NumberField`. It is a general number-field fact sitting in a roadmap-specific directory.",
+   "line": 62
+  },
+  {
+   "evidence": "`grep -rn \"NumberField.Frobenius\" TauCeti/` \u2192 no results; Multiquadratic/Frobenius.lean's import block lists only `Mathlib.NumberTheory.NumberField.Basic`, `Mathlib.RingTheory.Frobenius`, `TauCeti.NumberTheory.LegendreSymbol.Frobenius`.",
+   "file": "TauCeti/NumberTheory/NumberField/Frobenius.lean",
+   "fix": "Import `TauCeti.NumberTheory.NumberField.Frobenius` from `Multiquadratic/Frobenius.lean` and use `exists_isArithFrobAt_of_liesOver` to state a non-vacuous corollary there, or drop the claim from the docstring and fold these two lemmas into the file that will actually use them.",
+   "issue": "Nothing in the repo imports this file: `grep -rn \"NumberField.Frobenius\" TauCeti/` returns no hits, yet its module docstring says it packages existence \"in the form the multiquadratic roadmap's Layer 1 consumes (TauCeti.NumberTheory.Multiquadratic.Frobenius ...)\". Multiquadratic/Frobenius.lean takes `h\u03c3 : IsArithFrobAt \u2124 \u03c3 Q` as a hypothesis and never obtains \u03c3 from these lemmas, so the stated dependency is fictional.",
+   "line": 0
+  },
+  {
+   "evidence": "`MultiquadraticSplitting.lean:71-76` is `(Ideal.mem_of_liesOver Q (span {a}) m).symm.trans Ideal.mem_span_singleton`, character-for-character the new `LegendreSymbol/Frobenius.lean` helper; `:40-42` is the same `\u27e8X ^ 2 - C (d i), monic_X_pow_sub_C .., by rw [eval\u2082_sub, eval\u2082_X_pow, eval\u2082_C, hr i, sub_self]\u27e9` as `isIntegral_of_sq_intCast`.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/Frobenius.lean",
+   "fix": "Give these one home: de-privatize the `\ud835\udcde K` square-root packaging (`ringGen`/`ringGen_sq`/integrality) into a shared file both Multiquadratic files import, and have MultiquadraticSplitting use the new generic `algebraMap_int_mem_iff_dvd` rather than keeping a `\ud835\udcde K`-specific copy.",
+   "issue": "Private helpers duplicate ones already in the sibling file `Multiquadratic/MultiquadraticSplitting.lean`: `isIntegral_of_sq_intCast` vs `mq_isIntegral_gen` (line 40), the `\u27e8r i, _\u27e9 ^ 2 = algebraMap \u2124 (\ud835\udcde K) (d i)` packaging vs `ringGen_sq` (line 62), and `LegendreSymbol/Frobenius.lean`'s `algebraMap_int_mem_iff_dvd` vs `algebraMap_int_mem_iff_dvd_of_liesOver` (line 71) \u2014 same proof term.",
+   "line": 53
+  }
+ ],
+ "head_sha": "1f5078979028800af13327618848f17103310ec1",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1039,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3d4266f110b7b44e977d75ceb8282f1ebf3d80dcabe65d6cad503dcb9a8b4f32",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T035507Z-1039-placement-72c887",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T03:55:07Z",
+ "submitted_by": "kim-em",
+ "summary": "Two placement problems: the general Frobenius-on-a-square-root lemma is stated with no multiquadratic hypothesis inside Multiquadratic/, and the new NumberField/Frobenius.lean is imported by nothing despite its docstring claiming the multiquadratic file consumes it. Imports themselves are fine.",
+ "transcript_blob": "2b713e1942cc2b606ce91ecc16cf492e57f2d88affe2f550a3d3c0f13398cbf4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48045,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48045,
+  "cache_read_input_tokens": 155091,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1747,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1747,
+    "cache_read_input_tokens": 45525,
+    "input_tokens": 2,
+    "output_tokens": 1975,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6916,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

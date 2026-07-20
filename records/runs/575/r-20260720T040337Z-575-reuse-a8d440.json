@@ -1,0 +1,131 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2892239999999995,
+   "returncode": 0,
+   "secs": 174.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 140233,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 140233,
+    "cache_read_input_tokens": 993134,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1353,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1353,
+      "cache_read_input_tokens": 96133,
+      "input_tokens": 2,
+      "output_tokens": 3172,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13737,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "cost_usd": 2.289224,
+ "dedupe_key": "TauCetiProject/TauCeti|575|d0e45b83973d999093b15351ab04c05037c4927e|reuse|claude-opus-4-8|0e86c8aad121a07b|production|2",
+ "diff_blob": "9e963f64181ce2df32895d8ecb3a13d5db014edc4b79bbed6ca5ffb8ac3789c3",
+ "diff_sha256": "9e963f64181ce2df32895d8ecb3a13d5db014edc4b79bbed6ca5ffb8ac3789c3",
+ "duration_s": 174.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Probability/Moments/MGFAnalytic.lean:42 `hasDerivAt_integral_pow_mul_exp_real (ht : t \u2208 interior (integrableExpSet X \u03bc)) (n : \u2115) : HasDerivAt (fun t \u21a6 \u03bc[fun \u03c9 \u21a6 X \u03c9 ^ n * exp (t * X \u03c9)]) \u03bc[fun \u03c9 \u21a6 X \u03c9 ^ (n+1) * exp (t * X \u03c9)] t`; :83 `iteratedDeriv_mgf ... : iteratedDeriv n (mgf X \u03bc) t = \u03bc[fun \u03c9 \u21a6 X \u03c9 ^ n * exp (t * X \u03c9)]`; :115 `analyticOnNhd_mgf`; Mathlib/Analysis/Calculus/ContDiff/Defs.lean:711 `AnalyticOnNhd.contDiffOn`; Mathlib/Probability/Moments/IntegrableExpMul.lean:113 `integrableExpSet X \u03bc = {t | Integrable (fun \u03c9 \u21a6 exp (t * X \u03c9)) \u03bc}`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Prove one bridge lemma `hIoi : Ioi (0:\u211d) \u2286 interior (integrableExpSet (fun x : \u211d\u22650 => -(x:\u211d)) \u03bc)` (immediate: for t \u2265 0 the kernel is \u2264 1 and \u03bc is finite, so `Ici 0 \u2286 integrableExpSet` and `Ioi 0 = interior (Ici 0)`), then delete :295\u2013:545 and use `ProbabilityTheory.hasDerivAt_integral_pow_mul_exp_real`, `ProbabilityTheory.iteratedDeriv_mgf`, and `(ProbabilityTheory.analyticOnNhd_mgf).contDiffOn (uniqueDiffOn_Ioi 0) |>.mono hIoi`.",
+   "issue": "The signed-moment differentiation block re-proves Mathlib's MGF analytic API. `laplaceMomentTransform \u03bc n t = \u222b (-(x))^n * exp(-(t*x))` is exactly `\u03bc[fun \u03c9 => X \u03c9 ^ n * exp (t * X \u03c9)]` for `X := fun x : \u211d\u22650 => -(x:\u211d)`; `hasDerivAt_laplaceMomentTransform` (:295), `iteratedDeriv_laplaceTransform_eq_laplaceMomentTransform` (:521) and `contDiffOn_Ioi_laplaceTransform` (:535) are directly replaced by existing declarations.",
+   "line": 295
+  },
+  {
+   "evidence": "Mathlib/Probability/Moments/Basic.lean:121 `def mgf (X : \u03a9 \u2192 \u211d) (\u03bc : Measure \u03a9) (t : \u211d) := \u03bc[fun \u03c9 => exp (t * X \u03c9)]`; :162 `mgf_zero' : mgf X \u03bc 0 = \u03bc.real Set.univ`; :180 `mgf_nonneg`; :250 `mgf_add_measure`; :260 `mgf_smul_measure (c : \u211d\u22650\u221e) : mgf X (c \u2022 \u03bc) t = c.toReal * mgf X \u03bc t`; :483 `mgf_dirac' : mgf X (Measure.dirac \u03c9) t = exp (t * X \u03c9)`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Define `laplaceTransform \u03bc t := ProbabilityTheory.mgf (fun x : \u211d\u22650 => -(x:\u211d)) \u03bc t` (keeping the name for the Bernstein statement, which is a legitimate specialization) plus a `@[simp]` bridge `laplaceTransform_apply` proved by `simp [ProbabilityTheory.mgf, mul_neg]`, then derive the five lemmas as one-liners from the mgf lemmas instead of re-proving them.",
+   "issue": "`laplaceTransform` is assembled from raw pieces rather than from `ProbabilityTheory.mgf`, and its five basic lemmas each restate an existing mgf lemma: laplaceTransform_zero (:100) = mgf_zero'; laplaceTransform_nonneg (:105) = mgf_nonneg; laplaceTransform_add (:111) = mgf_add_measure; laplaceTransform_smul (:123) = mgf_smul_measure (Mathlib's is the general \u211d\u22650\u221e statement, so the PR's is a strict special case); laplaceTransform_dirac (:130) = mgf_dirac'.",
+   "line": 47
+  },
+  {
+   "evidence": "Mathlib/Probability/Moments/Basic.lean:493 `integrable_exp_mul_of_le [IsFiniteMeasure \u03bc] {X : \u03a9 \u2192 \u211d} (t b : \u211d) (ht : 0 \u2264 t) (hX : AEMeasurable X \u03bc) (hb : \u2200\u1d50 \u03c9 \u2202\u03bc, X \u03c9 \u2264 b) : Integrable (fun \u03c9 \u21a6 exp (t * X \u03c9)) \u03bc`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/LaplaceRepresentation.lean",
+   "fix": "Replace the proof with `ProbabilityTheory.integrable_exp_mul_of_le t 0 ht (by fun_prop) (.of_forall fun x => neg_nonpos.mpr x.2)` (after the `mul_neg` rewrite), i.e. `X := fun x : \u211d\u22650 => -(x:\u211d)`, `b := 0`.",
+   "issue": "`integrable_laplaceKernel_of_nonneg` re-derives, via the bundled bounded-continuous kernel, a Mathlib lemma that states exactly this for finite measures.",
+   "line": 91
+  },
+  {
+   "evidence": "Mathlib/MeasureTheory/Measure/Tight.lean:103 `theorem isTightMeasureSet_singleton {\u03b1} [IsCompletelyPseudoMetrizableSpace \u03b1] [SecondCountableTopology \u03b1] [BorelSpace \u03b1] {\u03bc : Measure \u03b1} [IsFiniteMeasure \u03bc] : IsTightMeasureSet {\u03bc}`; :123 `protected lemma IsTightMeasureSet.union`; :118 `protected lemma IsTightMeasureSet.subset`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/BernsteinTheorem.lean",
+   "fix": "Since `Set.range \u03bc` is a finite set for `[Finite \u03b9]`, prove it by `Set.Finite.induction_on` using `IsTightMeasureSet.union` with `isTightMeasureSet_singleton` for each member (`\u211d\u22650` is a complete second-countable pseudo-metric Borel space), replacing the ~20-line proof with ~3 lines.",
+   "issue": "`isTightMeasureSet_range_finite` re-derives finite-family tightness by hand (choice over `i`, explicit compact `\u22c3 i, K i`, manual complement bound), duplicating the tightness algebra Mathlib already provides.",
+   "line": 48
+  }
+ ],
+ "head_sha": "d0e45b83973d999093b15351ab04c05037c4927e",
+ "merge_base_sha": "306a0c49d67c633c74f55822f02a51d038191ea3",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 575,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "5f960fc4bb2ab7115a77375f0dbbc33bb53867f651689caffb6dae27453e0832",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T040337Z-575-reuse-a8d440",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T04:03:37Z",
+ "submitted_by": "kim-em",
+ "summary": "laplaceTransform is Mathlib's ProbabilityTheory.mgf at X := fun x : \u211d\u22650 => -(x:\u211d), and its basic and open-half-line analytic APIs re-prove located mgf lemmas that directly replace them. The endpoint (t = 0) results, laplaceTransform_ext, and the Chafa\u00ef extraction are genuinely new and should stay.",
+ "transcript_blob": "691c31471eb7d7d115a612cf88304d980b4f570a871c419ac7ffa1b4f12649e0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 140233,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 140233,
+  "cache_read_input_tokens": 993134,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1353,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1353,
+    "cache_read_input_tokens": 96133,
+    "input_tokens": 2,
+    "output_tokens": 3172,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13737,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
