@@ -1,0 +1,78 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.830211,
+   "returncode": 0,
+   "secs": 95.2,
+   "usage": {
+    "cached_input_tokens": 372352,
+    "input_tokens": 475965,
+    "output_tokens": 4199,
+    "reasoning_output_tokens": 1569
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "cost_estimated": true,
+ "cost_usd": 0.830211,
+ "dedupe_key": "TauCetiProject/TauCeti|1046|58a4a92d1309b91f15eb095ebe8cc3d4d609c550|reuse|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "828f5cbae9ff9c3d9e21afc5b83b894c283f771d995fdb44140bcfc47da79720",
+ "diff_sha256": "828f5cbae9ff9c3d9e21afc5b83b894c283f771d995fdb44140bcfc47da79720",
+ "duration_s": 95.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Module/LinearMap/Defs.lean:575` has `theorem injective_of_comp_eq_id : Injective f`; `mathlib/Mathlib/Algebra/Module/LinearMap/Defs.lean:867` has `LinearMap.neg_comp`.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Delete this declaration; if needed, use `LinearMap.injective_of_comp_eq_id J (-J)` after rewriting `(-J).comp J = LinearMap.id` with `LinearMap.neg_comp` and `hJ`.",
+   "issue": "`LinearMap.injective_of_comp_self_eq_neg_id` is an unnecessary specialization of Mathlib's left-inverse lemma.",
+   "line": 56
+  },
+  {
+   "evidence": "The proof at line 74 is exactly `((Submodule.equivMapOfInjective J hJ L).finrank_eq).symm`; Mathlib also has `Module.rank_map_eq` at `mathlib/Mathlib/LinearAlgebra/Dimension/Basic.lean:398`.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Remove the public theorem and use `((Submodule.equivMapOfInjective J hJ L).finrank_eq).symm` at the few call sites, or keep only a private local helper if needed inside this file.",
+   "issue": "`Submodule.finrank_map_of_injective` is a public thin wrapper around existing Mathlib submodule-map equivalence/rank API.",
+   "line": 72
+  },
+  {
+   "evidence": "`mathlib/Mathlib/LinearAlgebra/FiniteDimensional/Lemmas.lean:66` proves `Submodule.finrank_add_finrank_le_of_disjoint`; lines 88-93 reproduce its proof shape.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Use `Submodule.finrank_add_finrank_le_of_disjoint hL.disjoint`, then rewrite the `L.map J` term using the injective-map finrank equality.",
+   "issue": "`IsTotallyReal.two_mul_finrank_le` rederives Mathlib's disjoint-submodule dimension inequality via `finrank_sup_add_finrank_inf_eq`.",
+   "line": 88
+  }
+ ],
+ "head_sha": "58a4a92d1309b91f15eb095ebe8cc3d4d609c550",
+ "merge_base_sha": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1046,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d0f6cf5f17e5868de456ffa95e6a5455ef0cd01f50dcba9d103c2ae3cd5b6dfb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T082758Z-1046-reuse-afa8a3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T08:27:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds useful totally-real dimension statements, but it also introduces generic helper API and proof plumbing that Mathlib already supplies.",
+ "transcript_blob": "8d86dd6a5c7868f17562d2f7e16d36dae1c06172e0f27939f4a3db296604ab44",
+ "usage": {
+  "cached_input_tokens": 372352,
+  "input_tokens": 475965,
+  "output_tokens": 4199,
+  "reasoning_output_tokens": 1569
+ },
+ "verdict": "request_changes"
+}

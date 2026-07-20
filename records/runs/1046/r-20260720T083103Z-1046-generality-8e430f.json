@@ -1,0 +1,71 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.35695,
+   "returncode": 0,
+   "secs": 74.8,
+   "usage": {
+    "cached_input_tokens": 104960,
+    "input_tokens": 145832,
+    "output_tokens": 3337,
+    "reasoning_output_tokens": 1874
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "cost_estimated": true,
+ "cost_usd": 0.35695,
+ "dedupe_key": "TauCetiProject/TauCeti|1046|58a4a92d1309b91f15eb095ebe8cc3d4d609c550|generality|gpt-5.5|0e86c8aad121a07b|production|1",
+ "diff_blob": "828f5cbae9ff9c3d9e21afc5b83b894c283f771d995fdb44140bcfc47da79720",
+ "diff_sha256": "828f5cbae9ff9c3d9e21afc5b83b894c283f771d995fdb44140bcfc47da79720",
+ "duration_s": 74.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti` line 72 has `{J : E \u2192\u2097[R] E}`; Mathlib `Submodule.equivMapOfInjective` is declared for `f : M \u2192\u209b\u2097[\u03c3\u2081\u2082] M\u2082` at `Mathlib/Algebra/Module/Submodule/Map.lean:146`.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Generalize the signature to `{F} [AddCommGroup F] [Module R F] {f : E \u2192\u2097[R] F} (hf : Function.Injective f) (L : Submodule R E) : finrank R (L.map f) = finrank R L`, or avoid adding the wrapper.",
+   "issue": "`Submodule.finrank_map_of_injective` is stated only for an endomorphism `J : E \u2192\u2097[R] E`, although the Mathlib API it wraps works for injective maps into an arbitrary codomain.",
+   "line": 72
+  },
+  {
+   "evidence": "`rg \"injective_of_comp_self_eq_neg_id\" code/TauCeti` finds only the declaration and doc mentions; Mathlib already has `LinearMap.injective_of_comp_eq_id` at `Mathlib/Algebra/Module/LinearMap/Defs.lean:575`.",
+   "file": "TauCeti/LinearAlgebra/TotallyReal/Finrank.lean",
+   "fix": "Remove it, make it private if only needed locally, or prove it as a thin convenience wrapper from `LinearMap.injective_of_comp_eq_id` instead of duplicating the argument.",
+   "issue": "`LinearMap.injective_of_comp_self_eq_neg_id` is an unused public special case of the existing left-inverse criterion, adding duplicate API rather than proving or using the natural general result.",
+   "line": 56
+  }
+ ],
+ "head_sha": "58a4a92d1309b91f15eb095ebe8cc3d4d609c550",
+ "merge_base_sha": "8d43d1c77ef4118d95e6f732d1221b9a70672bde",
+ "mode": "commit",
+ "model": "gpt-5.5",
+ "pr": 1046,
+ "prices_sha": "f353e078f9fc",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "753a2ea340f8de7fcc08c2b62545143ea6aa4d9f781d6711dea9e1adb2a0b204",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "3ec769ec9d991c68605823b2ac1ea569741d9f0f",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260720T083103Z-1046-generality-8e430f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-20T08:31:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The main totally-real finrank statements are at the intended injective-endomorphism level, but the PR adds public helper API at an unnecessarily special level instead of using or matching existing Mathlib generality.",
+ "transcript_blob": "909fe6c791bc05f042916e4467a7ae62e804accaf5d62b0be7ece45bb7709e0c",
+ "usage": {
+  "cached_input_tokens": 104960,
+  "input_tokens": 145832,
+  "output_tokens": 3337,
+  "reasoning_output_tokens": 1874
+ },
+ "verdict": "request_changes"
+}
