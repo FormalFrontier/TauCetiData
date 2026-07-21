@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.148516,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.6,
+   "usage": {
+    "cached_input_tokens": 45312,
+    "input_tokens": 64076,
+    "output_tokens": 1068,
+    "reasoning_output_tokens": 247
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c2dcb57218b0bf316cd6535fbc013c915f64e131",
+ "cost_estimated": true,
+ "cost_usd": 0.148516,
+ "dedupe_key": "TauCetiProject/TauCeti|1051|a3526c76daaf7496427f8337c0e06df3d303e017|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|2",
+ "diff_blob": "c447e48385ae120236eb18180cf3c860c68f3c92b298f5599ccdb21c99a55147",
+ "diff_sha256": "c447e48385ae120236eb18180cf3c860c68f3c92b298f5599ccdb21c99a55147",
+ "duration_s": 32.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n 'theorem isCompletelyMonotone' Power.lean` finds only `isCompletelyMonotoneOnIoi_rpow_neg` at line 59, while `Reciprocal.lean:47,85,91` exposes the general shifted kernel and user-facing specializations.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Power.lean",
+   "fix": "Add `isCompletelyMonotone_rpow_neg_const_add` for `0 < a` and `isCompletelyMonotone_one_add_rpow_neg`, analogous to the public specializations in `Reciprocal.lean`.",
+   "issue": "The file exposes only the open-half-line theorem; the advertised `(a+t)\u207b\u02e2` closed-half-line result and its `a = 1` specialization are absent.",
+   "line": "59"
+  },
+  {
+   "evidence": "The imported derivative API appears only at lines 61\u201365 in the theorem proof; the public statement mentions only `IsCompletelyMonotoneOnIoi`, real power, and order.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Power.lean",
+   "fix": "Change this to a private `import`; retain only the public import needed for the theorem's statement.",
+   "issue": "`Mathlib.Analysis.SpecialFunctions.Pow.Deriv` is publicly re-exported although its declarations are used only inside the proof, expanding every downstream import's API.",
+   "line": "8"
+  }
+ ],
+ "head_sha": "a3526c76daaf7496427f8337c0e06df3d303e017",
+ "merge_base_sha": "c2dcb57218b0bf316cd6535fbc013c915f64e131",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1051,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7ed443fa975a65d52390576d27d569342de2a7e8671820284af255ffa25fd7bb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T185854Z-1051-api-design-613e7a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T18:58:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface omits the advertised closed-half-line shifted-power kernels and unnecessarily re-exports a proof-only Mathlib module.",
+ "transcript_blob": "efc28b64e265d82f87b1ed9f2aa82c644754bbeaf52d83d21e32983f55924acb",
+ "usage": {
+  "cached_input_tokens": 45312,
+  "input_tokens": 64076,
+  "output_tokens": 1068,
+  "reasoning_output_tokens": 247
+ },
+ "verdict": "request_changes"
+}
