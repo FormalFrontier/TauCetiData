@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.359715,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 67.6,
+   "usage": {
+    "cached_input_tokens": 168960,
+    "input_tokens": 212193,
+    "output_tokens": 1969,
+    "reasoning_output_tokens": 679
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "23ce8a8ba45101c8e2ddf57f56039fe35d58cd3b",
+ "cost_estimated": true,
+ "cost_usd": 0.359715,
+ "dedupe_key": "TauCetiProject/TauCeti|1081|747e8e83ab9d43af4a20d9a504aa5801eb07a7f6|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|2",
+ "diff_blob": "114bd23faf7d98f775da31961c06c4d9d6aed6d0a7f55b839082e2b854ef9e88",
+ "diff_sha256": "114bd23faf7d98f775da31961c06c4d9d6aed6d0a7f55b839082e2b854ef9e88",
+ "duration_s": 67.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 49\u201351 require `HasDerivWithinAt` at every `t \u2208 Set.Ici 0`; Mathlib's parallel `IsIntegralCurveOn` API provides `continuousOn` in `Analysis/ODE/Basic.lean:123`.",
+   "file": "TauCeti/Analysis/Semigroups/CauchyProblem.lean",
+   "fix": "Add `IsClassicalSolution.continuousOn : ContinuousOn u (Set.Ici 0)` derived from `hu.hasDerivWithinAt ht |>.continuousWithinAt`.",
+   "issue": "`IsClassicalSolution` exposes the pointwise derivative but no `IsClassicalSolution.continuousOn`, forcing consumers to reconstruct a fundamental property of classical solutions.",
+   "line": "73"
+  },
+  {
+   "evidence": "They rewrite `u 0` to the prescribed initial datum `x` without side effects, directly from the defining hypotheses.",
+   "file": "TauCeti/Analysis/Semigroups/CauchyProblem.lean",
+   "fix": "Mark both `IsClassicalSolution.apply_zero` and `IsMildSolution.apply_zero` with `@[simp]`.",
+   "issue": "The initial-value eliminators at lines 62 and 102 are canonical rewrite rules but are not tagged `@[simp]`.",
+   "line": "62"
+  }
+ ],
+ "head_sha": "747e8e83ab9d43af4a20d9a504aa5801eb07a7f6",
+ "merge_base_sha": "23ce8a8ba45101c8e2ddf57f56039fe35d58cd3b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1081,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "29c3eb209fbaa7d8bcd32109f5b760cb71e253b9b725678694e3d29b3e2c7ae5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T191733Z-1081-api-design-ab86bd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T19:17:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The classical-solution API omits its basic continuity consequence, and both initial-value normal forms lack simp annotations.",
+ "transcript_blob": "22efd6eeb2e227a694a0bf5b356b975dfa4a1e7bfbe913b7394ec1bb13deccbe",
+ "usage": {
+  "cached_input_tokens": 168960,
+  "input_tokens": 212193,
+  "output_tokens": 1969,
+  "reasoning_output_tokens": 679
+ },
+ "verdict": "request_changes"
+}
