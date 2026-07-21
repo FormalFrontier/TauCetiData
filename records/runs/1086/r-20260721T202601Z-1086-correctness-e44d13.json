@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.324409,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 67.1,
+   "usage": {
+    "cached_input_tokens": 187648,
+    "input_tokens": 219251,
+    "output_tokens": 2419,
+    "reasoning_output_tokens": 1265
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d7730c6af4207cddd58c9e7ab4d00372f8afe386",
+ "cost_estimated": true,
+ "cost_usd": 0.324409,
+ "dedupe_key": "TauCetiProject/TauCeti|1086|5d8c7cf64819d87e0bd51f6d3bf0be068e511ebb|correctness|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "ccc385f9de6a90a7c8fdabb4139b43211fa9ae5bb9d98130e7ed151cdd3a2c11",
+ "diff_sha256": "ccc385f9de6a90a7c8fdabb4139b43211fa9ae5bb9d98130e7ed151cdd3a2c11",
+ "duration_s": 67.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`zulip_pr_status.py:119-127` raises `RuntimeError` for every nonzero `gh api` exit, while `detect_dead_schedulers` assumes the lookup can return `None`.",
+   "file": "scripts/zulip/stuck_alerts.py",
+   "fix": "List workflows and compare filenames, or catch 404 separately for each workflow and emit `_sched_alert` while continuing with the remaining schedulers.",
+   "issue": "A missing or renamed workflow produces an Actions API 404, which `zp.gh_api` raises; `collect_alerts` then marks the whole detector unknown, so the advertised missing-workflow alert at lines 342\u2013345 is unreachable.",
+   "line": 340
+  },
+  {
+   "evidence": "`RED_CONCLUSIONS` contains only `failure`, `timed_out`, and `startup_failure`; lines 389\u2013392 return no alert for every other completed conclusion.",
+   "file": "scripts/zulip/stuck_alerts.py",
+   "fix": "Treat every completed conclusion other than explicitly benign `success` (and any deliberately accepted conclusions) as red, or document and justify the narrower contract consistently.",
+   "issue": "`main-red` claims to detect a non-success terminal CI run, but omits terminal conclusions such as `cancelled`, `action_required`, and `stale`, silently clearing or suppressing the alert for those failed invariants.",
+   "line": 133
+  }
+ ],
+ "head_sha": "5d8c7cf64819d87e0bd51f6d3bf0be068e511ebb",
+ "merge_base_sha": "b5e2c7fff898c5358de3c92c26f6f5432d06d3da",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1086,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bc789e1bcd4c682db964d5c89d6b8c8127b7a5bab1131d6229f837d03b2045cc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T202601Z-1086-correctness-e44d13",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T20:26:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The watchdog misses two states it explicitly claims to detect: deleted scheduled workflows and several non-success terminal CI conclusions on main.",
+ "transcript_blob": "ef77f2cfc835d492dc88920ec252b6aedb655f8444ccd71fc6aefc36b2e28120",
+ "usage": {
+  "cached_input_tokens": 187648,
+  "input_tokens": 219251,
+  "output_tokens": 2419,
+  "reasoning_output_tokens": 1265
+ },
+ "verdict": "block"
+}
