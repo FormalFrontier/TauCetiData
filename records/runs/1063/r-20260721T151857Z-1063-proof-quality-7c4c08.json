@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.163073,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 27.9,
+   "usage": {
+    "cached_input_tokens": 41216,
+    "input_tokens": 63361,
+    "output_tokens": 1058,
+    "reasoning_output_tokens": 328
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "cost_estimated": true,
+ "cost_usd": 0.163073,
+ "dedupe_key": "TauCetiProject/TauCeti|1063|eda6404e1e36d6c7f403e0553c2129c43c558875|proof-quality|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "8774ac9b96e94fc2d14f9dbb273fe05f4df1be1f756358c63663acc1b79796c2",
+ "diff_sha256": "8774ac9b96e94fc2d14f9dbb273fe05f4df1be1f756358c63663acc1b79796c2",
+ "duration_s": 27.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n '\\b(show|change)\\b'` finds `show` at lines 83, 88, and 130; the corresponding precomplex branch at line 72 elaborates without it.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Cone.lean",
+   "fix": "Remove the three `show` expressions by supplying explicit arguments to `Finset.singleton_nonempty` and using `Finset.nonempty_iff_ne_empty.mpr hright` directly, as already done at line 72.",
+   "issue": "Undocumented `show` is used here and again at lines 88 and 130 solely to shape inferred types, obscuring whether these proofs depend on elaboration details.",
+   "line": "83"
+  },
+  {
+   "evidence": "Lines 123\u2013130 duplicate lines 65\u201372 almost verbatim; `Join.lean` derives abstract `mem_join_iff` from the precomplex theorem via the forgetful equality.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Cone.lean",
+   "fix": "Derive the abstract theorem from `PreAbstractSimplicialComplex.mem_cone_iff` through `mem_toPreAbstractSimplicialComplex` and `cone_toPreAbstractSimplicialComplex`, following the existing abstract join API pattern.",
+   "issue": "The abstract `mem_cone_iff` repeats the full case analysis from lines 63\u201372, creating two proofs that can diverge when cone membership changes.",
+   "line": "121"
+  }
+ ],
+ "head_sha": "eda6404e1e36d6c7f403e0553c2129c43c558875",
+ "merge_base_sha": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1063,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "87a63bc475ed2622ef6e132098724dd4016eb9a8c56df66a2841725553f4def5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T151857Z-1063-proof-quality-7c4c08",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T15:18:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The cone proofs contain undocumented `show` coercion/type-shaping steps and duplicate the membership argument across the two complex wrappers.",
+ "transcript_blob": "e6fcb9c216dbc916b1eb5272268e526709da68a1c0b560a31144048decf6642a",
+ "usage": {
+  "cached_input_tokens": 41216,
+  "input_tokens": 63361,
+  "output_tokens": 1058,
+  "reasoning_output_tokens": 328
+ },
+ "verdict": "request_changes"
+}

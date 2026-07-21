@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.130788,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 34.1,
+   "usage": {
+    "cached_input_tokens": 27136,
+    "input_tokens": 43404,
+    "output_tokens": 1196,
+    "reasoning_output_tokens": 612
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "cost_estimated": true,
+ "cost_usd": 0.130788,
+ "dedupe_key": "TauCetiProject/TauCeti|1063|eda6404e1e36d6c7f403e0553c2129c43c558875|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "8774ac9b96e94fc2d14f9dbb273fe05f4df1be1f756358c63663acc1b79796c2",
+ "diff_sha256": "8774ac9b96e94fc2d14f9dbb273fe05f4df1be1f756358c63663acc1b79796c2",
+ "duration_s": 34.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only constructor results are `map_inl_mem_cone` at lines 75/133 and `disjSum_singleton_mem_cone` at lines 86/142, each proving only the forward construction direction.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Cone.lean",
+   "fix": "Add `[simp]` iff lemmas for `s.map Embedding.inl \u2208 cone K \u2194 s \u2208 K` and `s.disjSum {PUnit.unit} \u2208 cone K \u2194 s \u2208 K` in both namespaces; derive the current introduction lemmas from them if retained.",
+   "issue": "Both namespaces provide only forward lemmas for embedded base faces and base faces adjoined to the apex, so consumers cannot recover membership in K through the constructor API.",
+   "line": 75
+  },
+  {
+   "evidence": "`@[expose]` occurs on `cone` at Cone.lean lines 53 and 103 and on `join` at Join.lean lines 52 and 123; `mem_cone_iff`, `cone_toPreAbstractSimplicialComplex`, `mem_join_iff`, and `join_toPreAbstractSimplicialComplex` already provide theorem-level access.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Cone.lean",
+   "fix": "Remove `@[expose]` from all four definitions; if rewriting a cone to a join is required, add an explicit `cone_def`/`cone_eq_join` theorem instead.",
+   "issue": "The bodies of both `cone` definitions and both `join` definitions are exposed, coupling downstream proofs to implementation details even though membership and forgetful lemmas characterize the objects.",
+   "line": 53
+  }
+ ],
+ "head_sha": "eda6404e1e36d6c7f403e0553c2129c43c558875",
+ "merge_base_sha": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1063,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fef2705777008a5399a34fc18a087bf0fc2ddb8069f71914fb907ec780298720",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T151658Z-1063-api-design-9ce148",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T15:16:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The cone constructors lack elimination lemmas, and four definition bodies are exposed despite an adequate theorem-level API.",
+ "transcript_blob": "fee9109773ad270af7f5d454dc4bed1ccb57c4297b93dd6d284ca1416ade56c7",
+ "usage": {
+  "cached_input_tokens": 27136,
+  "input_tokens": 43404,
+  "output_tokens": 1196,
+  "reasoning_output_tokens": 612
+ },
+ "verdict": "request_changes"
+}
