@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.198742,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.7,
+   "usage": {
+    "cached_input_tokens": 82944,
+    "input_tokens": 105338,
+    "output_tokens": 1510,
+    "reasoning_output_tokens": 651
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "cost_estimated": true,
+ "cost_usd": 0.198742,
+ "dedupe_key": "TauCetiProject/TauCeti|1066|04fb23425267e093d7c8f893668614d2c9f1f13d|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "a55fcfc41d30547dd4db7c9287fccb867f4eaed61b39d54332da45124af49d8d",
+ "diff_sha256": "a55fcfc41d30547dd4db7c9287fccb867f4eaed61b39d54332da45124af49d8d",
+ "duration_s": 38.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declaration concludes `... x - ... x = (mu - lambda) \u2022 ... (... x)`, while roadmap lines 111\u2013114 require `R(\u03bb,A) \u2212 R(\u03bc,A) = (\u03bc \u2212 \u03bb) R(\u03bb,A) R(\u03bc,A)`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Identity.lean",
+   "fix": "Expose the continuous-linear-map equality using `\u2218L`, and retain this pointwise result as an `*_apply` lemma if useful.",
+   "issue": "`resolvent_sub_resolvent` only states the identity after application to `x`; the roadmap specifies equality of the bundled resolvent operators, so downstream operator-level reasoning still requires manual extensionality.",
+   "line": 159
+  },
+  {
+   "evidence": "`Resolvent/Basic.lean` lines 299\u2013335 exposes contraction versions of `resolvent`, `resolvent_apply`, `resolvent_mem_domain`, `resolventRightInv`, and `resolvent_norm_le`; `rg` finds no contraction versions of any declaration added here.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Identity.lean",
+   "fix": "Add `ContractionSemigroup.resolventLeftInv`, the operator/apply resolvent identity, and `resolvent_comm` wrappers specialized through `S.hasGrowthBound`.",
+   "issue": "The new left-inverse, resolvent-identity, and commutativity APIs have no `ContractionSemigroup` specializations, despite the existing resolvent interface providing contraction wrappers for its corresponding operations.",
+   "line": 231
+  }
+ ],
+ "head_sha": "04fb23425267e093d7c8f893668614d2c9f1f13d",
+ "merge_base_sha": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1066,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c2c5e5a3b3f8108b3ae5209dddd499d31284a88896defe3bc8dcd244e632128a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T145439Z-1066-api-design-f4f63b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T14:54:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The new resolvent interface omits the bundled identity required by the roadmap and breaks the established contraction-semigroup wrapper pattern.",
+ "transcript_blob": "c94b3e4eb9398c5c83437b3ef50402d8de94fc2dc416b267b3d250e920313c1c",
+ "usage": {
+  "cached_input_tokens": 82944,
+  "input_tokens": 105338,
+  "output_tokens": 1510,
+  "reasoning_output_tokens": 651
+ },
+ "verdict": "request_changes"
+}

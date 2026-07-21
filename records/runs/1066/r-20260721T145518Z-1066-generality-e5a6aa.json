@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.162204,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.1,
+   "usage": {
+    "cached_input_tokens": 73728,
+    "input_tokens": 90192,
+    "output_tokens": 1434,
+    "reasoning_output_tokens": 577
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "cost_estimated": true,
+ "cost_usd": 0.162204,
+ "dedupe_key": "TauCetiProject/TauCeti|1066|04fb23425267e093d7c8f893668614d2c9f1f13d|generality|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "a55fcfc41d30547dd4db7c9287fccb867f4eaed61b39d54332da45124af49d8d",
+ "diff_sha256": "a55fcfc41d30547dd4db7c9287fccb867f4eaed61b39d54332da45124af49d8d",
+ "duration_s": 41.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "At lines 167\u2013168, the proof uses the shared `hb` independently as `resolventLeftInv hb lambda ...` and `resolventRightInv hb mu ...`; no argument relates the two bounds. The same restriction is copied into `resolvent_comm` at lines 197\u2013200.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Identity.lean",
+   "fix": "Give the two resolvents independent bounds `hb\u03bb : S.HasGrowthBound \u03c9\u03bb M\u03bb` and `hb\u03bc : S.HasGrowthBound \u03c9\u03bc M\u03bc`, with `\u03c9\u03bb < \u03bb` and `\u03c9\u03bc < \u03bc`; use each bound in the corresponding left/right-inverse applications.",
+   "issue": "`resolvent_sub_resolvent` and `resolvent_comm` (line 197) require both parameters to use one `HasGrowthBound omega M`, although the proof only needs a valid bound for each resolvent separately.",
+   "line": 159
+  },
+  {
+   "evidence": "The signature at lines 159\u2013164 quantifies `(x : X)` and returns a vector equality, whereas `resolvent_comm` at lines 197\u2013202 already exposes the corresponding operator-level equality and the roadmap at line 114 states the identity between resolvents themselves.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Identity.lean",
+   "fix": "State the primary theorem as `R\u03bb - R\u03bc = (\u03bc - \u03bb) \u2022 (R\u03bb \u2218L R\u03bc)` in `X \u2192L[\u211d] X`; retain the current pointwise statement as an `_apply` corollary if useful.",
+   "issue": "The theorem named `resolvent_sub_resolvent` states the resolvent identity only after application to `x`, while the roadmap\u2019s identity and the surrounding API treat resolvents as continuous linear operators.",
+   "line": 159
+  }
+ ],
+ "head_sha": "04fb23425267e093d7c8f893668614d2c9f1f13d",
+ "merge_base_sha": "9554d1a440f7a7413eb2d16b8b656ae7086336f6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1066,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a93a8c6046236cd0c666d02f4bb9f4b551c1d607d17f9bff6042bcff0f82c6b9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260721T145518Z-1066-generality-e5a6aa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-21T14:55:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The identity API is under-generalized: it unnecessarily requires a shared growth bound and states the main resolvent identity only pointwise.",
+ "transcript_blob": "a914facb3e31e5a5992665f5f5bac79e1accafb771e9747a464ee79278541ff1",
+ "usage": {
+  "cached_input_tokens": 73728,
+  "input_tokens": 90192,
+  "output_tokens": 1434,
+  "reasoning_output_tokens": 577
+ },
+ "verdict": "request_changes"
+}
