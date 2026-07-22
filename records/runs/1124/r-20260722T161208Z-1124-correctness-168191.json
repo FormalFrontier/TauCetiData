@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.368761,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 54.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 210432,
+    "input_tokens": 250319,
+    "output_tokens": 2137,
+    "reasoning_output_tokens": 1126
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "48f7a84e11f64f3d3c5bbccf56223a9c7f208d8f",
+ "cost_estimated": true,
+ "cost_usd": 0.368761,
+ "dedupe_key": "TauCetiProject/TauCeti|1124|a14caebb35f6527728642cc170de5a24dc1c101c|correctness|gpt-5.6-sol|e9450f01fa585add|production|2",
+ "diff_blob": "1e9548e0ffca2d0575200ac8e126b4a3cc55b148454d695da68894f4ff3f0b76",
+ "diff_sha256": "a0c6ac059304a785a4152cc7efee783be2923a6f78f2e359b249fb7e6b10b80e",
+ "duration_s": 54.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 90\u201394 select every associated author's comments, and lines 108\u2013145 consume both marker types from that shared list; COORDINATION.md\u2019s review-state contract requires comments by the canonical reviewer.",
+   "file": "scripts/pr_status/core.py",
+   "fix": "Validate the exact canonical reviewer/App identity for both signal types, rather than filtering only by `author_association`.",
+   "issue": "Both scoreboard verdicts and in-progress markers are trusted from any OWNER/MEMBER/COLLABORATOR, so any collaborator can forge `ready-to-merge` or `review-in-progress`; repo association does not identify the canonical reviewer.",
+   "line": 90
+  },
+  {
+   "evidence": "Lines 185\u2013189 query only `--label review-in-progress`; all other reconciliation triggers require a future PR/build/comment event, while README.md relegates existing PR coverage to a local backfill command.",
+   "file": ".github/workflows/pr-labels.yml",
+   "fix": "Add an automated initial/full reconciliation of all open PRs, or make the scheduled sweep reconcile all open PRs.",
+   "issue": "The scheduled sweep only lists PRs already carrying `review-in-progress`, so existing open PRs without a status label never receive one unless an undocumented deployment-time backfill is manually run; this violates \u201cevery open PR exactly one status label.\u201d",
+   "line": 185
+  }
+ ],
+ "head_sha": "a14caebb35f6527728642cc170de5a24dc1c101c",
+ "merge_base_sha": "291ca560b9392d051593b4fd3db9a54bda687c62",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1124,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6a547785c45a81c299c8a23d3d9163534153bfb5d8abc84baa9c95406a93adc0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260722T161208Z-1124-correctness-168191",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T16:12:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The derivation can accept forged review signals, and deployment does not establish the claimed label invariant for existing open PRs.",
+ "transcript_blob": "981bb4bca2f81a5898b66583d2e5ebc96f1764230e17b5fa40190c6f9da4a34a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 210432,
+  "input_tokens": 250319,
+  "output_tokens": 2137,
+  "reasoning_output_tokens": 1126
+ },
+ "verdict": "block"
+}
