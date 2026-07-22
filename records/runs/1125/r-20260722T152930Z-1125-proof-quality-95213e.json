@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.49161599999999994,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 78.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 25445,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 25445,
+    "cache_read_input_tokens": 156402,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2585,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2585,
+      "cache_read_input_tokens": 38942,
+      "input_tokens": 2,
+      "output_tokens": 3827,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6107,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c77e6fd3ab2384cfc34f910ca0d2ba962aeb926e",
+ "cost_usd": 0.491616,
+ "dedupe_key": "TauCetiProject/TauCeti|1125|b416ecda841eff9a5d25803156bc30b3844178b0|proof-quality|claude-opus-4-8|e9450f01fa585add|production|1",
+ "diff_blob": "31cba76146c7b6e9b5d3b955424460fa92c4474a083c0fce63ba1d727b7a6536",
+ "diff_sha256": "31cba76146c7b6e9b5d3b955424460fa92c4474a083c0fce63ba1d727b7a6536",
+ "duration_s": 78.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 125-127: `rw [link_simplex Subset.rfl, sdiff_self]` then `change simplex (\u2205 : Finset \u03b9) = \u22a5`; `sdiff_self : a \\ a = \u22a5`; `Finset.bot_eq_empty` exists (mathlib/Mathlib/GroupTheory/Perm/Finite.lean:259).",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Simplex/Link.lean",
+   "fix": "Make the coercion explicit: `rw [link_simplex Subset.rfl, sdiff_self, Finset.bot_eq_empty]; exact simplex_empty`, or close with `simp`.",
+   "issue": "`change simplex (\u2205 : Finset \u03b9) = \u22a5` is an undocumented `change` that converts the `\u22a5 : Finset \u03b9` produced by `sdiff_self` into `\u2205` purely by definitional equality, so `simplex_empty` applies. The rubric flags `change`/`show` without a justifying comment and reliance on wrapper defeq.",
+   "line": "126"
+  },
+  {
+   "evidence": "Lines 133-135.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Simplex/Link.lean",
+   "fix": "`rw [link_simplexBoundary Subset.rfl, sdiff_self, Finset.bot_eq_empty]; exact simplexBoundary_empty`, or `simp`.",
+   "issue": "Same undocumented `change`/defeq pattern as `link_simplex_self`: `change simplexBoundary (\u2205 : Finset \u03b9) = \u22a5` converts `\u22a5` to `\u2205` implicitly.",
+   "line": "134"
+  },
+  {
+   "evidence": "Lines 101-107 mirror lines 115-120 (both `apply Subset.antisymm ...; intro x ...; by_cases/resolve`).",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Simplex/Link.lean",
+   "fix": "Factor a helper lemma, e.g. `Disjoint \u03c1 \u03c3 \u2192 \u03c3 \u2286 V \u2192 (\u03c1 \u222a \u03c3 = V \u2194 \u03c1 = V \\ \u03c3)`, and use its two directions here.",
+   "issue": "Both directions of `link_simplexBoundary` reprove the same set-equality fact by an explicit `Subset.antisymm`/`by_cases` argument: forward (98-107) derives `\u03c1 \u222a \u03c3 = V` from `\u03c1 = V \\ \u03c3`, backward (114-120) derives `\u03c1 = V \\ \u03c3` from `\u03c1 \u222a \u03c3 = V`. This is substantial repeated reasoning inlined twice.",
+   "line": "98"
+  }
+ ],
+ "head_sha": "b416ecda841eff9a5d25803156bc30b3844178b0",
+ "merge_base_sha": "c77e6fd3ab2384cfc34f910ca0d2ba962aeb926e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1125,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1586e662381af1fb5cf9327a41e6900e3b8b8db360428754999884d963ee6acd",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260722T152930Z-1125-proof-quality-95213e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T15:29:30Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proofs use an undocumented `change` that relies on the Finset `\u22a5 = \u2205` definitional equality instead of an explicit rewrite; `link_simplexBoundary` also reproves the same union/sdiff antisymmetry argument in both directions.",
+ "transcript_blob": "7f160598b4f0c37a307f49c6291dbb7a91c1514f71f182c78f7ecc855c27f3de",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25445,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 25445,
+  "cache_read_input_tokens": 156402,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2585,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2585,
+    "cache_read_input_tokens": 38942,
+    "input_tokens": 2,
+    "output_tokens": 3827,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6107,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
