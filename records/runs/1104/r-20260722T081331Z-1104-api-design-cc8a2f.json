@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.228567,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 33.4,
+   "usage": {
+    "cached_input_tokens": 82944,
+    "input_tokens": 112713,
+    "output_tokens": 1275,
+    "reasoning_output_tokens": 537
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "cost_estimated": true,
+ "cost_usd": 0.228567,
+ "dedupe_key": "TauCetiProject/TauCeti|1104|b818d9fcc43ab2fa8a72a27b02f771dd6a015ca8|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "4d3917785eef9a59def585a1a4f7b7a294e76febf11665b78e1b1b8cc48cc261",
+ "diff_sha256": "4d3917785eef9a59def585a1a4f7b7a294e76febf11665b78e1b1b8cc48cc261",
+ "duration_s": 33.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 77\u201378 expose the body; lines 127\u2013130 already prove `ofBasedPath x\u2080 \u03b1 = mk (endpoint \u03b1) \u27e6\u03b1.toPath\u27e7`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Basic.lean",
+   "fix": "Remove `@[expose]` and use `ofBasedPath_eq` (or additional focused lemmas) wherever consumers need to reason about the definition.",
+   "issue": "`ofBasedPath` is marked `@[expose]` even though `ofBasedPath_eq` provides its exact public unfolding equation, making downstream proofs depend unnecessarily on the implementation body.",
+   "line": 77
+  },
+  {
+   "evidence": "The declarations occur at lines 92, 194, 207, and 281; later proofs manually rewrite `basedPathSheet_mk` and `ofBasedPath_preimage_sheet`, confirming these are intended normal forms.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Basic.lean",
+   "fix": "Add `@[simp]` to these four lemmas so representative construction, quotient lifting, and sheet membership normalize through the public API.",
+   "issue": "Canonical normalization and membership lemmas lack `@[simp]`: `ofBasedPath_ofPath`, `mem_basedPathComponent_iff`, `basedPathSheet_mk`, and `ofBasedPath_mem_sheet_iff`.",
+   "line": 92
+  }
+ ],
+ "head_sha": "b818d9fcc43ab2fa8a72a27b02f771dd6a015ca8",
+ "merge_base_sha": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1104,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6a0bbcbe7c05f14d755de0d7d57638ad911c559ef69792000b3a8907f1250591",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T081331Z-1104-api-design-cc8a2f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T08:13:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API unnecessarily exposes an implementation body and omits simp annotations on its characteristic normalization lemmas.",
+ "transcript_blob": "a65691383fa85062773df0ce2496b8b5e5002fc304d305df4691f8ab69330a59",
+ "usage": {
+  "cached_input_tokens": 82944,
+  "input_tokens": 112713,
+  "output_tokens": 1275,
+  "reasoning_output_tokens": 537
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.207847,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 37.2,
+   "usage": {
+    "cached_input_tokens": 57344,
+    "input_tokens": 84215,
+    "output_tokens": 1494,
+    "reasoning_output_tokens": 472
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "cost_estimated": true,
+ "cost_usd": 0.207847,
+ "dedupe_key": "TauCetiProject/TauCeti|1103|ec4222823457b14aa8b95fa6121bb4381c512376|reuse|gpt-5.6-sol|0e86c8aad121a07b|production|2",
+ "diff_blob": "1d85a895feb34c8a67a8150b7a8e6386bbe8e9da26d857d8089a1cd464c0c801",
+ "diff_sha256": "1d85a895feb34c8a67a8150b7a8e6386bbe8e9da26d857d8089a1cd464c0c801",
+ "duration_s": 37.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/LinearAlgebra/FixedSubmodule.lean:32 defines `LinearMap.fixedSubmodule` as the fixed-point submodule, and line 39 provides its membership iff; the PR defines the same `eqLocus 1` at lines 51\u201352.",
+   "file": "TauCeti/Probability/Ergodic/FixedSpace.lean",
+   "fix": "Use `(Lp.compMeasurePreserving\u2097\u1d62 \ud835\udd5c T hT).toLinearMap.fixedSubmodule` directly and `LinearMap.mem_fixedSubmodule_iff`; retain only genuinely Lp-specific representative lemmas.",
+   "issue": "`fixedSpace` is exactly the existing `LinearMap.fixedSubmodule`, while `mem_fixedSpace_iff` duplicates `LinearMap.mem_fixedSubmodule_iff`.",
+   "line": "51"
+  },
+  {
+   "evidence": "Mathlib/MeasureTheory/Function/LpSpace/Basic.lean:630 defines `Lp.compMeasurePreserving\u2097\u1d62`, and Mathlib/Analysis/Normed/Operator/Basic.lean:492 already supplies `LinearIsometry.norm_toContinuousLinearMap_le`; the PR wrapper is definitionally just that conversion.",
+   "file": "TauCeti/Probability/Ergodic/FixedSpace.lean",
+   "fix": "Remove `compMeasurePreservingLp`, `compMeasurePreservingLp_apply`, and `norm_compMeasurePreservingLp_le`; use `(Lp.compMeasurePreserving\u2097\u1d62 \ud835\udd5c T hT).toContinuousLinearMap` and `LinearIsometry.norm_toContinuousLinearMap_le` at call sites.",
+   "issue": "`compMeasurePreservingLp` is an unnecessary thin wrapper around Mathlib\u2019s `Lp.compMeasurePreserving\u2097\u1d62.toContinuousLinearMap`; its apply and norm lemmas merely expose existing behavior.",
+   "line": "33"
+  }
+ ],
+ "head_sha": "ec4222823457b14aa8b95fa6121bb4381c512376",
+ "merge_base_sha": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1103,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "674dd3f626dcc25d61ca35a68ddd133db40356b1d1e22d628c98bc032723e6e3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T083001Z-1103-reuse-31b199",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T08:30:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The core fixed-space declaration directly duplicates Mathlib\u2019s generic fixed-submodule API, and the composition-operator wrapper adds a parallel name for an existing coercion.",
+ "transcript_blob": "4fb66d48dfe942a9e6017b50dd159a7c3e884fccd7cba8e9b86739b28b6ba92f",
+ "usage": {
+  "cached_input_tokens": 57344,
+  "input_tokens": 84215,
+  "output_tokens": 1494,
+  "reasoning_output_tokens": 472
+ },
+ "verdict": "block"
+}

@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.189914,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.1,
+   "usage": {
+    "cached_input_tokens": 58368,
+    "input_tokens": 83164,
+    "output_tokens": 1225,
+    "reasoning_output_tokens": 363
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "cost_estimated": true,
+ "cost_usd": 0.189914,
+ "dedupe_key": "TauCetiProject/TauCeti|1103|cb389de363c956d5aed532fc5e8b4587a17dde49|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|3",
+ "diff_blob": "c37f565a628702362173fe9205740338fa0a40e09c833c4eb8e6b274805a5d0e",
+ "diff_sha256": "c37f565a628702362173fe9205740338fa0a40e09c833c4eb8e6b274805a5d0e",
+ "duration_s": 36.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The file\u2019s only declarations are the three theorems at lines 29, 38, and 46, while roadmap line 532 requires `fixedSpace`; Mathlib provides `ContinuousLinearMap.isClosed_eqLocus` and `completeSpace_eqLocus` at `Basic.lean:672-694`.",
+   "file": "TauCeti/Probability/Ergodic/FixedSpace.lean",
+   "fix": "Define the fixed space using the continuous-map equality locus (or prove it equal to that locus), then expose membership, closedness/`CompleteSpace`, identity, and iterate lemmas without requiring consumers to unfold it.",
+   "issue": "The public API only repeats the raw `toLinearMap.fixedSubmodule` expression; it defines no named fixed space and supplies no closedness/completeness, identity, or iterate behavior, so later projection code has no stable codomain API.",
+   "line": 29
+  },
+  {
+   "evidence": "Line 46 declares the `mem_*_iff` theorem without an attribute; its right-hand side contains no fixed-space membership and is the intended normal form.",
+   "file": "TauCeti/Probability/Ergodic/FixedSpace.lean",
+   "fix": "Add `@[simp]` to `mem_fixedSubmodule_iff_comp_ae_eq_self` (or to the corresponding membership theorem for the new named fixed space).",
+   "issue": "The characteristic membership equivalence is not marked `@[simp]`, so routine membership goals do not normalize to representative-level invariance.",
+   "line": 46
+  }
+ ],
+ "head_sha": "cb389de363c956d5aed532fc5e8b4587a17dde49",
+ "merge_base_sha": "ea4d54938f2557be5dbe590c07e4b52e48d823b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1103,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "13fbf9567170b8871a91c3aeda9b0e95e864f0f229bd098fc3a1398e83c4d890",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T084006Z-1103-api-design-7bb6fe",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T08:40:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR does not expose the fixed-space object or the closedness/completeness API required by the roadmap\u2019s next projection step, and its characteristic membership lemma lacks the expected simplifier annotation.",
+ "transcript_blob": "97f037e07c358205464e6e01e92bd4e560e3f4974896cb4d30389fc0fc5b7096",
+ "usage": {
+  "cached_input_tokens": 58368,
+  "input_tokens": 83164,
+  "output_tokens": 1225,
+  "reasoning_output_tokens": 363
+ },
+ "verdict": "request_changes"
+}
