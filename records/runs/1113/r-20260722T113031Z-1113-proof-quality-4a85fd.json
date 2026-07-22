@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.2448,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.9,
+   "usage": {
+    "cached_input_tokens": 104960,
+    "input_tokens": 131730,
+    "output_tokens": 1949,
+    "reasoning_output_tokens": 886
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d381adda0bd59ea78fb33bcf90fdcbd23750bf98",
+ "cost_estimated": true,
+ "cost_usd": 0.2448,
+ "dedupe_key": "TauCetiProject/TauCeti|1113|2db5c250b93b7258da1c4ec0fce390dc69ed9211|proof-quality|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "aaa197032d571cd59e4ca8d55fd3386181b4d52a6f27df6b60c4b9b8a59817e6",
+ "diff_sha256": "aaa197032d571cd59e4ca8d55fd3386181b4d52a6f27df6b60c4b9b8a59817e6",
+ "duration_s": 56.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 67 is `exact \u27e8(p.prod q).mkQ (x, y), rfl\u27e9`; Mathlib provides the explicit computation lemmas `Submodule.liftQ_mkQ` and `LinearMap.prodMap_apply`.",
+   "file": "TauCeti/Analysis/Fredholm/Prod.lean",
+   "fix": "Prove the image equality explicitly using `Submodule.liftQ_mkQ` and `LinearMap.prodMap_apply` (with a short `simp`/`calc`) instead of `rfl`.",
+   "issue": "The surjectivity proof closes by unfolding `g`, `f`, `liftQ`, `prodMap`, and quotient constructors through `rfl`, so it rests on undocumented definitional equality across several wrappers.",
+   "line": 67
+  },
+  {
+   "evidence": "Lines 111\u2013115 explicitly rewrite `index_eq_finrank_sub` three times followed by six kernel, range, equivalence, quotient, and product lemmas.",
+   "file": "TauCeti/Analysis/Fredholm/Prod.lean",
+   "fix": "Use `simp` with the bridge and product-dimension lemmas to normalize all three indices uniformly, then discharge the integer identity with `omega`.",
+   "issue": "`index_prodMap_of_finiteDimensional` is a sequencing-sensitive chain of nine named rewrites, including three repetitions of `index_eq_finrank_sub`, before `omega`.",
+   "line": 111
+  }
+ ],
+ "head_sha": "2db5c250b93b7258da1c4ec0fce390dc69ed9211",
+ "merge_base_sha": "d381adda0bd59ea78fb33bcf90fdcbd23750bf98",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1113,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e8b5fb6971a7b463b7a6e575ad136f4d19ce4332067070887fe4c330ebe4f3cf",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T113031Z-1113-proof-quality-4a85fd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T11:30:31Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proofs rely on brittle reduction or rewrite sequencing that should be replaced with explicit API lemmas and automation.",
+ "transcript_blob": "ac1549d2590bc5ef56b5c9a267a83f410f5fa9dc13315feee3e02720b371c6a4",
+ "usage": {
+  "cached_input_tokens": 104960,
+  "input_tokens": 131730,
+  "output_tokens": 1949,
+  "reasoning_output_tokens": 886
+ },
+ "verdict": "request_changes"
+}

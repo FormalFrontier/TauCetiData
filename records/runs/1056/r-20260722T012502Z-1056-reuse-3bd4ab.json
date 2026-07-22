@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.460361,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 73.0,
+   "usage": {
+    "cached_input_tokens": 289792,
+    "input_tokens": 339127,
+    "output_tokens": 2293,
+    "reasoning_output_tokens": 641
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d7730c6af4207cddd58c9e7ab4d00372f8afe386",
+ "cost_estimated": true,
+ "cost_usd": 0.460361,
+ "dedupe_key": "TauCetiProject/TauCeti|1056|e250ac216b143d7108a3e8fa7a972ef6127388b3|reuse|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "5aaca0dab64bdd4eb2fb94adda82b71b73fe3efb099532ea12634800d939cce5",
+ "diff_sha256": "5aaca0dab64bdd4eb2fb94adda82b71b73fe3efb099532ea12634800d939cce5",
+ "duration_s": 73.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/CharP/Basic.lean:127` proves `-a = a \u2194 a = 0` for a domain of characteristic not two; the new proof repeats its `two_mul`/`mul_eq_zero` argument.",
+   "file": "TauCeti/Algebra/NeNeg.lean",
+   "fix": "Delete this declaration and use `Ring.eq_self_iff_eq_zero_of_char_ne_two` after deriving `ringChar L \u2260 2` from `h2`; update both consumers accordingly.",
+   "issue": "`TauCeti.ne_neg_of_ne_zero` duplicates Mathlib's `Ring.eq_self_iff_eq_zero_of_char_ne_two`, up to symmetry and expressing characteristic \u2260 2 as `(2 : L) \u2260 0`.",
+   "line": "27"
+  },
+  {
+   "evidence": "`mathlib/Mathlib/RingTheory/IntegralClosure/IsIntegral/Basic.lean:127` provides `IsIntegral.of_pow`; the only grep hit using the new theorem is `IntegralSqrt.lean:46`.",
+   "file": "TauCeti/NumberTheory/NumberField/IntegralSqrt.lean",
+   "fix": "Remove it and construct `integralSqrt` directly with `IsIntegral.of_pow two_pos (hx \u25b8 isIntegral_algebraMap)`.",
+   "issue": "`isIntegral_of_sq_eq_intCast` is an unnecessary public specialization of `IsIntegral.of_pow`.",
+   "line": "38"
+  }
+ ],
+ "head_sha": "e250ac216b143d7108a3e8fa7a972ef6127388b3",
+ "merge_base_sha": "311b1ba0edd93608c9f9868e5125597ca14980c2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1056,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8e0717b3f1a4b7fecb42bcd5069a313db4135e81f6db6317e4a7168dd4f2ec24",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T012502Z-1056-reuse-3bd4ab",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T01:25:02Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new generic declarations duplicate existing Mathlib results or trivial specializations.",
+ "transcript_blob": "6546cc59d6c485946ee3022dc9fffa01e6cf90dac5b3d862518273eb7d52565a",
+ "usage": {
+  "cached_input_tokens": 289792,
+  "input_tokens": 339127,
+  "output_tokens": 2293,
+  "reasoning_output_tokens": 641
+ },
+ "verdict": "block"
+}

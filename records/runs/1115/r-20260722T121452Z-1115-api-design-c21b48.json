@@ -1,0 +1,79 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.227853,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 66.6,
+   "usage": {
+    "cached_input_tokens": 114176,
+    "input_tokens": 136143,
+    "output_tokens": 2031,
+    "reasoning_output_tokens": 820
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d381adda0bd59ea78fb33bcf90fdcbd23750bf98",
+ "cost_estimated": true,
+ "cost_usd": 0.227853,
+ "dedupe_key": "TauCetiProject/TauCeti|1115|5395afca95ca02c03f210bcf9d60a028411ab152|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|2",
+ "diff_blob": "e97a07226ae8bb0e4c93269cbf779ce85cbed07164566e88862ffe6aaf7eda5b",
+ "diff_sha256": "e97a07226ae8bb0e4c93269cbf779ce85cbed07164566e88862ffe6aaf7eda5b",
+ "duration_s": 66.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 58\u201359 expose the body; the only restatement at lines 62\u201365 rewrites it as `(z\u207b\u00b9 * v).im`, so coordinate consumers currently depend on unfolding.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral.lean",
+   "fix": "Remove `@[expose]` and add an appropriately annotated `realWindingIntegrand_def` theorem stating the coordinate quotient, proved with `:= (rfl)`.",
+   "issue": "`realWindingIntegrand` is `@[expose]` even though clients should use a characteristic API; moreover, no coordinate-form `realWindingIntegrand_def` lemma is provided.",
+   "line": 58
+  },
+  {
+   "evidence": "The declaration is used only once, at line 147, to prove `tendsto_realWindingIntegrand_at_crossing`; repository grep finds no other consumer.",
+   "file": "TauCeti/Analysis/Contour/Winding/CrossingValue.lean",
+   "fix": "Make this algebraic helper private unless a concrete downstream roadmap consumer requires this interface.",
+   "issue": "`tendsto_realWindingIntegrand_mul_add` exposes the proof-specific `q/r/d/\u03c4` decomposition although the roadmap product is the curve-level crossing value.",
+   "line": 68
+  },
+  {
+   "evidence": "Line 137 defines `hpos' := tendsto_snd.comp (Tendsto.prodMk htend hpos)`, which is propositionally just `hpos`; `htend` has no other use.",
+   "file": "TauCeti/Analysis/Contour/Winding/CrossingValue.lean",
+   "fix": "Remove `htend` and use `hpos` directly as the normalized-position limit.",
+   "issue": "`htend : Tendsto t l (\ud835\udcdd t\u2080)` is a redundant public hypothesis: the proof pairs it with `hpos` and immediately projects `hpos` back out.",
+   "line": 126
+  }
+ ],
+ "head_sha": "5395afca95ca02c03f210bcf9d60a028411ab152",
+ "merge_base_sha": "d381adda0bd59ea78fb33bcf90fdcbd23750bf98",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1115,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "caf7053f28c700b1f05ec75f4dcd2ccb2cc321939138636bbf66a09bb0c7f917",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T121452Z-1115-api-design-c21b48",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T12:14:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes an implementation helper and the definition body, while the main crossing theorem carries an unnecessary hypothesis.",
+ "transcript_blob": "c96acdc09fd5123106d88d910773c58ab47066edda8b958dafe4cb8a8fbbe1e7",
+ "usage": {
+  "cached_input_tokens": 114176,
+  "input_tokens": 136143,
+  "output_tokens": 2031,
+  "reasoning_output_tokens": 820
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,72 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.197125,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.0,
+   "usage": {
+    "cached_input_tokens": 52480,
+    "input_tokens": 78695,
+    "output_tokens": 1327,
+    "reasoning_output_tokens": 680
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe10e2cafde33c590cf45d7e4666b3fd962e6531",
+ "cost_estimated": true,
+ "cost_usd": 0.197125,
+ "dedupe_key": "TauCetiProject/TauCeti|1067|1f471744bf1dab85c6b066539ebc0b0cdfc627bb|api-design|gpt-5.6-sol|0e86c8aad121a07b|production|1",
+ "diff_blob": "95c6e1619a9b93aaf6ca2613e0202aee75ab4a8cbef4cbcd4a14d103323434b4",
+ "diff_sha256": "95c6e1619a9b93aaf6ca2613e0202aee75ab4a8cbef4cbcd4a14d103323434b4",
+ "duration_s": 42.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg \"baseChange_toCommGrp\"` finds uses only in the new `Hom/BaseChange.lean`; no roadmap consumer refers to this equality.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Basic.lean",
+   "fix": "Move this equality to `Hom/BaseChange.lean` as a private helper (or construct `Hom.baseChange` through the public group-operation lemmas) and remove it from the public object API.",
+   "issue": "`baseChange_toCommGrp` publicly exposes a bundled implementation equality used only to construct and prove properties of `Hom.baseChange`.",
+   "line": 205
+  },
+  {
+   "evidence": "`Hom/Basic.lean` provides both `toOverHom_mk'` (line 91) and `toSchemeHom_mk'` (line 128), while `rg \"toSchemeHom_baseChange\" code/TauCeti` has no hit.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Hom/BaseChange.lean",
+   "fix": "Add a `[simp]` lemma identifying `Hom.toSchemeHom (Hom.baseChange f L)` with the left component of the pulled-back `Over` morphism.",
+   "issue": "Base change characterizes `Hom.toOverHom` but omits the parallel `Hom.toSchemeHom_baseChange`, forcing scheme-level consumers to manually project an `Over` equality.",
+   "line": 58
+  }
+ ],
+ "head_sha": "1f471744bf1dab85c6b066539ebc0b0cdfc627bb",
+ "merge_base_sha": "fe10e2cafde33c590cf45d7e4666b3fd962e6531",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1067,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bae3f6635014804483ba0589a10d573c45ef44d1cc01d8366e589171c4662289",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T002415Z-1067-api-design-506118",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T00:24:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The base-change surface exposes an implementation equality while omitting the scheme-level projection lemma expected by the existing homomorphism API.",
+ "transcript_blob": "33186ddc0122d88559d2a87070268f36d15f10e4dad5c4d9554eaf538f9261c2",
+ "usage": {
+  "cached_input_tokens": 52480,
+  "input_tokens": 78695,
+  "output_tokens": 1327,
+  "reasoning_output_tokens": 680
+ },
+ "verdict": "request_changes"
+}
