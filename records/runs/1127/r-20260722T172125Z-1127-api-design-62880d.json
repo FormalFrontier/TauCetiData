@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.222453,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 22016,
+    "input_tokens": 56127,
+    "output_tokens": 1363,
+    "reasoning_output_tokens": 636
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "51d63f753610d4d2f2e09eb873ab039d10d7bc35",
+ "cost_estimated": true,
+ "cost_usd": 0.222453,
+ "dedupe_key": "TauCetiProject/TauCeti|1127|0bda7338c5da2b21bbf260043db2b7b14807a8fc|api-design|gpt-5.6-sol|e9450f01fa585add|production|2",
+ "diff_blob": "187184bfb078fb6bae4abb9115de3a00e65d895927832795ca65f85772e88bf3",
+ "diff_sha256": "187184bfb078fb6bae4abb9115de3a00e65d895927832795ca65f85772e88bf3",
+ "duration_s": 32.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds `parametrization` only in the structure field; all subsequent constructions use `T.carrier`, its topology, and the framing basis.",
+   "file": "TauCeti/LowDimTopology/DehnSurgery/Slope.lean",
+   "fix": "Store mere existence of a torus homeomorphism, e.g. `Nonempty (carrier \u2243\u209c UnitAddTorus (Fin 2))`, or otherwise make the parametrization part of operations/laws and provide an extensionality theorem.",
+   "issue": "`BoundaryTorus.parametrization` is unconstrained data unused by `firstHomology`, `FramedBoundaryTorus`, or any slope operation, so equivalent parametrizations of the same framed torus produce unequal bundled objects.",
+   "line": "312"
+  },
+  {
+   "evidence": "Lines 124 and 130 mark both definitions `@[expose]`; line 132 states only `(v = w \u2228 v = -w) \u2192 mk v hv = mk w hw`.",
+   "file": "TauCeti/LowDimTopology/DehnSurgery/Slope.lean",
+   "fix": "Add `Slope.mk_eq_mk_iff : mk v hv = mk w hw \u2194 v = w \u2228 v = -w` (with suitable simp annotation), then remove `@[expose]` from `Slope` and `Slope.mk`.",
+   "issue": "`Slope` and `Slope.mk` expose their quotient bodies, while the API only provides the forward implication `mk_eq_mk`; consumers lack the characteristic equality equivalence and must unfold the representation for elimination such as distinctness.",
+   "line": "124"
+  },
+  {
+   "evidence": "Lines 206\u2013212 show the zero branch has `@[simp]` while the nonzero branch does not; lines 349 and 353 are the canonical evaluations of `coord` on the framing basis.",
+   "file": "TauCeti/LowDimTopology/DehnSurgery/Slope.lean",
+   "fix": "Mark `slopeValue_of_snd_ne_zero`, `coord_basis_zero`, and `coord_basis_one` with `@[simp]` so downstream coordinate/value reductions do not require manual rewrites.",
+   "issue": "Parallel characteristic equations are inconsistently automated: only `slopeValue_of_snd_eq_zero` is `[simp]`, and the framing coordinate equations at lines 349 and 353 are also unannotated normal forms.",
+   "line": "209"
+  }
+ ],
+ "head_sha": "0bda7338c5da2b21bbf260043db2b7b14807a8fc",
+ "merge_base_sha": "73f7cc2d76e828ccaa26e4a4c9bc90a893644d8e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1127,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "06002a179ca7e1b3f006b679a439c2048f308b094e927955dfe45d66ffe17d0e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260722T172125Z-1127-api-design-62880d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T17:21:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The public slope representation carries unused data and relies on exposed quotient internals instead of a complete characteristic API. Several defining equations also lack normal-form annotations.",
+ "transcript_blob": "689be01edf42a5890cfd17d3bfaefef24627ccb4d69448783cabded439a1c7b9",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 22016,
+  "input_tokens": 56127,
+  "output_tokens": 1363,
+  "reasoning_output_tokens": 636
+ },
+ "verdict": "request_changes"
+}
