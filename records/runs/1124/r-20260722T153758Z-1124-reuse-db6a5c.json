@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8688130000000001,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 91.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 58885,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 58885,
+    "cache_read_input_tokens": 205536,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1909,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1909,
+      "cache_read_input_tokens": 73058,
+      "input_tokens": 2,
+      "output_tokens": 2767,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6081,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "48f7a84e11f64f3d3c5bbccf56223a9c7f208d8f",
+ "cost_usd": 0.868813,
+ "dedupe_key": "TauCetiProject/TauCeti|1124|ad7da502ee9b578115dec58707380053cd51b528|reuse|claude-opus-4-8|e9450f01fa585add|production|1",
+ "diff_blob": "2a80a3bbb2547a2f1e77fb256cbca55d778ffcb21f073248ad19a5979d6ac4c3",
+ "diff_sha256": "28acda86e2b6d84acba4daa09e02e5d115652f03608fc3fe04ca5fc60416c546",
+ "duration_s": 91.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "core.py:99 `f\"/repos/{REPO}/commits/{head}/statuses\"` vs stuck_alerts.py:189 `f\"/repos/{REPO}/commits/{head}/statuses?per_page=100\"`; both select a context and take `sort_by(.updated_at) | last`.",
+   "file": "scripts/pr_status/core.py",
+   "fix": "Put one generic `newest_status(head, context)` (with per_page=100) in core; have core.ci_status call it and normalize pending/success/failure\u2192its states, and have stuck_alerts import newest_status from core instead of defining its own.",
+   "issue": "core.ci_status reads `/repos/{REPO}/commits/{head}/statuses`, selecting context==\"build\" and taking the newest by updated_at \u2014 the same 'newest commit status for a context' logic stuck_alerts.newest_status (stuck_alerts.py:182) already implements in the same package (now that stuck_alerts imports core). This is exactly the kind of residual duplication this refactor is meant to remove, and the two have already diverged: newest_status uses `?per_page=100` (documented as necessary so a burst of status events can't push `build` off the default first page) while ci_status omits it.",
+   "line": "96"
+  }
+ ],
+ "head_sha": "ad7da502ee9b578115dec58707380053cd51b528",
+ "merge_base_sha": "291ca560b9392d051593b4fd3db9a54bda687c62",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1124,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bc6fad2e74646c89a2d850f05dcf1d17ba0b27fed071ff40b0e535d2017f5195",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260722T153758Z-1124-reuse-db6a5c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T15:37:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The core extraction is a genuine net de-duplication and the two sinks correctly share core.derive with no leftover copies. One residual near-clone remains: core.ci_status re-implements the newest-status-for-a-context read that stuck_alerts.newest_status already provides in the same package, and the two have already diverged.",
+ "transcript_blob": "dac5a07bea9f7fd5fe0b2bef8d6e2c0a32217ac0eefa1f11ed40e33af536a68b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58885,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 58885,
+  "cache_read_input_tokens": 205536,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1909,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1909,
+    "cache_read_input_tokens": 73058,
+    "input_tokens": 2,
+    "output_tokens": 2767,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6081,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
