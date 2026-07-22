@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.589183,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 108.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 26966,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 26966,
+    "cache_read_input_tokens": 194530,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1140,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1140,
+      "cache_read_input_tokens": 41908,
+      "input_tokens": 2,
+      "output_tokens": 2859,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8635,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "291ca560b9392d051593b4fd3db9a54bda687c62",
+ "cost_usd": 0.589183,
+ "dedupe_key": "TauCetiProject/TauCeti|1123|f80e3f5dfceba58dedab4d1891186b494a59f8ed|proof-quality|claude-opus-4-8|0e86c8aad121a07b|production|1",
+ "diff_blob": "faf828b0817b1d099fe125c18f20fc82e751efa392eba2854245685664266211",
+ "diff_sha256": "faf828b0817b1d099fe125c18f20fc82e751efa392eba2854245685664266211",
+ "duration_s": 108.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Basic.lean:26-28 `mem_toPreAbstractSimplicialComplex ... := Iff.rfl` with docstring; Join.lean:149/181 route through the bridging lemmas rather than defeq.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Dimension.lean",
+   "fix": "Route through the lemma: `PreAbstractSimplicialComplex.le_dimension (mem_toPreAbstractSimplicialComplex.mpr h\u03c3)`.",
+   "issue": "AbstractSimplicialComplex.le_dimension passes `h\u03c3 : \u03c3 \u2208 K` (abstract membership) directly into PreAbstractSimplicialComplex.le_dimension, relying on the raw defeq `\u03c3 \u2208 K` \u2261 `\u03c3 \u2208 K.toPreAbstractSimplicialComplex` rather than the bridging lemma. Basic.lean:22-24 declares mem_toPreAbstractSimplicialComplex 'the single place where the two SetLike instances are identified'; this bypasses it and the reliance is undocumented, so it breaks silently if the SetLike instance is refactored.",
+   "line": "136"
+  },
+  {
+   "evidence": "Line 143 delegates to PreAbstractSimplicialComplex.dimension_le_iff whose binder is over `K.toPreAbstractSimplicialComplex`.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Dimension.lean",
+   "fix": "Rewrite membership explicitly, e.g. `by simp only [\u2190 mem_toPreAbstractSimplicialComplex]; exact PreAbstractSimplicialComplex.dimension_le_iff` (or the corresponding `dimension` unfolding).",
+   "issue": "AbstractSimplicialComplex.dimension_le_iff proves `dimension K \u2264 n \u2194 \u2200 \u03c3 \u2208 K, ...` by returning the Pre lemma verbatim, relying on the bound `\u2200 \u03c3 \u2208 K` (abstract) being defeq to `\u2200 \u03c3 \u2208 K.toPre`. Same undocumented cross-wrapper defeq.",
+   "line": "141"
+  },
+  {
+   "evidence": "Basic.lean:214-217 `toPreAbstractSimplicialComplex_le_iff ... := Iff.rfl`; Join.lean:181 uses it explicitly.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Dimension.lean",
+   "fix": "`PreAbstractSimplicialComplex.dimension_mono (toPreAbstractSimplicialComplex_le_iff.mpr h)`.",
+   "issue": "AbstractSimplicialComplex.dimension_mono passes `h : K \u2264 L` (abstract order) into the Pre monotonicity lemma, relying on defeq `K \u2264 L` \u2261 `K.toPre \u2264 L.toPre` instead of `toPreAbstractSimplicialComplex_le_iff`.",
+   "line": "146"
+  }
+ ],
+ "head_sha": "f80e3f5dfceba58dedab4d1891186b494a59f8ed",
+ "merge_base_sha": "291ca560b9392d051593b4fd3db9a54bda687c62",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1123,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e61fc23b4e462a3a741fe28620ad2877cb6726905abfe775150dc18e99eb24ee",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T143800Z-1123-proof-quality-5081c4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T14:38:00Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs compile and are largely robust, but the abstract-complex wrappers rely on undocumented raw defeq between the abstract and pre membership/order instances instead of the designated bridging lemmas the codebase mandates for exactly this identification.",
+ "transcript_blob": "f890d15634039d66515b4cf218dd3b64d08ff56b71828093d69bd894915ef96b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 26966,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 26966,
+  "cache_read_input_tokens": 194530,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1140,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1140,
+    "cache_read_input_tokens": 41908,
+    "input_tokens": 2,
+    "output_tokens": 2859,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8635,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
