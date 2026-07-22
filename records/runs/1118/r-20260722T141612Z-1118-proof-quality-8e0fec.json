@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7725440000000001,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 198.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 26603,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 26603,
+    "cache_read_input_tokens": 281920,
+    "inference_geo": "not_available",
+    "input_tokens": 17,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 739,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 739,
+      "cache_read_input_tokens": 41946,
+      "input_tokens": 2,
+      "output_tokens": 6748,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14381,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6355c29a009288665d5d6092b7827269133632f4",
+ "cost_usd": 0.772544,
+ "dedupe_key": "TauCetiProject/TauCeti|1118|7dcb18b91f907647d6c0ef842b211d21822c675b|proof-quality|claude-opus-4-8|0e86c8aad121a07b|production|2",
+ "diff_blob": "dbc86abca24269216319eb7cf2bf01e8124a9a94f47ba50b70fab79c16e20e2e",
+ "diff_sha256": "dbc86abca24269216319eb7cf2bf01e8124a9a94f47ba50b70fab79c16e20e2e",
+ "duration_s": 198.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 55 `rfl`; Mathlib `AEEqFun.one_def` (`1 = mk (fun _ => 1) ..`) and `@[simp] compMeasurePreserving_mk` at AEEqFun.lean:284.",
+   "file": "TauCeti/Probability/Ergodic/KoopmanMarkov.lean",
+   "fix": "Prove via `AEEqFun.ext`/`filter_upwards` with `coeFn_koopmanMarkov` and `AEEqFun.coeFn_one`, or route through `simp [koopmanMarkov, AEEqFun.compMeasurePreserving_mk]`; failing that add a comment explaining why the bare `rfl` holds.",
+   "issue": "koopmanMarkov_one is closed by a bare undocumented `rfl` that unfolds koopmanMarkov, the AEEqFun `One` instance (`1 = mk 1`), `compMeasurePreserving_mk`, and `Pi.one` composition \u2014 accidental defeq across the quotient wrapper.",
+   "line": "55"
+  },
+  {
+   "evidence": "Lines 40/43/62 `fun _ ... => rfl` after `AEEqFun.induction_on`/`induction_on\u2082`.",
+   "file": "TauCeti/Probability/Ergodic/KoopmanMarkov.lean",
+   "fix": "Prove via `AEEqFun.ext` + `coeFn_koopmanMarkov`/`AEEqFun.coeFn_mul` (etc.), or make the `compMeasurePreserving_mk` step explicit with `simp only`; otherwise add a comment documenting the definitional reduction.",
+   "issue": "map_add' (40), map_smul' (43), and koopmanMarkov_mul (62) reduce with induction_on and close by `rfl`, resting on undocumented defeq of the AEEqFun algebraic instances (`mk a \u22c6 mk b` \u2261 `mk (a\u22c6b)` and `(a\u22c6b)\u2218T` \u2261 `(a\u2218T)\u22c6(b\u2218T)`).",
+   "line": "62"
+  },
+  {
+   "evidence": "Line 121 `Filter.EventuallyEq.rfl.trans (...)`; `rfl.trans x` reduces to `x`.",
+   "file": "TauCeti/Probability/Ergodic/KoopmanMarkov.lean",
+   "fix": "Drop the `EventuallyEq.rfl.trans`; e.g. `by rw [\u2190 h]; exact (coeFn_koopmanMarkov T hT g).symm`.",
+   "issue": "Forward branch of koopmanMarkov_eq_self_iff wraps a `congrArg`-based ae-equality in `Filter.EventuallyEq.rfl.trans`, which is a no-op, obscuring the argument.",
+   "line": "121"
+  }
+ ],
+ "head_sha": "7dcb18b91f907647d6c0ef842b211d21822c675b",
+ "merge_base_sha": "7ab92f42578f34807732cdc7a0392b338bb85bbd",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1118,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0ad55dd28bb28a8071cf5ee5a19a96c9557c7e60aa75670ad9ab0d6337b2f17d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b54dc0a369d7df2c70e996f0a16801cde9d45c4a",
+ "rubrics_version": "0e86c8aad121a07b",
+ "run_id": "r-20260722T141612Z-1118-proof-quality-8e0fec",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-22T14:16:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The structure-preservation lemmas close by undocumented definitional equality across the AEEqFun quotient wrapper rather than the available coeFn/mk lemmas, and the fixed-point lemma contains a redundant no-op. Robustness/readability, not correctness.",
+ "transcript_blob": "f9696ce38197415b6d444cbad9069baedf64eee22090c4a3a7e85356a7091c1f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 26603,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 26603,
+  "cache_read_input_tokens": 281920,
+  "inference_geo": "not_available",
+  "input_tokens": 17,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 739,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 739,
+    "cache_read_input_tokens": 41946,
+    "input_tokens": 2,
+    "output_tokens": 6748,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14381,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
