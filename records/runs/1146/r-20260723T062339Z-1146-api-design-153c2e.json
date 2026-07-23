@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.378176,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 61.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 188672,
+    "input_tokens": 231598,
+    "output_tokens": 2307,
+    "reasoning_output_tokens": 875
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ae2499c4e943300bb354b8a8c807c128d3e86a83",
+ "cost_estimated": true,
+ "cost_usd": 0.378176,
+ "dedupe_key": "TauCetiProject/TauCeti|1146|81c81aca82846e13dc43e3d57750fe2541040d73|api-design|gpt-5.6-sol|e9450f01fa585add|production|1",
+ "diff_blob": "803113ac122dfd2730a7998a7e61c63304960aff526ec440903eb22748683805",
+ "diff_sha256": "803113ac122dfd2730a7998a7e61c63304960aff526ec440903eb22748683805",
+ "duration_s": 61.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 86, 125, 160, and 187 carry `@[expose]`; the public generator lemmas at 146\u2013152 already characterize `frobeniusBialgHom`, and the point maps are instances of `AlgHom.mapDomain`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/AdditiveFrobeniusKernel/Kernel.lean",
+   "fix": "Make `frobeniusAlgHom` private, remove all four `@[expose]` annotations, and provide abstract API lemmas instead of requiring downstream unfolding.",
+   "issue": "`frobeniusAlgHom` is an exposed implementation helper, while `frobeniusBialgHom`, `frobeniusEnd`, and `inclusion` also expose bodies despite having or needing characteristic lemmas.",
+   "line": 86
+  },
+  {
+   "evidence": "`AlgHom.mapValue_mapDomain` exists at `Hopf/Map.lean:172`; no corresponding Frobenius or AlphaP inclusion theorem is present, while lines 167 and 194 are terminating characteristic rewrites to simpler point descriptions.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/AdditiveFrobeniusKernel/Kernel.lean",
+   "fix": "Add `mapValue` naturality lemmas for `frobeniusEnd` and `inclusion` using `AlgHom.mapValue_mapDomain`, and mark `toAdd_gaPointsMulEquiv_frobeniusEnd` and `gaPointsMulEquiv_inclusion` `@[simp]`.",
+   "issue": "The pointwise Frobenius and inclusion APIs omit naturality in the value algebra, and their normal-form dictionary lemmas are not simp lemmas.",
+   "line": 167
+  }
+ ],
+ "head_sha": "81c81aca82846e13dc43e3d57750fe2541040d73",
+ "merge_base_sha": "0bbcf0ead2f206a1a01f5e9f6c6992915feabe60",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1146,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d7d80dce90f952d42b9c3c598b848e0e43629eb94b898406cd9aea61dedf70f2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260723T062339Z-1146-api-design-153c2e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-23T06:23:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes implementation bodies and lacks the naturality and simplification API needed to use the pointwise maps abstractly.",
+ "transcript_blob": "efcf1319111855e57cd3c9314e4d8db634e8435e6bf91162b42d4fad0cbf2d4c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 188672,
+  "input_tokens": 231598,
+  "output_tokens": 2307,
+  "reasoning_output_tokens": 875
+ },
+ "verdict": "request_changes"
+}
