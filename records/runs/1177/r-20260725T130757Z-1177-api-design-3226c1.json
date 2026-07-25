@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6119855,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 172.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 25519,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 25519,
+    "cache_read_input_tokens": 45139,
+    "inference_geo": "not_available",
+    "input_tokens": 3,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 12738,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 12738,
+      "cache_read_input_tokens": 28960,
+      "input_tokens": 1,
+      "output_tokens": 12704,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13030,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d14d5ead1b0dae4d5a220d8713e6ab7f8a32571",
+ "cost_usd": 0.611985,
+ "dedupe_key": "TauCetiProject/TauCeti|1177|5771b4a8e3b6e6027b98307fc8a0e0a3571240dd|api-design|claude-opus-4-8|e9450f01fa585add|production|1",
+ "diff_blob": "bf4169bc01c3bfc6bbfa2a60905776fd0c3ccf79df6bf38542f20dd0e8b5291a",
+ "diff_sha256": "bf4169bc01c3bfc6bbfa2a60905776fd0c3ccf79df6bf38542f20dd0e8b5291a",
+ "duration_s": 172.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 88,147,180,213 `@[expose]`; every use path (e.g. orthogonalToDiffSphere_apply at 221, coe_unitSphereDiffeomorph_apply at 154) goes through lemmas, not unfolding.",
+   "file": "TauCeti/Geometry/Diffeomorphism/Sphere.lean",
+   "fix": "Drop `@[expose]` on all four defs; keep bodies hidden and rely on the characteristic lemmas. For the `rfl` characteristic lemmas (coe_unitSphereEquiv_apply, unitSphereEquiv_symm/_refl, coe_unitSphereDiffeomorph_apply, _toEquiv, _symm, unitSphereDiffHom_apply, orthogonalToDiffSphere_apply) use `:= (rfl)` so consumers do not depend on defeq.",
+   "issue": "`unitSphereEquiv`, `unitSphereDiffeomorph` (148), `unitSphereDiffHom` (181), and `orthogonalToDiffSphere` (214) all carry `@[expose]`, but each has a full `_apply`/`coe_`/`_symm` characterization and no downstream consumer must unfold or compute their bodies.",
+   "line": "88"
+  },
+  {
+   "evidence": "Docstring line 211 asserts injectivity; only `unitSphereDiffHom_injective` (194) exists.",
+   "file": "TauCeti/Geometry/Diffeomorphism/Sphere.lean",
+   "fix": "Add `orthogonalToDiffSphere_injective : Function.Injective (orthogonalToDiffSphere n m)` (immediate from `unitSphereDiffHom_injective` via `orthogonalToDiffSphere_apply`).",
+   "issue": "`orthogonalToDiffSphere`'s docstring claims O(n+1) is realised as a subgroup (injectivity), but injectivity is provided only as `unitSphereDiffHom_injective`; the named roadmap deliverable has no injectivity lemma of its own.",
+   "line": "213"
+  }
+ ],
+ "head_sha": "5771b4a8e3b6e6027b98307fc8a0e0a3571240dd",
+ "merge_base_sha": "8d14d5ead1b0dae4d5a220d8713e6ab7f8a32571",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1177,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9910e644fc9c5befffbb724d703eeb8029b8ca845d3092b573b6b3f7174fc6da",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260725T130757Z-1177-api-design-3226c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-25T13:07:57Z",
+ "submitted_by": "kim-em",
+ "summary": "Construction is correct and the characteristic API is complete and mostly well-annotated, but all four definitions expose their bodies without any consumer needing to unfold, and the named deliverable's advertised injectivity is not stated about the deliverable itself.",
+ "transcript_blob": "3a425723e1c5462f9a9fad8ca2491c27e7fff44f1e131400a11c7197577162e3",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 25519,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 25519,
+  "cache_read_input_tokens": 45139,
+  "inference_geo": "not_available",
+  "input_tokens": 3,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 12738,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 12738,
+    "cache_read_input_tokens": 28960,
+    "input_tokens": 1,
+    "output_tokens": 12704,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13030,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
