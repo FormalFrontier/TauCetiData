@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.164752,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 27.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 63744,
+    "input_tokens": 84224,
+    "output_tokens": 1016,
+    "reasoning_output_tokens": 346
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a9166bf968b0f5b0b50d0dffb7a992363f69dcd0",
+ "cost_estimated": true,
+ "cost_usd": 0.164752,
+ "dedupe_key": "TauCetiProject/TauCeti|1200|4d33c0619bfb803377eb7f7f3aabb2bb7675a80c|generality|gpt-5.6-sol|e9450f01fa585add|production|1",
+ "diff_blob": "025da47cc92b9dc9d7f7d120475c2fdc7e1cdf739a3366a641fede8ef6bde770",
+ "diff_sha256": "025da47cc92b9dc9d7f7d120475c2fdc7e1cdf739a3366a641fede8ef6bde770",
+ "duration_s": 27.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only uses are at lines 128 and 154, both as `hconn.isPreconnected`; neither connectedness nor nonemptiness is otherwise used.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Hurwitz.lean",
+   "fix": "State the theorem with `(hconn : IsPreconnected U)` and pass it directly to the two identity/order lemmas.",
+   "issue": "`hconn : IsConnected U` is stronger than required; the proof only uses `hconn.isPreconnected`.",
+   "line": "112"
+  },
+  {
+   "evidence": "Mathlib `LocallyUniformLimit.lean:136` proves `TendstoLocallyUniformlyOn.differentiableOn` from locally uniform convergence, openness, and eventual differentiability; the PR currently assumes `\u2200 n` at line 113 and separately assumes the derived conclusion at line 114.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Hurwitz.lean",
+   "fix": "Take `(hF : \u2200\u1da0 n in atTop, DifferentiableOn \u2102 (F n) U)`, remove `hf`, and derive it with `have hf := hconv.differentiableOn hF hU`; similarly use the eventual hypotheses when selecting the Rouch\u00e9 approximant.",
+   "issue": "The limit-holomorphic hypothesis `hf` is redundant, while `hF` is stronger than the standard locally-uniform-limit API requires.",
+   "line": "113"
+  }
+ ],
+ "head_sha": "4d33c0619bfb803377eb7f7f3aabb2bb7675a80c",
+ "merge_base_sha": "a9166bf968b0f5b0b50d0dffb7a992363f69dcd0",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1200,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "40e5f0253247b651325c3747b44ebb9a9ea3e22a9e2cbd147827ecb8cb9ea53e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260725T234453Z-1200-generality-0919c8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-25T23:44:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The public theorem carries redundant and unnecessarily strong hypotheses that should be removed or weakened.",
+ "transcript_blob": "3240e0bddd3e86bf75de8535d7eb2c02296959615a76ae77b3d975209675f429",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 63744,
+  "input_tokens": 84224,
+  "output_tokens": 1016,
+  "reasoning_output_tokens": 346
+ },
+ "verdict": "request_changes"
+}
