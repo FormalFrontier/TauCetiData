@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8546690000000001,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 194.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 39546,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 39546,
+    "cache_read_input_tokens": 147078,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5422,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5422,
+      "cache_read_input_tokens": 50303,
+      "input_tokens": 2,
+      "output_tokens": 1966,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14906,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "51d63f753610d4d2f2e09eb873ab039d10d7bc35",
+ "cost_usd": 0.854669,
+ "dedupe_key": "TauCetiProject/TauCeti|1127|4210d969efd7fbfb7e37fb44687ad9888027e4d4|api-design|claude-opus-4-8|e9450f01fa585add|production|2",
+ "diff_blob": "77f13070f516a373aa7dbe55e9fe2fe8f1d4e939f2c97a58bb1575ab5c1c7919",
+ "diff_sha256": "77f13070f516a373aa7dbe55e9fe2fe8f1d4e939f2c97a58bb1575ab5c1c7919",
+ "duration_s": 194.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Probability/Martingale/Reverse.lean:57-65 (same `public section` context, line 31): `revCEFinite` has body `\u03bc[f|\ud835\udd3d (N-n)]` with no `@[expose]`, yet `@[simp] lemma revCEFinite_apply ... := by rfl` compiles and exports. In this very PR `coord` is unexposed but `coord_basis_zero` proves by `simp [coord]`, showing module-local unfolds work without exposure. Convention is stated explicitly at Process/Tail/Basic.lean:157 ('definitions are not `@[expose]`; their characteristic API is the `@[simp]` `_apply` lemmas').",
+   "file": "TauCeti/LowDimTopology/DehnSurgery/Slope.lean",
+   "fix": "Drop all eight `@[expose]` annotations (keep the characteristic `_apply`/`_mk` lemmas). Consumers already have `Slope.mk`, `mk_eq_mk_iff`, `induction_on`, `congr_mk`, `value_mk`, `slopeOfValue_infty/_coe`, `slopeEquivStd_apply/_symm_apply`, `slopeEquiv_apply/_symm_apply` \u2014 no body needs to be unfolded downstream. Use `:= (rfl)` for any `_apply` lemma to avoid downstream defeq reliance. Correct/remove the docstring paragraph at line 87.",
+   "issue": "`Slope` (137), `Slope.mk` (143), `Slope.congr` (164), `Slope.value` (254), `slopeOfValue` (266), `slopeEquivStd` (320), `FramedBoundaryTorus.value` (407), and `slopeEquiv` (413) all carry `@[expose]`, leaking their bodies \u2014 most damagingly the `Quotient (slopeSetoid M)` representation of `Slope` \u2014 to importers. The rationale in the file docstring (line 87), that the module system requires exposing every unfolded def for a `rfl`-proven exported theorem, is false.",
+   "line": 137
+  }
+ ],
+ "head_sha": "4210d969efd7fbfb7e37fb44687ad9888027e4d4",
+ "merge_base_sha": "73f7cc2d76e828ccaa26e4a4c9bc90a893644d8e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1127,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ea6759150db0e5941ea07700e2dd709627a71e383690e3b23459afabb273e912",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260725T001947Z-1127-api-design-ac6cb2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-25T00:19:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API (intro/elim, _def/_apply lemmas, annotations) is complete and correctly annotated, but eight definitions are needlessly @[expose]d, leaking the Slope quotient representation and helper bodies to consumers.",
+ "transcript_blob": "a7c2a1e9bf5187b4e0eaa1c371ae9a7ab58a66db4224f80c2352e2c1f4584062",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 39546,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 39546,
+  "cache_read_input_tokens": 147078,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5422,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5422,
+    "cache_read_input_tokens": 50303,
+    "input_tokens": 2,
+    "output_tokens": 1966,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14906,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
