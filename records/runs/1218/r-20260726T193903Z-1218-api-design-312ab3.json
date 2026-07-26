@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.220566,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 119552,
+    "input_tokens": 142704,
+    "output_tokens": 1501,
+    "reasoning_output_tokens": 529
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "42692ba553511adefdb3ab7f130ed2d741c69995",
+ "cost_estimated": true,
+ "cost_usd": 0.220566,
+ "dedupe_key": "TauCetiProject/TauCeti|1218|180ee45c290f7e9a7c6617c7b9415bc454b8c3e1|api-design|gpt-5.6-sol|e9450f01fa585add|production|1",
+ "diff_blob": "b74b1dd748be3f41e220f0c8f2b88293509556119d2caba9e740d13ca9ac913c",
+ "diff_sha256": "b74b1dd748be3f41e220f0c8f2b88293509556119d2caba9e740d13ca9ac913c",
+ "duration_s": 49.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 44\u201374 provide both `hasFDerivAt_planarNewtonianKernel` and its `fderiv` consequence, while lines 95\u2013111 provide only `fderiv`/application/norm results for the translated kernel; Mathlib `FDeriv/Add.lean:930` supplies `hasFDerivAt_comp_sub`.",
+   "file": "TauCeti/Analysis/PDE/FundamentalSolution/Gradient.lean",
+   "fix": "Add `hasFDerivAt_planarNewtonianKernel_sub`, derived via `hasFDerivAt_comp_sub` from `hasFDerivAt_planarNewtonianKernel`, and derive the `fderiv` theorem from it.",
+   "issue": "The translated development exposes only `fderiv_planarNewtonianKernel_sub`, not the corresponding `HasFDerivAt`; consumers differentiating translated kernels must reconstruct the witness from unrelated smoothness results.",
+   "line": "95"
+  },
+  {
+   "evidence": "All six equalities rewrite derivative expressions to explicit closed forms under nonzero hypotheses; Mathlib follows this convention, e.g. `Analysis/InnerProductSpace/Calculus.lean:204` marks `fderiv_norm_sq_apply` with `@[simp]`, and existing `Flux.lean:36` marks the radial specialization `fderiv_planarNewtonianKernel_self` likewise.",
+   "file": "TauCeti/Analysis/PDE/FundamentalSolution/Gradient.lean",
+   "fix": "Mark the origin and translated `fderiv`, `_apply`, and `norm_fderiv` formulas `@[simp]` (or select a non-overlapping equivalent set that fully normalizes applications and norms).",
+   "issue": "The six new `fderiv`, directional, and norm formulas at lines 71, 78, 85, 95, 101, and 108 are normal-form lemmas but lack `@[simp]`, so `simp [hz]` cannot compute this public derivative API.",
+   "line": "71"
+  }
+ ],
+ "head_sha": "180ee45c290f7e9a7c6617c7b9415bc454b8c3e1",
+ "merge_base_sha": "42692ba553511adefdb3ab7f130ed2d741c69995",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1218,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "07a22d61dd9376c8f962fa18bde4d146399e62e3ed72ebc779b0a22d870427a2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260726T193903Z-1218-api-design-312ab3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-26T19:39:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The translated kernel API lacks the derivative witness needed for calculus composition, and none of the new derivative normal forms participate in simplification.",
+ "transcript_blob": "dfb5242d03d49f411947db02542942e5befadcd91b434c3f985dc4e5990ab264",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 119552,
+  "input_tokens": 142704,
+  "output_tokens": 1501,
+  "reasoning_output_tokens": 529
+ },
+ "verdict": "request_changes"
+}
