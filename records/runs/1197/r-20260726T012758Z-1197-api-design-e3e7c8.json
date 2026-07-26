@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.139532,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 34304,
+    "input_tokens": 51730,
+    "output_tokens": 1175,
+    "reasoning_output_tokens": 599
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "11159f9cd17429247fa6b92f6333e69b8f4f5690",
+ "cost_estimated": true,
+ "cost_usd": 0.139532,
+ "dedupe_key": "TauCetiProject/TauCeti|1197|5fa4efcea431efe5f6495b3918c6605509b5b8a9|api-design|gpt-5.6-sol|e9450f01fa585add|production|3",
+ "diff_blob": "efca964aa22b053b6ce03b556cc4dd4a2e7d0ed6f984fe0d653bc467e2682665",
+ "diff_sha256": "efca964aa22b053b6ce03b556cc4dd4a2e7d0ed6f984fe0d653bc467e2682665",
+ "duration_s": 40.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 79\u201385 expose the vectors and lines 87\u201397 give equations for every `Fin 3` input; downstream unfoldings occur at RelativeDegree.lean:57 and :102 and can use those equations instead.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/MinusTwentyOne/Examples.lean",
+   "fix": "Remove both `@[expose]` annotations; define exported equations with opaque proofs such as `:= (rfl)`, and replace downstream explicit unfolding with the pointwise simp lemmas.",
+   "issue": "`minusTwentyOneRadicand` and `minusTwentyOneRoot` expose vector bodies although their six `[simp]` equations completely characterize the finite families.",
+   "line": 79
+  },
+  {
+   "evidence": "Lines 66\u201371 expose the body; lines 74\u201380 characterize it as an `adjoin`, and lines 89\u201393 provide generator introduction.",
+   "file": "TauCeti/NumberTheory/Multiquadratic/MinusTwentyOne/RelativeDegree.lean",
+   "fix": "Remove `@[expose]` and give `sqrtNegTwentyOneSubfield_def` an opaque parenthesized proof term, e.g. `:= (quadraticSubfieldOfFinset_val \u2026)`, so conversion is checked while elaborating this module without exporting the body.",
+   "issue": "`sqrtNegTwentyOneSubfield` still exposes the `quadraticSubfieldOfFinset` implementation even though the new public definition and generator-membership lemmas provide its interface.",
+   "line": 66
+  }
+ ],
+ "head_sha": "5fa4efcea431efe5f6495b3918c6605509b5b8a9",
+ "merge_base_sha": "7272f953be666ac5f40858b3046ff0026776b31a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1197,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "bc808bb9a02ee6e48e199c7aaa07f5ef54a357704c2d63a7fff1e55f754a47a5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b9539a39556d34b3e3bf6199d0da7b4e7d5d4c27",
+ "rubrics_version": "e9450f01fa585add",
+ "run_id": "r-20260726T012758Z-1197-api-design-e3e7c8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-26T01:27:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic lemmas are now present, but all three definitions still expose implementation bodies unnecessarily; the cited module-export restriction can be avoided with opaque parenthesized proof terms.",
+ "transcript_blob": "23a0f14ece340b779fb29650703aa0f1971e98bf75e2e8c8c1fb9460f46260f9",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 34304,
+  "input_tokens": 51730,
+  "output_tokens": 1175,
+  "reasoning_output_tokens": 599
+ },
+ "verdict": "request_changes"
+}
