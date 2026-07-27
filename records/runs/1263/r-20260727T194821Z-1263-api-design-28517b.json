@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.217493,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 35.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 56576,
+    "input_tokens": 87415,
+    "output_tokens": 1167,
+    "reasoning_output_tokens": 461
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a8212bb25b146754400ca77c527710df3df9dfe0",
+ "cost_estimated": true,
+ "cost_usd": 0.217493,
+ "dedupe_key": "TauCetiProject/TauCeti|1263|3c9b886b8422bf5cf39c0ec82ed4099601cca5fd|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "aee397e17cfb79fba91a6ca5bb57273ac9ea614e3fc0d29e82541f5669d2511a",
+ "diff_sha256": "aee397e17cfb79fba91a6ca5bb57273ac9ea614e3fc0d29e82541f5669d2511a",
+ "duration_s": 35.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The diff deletes/renames `TauCeti/LinearAlgebra/RootSystem/Inversions.lean`; no compatibility module remains at that path.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Inversions.lean",
+   "fix": "Retain `Inversions.lean` as a forwarding module that publicly imports `TauCeti.LinearAlgebra.RootSystem.Inversions.Basic`.",
+   "issue": "Renaming the public module to `Inversions.Basic` removes the existing import path, breaking downstream source compatibility.",
+   "line": 0
+  },
+  {
+   "evidence": "Confirmed declarations occur at Exchange.lean:43, 51, and 121 and Basic.lean:132 without attributes; their right sides eliminate multiplication by `ofIdx`, action on negation, or composite inversion membership.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Inversions/Exchange.lean",
+   "fix": "Add `@[simp]` to these terminating rewrites, and likewise to `weylGroupToPerm_ofIdx_apply` in `Basic.lean`.",
+   "issue": "The characteristic normal-form lemmas `weylGroupToPerm_mul_ofIdx_apply`, `weylGroupToPerm_neg`, and `mem_inversions_mul_ofIdx_iff_not_mem` lack `@[simp]`; the parallel `inversions_ofIdx` and `mem_inversions` API is already simp-enabled.",
+   "line": 43
+  }
+ ],
+ "head_sha": "3c9b886b8422bf5cf39c0ec82ed4099601cca5fd",
+ "merge_base_sha": "a8212bb25b146754400ca77c527710df3df9dfe0",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1263,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e4bb32f0dc5968ce9a455f014513e37c277e9f03933d49b06b4087ab2cc83a4e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T194821Z-1263-api-design-28517b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T19:48:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The module rename breaks the existing public import path, and the new characteristic rewrite API is not registered for simplification.",
+ "transcript_blob": "6c96f3ff29b0dc3f0fd8f8837e023aea41438f4a003b81d41533ab5b45ac2a55",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 56576,
+  "input_tokens": 87415,
+  "output_tokens": 1167,
+  "reasoning_output_tokens": 461
+ },
+ "verdict": "request_changes"
+}
