@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.6494340000000001,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 140.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 31769,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 31769,
+    "cache_read_input_tokens": 86052,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7248,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7248,
+      "cache_read_input_tokens": 40700,
+      "input_tokens": 2,
+      "output_tokens": 1459,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11201,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "15ff15da7171320a8685867ea9283a556f05ef6c",
+ "cost_usd": 0.649434,
+ "dedupe_key": "TauCetiProject/TauCeti|1264|b6c9b53c19531171be6fbe72dcee56fed3b05efb|api-design|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "dd3c4588326146e035be76d548a481bd2188a8cff42a8041735e749e9291e244",
+ "diff_sha256": "dd3c4588326146e035be76d548a481bd2188a8cff42a8041735e749e9291e244",
+ "duration_s": 140.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "finPermPartition_parts (line 87) and finPermPartition_eq_iff (line 94) characterize it; permConjClassPartition uses it through Quotient.lift, not defeq.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Partitions.lean",
+   "fix": "Drop @[expose] from finPermPartition; finPermPartition_parts is a same-module rfl and stays valid.",
+   "issue": "finPermPartition is @[expose] but every consumer uses finPermPartition_parts (a Nat.Partition is fixed by its parts via ext); no module unfolds the body, so the expose leaks the implementation for no benefit.",
+   "line": "80"
+  },
+  {
+   "evidence": "Lines 50-77 provide forward and inverse simp lemmas covering the interface.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Partitions.lean",
+   "fix": "Drop @[expose] from partitionEquivYoungDiagram (noncomputable, so expose only enables defeq unfolding, which the characteristic lemmas make unnecessary).",
+   "issue": "partitionEquivYoungDiagram is @[expose] though fully characterized by partitionEquivYoungDiagram_apply_coe/_apply_rowLens/_symm_apply_parts; downstream should never unfold it.",
+   "line": "37"
+  },
+  {
+   "evidence": "equivSortedParts is noncomputable, so expose only affects unfolding; equivSortedParts_apply_parts (line 47) already gives the forward map without exposing the body.",
+   "file": "TauCeti/Combinatorics/Enumerative/Partition/Basic.lean",
+   "fix": "Reprove partitionEquivYoungDiagram_apply_coe via Equiv.trans_apply and equivSortedParts_apply_parts instead of bare rfl (use `(rfl)` if a defeq step remains), then drop @[expose] from equivSortedParts.",
+   "issue": "equivSortedParts is @[expose] solely so the cross-module proof partitionEquivYoungDiagram_apply_coe := rfl (Partitions.lean:54) can reduce through its toFun \u2014 a body exposed to compensate for proving a characteristic lemma by defeq.",
+   "line": "25"
+  }
+ ],
+ "head_sha": "b6c9b53c19531171be6fbe72dcee56fed3b05efb",
+ "merge_base_sha": "a8212bb25b146754400ca77c527710df3df9dfe0",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1264,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "db1a90c3daf45d99e770a4f3c6003a179dfb52bba4270bcf59cb158967e3388a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T204604Z-1264-api-design-7d30b0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T20:46:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is complete and correctly annotated, but three definitions carry unnecessary @[expose]. finPermPartition and partitionEquivYoungDiagram are fully characterized by their simp lemmas, and equivSortedParts is exposed only to make a cross-module `:= rfl` proof go through.",
+ "transcript_blob": "d918f759d3140747eceb8df58b5c191abac2fef175f03c4ba23368363af0d1ff",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 31769,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 31769,
+  "cache_read_input_tokens": 86052,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7248,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7248,
+    "cache_read_input_tokens": 40700,
+    "input_tokens": 2,
+    "output_tokens": 1459,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11201,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5030924999999999,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 89.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 27503,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 27503,
+    "cache_read_input_tokens": 115701,
+    "inference_geo": "not_available",
+    "input_tokens": 8,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4593,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4593,
+      "cache_read_input_tokens": 39089,
+      "input_tokens": 2,
+      "output_tokens": 1470,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6475,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "15ff15da7171320a8685867ea9283a556f05ef6c",
+ "cost_usd": 0.503092,
+ "dedupe_key": "TauCetiProject/TauCeti|1264|b6c9b53c19531171be6fbe72dcee56fed3b05efb|generality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "dd3c4588326146e035be76d548a481bd2188a8cff42a8041735e749e9291e244",
+ "diff_sha256": "dd3c4588326146e035be76d548a481bd2188a8cff42a8041735e749e9291e244",
+ "duration_s": 89.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib `partition (\u03c3 : Perm \u03b1) : (Fintype.card \u03b1).Partition` and `exists_with_cycleType_iff {m} : (\u2203 g, g.cycleType = m) \u2194 (m.sum \u2264 Fintype.card \u03b1 \u2227 \u2200 a \u2208 m, 2 \u2264 a)` are proved for `variable [Fintype \u03b1] [DecidableEq \u03b1]`; the PR proof uses only `Fintype.card_fin` to pin `n`.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Partitions.lean",
+   "fix": "Prove the general form: `def permConjClassPartition {\u03b1} [Fintype \u03b1] [DecidableEq \u03b1] : ConjClasses (Equiv.Perm \u03b1) \u2192 (Fintype.card \u03b1).Partition`, `noncomputable def permEquivConjClasses ... : (Fintype.card \u03b1).Partition \u2243 ConjClasses (Equiv.Perm \u03b1)`, and `Fintype.card (ConjClasses (Equiv.Perm \u03b1)) = Fintype.card (Fintype.card \u03b1).Partition`. Derive the roadmap-named `Fin n` versions as specializations via `Fintype.card_fin`.",
+   "issue": "Under-generalization: `card_conjClasses_perm_eq_card_partition`, `partitionEquivConjClasses`, and their supporting lemmas (`finPermPartition`, `finPermPartition_eq_iff`, `exists_perm_partition_eq`, `permConjClassPartition`, `permConjClassPartition_injective/surjective`) are stated only for `Fin n`. The theorem `ConjClasses (Equiv.Perm \u03b1) \u2243 (Fintype.card \u03b1).Partition` holds for any `[Fintype \u03b1] [DecidableEq \u03b1]`, which is the natural Mathlib level \u2014 Mathlib's own `Equiv.Perm.partition`, `partition_eq_of_isConj`, and `exists_with_cycleType_iff` are all stated generally in \u03b1.",
+   "line": 187
+  },
+  {
+   "evidence": "`finPermPartition_parts` proves `(finPermPartition n \u03c3).parts = \u03c3.partition.parts` by `rfl`; the wrapper only changes the index type from `Fintype.card (Fin n)` to `n`.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Partitions.lean",
+   "fix": "If the conjugacy-class chain is generalized to arbitrary `\u03b1`, drop `finPermPartition` and use `Equiv.Perm.partition` directly, keeping any `Fin n` cast localized to the specialization.",
+   "issue": "`finPermPartition n \u03c3` is a thin reindexing of Mathlib's `Equiv.Perm.partition \u03c3` (same parts) through `Fintype.card (Fin n) = n`. It exists only because the file works over `Fin n` instead of a general \u03b1; in the general statement above it collapses into `Equiv.Perm.partition` itself.",
+   "line": 100
+  }
+ ],
+ "head_sha": "b6c9b53c19531171be6fbe72dcee56fed3b05efb",
+ "merge_base_sha": "a8212bb25b146754400ca77c527710df3df9dfe0",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1264,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "75130a638970eab2b9a1f982b0e3bdb32296fb47c570f2ee7a340f6ff19e69cc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T204825Z-1264-generality-c57cf9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T20:48:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The Young-diagram half sits at the natural level, but the entire conjugacy-class half is specialized to `Equiv.Perm (Fin n)` when the natural Mathlib level is an arbitrary `[Fintype \u03b1] [DecidableEq \u03b1]`; every step generalizes verbatim since it rests only on `Fintype.card \u03b1` facts.",
+ "transcript_blob": "139d74841dab467c39141f4d53939acafb65c491b5377865c483558beedc8c11",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 27503,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 27503,
+  "cache_read_input_tokens": 115701,
+  "inference_geo": "not_available",
+  "input_tokens": 8,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4593,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4593,
+    "cache_read_input_tokens": 39089,
+    "input_tokens": 2,
+    "output_tokens": 1470,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6475,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
