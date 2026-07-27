@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.330535,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 58.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 112640,
+    "input_tokens": 156971,
+    "output_tokens": 1752,
+    "reasoning_output_tokens": 646
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "afd00e94d58bd6802b2eed1cd44b94352ece17d4",
+ "cost_estimated": true,
+ "cost_usd": 0.330535,
+ "dedupe_key": "TauCetiProject/TauCeti|1248|2c0d643ff309d46b534787fdffd3c2ff6c86cacb|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "f975cf2480c8f26d42c79b6c05183a7258ceb81ae414c1560debeac2eef6599b",
+ "diff_sha256": "f975cf2480c8f26d42c79b6c05183a7258ceb81ae414c1560debeac2eef6599b",
+ "duration_s": 58.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 39 and 43 carry `@[expose]`; lines 50 and 54 already provide `[simp]` membership iff lemmas.",
+   "file": "TauCeti/RepresentationTheory/RootSystems/Positive.lean",
+   "fix": "Remove `@[expose]` from both definitions and retain `mem_posRoots`/`mem_negRoots` as the public unfolding interface.",
+   "issue": "`posRoots` and `negRoots` are both `@[expose]` despite having membership lemmas that fully characterize them, making downstream proofs depend on their bodies unnecessarily.",
+   "line": 39
+  },
+  {
+   "evidence": "The roadmap's \u201cPositive and negative roots\u201d item explicitly requires every `i \u2208 posRoots b` to be a nonnegative integer combination; Mathlib `Base.lean:356` only exposes a positive-or-negative disjunction.",
+   "file": "TauCeti/RepresentationTheory/RootSystems/Positive.lean",
+   "fix": "Add a public lemma specializing `Base.exists_root_eq_sum_nat_or_neg` to `i \u2208 posRoots P b` and eliminate its negative branch using positivity/height.",
+   "issue": "The API omits the roadmap-required theorem that membership in `posRoots` yields a nonnegative natural-number combination of simple roots.",
+   "line": 40
+  },
+  {
+   "evidence": "Lines 102 and 110 are the dedicated membership rewrite rules, but neither has an automation annotation.",
+   "file": "TauCeti/RepresentationTheory/RootSystems/Positive.lean",
+   "fix": "Mark both `reflectionPerm_self_mem_negRoots_iff_mem_posRoots` and `reflectionPerm_self_mem_posRoots_iff_mem_negRoots` with `@[simp]`.",
+   "issue": "The two characteristic root-negation membership equivalences are not tagged `[simp]`, so simplification cannot normalize membership after negation through the packaged set API.",
+   "line": 102
+  }
+ ],
+ "head_sha": "2c0d643ff309d46b534787fdffd3c2ff6c86cacb",
+ "merge_base_sha": "afd00e94d58bd6802b2eed1cd44b94352ece17d4",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1248,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c4cd92e56c366139585354e4e420a5bb485a9b81e4fea7c3d3f7eb92642415e6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T100855Z-1248-api-design-81b33e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T10:08:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes implementation bodies while omitting a roadmap-required positive-root characterization. Key root-negation membership rules also lack normal-form automation.",
+ "transcript_blob": "7a974657fc5558e3447f12d4a9a29c77e475b1645771d65dcd1353d074018ae3",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 112640,
+  "input_tokens": 156971,
+  "output_tokens": 1752,
+  "reasoning_output_tokens": 646
+ },
+ "verdict": "request_changes"
+}
