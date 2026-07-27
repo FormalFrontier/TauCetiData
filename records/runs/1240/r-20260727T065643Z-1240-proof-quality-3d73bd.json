@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.188392,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 44544,
+    "input_tokens": 72038,
+    "output_tokens": 955,
+    "reasoning_output_tokens": 225
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9ca0e8e6c8275c5777869caafe7ba497e6d46a34",
+ "cost_estimated": true,
+ "cost_usd": 0.188392,
+ "dedupe_key": "TauCetiProject/TauCeti|1240|2abc1eda72e2414facae77f96621c08b96ade184|proof-quality|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "877b917a658cbb7ca15ceb0c9594c1f3421989a73cc19d06b0b7c5dc44f2633a",
+ "diff_sha256": "877b917a658cbb7ca15ceb0c9594c1f3421989a73cc19d06b0b7c5dc44f2633a",
+ "duration_s": 40.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n 'change ' .../Orthogonal.lean` reports lines 89, 133, and 137.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Orthogonal.lean",
+   "fix": "Replace these with explicit API lemmas such as `Basis.toDualEquiv_apply`, `LinearMap.comp_apply`, `Module.Dual.transpose_apply`, and `stdOrthogonalRep_apply_apply`, or document why definitional reduction is required.",
+   "issue": "The proofs use undocumented `change` at lines 89, 133, and 137 to unfold the basis equivalence, linear-map composition, dual transpose, and matrix action.",
+   "line": "89"
+  },
+  {
+   "evidence": "Lines 102 and 104 end in `rfl`; `stdOrthogonalRep_apply_apply` is declared at lines 57\u201360.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Orthogonal.lean",
+   "fix": "Use `(stdOrthogonalRep_apply_apply k n g _).symm` and `stdOrthogonalRep_apply_apply k n h _` so the proof depends on the stated interface rather than wrapper reducibility.",
+   "issue": "`stdOrthogonalRep_injective` bridges the representation action and `mulVec` by bare `rfl` at lines 102 and 104, despite already exposing that relationship through a public lemma.",
+   "line": "102"
+  },
+  {
+   "evidence": "Lines 77\u201378 define `hstar` with `:= rfl`, and line 79 uses it to reach `mem_unitaryGroup_iff'`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Orthogonal.lean",
+   "fix": "Use an explicit star/transpose lemma or add a comment explaining why this definitional equality is intentionally unavoidable.",
+   "issue": "The dot-product proof asserts `star matrix = transpose matrix` by undocumented `rfl`, coupling it to the implementation of the local `starRingOfComm` instance.",
+   "line": "77"
+  }
+ ],
+ "head_sha": "2abc1eda72e2414facae77f96621c08b96ade184",
+ "merge_base_sha": "9ca0e8e6c8275c5777869caafe7ba497e6d46a34",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1240,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "806b3f0c714d80b1283613d0cb5c69a44244a385832596d9653e46fc1d6ff7d3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T065643Z-1240-proof-quality-3d73bd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T06:56:43Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs rely on undocumented definitional equality, making them fragile across representation and coercion refactors.",
+ "transcript_blob": "b8ecef7f8e1424efa7f213c3631a313b6519278d684c2c85321b8155f089f592",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 44544,
+  "input_tokens": 72038,
+  "output_tokens": 955,
+  "reasoning_output_tokens": 225
+ },
+ "verdict": "request_changes"
+}
