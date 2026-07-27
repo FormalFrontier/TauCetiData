@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.83547,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 151.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40315,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40315,
+    "cache_read_input_tokens": 312636,
+    "inference_geo": "not_available",
+    "input_tokens": 15,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5855,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5855,
+      "cache_read_input_tokens": 50639,
+      "input_tokens": 2,
+      "output_tokens": 2155,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10683,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d3c9c843528aa8513cc73500ff12bc5b3605159f",
+ "cost_usd": 0.83547,
+ "dedupe_key": "TauCetiProject/TauCeti|1252|ae39805b13045c3c95b7bed926e7b4dd030a1cf4|reuse|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "e696a2b8004836fdf4d0b82976e2bbf5f48c6e8fb4aa07dfbb14f0eb987e5950",
+ "diff_sha256": "e696a2b8004836fdf4d0b82976e2bbf5f48c6e8fb4aa07dfbb14f0eb987e5950",
+ "duration_s": 151.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Standard.lean:45-47 `stdRep := (Units.coeHom ...).comp Matrix.GeneralLinearGroup.toLin.toMonoidHom`; Symplectic.lean:81-83 repeats this composition; Orthogonal.lean:80-81 reuses stdRep via `.comp`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Symplectic.lean",
+   "fix": "Generalize `stdRep` (and stdRep_apply, stdRep_injective, char_stdRep) in Standard.lean to an arbitrary Fintype/DecidableEq index type \u03b9, then define `stdSymplecticRep := (stdRep k (Fin n \u2295 Fin n)).comp (symplecticGroupToGL k n)` and derive stdSymplecticRep_apply/_injective/char_stdSymplecticRep from the generalized lemmas (as Orthogonal.lean:88,130,204 do), rather than reproving them from scratch. Ship the stdRep generalization as its own prerequisite PR if needed.",
+   "issue": "stdSymplecticRep re-inlines stdRep's definition \u2014 `(Units.coeHom _).comp (GeneralLinearGroup.toLin.toMonoidHom.comp _)` is exactly `stdRep`'s body (Standard.lean:45-47). The sibling stdOrthogonalRep reuses it via `(stdRep k n).comp (orthogonalGroupToGL k n)` (Orthogonal.lean:80-81); reuse here is blocked only because stdRep is over-specialized to index `Fin n` while the symplectic module is `Fin n \u2295 Fin n`.",
+   "line": 79
+  },
+  {
+   "evidence": "Compare stdSymplecticRepToDual_equivariant (Symplectic.lean, the `change`/`rw`/`calc`+Representation.self_inv_apply proof and 'Extensionality leaves ... behind coercions' comment) with stdOrthogonalRepToDual_equivariant (Orthogonal.lean:151-174) \u2014 structurally identical; likewise char_std{Symplectic,Orthogonal}DualRep and the *FDRep character lemmas.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Symplectic.lean",
+   "fix": "Factor a shared construction: given a GL-subgroup whose standard action preserves a nondegenerate matrix bilinear form B, produce the equivariant self-duality and trace character generically, then instantiate it for both orthogonal (B = 1) and symplectic (B = J). This eliminates the duplicated scaffolding across the two files.",
+   "issue": "The whole self-duality + character block (stdSymplecticRepToDual_equivariant, stdSymplecticRepEquivDual, stdSymplecticDualRep_apply, char_stdSymplecticDualRep, the four FDRep/char lemmas) is a near-verbatim clone of the Orthogonal.lean template \u2014 identical proof scripts and even copied comments \u2014 differing only in the invariant-form matrix (J vs identity dot product).",
+   "line": 0
+  }
+ ],
+ "head_sha": "ae39805b13045c3c95b7bed926e7b4dd030a1cf4",
+ "merge_base_sha": "d3c9c843528aa8513cc73500ff12bc5b3605159f",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1252,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a45c9d207bccec19c0cfa3ba22a32fafd245b58be7be0e829920e61d5ac6c5c6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T133450Z-1252-reuse-c76d7e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T13:34:50Z",
+ "submitted_by": "kim-em",
+ "summary": "stdSymplecticRep re-inlines the body of stdRep instead of reusing it (blocked only by stdRep being fixed to index Fin n), and the equivariant-self-duality/character scaffolding is a verbatim clone of Orthogonal.lean modulo the invariant form. Both should be factored rather than copied.",
+ "transcript_blob": "8acb3af9a76cc10d4773fbdde1e917b40b439e58c4b09bb67c209f62aaf6ddd8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40315,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40315,
+  "cache_read_input_tokens": 312636,
+  "inference_geo": "not_available",
+  "input_tokens": 15,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5855,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5855,
+    "cache_read_input_tokens": 50639,
+    "input_tokens": 2,
+    "output_tokens": 2155,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10683,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
