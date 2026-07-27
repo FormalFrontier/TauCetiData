@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.43966249999999996,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 87.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19648,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 19648,
+    "cache_read_input_tokens": 171431,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 522,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 522,
+      "cache_read_input_tokens": 35305,
+      "input_tokens": 2,
+      "output_tokens": 2335,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 6090,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "cost_usd": 0.439662,
+ "dedupe_key": "TauCetiProject/TauCeti|1234|03257837b35017ef6c66f623cba3bded2625fbf4|proof-quality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "diff_sha256": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "duration_s": 87.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Algebra/BigOperators/Finsupp/Basic.lean:271 `finsetSum_apply (S) (f) (a) : (\u2211 i \u2208 S, f i) a = \u2211 i \u2208 S, f i a`, exactly the stated goal at Finset.univ.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Delete `sum_apply` and rewrite with `Finsupp.finsetSum_apply` after `MonoidAlgebra.coeff_sum`.",
+   "issue": "The local `sum_apply` lemma reimplements Mathlib's `Finsupp.finsetSum_apply` via a manual `Finset.induction_on`; this hides a reusable existing fact and is brittle (its `change`/`induction`/`simp` script breaks on refactors).",
+   "line": "52"
+  },
+  {
+   "evidence": "Lines 54\u201355 and 65\u201366 use `change` with no justifying comment; the second unfolds the anonymous-constructor `coeff` field by definitional equality.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Reach the if-form via explicit lemmas (`Finsupp.single_apply`, `Finsupp.coe_mk`, `Subtype.ext_iff`) or add a comment stating why no rewrite reaches the goal.",
+   "issue": "Undocumented `change` (also line 54) reshapes the goal into `if ... then 1 else 0 = \u2211 ..., if (i:G) = x then 1 else 0`, relying on accidental defeq through `Finsupp.coe_mk`/`Finsupp.single_apply`. The rubric flags any `change`/`show` without a comment and any reliance on cross-coercion defeq.",
+   "line": "65"
+  },
+  {
+   "evidence": "classSum (lines 26\u201335) is defined in tactic mode via `by_cases`, so `rw [classSum, dif_pos hk]` matches the compiled `dite`; any change to the definition's shape breaks this proof.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Prove a `classSum_coeff`/`classSum_apply` characterization lemma once and use it here, so downstream proofs never unfold the raw definition or its `dif_pos`.",
+   "issue": "`rw [classSum, dif_pos hk, ...]` unfolds the tactic-built definition and depends on the exact `dite` term emitted by the `by_cases Nontrivial k` in `classSum`'s body; this is fragile reliance on the elaborated definition rather than a stable characterization lemma.",
+   "line": "63"
+  }
+ ],
+ "head_sha": "03257837b35017ef6c66f623cba3bded2625fbf4",
+ "merge_base_sha": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1234,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c8f437af85859204e89e4711b0010f1b51a5bbde0374f12ed3a0e43d8c2f78b8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T132434Z-1234-proof-quality-87a2e1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T13:24:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The classSum_eq_sum proof hand-rolls a Mathlib lemma via induction and leans on two undocumented `change` steps that unfold coercions by defeq. Replace the reinvented helper and document or eliminate the defeq manipulations.",
+ "transcript_blob": "e11c988b88962b37e7af432a488546f396ea96470a5718b6d086acfee999c3ef",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 19648,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 19648,
+  "cache_read_input_tokens": 171431,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 522,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 522,
+    "cache_read_input_tokens": 35305,
+    "input_tokens": 2,
+    "output_tokens": 2335,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 6090,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

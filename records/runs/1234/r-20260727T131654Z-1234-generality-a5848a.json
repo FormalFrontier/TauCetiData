@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.4582115,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 115.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 18463,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 18463,
+    "cache_read_input_tokens": 128823,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2168,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2168,
+      "cache_read_input_tokens": 32474,
+      "input_tokens": 2,
+      "output_tokens": 3029,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8166,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "cost_usd": 0.458211,
+ "dedupe_key": "TauCetiProject/TauCeti|1234|03257837b35017ef6c66f623cba3bded2625fbf4|generality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "diff_sha256": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "duration_s": 115.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: only def-site at line 38, no other occurrence of classSumOfDecidableEq in ./code; identical toFun `fun x => if ConjClasses.mk x = C then 1 else 0` as classSum.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Delete classSumOfDecidableEq, or make it the sole classSum. The natural, general definition is exactly the RHS of classSum_eq_sum: `classSum C := \u2211 x : C.carrier, MonoidAlgebra.of k G x`, which needs neither the [DecidableEq k] variant nor the Nontrivial-k branch.",
+   "issue": "classSumOfDecidableEq duplicates classSum for the special case [DecidableEq k], but nothing references it and no lemma relates it to classSum. It is dead special-case API with an extra assumption and no roadmap need (the roadmap calls for a single classSum).",
+   "line": "38"
+  },
+  {
+   "evidence": "classSum_eq_sum (line 44) proves `classSum C = \u2211 x : C.carrier, MonoidAlgebra.of k G x`, i.e. the intended definition, after re-deriving both branches of the split.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Define classSum directly as `\u2211 x : C.carrier, MonoidAlgebra.of k G x`; the Nontrivial/subsingleton casework then disappears from classSum_eq_sum as well.",
+   "issue": "classSum is built via an artificial `by_cases h : Nontrivial k` split (with the trivial branch returning 0) rather than as the natural general sum. This is a special-case construction of a definition whose general form is proved equal in classSum_eq_sum.",
+   "line": "20"
+  }
+ ],
+ "head_sha": "03257837b35017ef6c66f623cba3bded2625fbf4",
+ "merge_base_sha": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1234,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d7659ff4da913e3b15f96503fc8c67759f6b1d65e71974f2a46d447a536649ae",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T131654Z-1234-generality-a5848a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T13:16:54Z",
+ "submitted_by": "kim-em",
+ "summary": "classSum is duplicated as a second special-case definition classSumOfDecidableEq that adds a [DecidableEq k] assumption, is unused, and is disconnected from every lemma; the material otherwise sits at the natural level.",
+ "transcript_blob": "6c98288b973d5befed41ca204e41ce5ba04746514cec29edd8416d671afbd7bd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 18463,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 18463,
+  "cache_read_input_tokens": 128823,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2168,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2168,
+    "cache_read_input_tokens": 32474,
+    "input_tokens": 2,
+    "output_tokens": 3029,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8166,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

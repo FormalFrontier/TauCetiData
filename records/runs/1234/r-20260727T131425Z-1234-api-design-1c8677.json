@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5826815,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 148.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 21105,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 21105,
+    "cache_read_input_tokens": 205561,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 984,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 984,
+      "cache_read_input_tokens": 36300,
+      "input_tokens": 1,
+      "output_tokens": 5304,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10537,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "cost_usd": 0.582681,
+ "dedupe_key": "TauCetiProject/TauCeti|1234|03257837b35017ef6c66f623cba3bded2625fbf4|api-design|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "diff_sha256": "3dad3dfc4b9d0f9c7ff97371849bf3ea78e4b1bab935c31e21d8ea0af1b50b16",
+ "duration_s": 148.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`noncomputable def classSum` vs `def classSumOfDecidableEq`; roadmap README L206-207 'a genuine `def` ... hence computable'; `classSumOfDecidableEq` referenced nowhere else in the diff.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Define a single computable `classSum` (e.g. `[DecidableEq k]` filter as in `classSumOfDecidableEq`, or `\u2211 of`) matching the roadmap's named object, and drop `classSumOfDecidableEq`; if both must stay, add `classSumOfDecidableEq = classSum`.",
+   "issue": "`classSumOfDecidableEq` is a second public class-sum definition that is unused, carries no characteristic API, and has no lemma relating it to `classSum`. Meanwhile the roadmap's named target `classSum k C` is delivered `noncomputable` (via the `by_cases Nontrivial k` split), contradicting the roadmap's stated computable `def` and leaving two divergent class sums on the public surface.",
+   "line": "33"
+  },
+  {
+   "evidence": "MonoidAlgebra has `coeff` field and `coeff_ofCoeff` (mathlib Defs.lean:81,130); only `classSum_eq_sum`, `classSum_commutes_of`, `classSum_mem_center` are provided.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Add `@[simp] classSum_coeff (g) : (classSum (k:=k) C).coeff g = if ConjClasses.mk g = C then 1 else 0` (or a `mem_support`/`coeff` restatement).",
+   "issue": "No coefficient/apply characteristic lemma for `classSum`. Bodies are unexposed (no `@[expose]`), so the only handle downstream is `classSum_eq_sum`; the structure-constants item needs to compute `(classSum C).coeff g` to prove `classSum C\u1d62 * classSum C\u2c7c = \u2211\u2096 a\u1d62\u2c7c\u2096 \u2022 classSum C\u2096`.",
+   "line": "27"
+  },
+  {
+   "evidence": "`simp [conjugateCarrierEquiv, mul_assoc]` in `classSum_commutes_of`; no `_apply` lemma exists in the file.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/ClassSum.lean",
+   "fix": "Add `@[simp] conjugateCarrierEquiv_apply (g x) : ((conjugateCarrierEquiv g C x : G)) = g * x * g\u207b\u00b9` and use it in the proof.",
+   "issue": "`conjugateCarrierEquiv` (a genuinely reusable result) has no characteristic apply lemma; `classSum_commutes_of` uses `simp [conjugateCarrierEquiv]` to unfold the definition instead of a lemma, blocking consumers that cannot unfold it.",
+   "line": "89"
+  }
+ ],
+ "head_sha": "03257837b35017ef6c66f623cba3bded2625fbf4",
+ "merge_base_sha": "41937c326238552d15f8680b2d99f1d95544ce17",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1234,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "26d215ba5b553baedf53d6e257d0b59040fe941b49b4ea9ea2bf5d281271895c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T131425Z-1234-api-design-1c8677",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T13:14:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The class-sum surface is duplicated (a noncomputable `classSum` plus an unlinked, uncharacterized `classSumOfDecidableEq`) and lacks the coefficient characterization lemma the structure-constant item will need. Missing apply/simp lemma for `conjugateCarrierEquiv`.",
+ "transcript_blob": "f684450c3872a9e467810447eff1e5454153b9fd2cb164e0a9d0f192702cf16b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 21105,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 21105,
+  "cache_read_input_tokens": 205561,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 984,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 984,
+    "cache_read_input_tokens": 36300,
+    "input_tokens": 1,
+    "output_tokens": 5304,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10537,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
