@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.302112,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 84224,
+    "input_tokens": 128268,
+    "output_tokens": 1326,
+    "reasoning_output_tokens": 491
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "51b8d179abb672f3e1a7296a34123c4acd534618",
+ "cost_estimated": true,
+ "cost_usd": 0.302112,
+ "dedupe_key": "TauCetiProject/TauCeti|1244|4fa3ceb5601ee1008777fdaa920bab687d92278b|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "4eece31fe328827023994ab90982b943f8567c8849a378c753f45c617ef0bb99",
+ "diff_sha256": "4eece31fe328827023994ab90982b943f8567c8849a378c753f45c617ef0bb99",
+ "duration_s": 40.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Analysis/SpecialFunctions/Complex/CircleMap.lean:102` provides `circleMap_zero_im (r \u03b8) : (circleMap 0 r \u03b8).im = r * Real.sin \u03b8`; lines 61\u201364 reproduce that computation.",
+   "file": "TauCeti/Analysis/Contour/JordanLemma.lean",
+   "fix": "Use `circleMap_zero_im` after `Complex.norm_exp` and simplify the surrounding complex multiplication, instead of the raw `circleMap`/real-imaginary expansion.",
+   "issue": "`norm_exp_mul_circleMap` unfolds `circleMap` and manually computes its imaginary component despite Mathlib\u2019s `circleMap_zero_im`.",
+   "line": 57
+  },
+  {
+   "evidence": "`Mathlib/Analysis/SpecialFunctions/Complex/CircleMap.lean:40` gives `norm_circleMap_zero`; the entire new proof at line 132 is `rw [norm_inv, norm_circleMap_zero, abs_of_pos hR, one_div]`, and its sole grep hit as a use is line 143.",
+   "file": "TauCeti/Analysis/Contour/JordanLemma.lean",
+   "fix": "Remove the declaration and discharge the bound inline in `tendsto_integral_semicircle_exp_div_nhds_zero` using `norm_inv`, `norm_circleMap_zero`, and `abs_of_pos hR`.",
+   "issue": "Public `norm_inv_circleMap_le` is a thin restatement of existing exact norm identities and has only the immediately following internal consumer.",
+   "line": 131
+  }
+ ],
+ "head_sha": "4fa3ceb5601ee1008777fdaa920bab687d92278b",
+ "merge_base_sha": "51b8d179abb672f3e1a7296a34123c4acd534618",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1244,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ab0ce184af1e7530a52c269af7b320344f6b1184b6e38e379a59bc75a3c4bc03",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T102318Z-1244-reuse-c3330c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T10:23:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds one redundant public specialization and re-derives an existing circle-map component calculation.",
+ "transcript_blob": "9507a8e594b93f84c439bf94c85dc49cf96e78a075ad811e8d307bf96460d248",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 84224,
+  "input_tokens": 128268,
+  "output_tokens": 1326,
+  "reasoning_output_tokens": 491
+ },
+ "verdict": "request_changes"
+}
