@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.200342,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 63744,
+    "input_tokens": 90376,
+    "output_tokens": 1177,
+    "reasoning_output_tokens": 492
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "76a2322cbb6f51df0489a9e856c3079bab292701",
+ "cost_estimated": true,
+ "cost_usd": 0.200342,
+ "dedupe_key": "TauCetiProject/TauCeti|1237|a90ee0288cb8827f84a259949a796e12c2596602|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "bedc12a3ff03d0d0e558efef95ffa905ea5aff6d81c380b6e5544730b03a17e2",
+ "diff_sha256": "bedc12a3ff03d0d0e558efef95ffa905ea5aff6d81c380b6e5544730b03a17e2",
+ "duration_s": 45.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 26\u201335 define all three forms inside the exposed section; grep finds only `titsForm_eq_eulerForm` at line 133 and no `eulerForm_def` or `titsPolarForm_def`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/EulerForm.lean",
+   "fix": "Remove `@[expose]` and add public `eulerForm_def` and `titsPolarForm_def` equations (retaining `titsForm_eq_eulerForm`), proved with `:= (rfl)` so downstream proofs use lemmas rather than definitional reduction.",
+   "issue": "`@[expose] public section` exposes the bodies of `eulerForm`, `titsForm`, and `titsPolarForm`, while only `titsForm` has a public defining equation; consumers cannot state the Euler sum or polarization formula through stable API lemmas without relying on unfolding.",
+   "line": "15"
+  },
+  {
+   "evidence": "`ring` appears only in proof bodies at lines 48, 53, 59, 65, 90, 97, 104, 111, 118, and 150; no declaration signature requires the tactic module.",
+   "file": "TauCeti/RepresentationTheory/Quiver/EulerForm.lean",
+   "fix": "Change it to a non-public `import Mathlib.Tactic.Ring`.",
+   "issue": "`public import Mathlib.Tactic.Ring` re-exports an implementation-only proof tactic as part of this module's public dependency surface.",
+   "line": "6"
+  }
+ ],
+ "head_sha": "a90ee0288cb8827f84a259949a796e12c2596602",
+ "merge_base_sha": "76a2322cbb6f51df0489a9e856c3079bab292701",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1237,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c38dd96eeb063477e9e0f5cd15013ae41b435cea9e262b5603970e02908a390",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260727T061551Z-1237-api-design-c8e2e2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-27T06:15:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The three forms expose their implementation bodies instead of providing a complete characteristic API, and an implementation-only tactic is re-exported.",
+ "transcript_blob": "a7bd2c8134219b5f50c055bd30e7801b23c4c739c20229db3c96b93cdb4f5fff",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 63744,
+  "input_tokens": 90376,
+  "output_tokens": 1177,
+  "reasoning_output_tokens": 492
+ },
+ "verdict": "request_changes"
+}
