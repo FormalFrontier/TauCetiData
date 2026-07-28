@@ -1,0 +1,88 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.444281,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 72.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 225792,
+    "input_tokens": 277861,
+    "output_tokens": 2368,
+    "reasoning_output_tokens": 717
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3f204416d924e235f08d4b799216974f4c5a26d",
+ "cost_estimated": true,
+ "cost_usd": 0.444281,
+ "dedupe_key": "TauCetiProject/TauCeti|1283|88e3b473cb46f9f3a52e5209099862c13c045da2|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "eb9ba15ba20dcd8b6672dcfffb8b246c70557397948a7af5820f6b3135dc4798",
+ "diff_sha256": "eb9ba15ba20dcd8b6672dcfffb8b246c70557397948a7af5820f6b3135dc4798",
+ "duration_s": 72.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Analysis/SpecialFunctions/Hermite/Orthogonality.lean:162` defines `integral_hermite_mul_hermite_gaussianReal` with the same integrand and normalization, and its docstring explicitly identifies it as the relation consumed by the Gaussian Hermite basis.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/HermiteBasis.lean",
+   "fix": "Rewrite the existing theorem using `gaussianReal_zero_one_eq_withDensity` and the with-density integral API; move that measure equality earlier if needed.",
+   "issue": "`integral_hermite_mul_hermite_mul_gaussianPDFReal` re-proves the Gaussian-measure Hermite orthogonality already exposed as `integral_hermite_mul_hermite_gaussianReal`.",
+   "line": 48
+  },
+  {
+   "evidence": "`Mathlib/Probability/Distributions/Gaussian/Real.lean:516` provides `integrable_exp_mul_gaussianReal`; `Mathlib/Probability/Moments/IntegrableExpMul.lean:175` provides exactly the positive/negative-rate-to-absolute-value combinator.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/HermiteBasis.lean",
+   "fix": "Combine Mathlib's `integrable_exp_mul_gaussianReal a` and `integrable_exp_mul_gaussianReal (-a)` with `integrable_exp_mul_abs`, then transport along `gaussianReal_zero_one_eq_withDensity`.",
+   "issue": "`integrable_exp_mul_abs_gaussianPDFReal` manually re-derives Gaussian exponential integrability through density domination.",
+   "line": 101
+  },
+  {
+   "evidence": "`Analysis/SpecialFunctions/Hermite/Orthogonality.lean:156` contains the same `gaussianPDFReal 0 1 x = (\u221a(2\u03c0))\u207b\u00b9 * exp (-(x\u00b2/2))` statement.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/HermiteBasis.lean",
+   "fix": "Promote the existing helper to public in `Hermite/Orthogonality.lean` and reuse it here rather than maintaining two proofs of the density formula.",
+   "issue": "`gaussianPDFReal_zero_one` duplicates the same helper already present privately in the imported Hermite orthogonality file.",
+   "line": 41
+  },
+  {
+   "evidence": "`Function/MemLp.lean:53,62,70,85` repeatedly uses `((hermite n).map ...).comp (X * C (sqrt 2))`, while its private `eval_hermiteComp` at line 51 duplicates `eval_hermiteDilated` up to commutation of `X` and the constant polynomial.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Hermite/Function/HilbertBasis.lean",
+   "fix": "Define the shared dilated polynomial in the earlier MemLp layer, refactor its existing occurrences to use it, and reuse its evaluation lemma here.",
+   "issue": "`hermiteDilated` introduces a second representation of the polynomial already assembled repeatedly in `Function/MemLp.lean`, leaving a parallel private evaluation API.",
+   "line": 35
+  }
+ ],
+ "head_sha": "88e3b473cb46f9f3a52e5209099862c13c045da2",
+ "merge_base_sha": "6b24d3a5b3abe42b3b04eaa708d1772ab2a21ec2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1283,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "06fc36ea6ca7ecb579f23dacd2bdf1f6b37529315630ec03c2b0a004574cbbbe",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260728T021502Z-1283-reuse-73d96b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-28T02:15:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR re-derives existing Gaussian and Hermite infrastructure instead of reusing the APIs already present in TauCeti and Mathlib.",
+ "transcript_blob": "9a7bc41a98faed9202c10d8147cec885712c9484e0c0e782518c37fb2d293ff4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 225792,
+  "input_tokens": 277861,
+  "output_tokens": 2368,
+  "reasoning_output_tokens": 717
+ },
+ "verdict": "request_changes"
+}
