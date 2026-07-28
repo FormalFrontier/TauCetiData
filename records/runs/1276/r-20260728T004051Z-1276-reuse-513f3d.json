@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.63609,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 135.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 28662,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 28662,
+    "cache_read_input_tokens": 150882,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2080,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2080,
+      "cache_read_input_tokens": 42761,
+      "input_tokens": 2,
+      "output_tokens": 4556,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10752,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9329b12510eb1b83e1f13dcffd229a52fa4256c9",
+ "cost_usd": 0.63609,
+ "dedupe_key": "TauCetiProject/TauCeti|1276|cfaea45e2da3bc099720e57325ca78ada1d2e0ff|reuse|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "86f106d0dc1810bb1debcc7a9ce0e97837750a84834e212d8c6ed63424fb7872",
+ "diff_sha256": "86f106d0dc1810bb1debcc7a9ce0e97837750a84834e212d8c6ed63424fb7872",
+ "duration_s": 135.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib Base.lean:652-663 proves `b.height (P.reflectionPerm j i) < b.height i` for positive `i` with simple `j`, using `IsPos.reflectionPerm` and `height_add_zsmul`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Lowering.lean",
+   "fix": "Drop the file and use `RootPairing.Base.IsPos.induction_on_reflect` / `induction_reflect` downstream, or justify the standalone existence lemma with a concrete consumer the induction principle cannot serve.",
+   "issue": "`exists_mem_support_isPos_reflectionPerm_height_lt` (and `exists_mem_support_height_reflectionPerm_lt`, line 77) re-derive the exact step proved inside `RootPairing.Base.IsPos.induction_on_reflect` (mathlib Base.lean:648-663): a simple reflection of a positive nonsimple root strictly lowers height (same `height_add_zsmul` computation) and stays positive (via `IsPos.reflectionPerm`, Base.lean:578). The stated purpose 'induction on height' is exactly what `induction_on_reflect` and `induction_reflect` (Base.lean:665) already provide.",
+   "line": "86"
+  },
+  {
+   "evidence": "mathlib Base.lean:657-659 vs Lowering.lean:47-51 are the same rewrite chain.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Lowering.lean",
+   "fix": "Remove; if a downstream user needs the induction, use the existing principle rather than reconstructing this computation.",
+   "issue": "`height_reflectionPerm` re-derives the reflection height computation that Mathlib already inlines at Base.lean:657-659 (`reflection_apply_root' \u2124` rewritten into `height_add_zsmul`); it exists only to feed the redundant existence theorems above.",
+   "line": "45"
+  },
+  {
+   "evidence": "mathlib Base.lean:520-521: `IsPos.exists_mem_support_pos_pairingIn : \u2203 j \u2208 b.support, 0 < P.pairingIn \u2124 j i`, used verbatim at Base.lean:648.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Lowering.lean",
+   "fix": "Use `IsPos.exists_mem_support_pos_pairingIn` directly with Mathlib's reflection orientation (as `induction_on_reflect` does), avoiding the extra wrapper.",
+   "issue": "`exists_mem_support_pairingIn_pos` is a thin transpose-wrapper of `IsPos.exists_mem_support_pos_pairingIn` (Base.lean:520) composed with `zero_lt_pairingIn_iff'`; it is needed only because the file adopts the `reflectionPerm i j` orientation opposite to Mathlib's `reflectionPerm j i` convention.",
+   "line": "70"
+  }
+ ],
+ "head_sha": "cfaea45e2da3bc099720e57325ca78ada1d2e0ff",
+ "merge_base_sha": "9329b12510eb1b83e1f13dcffd229a52fa4256c9",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1276,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "db97db413b58e8c4d24d253eaf0397f6f01e99efdc9a8b865a82bb33d3fc18db",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260728T004051Z-1276-reuse-513f3d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-28T00:40:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The file rebuilds the internals of Mathlib's existing `RootPairing.Base.IsPos.induction_on_reflect` (Base.lean:639), which already proves the positive-root height-lowering reflection step and packages it as a reusable strong induction; the new existence theorems re-derive that content and their stated consumer (height induction) is already served by the existing principle.",
+ "transcript_blob": "cb30d237c0523f6c7a384430e619a9ab50eacdbeb65d37b76809df9c00ad1a3c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 28662,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 28662,
+  "cache_read_input_tokens": 150882,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2080,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2080,
+    "cache_read_input_tokens": 42761,
+    "input_tokens": 2,
+    "output_tokens": 4556,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10752,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
