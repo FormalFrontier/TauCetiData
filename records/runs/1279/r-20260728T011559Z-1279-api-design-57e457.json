@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.18317,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 46.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 62720,
+    "input_tokens": 85762,
+    "output_tokens": 1220,
+    "reasoning_output_tokens": 499
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3ac2a450efea3046ce2071902f45c1d592ba5aaf",
+ "cost_estimated": true,
+ "cost_usd": 0.18317,
+ "dedupe_key": "TauCetiProject/TauCeti|1279|d3b2eda142d447a06ab10616d6d836b317dde0f0|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "b2452631b456999c51a27f50c31f1fcd279f28cdbfc500d50ad22ca7b29dd534",
+ "diff_sha256": "b2452631b456999c51a27f50c31f1fcd279f28cdbfc500d50ad22ca7b29dd534",
+ "duration_s": 46.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 47 applies `@[expose]` to the whole section; lines 66, 89, 105, and 114 already provide characteristic lemmas for the exposed definitions.",
+   "file": "TauCeti/KnotTheory/Grid/Diagram/Components.lean",
+   "fix": "Use `public section` without `@[expose]`; retain the API lemmas and write reflexive proofs as `:= (rfl)` where necessary.",
+   "issue": "`@[expose] public section` exposes the bodies of all five public definitions despite the file providing apply/definition lemmas, coupling downstream proofs to implementation details.",
+   "line": "47"
+  },
+  {
+   "evidence": "Lines 130\u2013131 define `IsKnot` by the count, while lines 135\u2013138 expose only the distinct cycle characterization.",
+   "file": "TauCeti/KnotTheory/Grid/Diagram/Components.lean",
+   "fix": "Add a preferably `[simp]` lemma `G.IsKnot \u2194 G.componentCount = 1` (or an equivalent `isKnot_def`) before hiding the definition body.",
+   "issue": "`IsKnot` is defined by `componentCount = 1`, but its only characterization lemma changes abstraction to `componentPerm.IsCycle`; consumers cannot state or rewrite the direct count characterization without unfolding.",
+   "line": "130"
+  }
+ ],
+ "head_sha": "d3b2eda142d447a06ab10616d6d836b317dde0f0",
+ "merge_base_sha": "e6ac14cbee3dddd0dab00710eef8a3b06a6ebb40",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1279,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a7b12303c55468436e4bbb5f4c07e7603b3eaae0f20bb87993b588f0b41fb4eb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260728T011559Z-1279-api-design-57e457",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-28T01:15:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The public definitions expose their bodies unnecessarily, and `IsKnot` lacks its direct defining characterization once that exposure is removed.",
+ "transcript_blob": "eced5db4e7ae481f38b52a040b47c7cc4592461147dc1761e798a18ac5b6cd0a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 62720,
+  "input_tokens": 85762,
+  "output_tokens": 1220,
+  "reasoning_output_tokens": 499
+ },
+ "verdict": "request_changes"
+}
