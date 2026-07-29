@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.246957,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 143104,
+    "input_tokens": 169521,
+    "output_tokens": 1444,
+    "reasoning_output_tokens": 544
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "751a6226dc60649f1d641588768207ee6a76cc93",
+ "cost_estimated": true,
+ "cost_usd": 0.246957,
+ "dedupe_key": "TauCetiProject/TauCeti|1399|e91a9ec4ef9586db55532056b62caa88adfae28f|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "4a78e13ceb3912e232809278607736af05bbdb513f9d8010f720eb4c3aff7a07",
+ "diff_sha256": "4a78e13ceb3912e232809278607736af05bbdb513f9d8010f720eb4c3aff7a07",
+ "duration_s": 45.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 146 and 154 wrap `Submodule.projectionL`; lines 233\u2013242 provide only `range_kerProjection` and `range_cokerProjection`, while Mathlib's wrapped API also includes `ker_projectionL`, `projectionL_apply_left/right`, and `isIdempotentElem_projectionL`.",
+   "file": "TauCeti/Analysis/Fredholm/Parametrix.lean",
+   "fix": "Add characteristic lemmas for both projections, including `ker_kerProjection = kerComplement`, `ker_cokerProjection = range T`, left/right action lemmas, and appropriately annotated idempotence lemmas.",
+   "issue": "The public `kerProjection` and `cokerProjection` wrappers expose only their ranges; their kernels, action on the two complementary subspaces, and idempotence remain accessible only by unfolding the definitions.",
+   "line": "146"
+  },
+  {
+   "evidence": "The equations reduce `T (parametrix y)` and `parametrix (T x)` to identity-minus-projection forms, while the analogous public application lemmas in `Splitting.lean` (`rangeProdCokerComplementEquiv_apply`, `kerProdComplementEquiv_apply`, and related inverse applications) are marked `@[simp]`.",
+   "file": "TauCeti/Analysis/Fredholm/Parametrix.lean",
+   "fix": "Mark both pointwise equations `@[simp]`; likewise annotate any added projection action/idempotence normal forms where safe.",
+   "issue": "The pointwise characteristic equations `apply_parametrix` and `parametrix_apply_apply` (line 196) are normal-form rules but have no `@[simp]` annotation, so simplification cannot use the defining behavior of the public parametrix.",
+   "line": "178"
+  }
+ ],
+ "head_sha": "e91a9ec4ef9586db55532056b62caa88adfae28f",
+ "merge_base_sha": "da37011b1c5249d427ae61eeca907190c86d97a9",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1399,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d2adf1b10d57be7627a1e050cfb3818fbef47aa9297d8b823e9dfbd1879a7b99",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T220001Z-1399-api-design-28de41",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T22:00:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The named parametrix and projection definitions lack parts of their characteristic public API and normal-form automation.",
+ "transcript_blob": "8f6e12688afd13d1d7595fe1f6167208d8c02274dfa46aebaf4b0e28f45e2cb4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 143104,
+  "input_tokens": 169521,
+  "output_tokens": 1444,
+  "reasoning_output_tokens": 544
+ },
+ "verdict": "request_changes"
+}
