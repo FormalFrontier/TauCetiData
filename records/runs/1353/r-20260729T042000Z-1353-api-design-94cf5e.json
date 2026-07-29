@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.174221,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 25.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 26112,
+    "input_tokens": 52429,
+    "output_tokens": 986,
+    "reasoning_output_tokens": 442
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "27bbf5fe0fc650fa99b6affc984fc6373e0198c7",
+ "cost_estimated": true,
+ "cost_usd": 0.174221,
+ "dedupe_key": "TauCetiProject/TauCeti|1353|a59b16e0d09127c708cd71aa88f4e937cbb1e929|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "d973a918819b52428b296fb0847a8429499dfc643f106f7cd8c9fd7ef1ea3a8c",
+ "diff_sha256": "d973a918819b52428b296fb0847a8429499dfc643f106f7cd8c9fd7ef1ea3a8c",
+ "duration_s": 25.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Grep finds `@[expose] public section` at `FiberSubgroup.lean:30` and `YoungTableau.lean:40`; the provided membership and application lemmas already supply the intended unfolding interface.",
+   "file": "TauCeti/GroupTheory/Perm/FiberSubgroup.lean",
+   "fix": "Remove `@[expose]` from both public sections, retain public declarations with opaque bodies, and write definitional theorem proofs as `:= (Iff.rfl)`/`:= (rfl)` where needed.",
+   "issue": "`@[expose] public section` exposes every definition body in this file; the same blanket exposure occurs at `YoungTableau.lean:40`, including subgroup and equivalence implementations.",
+   "line": "30"
+  },
+  {
+   "evidence": "Grep confirms application lemmas for `fiberSubgroupMulEquivPiPerm` (line 106), `rowFiberEquiv` (126), and `colFiberEquiv` (132), but none for `rowSubgroupMulEquiv` (139) or `colSubgroupMulEquiv` (146).",
+   "file": "TauCeti/RepresentationTheory/Symmetric/YoungTableau.lean",
+   "fix": "Add `[simp]` application/coercion lemmas for both equivalences, analogous to `fiberSubgroupMulEquivPiPerm_apply_coe`, relating each component action through `rowFiberEquiv`/`colFiberEquiv`.",
+   "issue": "`rowSubgroupMulEquiv` and `colSubgroupMulEquiv` expose the roadmap products but have no lemmas describing how their component permutations act, so users must unfold their composed implementations.",
+   "line": "139"
+  }
+ ],
+ "head_sha": "a59b16e0d09127c708cd71aa88f4e937cbb1e929",
+ "merge_base_sha": "d1b208af3c66cade09ead1c5695e8b35ad22065b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1353,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9600f73f976afd793df77a781402ec2cd4541c44008790e81dbbaa4d512729eb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T042000Z-1353-api-design-94cf5e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T04:20:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes implementation bodies and leaves the tableau-specific product equivalences without application lemmas, forcing consumers to depend on those bodies.",
+ "transcript_blob": "a2b3420be4993b4dc295a5f2cecd0fe81cf8ae9647091be39cd30f348835d448",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 26112,
+  "input_tokens": 52429,
+  "output_tokens": 986,
+  "reasoning_output_tokens": 442
+ },
+ "verdict": "request_changes"
+}
