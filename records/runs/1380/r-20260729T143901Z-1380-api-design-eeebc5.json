@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.334531,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 145152,
+    "input_tokens": 186287,
+    "output_tokens": 1876,
+    "reasoning_output_tokens": 586
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "648a02639f5f84a84633e60ab6d65088f094da35",
+ "cost_estimated": true,
+ "cost_usd": 0.334531,
+ "dedupe_key": "TauCetiProject/TauCeti|1380|a77348e1dea68fd87c3e507058d375d8e0b05cdf|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "8b0dfa7e85513be6c7ee498d1a010782be1919f82aaed8825b6dcf33c93bca82",
+ "diff_sha256": "8b0dfa7e85513be6c7ee498d1a010782be1919f82aaed8825b6dcf33c93bca82",
+ "duration_s": 56.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 37\u201342 define `youngBlocksEquiv`; grep finds only `youngBlock_youngBlocksEquiv` at lines 51\u201355, while Mathlib/Algebra/BigOperators/Fin.lean:692 provides `finSigmaFinEquiv_apply` for the underlying equivalence.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/YoungSubgroup.lean",
+   "fix": "Add a `@[simp]` application theorem giving the `Fin` value as the prefix sum of preceding sorted parts plus the local coordinate, analogous to Mathlib's `finSigmaFinEquiv_apply`.",
+   "issue": "`youngBlocksEquiv` is public and opaque, but its only theorem records the block label after a round trip; it does not characterize the claimed consecutive enumeration, so consumers cannot prove which numeric interval contains an element.",
+   "line": 37
+  },
+  {
+   "evidence": "Lines 57\u201368 make `youngSubgroupHom` and its injectivity private, lines 77\u201381 define the opaque equivalence, and grep finds no `youngSubgroupMulEquiv_apply` or `_symm_apply` theorem.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/YoungSubgroup.lean",
+   "fix": "Add `@[simp]` apply/symm-apply lemmas describing the action at `youngBlocksEquiv \u03bc \u27e8i,j\u27e9` (or expose a suitably characterized block-permutation homomorphism).",
+   "issue": "`youngSubgroupMulEquiv` exposes the roadmap's product decomposition but has no theorem describing either direction, and its constructing homomorphism is private; downstream code therefore cannot relate a tuple of block permutations to its action on `Fin n`.",
+   "line": 77
+  },
+  {
+   "evidence": "Lines 84\u2013101 define `youngBlockEquiv` via opaque `Equiv.ofBijective`; grep finds no theorem characterizing its application.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/YoungSubgroup.lean",
+   "fix": "Add a `@[simp] youngBlockEquiv_apply` theorem identifying its value with `\u27e8youngBlocksEquiv \u03bc \u27e8i,j\u27e9, \u2026\u27e9`, or make this proof-only equivalence private.",
+   "issue": "The public `youngBlockEquiv` likewise has no application theorem, so its intended canonical map into the fiber is unavailable through the API.",
+   "line": 84
+  }
+ ],
+ "head_sha": "a77348e1dea68fd87c3e507058d375d8e0b05cdf",
+ "merge_base_sha": "2b03cd637ba36180563a61d3b9c05cea659836de",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1380,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7b7cd2a4be729f46e9f103c68375c1709bc7a1a952e2b9ae75d2860a06ace9a4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T143901Z-1380-api-design-eeebc5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T14:39:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The core subgroup is characterized, but the public equivalences lack application lemmas, leaving the advertised consecutive-block and product-decomposition APIs unusable without unfolding opaque definitions.",
+ "transcript_blob": "6138470393daa43a453414b253a2adc7e3585c9a45a819dcc776f9c6f8647009",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 145152,
+  "input_tokens": 186287,
+  "output_tokens": 1876,
+  "reasoning_output_tokens": 586
+ },
+ "verdict": "request_changes"
+}
