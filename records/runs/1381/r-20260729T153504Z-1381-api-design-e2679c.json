@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.218087,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 93184,
+    "input_tokens": 120445,
+    "output_tokens": 1173,
+    "reasoning_output_tokens": 392
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "648a02639f5f84a84633e60ab6d65088f094da35",
+ "cost_estimated": true,
+ "cost_usd": 0.218087,
+ "dedupe_key": "TauCetiProject/TauCeti|1381|d3c1b7bc7c2aaf2b803eabeaf2437765e4356c31|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "fb69a2b0ed40ab80bcb678a635ab09bcfb8a6a3ba9de7c7b4a214e33c82b7e9f",
+ "diff_sha256": "fb69a2b0ed40ab80bcb678a635ab09bcfb8a6a3ba9de7c7b4a214e33c82b7e9f",
+ "duration_s": 32.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 192\u2013197 provide only `coe_cokerEquivKerAdjoint_mk`; the parallel API in `Analysis/Fredholm/Splitting.lean:185` provides both `cokerEquivComplement_symm_apply` and the forward `_apply_mk` lemma.",
+   "file": "TauCeti/Analysis/Fredholm/Adjoint.lean",
+   "fix": "Add a `@[simp] cokerEquivKerAdjoint_symm_apply` lemma identifying the inverse with `Submodule.Quotient.mk` of the underlying vector.",
+   "issue": "`cokerEquivKerAdjoint` is characterized only in the forward direction; consumers cannot simplify its inverse on an adjoint-kernel element without unfolding the definition.",
+   "line": "180"
+  },
+  {
+   "evidence": "Lines 214\u2013222 characterize only the forward map, while Mathlib\u2019s `ProdL2.lean:176` exposes `quotientEquivOrthogonal_symm_eq_mk`, which directly supports the missing inverse statement.",
+   "file": "TauCeti/Analysis/Fredholm/Adjoint.lean",
+   "fix": "Add a `@[simp] cokerAdjointEquivKer_symm_apply` lemma identifying the inverse of a kernel element with its quotient class.",
+   "issue": "`cokerAdjointEquivKer` likewise has no characteristic lemma for its inverse, requiring downstream users to unfold its quotient/orthogonal construction.",
+   "line": "201"
+  }
+ ],
+ "head_sha": "d3c1b7bc7c2aaf2b803eabeaf2437765e4356c31",
+ "merge_base_sha": "648a02639f5f84a84633e60ab6d65088f094da35",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1381,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c61da91972eb4224e81d50b449bcca954c33fa2c1a76e9153969a9d2852c487a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T153504Z-1381-api-design-e2679c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T15:35:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The two new cokernel equivalences lack inverse application lemmas, leaving their public APIs incomplete for constructing quotient classes from kernel elements.",
+ "transcript_blob": "fb9999273e8ea1427e75f65c39f491075dc353c5291ca77b9725519c8bc0ff5a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 93184,
+  "input_tokens": 120445,
+  "output_tokens": 1173,
+  "reasoning_output_tokens": 392
+ },
+ "verdict": "request_changes"
+}
