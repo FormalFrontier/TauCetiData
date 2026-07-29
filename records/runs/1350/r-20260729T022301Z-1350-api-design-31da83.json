@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.231004,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 29.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 59648,
+    "input_tokens": 93782,
+    "output_tokens": 1017,
+    "reasoning_output_tokens": 307
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9b3436ec4ac790007beb5783bd92ae34e0357c0c",
+ "cost_estimated": true,
+ "cost_usd": 0.231004,
+ "dedupe_key": "TauCetiProject/TauCeti|1350|fda3edab29c3cb5b099b466629b84ccd1b42e12f|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "99484989c0b192b5878f73b0d7c04892740ac4a0f70b7dda553e203a292d0638",
+ "diff_sha256": "99484989c0b192b5878f73b0d7c04892740ac4a0f70b7dda553e203a292d0638",
+ "duration_s": 29.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 148\u2013179 provide `ofGeometricallyIntegral_toOver`, `_one`, `_mul`, and `_inv`, so exposing the constructor body adds no required interface.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Basic.lean",
+   "fix": "Remove `@[expose]`; prove the existing characteristic lemmas internally by unfolding, while consumers use those lemmas rather than reduction.",
+   "issue": "`ofGeometricallyIntegral` is unnecessarily `@[expose]` despite already having public `toOver`, unit, multiplication, and inverse lemmas.",
+   "line": "140"
+  },
+  {
+   "evidence": "Lines 97\u2013103 expose only `trivial_toOver` and `trivial_toScheme`, while lines 145\u2013150 already exploit definitional access to the unit; no `trivial_one`, `trivial_mul`, or `trivial_inv` declaration exists in the repository.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/Trivial.lean",
+   "fix": "Remove `@[expose]` and add `[simp]` characteristic lemmas for the unit, multiplication, and inverse of `trivial`, analogous to the constructor lemmas in `Basic.lean`.",
+   "issue": "`trivial` is `@[expose]` to make its inherited group-object structure reduce, but its API only characterizes `toOver`/`toScheme`; consumers of its unit, multiplication, or inverse must rely on unfolding.",
+   "line": "90"
+  }
+ ],
+ "head_sha": "fda3edab29c3cb5b099b466629b84ccd1b42e12f",
+ "merge_base_sha": "e32a0c27307d8801c6bae898eba4f69567c5ca8c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1350,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9e337be1563884ba2df19002158947d343106851bb5b6db245f4a383c4175e4f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T022301Z-1350-api-design-31da83",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T02:23:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes two definition bodies to obtain definitional behavior that should be supplied by characteristic lemmas, making downstream code depend on implementation details.",
+ "transcript_blob": "d9c630e665eade2569e16c54ec23303416972bf465d83a35ffc61c4e6f3cc1fb",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 59648,
+  "input_tokens": 93782,
+  "output_tokens": 1017,
+  "reasoning_output_tokens": 307
+ },
+ "verdict": "request_changes"
+}
