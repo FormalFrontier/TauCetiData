@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.317674,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 153088,
+    "input_tokens": 190556,
+    "output_tokens": 1793,
+    "reasoning_output_tokens": 569
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7c656d5eab7646b266719204383fc819b8dcef1c",
+ "cost_estimated": true,
+ "cost_usd": 0.317674,
+ "dedupe_key": "TauCetiProject/TauCeti|1354|d3ab43788d3db698316d5dfbf8410cf2699ed1ca|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "2220870f0d1cc03efb9a1b626cbc3ecd9917f8e4714a5c0f156335c7ee9840a9",
+ "diff_sha256": "2220870f0d1cc03efb9a1b626cbc3ecd9917f8e4714a5c0f156335c7ee9840a9",
+ "duration_s": 45.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "ExteriorPower.lean:69 is exactly `rw [exteriorPower_apply, exteriorPower.map_apply_\u03b9Multi]`; Mathlib/LinearAlgebra/ExteriorPower/Basic.lean:272 defines the latter lemma, while ClassicalGroups/ExteriorPower.lean:54 merely applies the former.",
+   "file": "TauCeti/RepresentationTheory/ExteriorPower.lean",
+   "fix": "Remove both lemmas and let consumers prove or simplify these statements with `simp`.",
+   "issue": "`exteriorPower_apply_\u03b9Multi` is redundant, and `TauCeti.extPowerRep_apply_\u03b9Multi` at ClassicalGroups/ExteriorPower.lean:51 duplicates it again; both conclusions already normalize using `Representation.exteriorPower_apply` and Mathlib's `exteriorPower.map_apply_\u03b9Multi`.",
+   "line": "65"
+  },
+  {
+   "evidence": "Lines 79\u201380 are precisely that invocation and dimension simplification; the replacement is declared at RepresentationTheory/ExteriorPower.lean:185.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/ExteriorPower.lean",
+   "fix": "Remove it and invoke `exteriorPower.eq_zero_of_finrank_lt d` directly, discharging `Module.finrank k (Fin n \u2192 k) < d` by `simpa using h`.",
+   "issue": "`extPowerRep_eq_zero_of_lt` is an unnecessary standard-representation restatement of the generic `exteriorPower.eq_zero_of_finrank_lt`; it does not mention or use `extPowerRep`.",
+   "line": "77"
+  }
+ ],
+ "head_sha": "d3ab43788d3db698316d5dfbf8410cf2699ed1ca",
+ "merge_base_sha": "7c656d5eab7646b266719204383fc819b8dcef1c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1354,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4a3112bafe512428a4a2f0a31c7584562ecc574ead247b75cd1f6784962d3f9f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260729T043305Z-1354-reuse-53b185",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-29T04:33:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The core construction is new, but three public specialization/composite lemmas duplicate APIs already sufficient for their statements.",
+ "transcript_blob": "5dcfcfee5390d0f8a90e6036050a05b0f859e3bd09e0150fb6516d706e627dc1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 153088,
+  "input_tokens": 190556,
+  "output_tokens": 1793,
+  "reasoning_output_tokens": 569
+ },
+ "verdict": "request_changes"
+}
