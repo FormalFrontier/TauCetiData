@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.252472,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 113664,
+    "input_tokens": 145340,
+    "output_tokens": 1242,
+    "reasoning_output_tokens": 404
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "360baae8f62855dc9e62e7fbd85371ca4e86af43",
+ "cost_estimated": true,
+ "cost_usd": 0.252472,
+ "dedupe_key": "TauCetiProject/TauCeti|1449|0e11fbd03d89de5f2e1162bdace350e963036a53|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "3541ff1b7adfab9687fbfbe00280adfb4d018b980dfa2ea746afb0af60f8f730",
+ "diff_sha256": "3541ff1b7adfab9687fbfbe00280adfb4d018b980dfa2ea746afb0af60f8f730",
+ "duration_s": 42.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Construct.lean:86-94` exposes `iidMixtureLaw` and immediately supplies `iidMixtureLaw_def`; `CoinFlips.lean:62-68` does the same with `coinKernel_toMeasure`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/Construct.lean",
+   "fix": "Remove both `@[expose]` annotations and retain `iidMixtureLaw_def`/`coinKernel_toMeasure` as the public unfolding interface, using `:= (rfl)` if needed across visibility boundaries.",
+   "issue": "`iidMixtureLaw` and `coinKernel` (`CoinFlips.lean:62`) are both `@[expose]` even though exported characterization lemmas already provide access, coupling downstream proofs to implementation bodies.",
+   "line": 86
+  },
+  {
+   "evidence": "All three declarations lack attributes; the established analogous API uses `@[simp] theorem blockLaw_def`, `prefixLaw_def`, and `pathLaw_def` in `Exchangeability/Basic.lean:92-129`, and `@[simp] theorem deFinettiMeasure_toMeasure` in `DeFinetti/Mixture.lean:87-93`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/Construct.lean",
+   "fix": "Add `@[simp]` to these lemmas, unless a concrete loop is demonstrated; this also makes the protected definitions usable without unfolding.",
+   "issue": "The characteristic normal forms `iidMixtureLaw_def`, `coinKernel_toMeasure` (`CoinFlips.lean:66`), and the closed evaluation `coinKernel_apply_true` (`CoinFlips.lean:71`) are not tagged `@[simp]`, so routine normalization requires manual rewriting.",
+   "line": 90
+  }
+ ],
+ "head_sha": "0e11fbd03d89de5f2e1162bdace350e963036a53",
+ "merge_base_sha": "0645b8c8b4cbfe90dfaf026a61614449e759d9f1",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1449,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "615036a188beaccb1bf1afa5a271234adce7ed139f65c79540cb7ddbf2c3c0f4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T075739Z-1449-api-design-1d51d9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T07:57:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The new definitions unnecessarily expose their bodies, and their characteristic normal-form lemmas lack the project\u2019s standard simplifier annotations.",
+ "transcript_blob": "6774bb967096da9b40f083ed46fcd89801f726aebc6d7f37a14b419c1e551edf",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 113664,
+  "input_tokens": 145340,
+  "output_tokens": 1242,
+  "reasoning_output_tokens": 404
+ },
+ "verdict": "request_changes"
+}
