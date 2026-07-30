@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.327128,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 53.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 164096,
+    "input_tokens": 202240,
+    "output_tokens": 1812,
+    "reasoning_output_tokens": 584
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "cost_estimated": true,
+ "cost_usd": 0.327128,
+ "dedupe_key": "TauCetiProject/TauCeti|1477|ca5d753a5c0917ffa859722d48c43bbead9a89d8|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "0227810a630d09334bd9594e4147c4ed910fdb4da83fc775135b4475e6c90561",
+ "diff_sha256": "0227810a630d09334bd9594e4147c4ed910fdb4da83fc775135b4475e6c90561",
+ "duration_s": 53.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 71\u201390 expose the mapped-list-product body while immediately providing equations sufficient for ordinary evaluation and composition.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/ExchangeCondition.lean",
+   "fix": "Remove `@[expose]`; retain the body-independent equations as the public API.",
+   "issue": "`wordProd` is marked `@[expose]` even though `wordProd_nil`, `wordProd_cons`, and `wordProd_append` provide an unfolding-free interface.",
+   "line": 71
+  },
+  {
+   "evidence": "Mathlib/GroupTheory/Coxeter/Basic.lean:374 and :380 expose exactly `wordProd_singleton` and `wordProd_reverse` for the parallel Coxeter word API.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/ExchangeCondition.lean",
+   "fix": "Add `@[simp] wordProd_singleton` and `@[simp] wordProd_reverse`; prove them using the existing nil/cons/append API and `ofIdx_inv`.",
+   "issue": "The public word operation lacks the standard singleton and reverse/inverse equations, forcing consumers to reconstruct basic behavior from implementation lemmas.",
+   "line": 87
+  },
+  {
+   "evidence": "Line 87 states `(weylGroup.ofIdx P i)\u207b\u00b9 = weylGroup.ofIdx P i`; this is terminating and strictly removes an inverse.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimpleReflections.lean",
+   "fix": "Annotate `ofIdx_inv` with `@[simp]` so inverses of simple reflections normalize automatically.",
+   "issue": "The newly public `ofIdx_inv` is a canonical normal-form rule but is not tagged `@[simp]`.",
+   "line": 87
+  }
+ ],
+ "head_sha": "ca5d753a5c0917ffa859722d48c43bbead9a89d8",
+ "merge_base_sha": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1477,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "aa71c4e649f14ec1655428ffad87f871bd1ba6caf5511e8be738ba647440607c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T144244Z-1477-api-design-c47009",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T14:42:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The public word-product API unnecessarily exposes its implementation and omits standard characteristic lemmas; the newly public involution identity also lacks its canonical simplification annotation.",
+ "transcript_blob": "9bd91d52829ccc1dea222a8457c0e020b54107cb0b8784d987f81be695c9a23a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 164096,
+  "input_tokens": 202240,
+  "output_tokens": 1812,
+  "reasoning_output_tokens": 584
+ },
+ "verdict": "request_changes"
+}
