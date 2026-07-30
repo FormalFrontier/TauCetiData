@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.280455,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 59.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 81920,
+    "input_tokens": 119775,
+    "output_tokens": 1674,
+    "reasoning_output_tokens": 564
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d18419b4e1a2497d075e91361ab65a32acd1b71",
+ "cost_estimated": true,
+ "cost_usd": 0.280455,
+ "dedupe_key": "TauCetiProject/TauCeti|1513|129edb61fcaa25d5b09d307c964890d276456947|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "a3b5c29db4e65744ad253f9bf6c35fb7e7332c65406203478434c2d5914f45f3",
+ "diff_sha256": "a3b5c29db4e65744ad253f9bf6c35fb7e7332c65406203478434c2d5914f45f3",
+ "duration_s": 59.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 330\u2013368 and 381\u2013443 expose both bodies while already supplying the observable API, including `conjNormalRep_\u03c1`, `conjNormalFDRep_\u03c1`, and `res_conj*`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "fix": "Remove both `@[expose]` attributes and prove the characteristic lemmas internally with `:= (rfl)` or explicit unfolding where needed.",
+   "issue": "`conjNormalRep` and `conjNormalFDRep` (line 381) are marked `@[expose]` despite having `V`, `\u03c1`, character, dimension, and comparison lemmas; consumers can unnecessarily depend on their `Rep.res`/`Action.res` implementation.",
+   "line": 330
+  },
+  {
+   "evidence": "`rg` finds only `conjNormalRep_one`/`conjNormalRep_mul` and their FDRep mirrors at lines 362\u2013425; the roadmap README line 234 explicitly requires an autoequivalence/action on `Rep k N`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "fix": "Bundle `conjNormalRep` and `conjNormalFDRep` as `MulAction`s (and expose the normal-subgroup endofunctor/autoequivalence required by the roadmap), using the one/mul coherence as laws.",
+   "issue": "The file calls these operations a genuine `G`-action, but only exports object functions and equations; there is no `SMul`/`MulAction` instance, normal conjugation functor, or autoequivalence, so downstream orbit/stabilizer and categorical APIs cannot consume the promised action.",
+   "line": 366
+  },
+  {
+   "evidence": "The corresponding identity laws at lines 361 and 418 are `@[simp]`, while both parallel multiplication laws lack any automation annotation.",
+   "file": "TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "fix": "Mark both multiplication laws `@[simp]`, or obtain the standard simp-normalized `mul_smul` law from the bundled `MulAction` interface.",
+   "issue": "`conjNormalRep_mul` and `conjNormalFDRep_mul` (line 423) are unannotated even though they are the action multiplication normal forms and should simplify conjugation by a product.",
+   "line": 366
+  }
+ ],
+ "head_sha": "129edb61fcaa25d5b09d307c964890d276456947",
+ "merge_base_sha": "f094c96eea8e87e10d6f0d11c894c8a2260718f7",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1513,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e8f524fc3f6573d3281b3934682f90fa47fb38515b01ae886e8c8a647da99a3f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T213016Z-1513-api-design-0fb66a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T21:30:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The normal-subgroup operations expose implementation bodies but do not provide the bundled action/autoequivalence interface promised by the roadmap. Their multiplication laws also lack normal-form automation.",
+ "transcript_blob": "5cfcb92af721a82c7314e5fb39df3a5c7b5ba3100d383dffaf17255dfc10e153",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 81920,
+  "input_tokens": 119775,
+  "output_tokens": 1674,
+  "reasoning_output_tokens": 564
+ },
+ "verdict": "request_changes"
+}
