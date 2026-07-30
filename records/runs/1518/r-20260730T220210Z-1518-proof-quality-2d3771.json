@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7193225000000001,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 120.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 31146,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 31146,
+    "cache_read_input_tokens": 398233,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 542,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 542,
+      "cache_read_input_tokens": 46783,
+      "input_tokens": 2,
+      "output_tokens": 1984,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8068,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "33d4e42d29c71e630dc8ff30c6a5c3a5f05087a6",
+ "cost_usd": 0.719323,
+ "dedupe_key": "TauCetiProject/TauCeti|1518|ae86d051438a700d0f2f5c307c041005fa8e9777|proof-quality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "b5de8b3c7a004b304411ddd04b8d02679eb4534ebe1be3d731a802c15793b1f4",
+ "diff_sha256": "b5de8b3c7a004b304411ddd04b8d02679eb4534ebe1be3d731a802c15793b1f4",
+ "duration_s": 120.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 67\u201375 `change (Coalgebra.comul \u2218\u2097 (TensorProduct.lid R C).toLinearMap \u2218\u2097 \u2026)`; `matrixCoefficientLinear` is `@[expose] def \u2026 lid.comp (map \u03c6 id \u2218\u2097 coact)` (Basic.lean:69). Rubric: flag `change` used without a documenting comment and reliance on defeq across wrappers.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/MatrixCoefficient/Subcoalgebra.lean",
+   "fix": "Replace the `change` with an explicit rewrite (e.g. via `matrixCoefficient_def` and an unfolding lemma for `matrixCoefficientLinear`), or add a comment documenting why the definitional form is required here.",
+   "issue": "The proof begins with a large `change` that silently unfolds `matrixCoefficient`/`matrixCoefficientLinear` into their `lid \u2218\u2097 map \u03c6 id \u2218\u2097 coact` composite form, relying on defeq of these `@[expose] def` wrappers, with no comment explaining why the goal cannot be reached otherwise.",
+   "line": "67"
+  },
+  {
+   "evidence": "Line 154 `change Coalgebra.comul c \u2208 LinearMap.range (TensorProduct.map D.subtype D.subtype)`; the `ofSubmodule` obligation (Subcoalgebra/Basic.lean:115-119) is already this shape.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/MatrixCoefficient/Subcoalgebra.lean",
+   "fix": "Drop the `change` (introduce `D` without it) or add a one-line comment explaining its purpose.",
+   "issue": "Undocumented `change` restating the membership goal into `LinearMap.range (TensorProduct.map D.subtype D.subtype)`; it only folds in the `let D`, but is still an undocumented goal-shape manipulation.",
+   "line": "154"
+  },
+  {
+   "evidence": "`equivFinsuppOfBasisLeft_apply` yields `lid ((b.coord i).rTensor _ x)` (mathlib Basis.lean:153-154) while the target has `map (b.coord i) id x`; `rTensor` is defeq to `map _ id`.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/MatrixCoefficient/Subcoalgebra.lean",
+   "fix": "Make the identification explicit, e.g. `rw [equivFinsuppOfBasisLeft_apply, LinearMap.rTensor]` or `simp [LinearMap.rTensor]`, instead of relying on `rfl`.",
+   "issue": "`rw [equivFinsuppOfBasisLeft_apply]` followed by a bare `rfl` closes the goal only through the undocumented defeq `LinearMap.rTensor f = TensorProduct.map f id`.",
+   "line": "123"
+  }
+ ],
+ "head_sha": "ae86d051438a700d0f2f5c307c041005fa8e9777",
+ "merge_base_sha": "7d18419b4e1a2497d075e91361ab65a32acd1b71",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1518,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4f75965201289f77e18ca3975198861dc2d13a43d2e4b4456669d6ee6b3f048b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T220210Z-1518-proof-quality-2d3771",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T22:02:10Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs lean on robust automation, but the main comultiplication lemma opens with a large undocumented `change` that unfolds the matrixCoefficient/matrixCoefficientLinear wrappers by definitional equality, and there are two further undocumented defeq manipulations. Add comments or explicit-lemma rewrites.",
+ "transcript_blob": "eb70a4573ae34c3348c1634d1f595938d436e228e9d03a501797509067fc1cef",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 31146,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 31146,
+  "cache_read_input_tokens": 398233,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 542,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 542,
+    "cache_read_input_tokens": 46783,
+    "input_tokens": 2,
+    "output_tokens": 1984,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8068,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
