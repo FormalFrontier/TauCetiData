@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.276202,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 51.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 137984,
+    "input_tokens": 169592,
+    "output_tokens": 1639,
+    "reasoning_output_tokens": 693
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "00028c788d459e29f0c83740ea13630decac4342",
+ "cost_estimated": true,
+ "cost_usd": 0.276202,
+ "dedupe_key": "TauCetiProject/TauCeti|1431|2729055cf9f12e5f6b38bbfd9164d1d4ca2667d4|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|3",
+ "diff_blob": "3dfc52703e42933336444d56e660e0234e7fbaeca49789a0ca1a8be0d48c68a7",
+ "diff_sha256": "3dfc52703e42933336444d56e660e0234e7fbaeca49789a0ca1a8be0d48c68a7",
+ "duration_s": 51.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 207\u2013215 provide `@[simp]` lemmas for every constructor; unlike `rank`, the `cartanMatrix` body need not compute in another public declaration's index type.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/DynkinType.lean",
+   "fix": "Remove `@[expose]` from `cartanMatrix` and prove the constructor lemmas with `:= (rfl)` so their exported proofs do not require exposing the body.",
+   "issue": "`cartanMatrix` is `@[expose]` even though its nine constructor simp lemmas provide the intended elimination API, unnecessarily allowing downstream proofs to unfold its dispatch implementation.",
+   "line": 196
+  },
+  {
+   "evidence": "Repository-wide grep finds its only use at line 275 inside `private lemma not_isSimplyLaced_cartanMatrix_B`; the roadmap contains no consumer.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/DynkinType.lean",
+   "fix": "Make this lemma `private`, or replace it with a reusable coordinate-free/standard-matrix API if an external consumer is identified.",
+   "issue": "`cartanMatrix_B_apply_eq_neg_two` is public despite being an implementation helper for the immediately following private lemma and exposing an awkward coordinate interface over Mathlib's matrix rather than `DynkinType.cartanMatrix`.",
+   "line": 263
+  }
+ ],
+ "head_sha": "2729055cf9f12e5f6b38bbfd9164d1d4ca2667d4",
+ "merge_base_sha": "f54240f06ec2bb92718853564b51ce9c60ef6866",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1431,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "f2fafc91e39a5eef9e4ca89a0f37fb8471e82e0f6286f9ae07dc8d732df2f883",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T044119Z-1431-api-design-a1fa42",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T04:41:19Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface still exposes one avoidable implementation body and one proof-only helper.",
+ "transcript_blob": "00ea20f9053488858696bf0f847ed8048d3bdd709b1d88d4b081b06b83120e39",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 137984,
+  "input_tokens": 169592,
+  "output_tokens": 1639,
+  "reasoning_output_tokens": 693
+ },
+ "verdict": "request_changes"
+}
