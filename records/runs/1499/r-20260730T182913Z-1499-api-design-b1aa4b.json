@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.231,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 33.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 57600,
+    "input_tokens": 90834,
+    "output_tokens": 1201,
+    "reasoning_output_tokens": 396
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bc8b60fc3dc5cd9f326b655a90f622b515d7ee8f",
+ "cost_estimated": true,
+ "cost_usd": 0.231,
+ "dedupe_key": "TauCetiProject/TauCeti|1499|bcd20cde48f56cccd2f4e5760aa250750c0896b5|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "272b900dfcbf2ce7a315acf8eee659a8950e9efafd14716d5651ab4e2034ff1e",
+ "diff_sha256": "272b900dfcbf2ce7a315acf8eee659a8950e9efafd14716d5651ab4e2034ff1e",
+ "duration_s": 33.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Confirmed at lines 89, 134, 152, and 178; characteristic lemmas occur at lines 100, 138, 160, 164, and 210, but line 210 covers only the forward direction of `orthogonalGroupCongr`.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean",
+   "fix": "Remove these `@[expose]` annotations; add a `@[simp]` coercion/application lemma for `(orthogonalGroupCongr e).symm` so its inverse is usable without unfolding.",
+   "issue": "`orthogonalGroup`, `specialOrthogonalGroup`, `orthogonalGroupEquivIsometryEquiv`, and `orthogonalGroupCongr` are all `@[expose]`, making consumers depend on implementation bodies. The group definitions already have membership APIs, and the first equivalence has forward/inverse coercion lemmas.",
+   "line": 89
+  },
+  {
+   "evidence": "Lines 99\u2013101 annotate the orthogonal membership characterization with `@[simp]`; lines 138\u2013139 provide the corresponding special-orthogonal characterization without it.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean",
+   "fix": "Add `@[simp]` to `mem_specialOrthogonalGroup_iff`.",
+   "issue": "`mem_specialOrthogonalGroup_iff` is the membership normal form but lacks `@[simp]`, unlike the parallel `mem_orthogonalGroup_iff`.",
+   "line": 138
+  },
+  {
+   "evidence": "Repository grep finds these names only at lines 223\u2013241 of this file, where they feed `Module.reflection`; no roadmap target or external consumer uses them.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean",
+   "fix": "Make `reflectionDual`, `reflectionDual_apply`, and `reflectionDual_apply_self` private.",
+   "issue": "`reflectionDual` and its two lemmas expose an implementation functional used only to construct `reflection`; the public reflection API is already stated directly via `reflection_apply` and subsequent lemmas.",
+   "line": 223
+  }
+ ],
+ "head_sha": "bcd20cde48f56cccd2f4e5760aa250750c0896b5",
+ "merge_base_sha": "0d0f0260d9ae8e467fbd613d4c1a20743512a217",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1499,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f1dedaf4adfa1405d351f002fc0357073f2ffbeee30553e4072b540d0612ebc4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T182913Z-1499-api-design-b1aa4b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T18:29:13Z",
+ "submitted_by": "kim-em",
+ "summary": "Several definitions expose implementation bodies despite having, or needing, characteristic lemmas; one internal reflection helper is also unnecessarily public.",
+ "transcript_blob": "a914e4f889008a7dbd4c7ab155f4b29f7a2d197304a9c16123ee74f159e7d0e5",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 57600,
+  "input_tokens": 90834,
+  "output_tokens": 1201,
+  "reasoning_output_tokens": 396
+ },
+ "verdict": "request_changes"
+}
