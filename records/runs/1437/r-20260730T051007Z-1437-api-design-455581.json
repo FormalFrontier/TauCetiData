@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.194848,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 66816,
+    "input_tokens": 91352,
+    "output_tokens": 1292,
+    "reasoning_output_tokens": 602
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "499962b193e8a2a2c49b1456081959415e6a3835",
+ "cost_estimated": true,
+ "cost_usd": 0.194848,
+ "dedupe_key": "TauCetiProject/TauCeti|1437|15d395419dadfc770df4849f0dabf0d05fefd406|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "1efe98e69b25fb98d03993f66e0b6878eccfcd0dc7441e5c159a28c3cfbcdc7f",
+ "diff_sha256": "1efe98e69b25fb98d03993f66e0b6878eccfcd0dc7441e5c159a28c3cfbcdc7f",
+ "duration_s": 36.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 70 and 84 expose the `Paths.lift` body globally; lines 95\u2013144 currently characterize the object using definitional identification with `Quiver.Path i j \u2192\u2080 k`, while lines 213\u2013220 already provide eliminators for the equivalence.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Projective.lean",
+   "fix": "Remove the section-wide `@[expose]`. Keep `indecProjRep` opaque and expose an abstract path basis (or pointwise linear equivalence) plus action lemmas stated through that basis, instead of requiring raw `Finsupp` terms to typecheck by unfolding.",
+   "issue": "`@[expose] public section` exposes every definition in the module, including `indecProjRepHomEquiv`, despite its apply/symm API; downstream proofs can depend on implementation details.",
+   "line": 70
+  },
+  {
+   "evidence": "Each lemma reduces a constructed morphism or represented postcomposition to its canonical normal form; neighboring `indecProjRepHom_app_single` and the two equivalence apply lemmas are already `@[simp]`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Projective.lean",
+   "fix": "Add `@[simp]` to these non-looping characteristic reductions so the universal property works through its API without manual rewrites.",
+   "issue": "The constructor/eliminator and naturality normal forms are not tagged for simplification: `indecProjRepHom_app_nil`, `indecProjRepHom_app_nil_self`, and `indecProjRepHomEquiv_comp` (lines 184, 190, 224).",
+   "line": 184
+  }
+ ],
+ "head_sha": "15d395419dadfc770df4849f0dabf0d05fefd406",
+ "merge_base_sha": "6987c24c92f9fd3f4fa2facd21a30bd76ae771f3",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1437,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4435918b7893d269696996332fc11aa1403ccdecc4de7b8b6b2bf938f8edb50e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T051007Z-1437-api-design-455581",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T05:10:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API exposes implementation bodies wholesale and omits simp annotations on core universal-property reductions.",
+ "transcript_blob": "7d4482d021ec99beebdbe37659974be6e73dbf33c804a17049cac7da414b16de",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 66816,
+  "input_tokens": 91352,
+  "output_tokens": 1292,
+  "reasoning_output_tokens": 602
+ },
+ "verdict": "request_changes"
+}
