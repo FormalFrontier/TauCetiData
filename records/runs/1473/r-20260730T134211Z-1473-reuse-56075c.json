@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.488919,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 250368,
+    "input_tokens": 311463,
+    "output_tokens": 1942,
+    "reasoning_output_tokens": 654
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3f41440c47de4d7beb0119f5061a94573f1e805a",
+ "cost_estimated": true,
+ "cost_usd": 0.488919,
+ "dedupe_key": "TauCetiProject/TauCeti|1473|2dd2b3af40e46ce8addc8a223e862ee62d0f8675|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "3b6434247ec65a812070f3460957cd048dc536878e98f1e3b11322a749644b1c",
+ "diff_sha256": "3b6434247ec65a812070f3460957cd048dc536878e98f1e3b11322a749644b1c",
+ "duration_s": 56.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 98\u2013100 prove the definition body by `rfl`; its uses at lines 113, 128, and 166 add no abstraction.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Remove it and unfold `filtration` directly at its uses, e.g. `rw [filtration, Submodule.span_le]`.",
+   "issue": "`filtration_eq_span` is a private restatement of the reducible definition `filtration`, used only as an unfolding lemma.",
+   "line": "98"
+  },
+  {
+   "evidence": "Lines 179\u2013181 are exactly `.le` of line 163; lines 241\u2013243 explicitly specialize the same equality at `i = 1`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Use `(filtration_mul Q i j).le` and `filtration_mul Q 1 k` (with `Nat.one_add`/commutativity) at consumers instead of exporting parallel API.",
+   "issue": "`filtration_mul_le` and `filtration_one_mul_filtration` duplicate immediate consequences/specializations of `filtration_mul`.",
+   "line": "179"
+  },
+  {
+   "evidence": "`Mathlib/Algebra/BigOperators/Group/List/Basic.lean:474` defines `map_list_prod`; `Mathlib/LinearAlgebra/CliffordAlgebra/Basic.lean:330` provides `map_apply_\u03b9`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Prove the bridge using `map_list_prod` plus `CliffordAlgebra.map_apply_\u03b9` and `List.map_map` (or use those directly in `map_mem_filtration`).",
+   "issue": "`map_prod_map_\u03b9` re-derives preservation of a list product by induction although Mathlib already provides `map_list_prod`.",
+   "line": "294"
+  }
+ ],
+ "head_sha": "2dd2b3af40e46ce8addc8a223e862ee62d0f8675",
+ "merge_base_sha": "3f41440c47de4d7beb0119f5061a94573f1e805a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1473,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bf401d41e32ffe3803cd39d62e13d0b6f03dc38655d7c6f02733ccf8bc70d5d7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T134211Z-1473-reuse-56075c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T13:42:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces redundant proof scaffolding and public specializations instead of reusing declarations already available in Mathlib or earlier in the file.",
+ "transcript_blob": "185dee30c689242059614d53aca40eaa7ee231b93c4edc7ac7441abade047a1e",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 250368,
+  "input_tokens": 311463,
+  "output_tokens": 1942,
+  "reasoning_output_tokens": 654
+ },
+ "verdict": "request_changes"
+}
