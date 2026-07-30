@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9512809999999999,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 190.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 47112,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 47112,
+    "cache_read_input_tokens": 328028,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 9622,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 9622,
+      "cache_read_input_tokens": 53669,
+      "input_tokens": 2,
+      "output_tokens": 3089,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12318,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "cost_usd": 0.951281,
+ "dedupe_key": "TauCetiProject/TauCeti|1476|62dbcfe514037cd04956be6b7047d677ef26b665|api-design|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "e11409a7f598143fae69fb4d490f6aef2e6d4379300bfb17cc8b119e1f241e80",
+ "diff_sha256": "e11409a7f598143fae69fb4d490f6aef2e6d4379300bfb17cc8b119e1f241e80",
+ "duration_s": 190.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 81-83: `@[expose] def resFDRep ... := (Action.res (FGModuleCat k) S.subtype).obj B`; lemmas resFDRep_\u03c1 (87), character_resFDRep (93), forget\u2082_obj_resFDRep (98) all `:= rfl` supply the full interface; indFDRep at FiniteDimensional.lean:259 is opaque with a bridge iso.",
+   "file": "TauCeti/RepresentationTheory/Induction/FrobeniusReciprocity.lean",
+   "fix": "Drop @[expose] from resFDRep; keep the three characteristic lemmas as the interface. If any rfl-lemma then needs the body sealed, prove it with `:= (rfl)` instead of `:= rfl` per the repo idiom (cf. characterPairing_apply).",
+   "issue": "resFDRep is marked @[expose], exposing its body `(Action.res (FGModuleCat k) S.subtype).obj B` to importers. The complete characteristic API already exists as rfl-lemmas (resFDRep_\u03c1, character_resFDRep, forget\u2082_obj_resFDRep), so no consumer needs the body: the in-file defeq compositions in indResFDRepHomEquiv/resIndFDRepHomEquiv hold in-module regardless of @[expose], which only governs cross-module visibility. Exposing the body couples downstream proofs to the Action.res implementation. This is inconsistent with the sibling indFDRep (FiniteDimensional.lean:259), kept opaque behind indFDRepForgetIso.",
+   "line": "81"
+  }
+ ],
+ "head_sha": "62dbcfe514037cd04956be6b7047d677ef26b665",
+ "merge_base_sha": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1476,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "632861442df5e142fe5fe3a4c4a29cc4bc185de81bbdd65908642bce0f64712c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T135432Z-1476-api-design-39e7cd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T13:54:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The exposed surface, characteristic API, and simp annotations are otherwise correct and match the roadmap signatures, but resFDRep carries a needless @[expose] that leaks its implementation body.",
+ "transcript_blob": "73ad1553a4927ef0e8229146da0dc7fe1dc4a93c1ae48aca1def464a2fc340a8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47112,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 47112,
+  "cache_read_input_tokens": 328028,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 9622,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 9622,
+    "cache_read_input_tokens": 53669,
+    "input_tokens": 2,
+    "output_tokens": 3089,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12318,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
