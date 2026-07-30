@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.3764895,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 69.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 21807,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 21807,
+    "cache_read_input_tokens": 42955,
+    "inference_geo": "not_available",
+    "input_tokens": 3,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 11210,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 11210,
+      "cache_read_input_tokens": 26776,
+      "input_tokens": 1,
+      "output_tokens": 4855,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5210,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0d0f0260d9ae8e467fbd613d4c1a20743512a217",
+ "cost_usd": 0.376489,
+ "dedupe_key": "TauCetiProject/TauCeti|1495|26f9a9ebaeb1b9d986d9905ab3942d3f801220f2|api-design|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "0628136c1921b5c1ed34e2ae2ae990821c5cdcb6438186429f4d91c957905640",
+ "diff_sha256": "0628136c1921b5c1ed34e2ae2ae990821c5cdcb6438186429f4d91c957905640",
+ "duration_s": 69.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Its sole use is at lines 85-86 as the root-condition argument to `(quadPowerBasis hgen).lift`; the statement references `(quadPowerBasis hgen).gen`.",
+   "file": "TauCeti/NumberTheory/NumberField/QuadraticConjugation.lean",
+   "fix": "Mark it `private` (like minpoly_rat_of_int).",
+   "issue": "aeval_neg_gen_minpoly is a public proof obligation whose only role is to feed PowerBasis.lift inside quadConj; it is stated in the implementation detail `(quadPowerBasis hgen).gen` and has no consumer use.",
+   "line": "73"
+  },
+  {
+   "evidence": "quadPowerBasis appears only inside quadConj/quadConj_gen/quadConj_involutive/aeval_neg_gen_minpoly in this file; no other file imports it.",
+   "file": "TauCeti/NumberTheory/NumberField/QuadraticConjugation.lean",
+   "fix": "Make quadPowerBasis private (and quadPowerBasis_gen file-local) unless a roadmap consumer needs the power basis directly; otherwise keep only quadConj's API public.",
+   "issue": "quadPowerBasis (and quadPowerBasis_gen) are helpers used only to build quadConj and prove its lemmas within this file; no downstream target consumes the `1,\u03b8` power basis. Exposing them widens the surface without a named consumer.",
+   "line": "64"
+  },
+  {
+   "evidence": "quadConjInt_coe (line 120) is the only characterization; (quadConjInt \u03b8 : K) = quadConj (\u03b8:K) = -(\u03b8:K) = (-\u03b8:K), so the integer-level equality holds by coe_injective.",
+   "file": "TauCeti/NumberTheory/NumberField/QuadraticConjugation.lean",
+   "fix": "Add `@[simp] theorem quadConjInt_gen : quadConjInt hmin hgen \u03b8 = -\u03b8`, proved by RingOfIntegers.coe_injective from quadConjInt_coe and quadConj_gen.",
+   "issue": "quadConjInt's characteristic \u03b8\u21a6-\u03b8 action is only available at the K level via quadConjInt_coe; there is no `\ud835\udcde K`-level lemma `quadConjInt hmin hgen \u03b8 = -\u03b8`, so consumers working in \ud835\udcde K (ideals/class group) must route through coe + coe_injective.",
+   "line": "116"
+  }
+ ],
+ "head_sha": "26f9a9ebaeb1b9d986d9905ab3942d3f801220f2",
+ "merge_base_sha": "5e49e92d34d9160183d2f3762fdf7f8bffd2534e",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1495,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9d50869f197e86dfabcebec318ea5e5db6f9de4d9c7047e699bb6aaee186649b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T182115Z-1495-api-design-0ce05f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T18:21:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is mostly complete and correctly annotated, but a pure construction obligation phrased in implementation terms is exposed, and the \u03b8\u21a6-\u03b8 characterization is missing at the \ud835\udcde K level. Fix exposure and add the missing integer-level lemma.",
+ "transcript_blob": "c7fb36f56c212a26aab346b8201290e6a4c75254411fb21930de2acb355e2196",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 21807,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 21807,
+  "cache_read_input_tokens": 42955,
+  "inference_geo": "not_available",
+  "input_tokens": 3,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 11210,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 11210,
+    "cache_read_input_tokens": 26776,
+    "input_tokens": 1,
+    "output_tokens": 4855,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5210,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
