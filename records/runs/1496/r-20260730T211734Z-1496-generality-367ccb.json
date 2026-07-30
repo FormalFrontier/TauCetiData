@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.48860049999999994,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 97.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 23065,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 23065,
+    "cache_read_input_tokens": 118641,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2507,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2507,
+      "cache_read_input_tokens": 36737,
+      "input_tokens": 1,
+      "output_tokens": 1525,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7567,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0d0f0260d9ae8e467fbd613d4c1a20743512a217",
+ "cost_usd": 0.4886,
+ "dedupe_key": "TauCetiProject/TauCeti|1496|8ff270bd118d2d664f0d012ff892200cd211b71b|generality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "0e0ef2e9a3ec97c58bd3accb0dfd81dc7533cd39063aee686383489aac98b3aa",
+ "diff_sha256": "0e0ef2e9a3ec97c58bd3accb0dfd81dc7533cd39063aee686383489aac98b3aa",
+ "duration_s": 97.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib mem_iff_lt_rowLen: `(i,j) \u2208 \u03bc \u2194 j < \u03bc.rowLen i`; armLength = \u03bc.rowLen c.1 - c.2 - 1 (line 141).",
+   "file": "TauCeti/Combinatorics/Young/HookLength.lean",
+   "fix": "Drop `(h : c \u2208 \u03bc)`; prove by `rw [mem_iff_lt_rowLen]; simp only [armLength]; omega`. This also refutes the docstring claim (lines ~23-25) that such lemmas would be false for the junk value.",
+   "issue": "`armLength_eq_zero_iff (h : c \u2208 \u03bc)`: `h` is unused. `armLength \u03bc c = 0` is `\u03bc.rowLen c.1 - c.2 - 1 = 0`, i.e. `\u03bc.rowLen c.1 \u2264 c.2 + 1`, which is definitionally `(c.1, c.2+1) \u2209 \u03bc` via `mem_iff_lt_rowLen`; the iff holds for every `c`. `omega` proves it without `h`.",
+   "line": "236"
+  },
+  {
+   "evidence": "mem_iff_lt_colLen: `(i,j) \u2208 \u03bc \u2194 i < \u03bc.colLen j`; legLength = \u03bc.colLen c.2 - c.1 - 1 (line 146).",
+   "file": "TauCeti/Combinatorics/Young/HookLength.lean",
+   "fix": "Drop `(h : c \u2208 \u03bc)`; `rw [mem_iff_lt_colLen]; simp only [legLength]; omega`.",
+   "issue": "`legLength_eq_zero_iff (h : c \u2208 \u03bc)`: same unused hypothesis. `\u03bc.colLen c.2 - c.1 - 1 = 0` \u2194 `\u03bc.colLen c.2 \u2264 c.1 + 1` \u2194 `(c.1+1, c.2) \u2209 \u03bc`, independent of `h`.",
+   "line": "241"
+  },
+  {
+   "evidence": "For c \u2209 \u03bc: armLength = legLength = 0 so LHS holds, and (c.1,c.2+1),(c.1+1,c.2) \u2209 \u03bc so RHS holds.",
+   "file": "TauCeti/Combinatorics/Young/HookLength.lean",
+   "fix": "Once the two zero-iff lemmas lose `h`, drop it here too: `rw [\u2190 armLength_eq_zero_iff, \u2190 legLength_eq_zero_iff, hookLength]; omega`.",
+   "issue": "`hookLength_eq_one_iff (h : c \u2208 \u03bc)`: `h` only forwards to the two lemmas above and is otherwise unnecessary \u2014 for `c \u2209 \u03bc` both sides are true (hookLength = 1, both neighbours absent), so the iff holds unconditionally.",
+   "line": "248"
+  }
+ ],
+ "head_sha": "8ff270bd118d2d664f0d012ff892200cd211b71b",
+ "merge_base_sha": "0d0f0260d9ae8e467fbd613d4c1a20743512a217",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1496,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b2d6c8260e6414d97a9cd56e3929dcd9733a9c9d5ad1f468ced09c2667232416",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T211734Z-1496-generality-367ccb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T21:17:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The arm/leg zero-length lemmas (and the derived corner criterion) carry a `c \u2208 \u03bc` hypothesis that is provably unused; the statements hold for all cells. Otherwise the material sits at the natural level, with the single-column formula correctly derived from the single-row case by transposition rather than duplicated.",
+ "transcript_blob": "700c933157fa91d9e6441c80ed6c05f88b0660b33ab34ac54b2fe0800d233cd7",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 23065,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 23065,
+  "cache_read_input_tokens": 118641,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2507,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2507,
+    "cache_read_input_tokens": 36737,
+    "input_tokens": 1,
+    "output_tokens": 1525,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7567,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
