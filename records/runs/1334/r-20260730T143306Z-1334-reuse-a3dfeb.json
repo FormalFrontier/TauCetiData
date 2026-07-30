@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9013344999999999,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 152.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 47295,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 47295,
+    "cache_read_input_tokens": 267251,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3730,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3730,
+      "cache_read_input_tokens": 59744,
+      "input_tokens": 2,
+      "output_tokens": 2312,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11168,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "cost_usd": 0.901334,
+ "dedupe_key": "TauCetiProject/TauCeti|1334|d396caec43809bab4add81043d3313f92d826c87|reuse|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "4c78e9d969281c2431ca2d4a9fd2b573fb1ab64e37d865f731f8b926aada8159",
+ "diff_sha256": "4c78e9d969281c2431ca2d4a9fd2b573fb1ab64e37d865f731f8b926aada8159",
+ "duration_s": 152.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `(hermite n).map (Int.castRingHom \u211d)` at Schwartz.lean:54,93, MemLp.lean:57, HilbertBasis.lean:47, Hermite/MemLp.lean:49; degree_hermite\u211d proof at Basis.lean:75 identical to hmap at HilbertBasis.lean:47-48. No named real-cast Hermite exists in Mathlib (only Polynomial.hermite : \u2124[X]).",
+   "file": "TauCeti/Probability/Distributions/Gaussian/Hermite/Basis.lean",
+   "fix": "Move hermite\u211d, eval_hermite\u211d, degree_hermite\u211d down to the shared Hermite polynomial layer (e.g. alongside TauCeti/RingTheory/Polynomial/Hermite/Derivative.lean) so hermiteDilated can be defined as (hermite\u211d n).comp (C (\u221a2) * X) and degree_hermiteDilated's hmap becomes `degree_hermite\u211d n`, eliminating the clones.",
+   "issue": "hermite\u211d n := (hermite n).map (Int.castRingHom \u211d) and degree_hermite\u211d duplicate an idiom already present anonymously in four merged files: Function/Schwartz.lean:54,93; Function/MemLp.lean:57 (hermiteDilated); Function/HilbertBasis.lean:47; Gaussian/Hermite/MemLp.lean:49. degree_hermite\u211d (line 74-75) is the verbatim proof of the inline `have hmap` in degree_hermiteDilated (Function/HilbertBasis.lean:47-48). Placed in this leaf file, the new named abstraction cannot be reused by any of those existing sites.",
+   "line": "65"
+  }
+ ],
+ "head_sha": "d396caec43809bab4add81043d3313f92d826c87",
+ "merge_base_sha": "5da542f94c438e6a91d48fc3be07455986e9d8ba",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1334,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "94531499dee95f9a4a238c29beba704d78f503738af11269afc4631ce1345b35",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T143306Z-1334-reuse-a3dfeb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T14:33:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR reuses the weighted-measure and pi-basis machinery and the existing Gaussian orthogonality lemma correctly, and shares gaussianPDFReal_zero_one via a new Basic file. Only issue: the new hermite\u211d abstraction and its degree lemma re-derive an idiom already inlined in four existing files but sit in a leaf file where those sites cannot adopt it.",
+ "transcript_blob": "bf63e30941da35b2447f8955a3f090be0857a7bcb04c6fb0147d84d09f5eeb51",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 47295,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 47295,
+  "cache_read_input_tokens": 267251,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3730,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3730,
+    "cache_read_input_tokens": 59744,
+    "input_tokens": 2,
+    "output_tokens": 2312,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11168,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
