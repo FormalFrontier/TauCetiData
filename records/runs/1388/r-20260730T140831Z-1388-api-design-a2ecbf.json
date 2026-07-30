@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.499582,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 260864,
+    "input_tokens": 324866,
+    "output_tokens": 1638,
+    "reasoning_output_tokens": 444
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d26644d444a883ff3c2fe549d772c2d35b823f1a",
+ "cost_estimated": true,
+ "cost_usd": 0.499582,
+ "dedupe_key": "TauCetiProject/TauCeti|1388|729b2730e97c215ba391e81f1b438dd94d4a9f53|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "b345a5045657e177606e540c7a9daee86e8fa1268e430c69b947a5d7551506cf",
+ "diff_sha256": "b345a5045657e177606e540c7a9daee86e8fa1268e430c69b947a5d7551506cf",
+ "duration_s": 56.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` confirms the exposed definition at line 77 and `centerPiAlgEquiv_apply_coe`/`centerPiAlgEquiv_symm_apply_coe` at lines 91\u201397.",
+   "file": "TauCeti/Algebra/Subalgebra/Center.lean",
+   "fix": "Remove `@[expose]` and write the two proofs as `:= (rfl)` so downstream users rely on the characteristic API, not unfolding.",
+   "issue": "`centerPiAlgEquiv` is newly `@[expose]` despite its forward and inverse behavior being covered by the two `@[simp]` lemmas at lines 91 and 96.",
+   "line": 77
+  },
+  {
+   "evidence": "Definitions are exposed at lines 48, 51, 85, and 96; their public API appears at lines 56\u201374 and 105 onward.",
+   "file": "TauCeti/Combinatorics/Young/Tableau.lean",
+   "fix": "Remove all four `@[expose]` annotations and parenthesize the affected definitional proofs (`:= (rfl)`); retain the existing characteristic lemmas as the interface.",
+   "issue": "`rowIndex`, `colIndex`, `rowFiberEquiv`, and `colFiberEquiv` are newly exposed solely to support definitional proofs, leaking four implementation bodies already characterized by public `*_def`, apply, and inverse-apply lemmas.",
+   "line": 48
+  },
+  {
+   "evidence": "The exposed definition is at line 90; `fiberSubgroupMulEquivStabilizer_apply_unop_coe` and `fiberSubgroupMulEquivStabilizer_symm_apply_coe` provide the consumer-facing behavior.",
+   "file": "TauCeti/GroupTheory/Perm/FiberSubgroup.lean",
+   "fix": "Remove `@[expose]` and use `:= (rfl)` for the forward characteristic lemma instead of exporting the equivalence body.",
+   "issue": "`fiberSubgroupMulEquivStabilizer` is newly `@[expose]` although its forward and inverse coercions are already characterized by the `@[simp]` lemmas at lines 103 and 110.",
+   "line": 90
+  }
+ ],
+ "head_sha": "729b2730e97c215ba391e81f1b438dd94d4a9f53",
+ "merge_base_sha": "d26644d444a883ff3c2fe549d772c2d35b823f1a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1388,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "eecd784270aa1327077c7e8594f5784f4f81f7a81c48c5eeccc3ea678828db5f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T140831Z-1388-api-design-a2ecbf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T14:08:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The compatibility fixes unnecessarily expose seven implementation bodies even though characteristic lemmas already provide the public API.",
+ "transcript_blob": "db770b8dc079dfd0343ae2a44a466f976c131f6e88fd9764dcb52bc5307976ef",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 260864,
+  "input_tokens": 324866,
+  "output_tokens": 1638,
+  "reasoning_output_tokens": 444
+ },
+ "verdict": "request_changes"
+}

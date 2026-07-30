@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.348521,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 54.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 161792,
+    "input_tokens": 204313,
+    "output_tokens": 1834,
+    "reasoning_output_tokens": 502
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d26644d444a883ff3c2fe549d772c2d35b823f1a",
+ "cost_estimated": true,
+ "cost_usd": 0.348521,
+ "dedupe_key": "TauCetiProject/TauCeti|1388|729b2730e97c215ba391e81f1b438dd94d4a9f53|proof-quality|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "b345a5045657e177606e540c7a9daee86e8fa1268e430c69b947a5d7551506cf",
+ "diff_sha256": "b345a5045657e177606e540c7a9daee86e8fa1268e430c69b947a5d7551506cf",
+ "duration_s": 54.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The four proofs use `unfold deformTerminal; change (if ...); rw [dif_*]`, duplicating the definition's full branch structure.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/BasedPath.lean",
+   "fix": "Add stable application lemmas for `deformTerminal` or document why unfolding is unavoidable, then prove the branch lemmas through that API.",
+   "issue": "`deformTerminal` is unfolded into a large nested `if` via undocumented `change` in four proofs (lines 156, 166, 178, 190), coupling them to its implementation.",
+   "line": "156"
+  },
+  {
+   "evidence": "Confirmed additions include AdditiveFrobeniusKernel/Basic.lean:252; FiniteType/CommHopfAlgCat.lean:198; HopfIdeal/Points/Naturality.lean:172; Sheaf/Invertible/Basic.lean:106,109,130,133; HopfIdeal/Comap.lean:74; HopfAlgebra/Kernel.lean:196; FractionalIdealDivisor/Basic.lean:152; AbelianVariety/Basic.lean:165,175,235,246; Fredholm/Adjoint.lean:81; Fredholm/Splitting.lean:173; Semigroups/Generator/Basic.lean:187; Prokhorov.lean:148; DedekindDomain/Transversal.lean:91; Symmetric/Partitions.lean:132.",
+   "file": "",
+   "fix": "Replace them with explicit API lemmas or `convert`/rewrites; where no lemma exists, add a comment explaining why defeq is required.",
+   "issue": "Undocumented `change`/`show` steps were added across wrapper/coercion proofs, relying on accidental definitional equality.",
+   "line": "0"
+  },
+  {
+   "evidence": "`comp_mul`, `mul_comp`, `one_comp`, `comp_one`, `inv_comp`, `div_comp`, `comp_inv`, and `comp_div` all use `Hom.toOverFunctor.map_injective; simp only [...]; rfl`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/MorphismGroup.lean",
+   "fix": "Provide and use an explicit extensionality/coercion lemma connecting these morphisms, instead of relying on wrapper reduction after simplification.",
+   "issue": "Eight related proofs (lines 128\u2013174) now finish `simp only` with bare `rfl`, exposing an undocumented defeq gap between the underlying `Over` morphisms.",
+   "line": "128"
+  }
+ ],
+ "head_sha": "729b2730e97c215ba391e81f1b438dd94d4a9f53",
+ "merge_base_sha": "d26644d444a883ff3c2fe549d772c2d35b823f1a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1388,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b1016b1d2e1429abe0bc33270602a6d036c466b62c2382d51bc57d81de44137d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "65ae7f03c2dc7f9f9648aefe452d36c043c7c0b6",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260730T141145Z-1388-proof-quality-70052a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-30T14:11:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The compatibility fixes introduce repeated undocumented definitional-equality proofs, including large unfolded implementation terms and `simp; rfl` chains. These are brittle across precisely the wrapper/coercion changes exercised by this dependency bump.",
+ "transcript_blob": "d96021110cd48b71e0411bc348655eccdecc46802b6c9d44154ea567d79ec61d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 161792,
+  "input_tokens": 204313,
+  "output_tokens": 1834,
+  "reasoning_output_tokens": 502
+ },
+ "verdict": "request_changes"
+}
