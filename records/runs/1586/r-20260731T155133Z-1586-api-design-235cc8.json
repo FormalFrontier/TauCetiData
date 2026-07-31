@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.176431,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 55552,
+    "input_tokens": 77957,
+    "output_tokens": 1221,
+    "reasoning_output_tokens": 447
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "123bbebb818b5b84d777b09ffea0a394e22d834d",
+ "cost_estimated": true,
+ "cost_usd": 0.176431,
+ "dedupe_key": "TauCetiProject/TauCeti|1586|2a54529784e24a9b74242a4f94b3c116caed89e7|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "db4ab06c0b679d1b8de6e4aa6b3f63688172d352a602fbca7c513724c2e0f48b",
+ "diff_sha256": "db4ab06c0b679d1b8de6e4aa6b3f63688172d352a602fbca7c513724c2e0f48b",
+ "duration_s": 32.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 84 and 90 characterize only forward application; the analogous existing `pathEquivArrow` API in `Kronecker/Basic.lean:240` explicitly provides `pathEquivArrow_symm_apply`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Kronecker/UpperTriangular.lean",
+   "fix": "Add `@[simp]` lemmas stating `vertexEquiv.symm 0 = tgt` and `vertexEquiv.symm 1 = src`.",
+   "issue": "The opaque public `vertexEquiv` has simp lemmas for `src` and `tgt` but none for `vertexEquiv.symm`, so inverse-index computations lack a characteristic API.",
+   "line": "75"
+  },
+  {
+   "evidence": "The required formula already appears exactly in private `ofMatrixLinear` at lines 187\u2013193, while the only exported behavior theorem, `upperTriangularAlgEquiv_single` at lines 246\u2013249, describes the forward map.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Kronecker/UpperTriangular.lean",
+   "fix": "Export a simp theorem identifying `upperTriangularAlgEquiv.symm M` with the three-path linear combination using entries `M 0 0`, `M 0 1`, and `M 1 1`.",
+   "issue": "`upperTriangularAlgEquiv` lacks a theorem characterizing its inverse on an arbitrary upper-triangular matrix, forcing downstream users to reconstruct the private inverse or reason indirectly through injectivity.",
+   "line": "237"
+  }
+ ],
+ "head_sha": "2a54529784e24a9b74242a4f94b3c116caed89e7",
+ "merge_base_sha": "3824ed06c315679e3b0322f8d031bca757067db0",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1586,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0d4e5baaf8c274471722b3305f307b13d297658845f08a082c65f05bf86cf720",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T155133Z-1586-api-design-235cc8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T15:51:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The two public equivalences expose only their forward behavior, leaving consumers without direct, stable APIs for their inverses.",
+ "transcript_blob": "a577c02b7e8646baa7fba2b63797c1241f3420c1820b20ebb689d7b39e869d29",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 55552,
+  "input_tokens": 77957,
+  "output_tokens": 1221,
+  "reasoning_output_tokens": 447
+ },
+ "verdict": "request_changes"
+}
