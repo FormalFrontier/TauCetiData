@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4816595,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 227.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 57710,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 57710,
+    "cache_read_input_tokens": 1021427,
+    "inference_geo": "not_available",
+    "input_tokens": 36,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1930,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1930,
+      "cache_read_input_tokens": 71959,
+      "input_tokens": 2,
+      "output_tokens": 1952,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14799,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2bc3b0b62fdbf36fdcf5039c770177244d19386a",
+ "cost_usd": 1.481659,
+ "dedupe_key": "TauCetiProject/TauCeti|1612|9b5cd8640f752dec3a6f7acbe4f211b2dbe63774|reuse|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "cd07a58b4671d7cd9ad12eee9aafa27c85c73c42d38fa0d96fa56e65231cdf32",
+ "diff_sha256": "cd07a58b4671d7cd9ad12eee9aafa27c85c73c42d38fa0d96fa56e65231cdf32",
+ "duration_s": 227.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep hits: instInnerProductSpaceRealComplex at Basic.lean:975; InnerProductSpace.toUniformConvexSpace [InnerProductSpace \u211d F] at Convex.lean:36; UniformConvexSpace.toStrictConvexSpace : StrictConvexSpace \u211d E at Uniform.lean:125; inner_eq_norm_mul_iff_real at Basic.lean:787; Complex.inner ... := rfl at Basic.lean:977.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Poincare/Betweenness.lean",
+   "fix": "Mathlib provides `inner_eq_norm_mul_iff_real {x y : F} : \u27eax, y\u27eb_\u211d = \u2016x\u2016 * \u2016y\u2016 \u2194 \u2016y\u2016 \u2022 x = \u2016x\u2016 \u2022 y` (Mathlib/Analysis/InnerProductSpace/Basic.lean:787) with `Complex.inner : \u27eaw, z\u27eb_\u211d = (z * conj w).re := rfl` (Basic.lean:977) \u2014 the exact equality condition, needing no StrictConvexSpace. And the SameRay route is available: `StrictConvexSpace \u211d \u2102` resolves via `instInnerProductSpaceRealComplex` (Basic.lean:975) \u2192 `InnerProductSpace.toUniformConvexSpace` (InnerProductSpace/Convex.lean:36) \u2192 `UniformConvexSpace.toStrictConvexSpace` (Convex/Uniform.lean:125), so `mem_segment_iff_sameRay` (Convex/Segment.lean:414) with `sameRay_iff_norm_add`/`sameRay_iff_norm_sub` (Convex/StrictConvexSpace.lean:191,204) applies. Derive both lemmas from this API and correct the docstring.",
+   "issue": "`mem_segment_zero_left_iff_re_mul_conj` and `zero_mem_segment_iff_re_mul_conj` re-derive the equality case of Cauchy\u2013Schwarz `(m * conj w).re = \u2016m\u2016 * \u2016w\u2016 \u2194 colinear` via hand-rolled `Complex.normSq_sub`/`normSq_add` + `field_simp; ring`. Their docstring justification \u2014 that the SameRay route needs a `StrictConvexSpace \u211d E` instance 'the pinned Mathlib does not provide' \u2014 is false.",
+   "line": 64
+  },
+  {
+   "evidence": "Identical `hdiff` (`rw [mul_pow, mul_pow, hD2, hN2]; ring`) plus `hN2`/`hD2` appear at Triangle.lean:114-135 and again inside the new equality-case theorem; reverse side instead reuses sq_sub_sq_reverse_triangle.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Hyperbolic/Triangle.lean",
+   "fix": "Extract a private `sq_sub_sq_triangle z w` (forward form, mirroring `sq_sub_sq_reverse_triangle` at line 155) and consume it in both the forward inequality and its new equality case, removing the duplicated `hN2`/`hD2`/`hdiff` block.",
+   "issue": "`pseudoHyperbolicExpr_eq_add_div_one_add_mul_iff_of_norm_lt_one` re-derives `hN2`, `hD2` and the factorisation `hdiff` verbatim from the existing `pseudoHyperbolicExpr_le_add_div_one_add_mul_of_norm_lt_one` (lines 114-135), whereas the reverse direction already factors this into the shared private `sq_sub_sq_reverse_triangle`.",
+   "line": 177
+  }
+ ],
+ "head_sha": "9b5cd8640f752dec3a6f7acbe4f211b2dbe63774",
+ "merge_base_sha": "b9e2591a49896ec2aaace6f254d140c314512b9b",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1612,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5682fefee92904b653a98c2dc6ee9ce0ccf00a3191d23d0a7d2f736ded21e63e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T213840Z-1612-reuse-3727b7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T21:38:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The uniqueness/classification theorems are genuinely new and reuse the existing existence API, but two private lemmas re-derive Cauchy\u2013Schwarz-equality facts from raw normSq algebra under the false claim that pinned Mathlib lacks a StrictConvexSpace \u211d \u2102 instance, and the forward triangle factorisation is duplicated inline rather than shared like its reverse mirror.",
+ "transcript_blob": "f4706a7cf93c520fa23770713ddb282ce547e604a453743d12157089b80c9e25",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 57710,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 57710,
+  "cache_read_input_tokens": 1021427,
+  "inference_geo": "not_available",
+  "input_tokens": 36,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1930,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1930,
+    "cache_read_input_tokens": 71959,
+    "input_tokens": 2,
+    "output_tokens": 1952,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14799,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
