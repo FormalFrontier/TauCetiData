@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.249662,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 127744,
+    "input_tokens": 157282,
+    "output_tokens": 1270,
+    "reasoning_output_tokens": 417
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "807b448b6cd7adb7fdbd5f44747664a7321152c8",
+ "cost_estimated": true,
+ "cost_usd": 0.249662,
+ "dedupe_key": "TauCetiProject/TauCeti|1545|df5bb69baf5b4ed34ee1fe083ab2c7e0a80eb916|proof-quality|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "d57a8eba7ed42ca9e3d313a91b80bc07c34e24ed01981e97fcc469fa50e570f2",
+ "diff_sha256": "d57a8eba7ed42ca9e3d313a91b80bc07c34e24ed01981e97fcc469fa50e570f2",
+ "duration_s": 40.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`ProbabilityMeasureExt.lean:64-67` states the reused lemma as `Measurable fun P => (P s : \u211d)`, while `ProbabilityMeasure.lean:131-136` defines `P s` via `((P : Measure \u03b1) s).toNNReal`; the goals at Moments.lean:338, 387, and 411 instead contain the measure evaluation followed by `.toReal`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/Moments.lean",
+   "fix": "Use `(measurable_directingMass h.measurable_directing hB).ennreal_toReal`, or add an explicitly proved helper whose conclusion has the exact `.toReal` form and use it at all three sites.",
+   "issue": "Lines 339, 388, and 412 use a lemma concluding measurability of `(\u03bd \u03c9 B : \u211d)` to prove measurability of `((\u03bd \u03c9 : Measure \u03b1) B).toReal`, relying silently on unfolding the `ProbabilityMeasure` function coercion through `toNNReal`.",
+   "line": "339"
+  }
+ ],
+ "head_sha": "df5bb69baf5b4ed34ee1fe083ab2c7e0a80eb916",
+ "merge_base_sha": "807b448b6cd7adb7fdbd5f44747664a7321152c8",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1545,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "04b04b307a71089b036f9f36eec6f8b80a90afa85254e5f1408356d08811fa88",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f0cf746096a8637b7a1703911a0c02a5ec93283c",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T024040Z-1545-proof-quality-65dedb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T02:40:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The real-valued measurability replacements rely on undocumented definitional equality between two different evaluation interfaces.",
+ "transcript_blob": "00670160528124961427ad5d070c15b35fb1db7dcdbb1081343d707954ac93a5",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 127744,
+  "input_tokens": 157282,
+  "output_tokens": 1270,
+  "reasoning_output_tokens": 417
+ },
+ "verdict": "request_changes"
+}
