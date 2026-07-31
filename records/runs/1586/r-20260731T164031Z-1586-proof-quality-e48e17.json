@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.118793,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 18.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 32256,
+    "input_tokens": 48343,
+    "output_tokens": 741,
+    "reasoning_output_tokens": 245
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "123bbebb818b5b84d777b09ffea0a394e22d834d",
+ "cost_estimated": true,
+ "cost_usd": 0.118793,
+ "dedupe_key": "TauCetiProject/TauCeti|1586|b38825abdfadcbe6e2c9d0b587909cf1663a7fd7|proof-quality|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "c960eb12e23a4e375c4d9d11004945b8c491a7a6eef33ce51727c36f968c832d",
+ "diff_sha256": "c960eb12e23a4e375c4d9d11004945b8c491a7a6eef33ce51727c36f968c832d",
+ "duration_s": 18.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 126\u2013129 contain the bare proof term `toMatrixLinear_single k x c` despite the goal passing through the `AlgHom.ofLinearMap` wrapper.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Kronecker/UpperTriangular.lean",
+   "fix": "Add and use an explicit lemma identifying the underlying linear map of `toMatrixAlgHom` with `toMatrixLinear`, then rewrite through it.",
+   "issue": "`toMatrixAlgHom_single` is proved directly by `toMatrixLinear_single`, relying on definitional equality through `AlgHom.ofLinearMap`.",
+   "line": "126"
+  },
+  {
+   "evidence": "Lines 202\u2013205 use only `toMatrixAlgHom_single k x c` although `upperTriangularAlgEquiv` is assembled from several wrappers at lines 193\u2013197.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Kronecker/UpperTriangular.lean",
+   "fix": "Expose an explicit apply/coercion lemma for `upperTriangularAlgEquiv` and rewrite with it before applying `toMatrixAlgHom_single`.",
+   "issue": "`upperTriangularAlgEquiv_single` is proved directly by `toMatrixAlgHom_single`, relying on definitional equality through `AlgEquiv.ofInjective`, `trans`, `Subalgebra.equivOfEq`, and subtype coercion.",
+   "line": "202"
+  }
+ ],
+ "head_sha": "b38825abdfadcbe6e2c9d0b587909cf1663a7fd7",
+ "merge_base_sha": "3824ed06c315679e3b0322f8d031bca757067db0",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1586,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "32e9fa2f5c9a84822fa937fc75aa983d557da13552b6af897b52c8f4ad2428ab",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T164031Z-1586-proof-quality-e48e17",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T16:40:31Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proofs rely silently on definitional reduction through constructed linear/algebra morphism wrappers, making them fragile under implementation changes.",
+ "transcript_blob": "f13b92b257678d9b73a6388d3a5b7adff8ce11ebc4a33e49c52882bb71cd2e6d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 32256,
+  "input_tokens": 48343,
+  "output_tokens": 741,
+  "reasoning_output_tokens": 245
+ },
+ "verdict": "request_changes"
+}
