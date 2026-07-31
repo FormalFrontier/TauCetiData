@@ -1,0 +1,76 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.613843,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 108.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 480256,
+    "input_tokens": 543779,
+    "output_tokens": 1870,
+    "reasoning_output_tokens": 711
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7fee08c1b306160ab483794c3d00c30f5a335ee3",
+ "cost_estimated": true,
+ "cost_usd": 0.613843,
+ "dedupe_key": "TauCetiProject/TauCeti|1551|62745391e4db245bce95a4adec6ce9bddc18b245|generality|gpt-5.6-sol|8e496a4454cfbac9|production|11",
+ "diff_blob": "b1494173dd52f3cd5ff118184545f28f6b489553dec456bb41b3e88cfb943389",
+ "diff_prompt_sha256": "5a56552abee99e3d4a911a01e155190a56c690aa6c443d2a6eba939bbd4b7e35",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "b1494173dd52f3cd5ff118184545f28f6b489553dec456bb41b3e88cfb943389",
+ "duration_s": 108.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declarations occur at lines 54, 64, 75, 95, and 155. Mathlib `Analysis/Normed/Operator/Banach.lean` lines 250 and 428 gives `ContinuousLinearMap.isQuotientMap` and `ContinuousLinearEquiv.ofBijective` under `[CompleteSpace E]`, with no `[CompleteSpace F]`.",
+   "file": "TauCeti/Analysis/Fredholm/Criteria.lean",
+   "fix": "Omit `[CompleteSpace F]` for these declarations; construct strictness using `T.isQuotientMap hT` (or the range restriction) and retain only `[CompleteSpace E]`.",
+   "issue": "`[CompleteSpace F]` unnecessarily restricts `of_surjective`, `isFredholm_iff_finite_ker_of_surjective`, `of_injective`, `isFredholm_iff_finite_coker_of_injective`, and `of_bijective`.",
+   "line": 48
+  },
+  {
+   "evidence": "The affected declarations are at lines 70, 111, and 134; their proof invokes `\u03a6.isQuotientMap`, whose Mathlib theorem at `Analysis/Normed/Operator/Banach.lean:250` assumes completeness only of the map's domain.",
+   "file": "TauCeti/Analysis/Fredholm/ClosedRange.lean",
+   "fix": "Omit `[CompleteSpace F]` from the three declarations; the proof's quotient-map step needs completeness of the source `E \u00d7 N`, not the codomain `F`.",
+   "issue": "`[CompleteSpace F]` is also unnecessarily inherited by `isClosed_range_of_finite_coker`, `IsFredholm.of_finite_ker_coker`, and `isFredholm_iff_finite_ker_coker`.",
+   "line": 58
+  }
+ ],
+ "head_sha": "62745391e4db245bce95a4adec6ce9bddc18b245",
+ "merge_base_sha": "7fee08c1b306160ab483794c3d00c30f5a335ee3",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1551,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "fabd6d02b90c300416d9d3abe1fe53c63c785c4d7bb3d9d5ffc823fe324ce561",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 11,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "136d1bf1f45262fc8acaba601a7c1123e4aaa592",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T055757Z-1551-generality-508459",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T05:57:57Z",
+ "submitted_by": "kim-em",
+ "summary": "Several Fredholm criteria unnecessarily require codomain completeness, although the Mathlib open-mapping and bounded-inverse APIs used here require only domain completeness.",
+ "transcript_blob": "6289bf00fcd05aee42c712685ec1d1ab073b316353f51a4fb5fc9fa8ddea7a0a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 480256,
+  "input_tokens": 543779,
+  "output_tokens": 1870,
+  "reasoning_output_tokens": 711
+ },
+ "verdict": "request_changes"
+}
