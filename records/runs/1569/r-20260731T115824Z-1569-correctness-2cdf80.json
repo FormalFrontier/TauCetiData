@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.347209,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 57.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 127488,
+    "input_tokens": 173363,
+    "output_tokens": 1803,
+    "reasoning_output_tokens": 717
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4ca60ce69b0876d305de0d60242559468b9fce0b",
+ "cost_estimated": true,
+ "cost_usd": 0.347209,
+ "dedupe_key": "TauCetiProject/TauCeti|1569|543c3b6962ac5d02608f733a71b5241f9180b5eb|correctness|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "232415075cf48fda55160c1ab9a06334de315e8ea689ce74e05a11a87cff0bf5",
+ "diff_sha256": "232415075cf48fda55160c1ab9a06334de315e8ea689ce74e05a11a87cff0bf5",
+ "duration_s": 57.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The classifier at lines 81\u201383 depends only on `current != fkb`, so it includes old-FKB = new-LKG. Lines 103\u2013105 then de-pin regardless of `steps.bump.outputs.updated`; `scripts/check-bump.sh:151\u2013154` rejects any manifest change when `ML_REV_B = ML_REV_P`, including the required `inputRev` change.",
+   "file": ".github/workflows/update.yml",
+   "fix": "First extend bump-guard to permit the exact-SHA-to-`master` nomination change with an unchanged resolved revision (while requiring every other manifest field unchanged), or otherwise implement a validated same-revision de-pin transition.",
+   "issue": "The transition unconditionally de-pins `inputRev` even when `bump-to-latest` leaves the resolved Mathlib SHA unchanged; that PR is rejected by bump-guard, so the next incompatibility repair never opens.",
+   "line": "103"
+  }
+ ],
+ "head_sha": "543c3b6962ac5d02608f733a71b5241f9180b5eb",
+ "merge_base_sha": "4ca60ce69b0876d305de0d60242559468b9fce0b",
+ "mode": "manual",
+ "model": "gpt-5.6-sol",
+ "pr": 1569,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "dba7439d9bce83bd730e1b3567cf31daf0b4d44b1c61fa6298e1b94f74d0ddd9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "136d1bf1f45262fc8acaba601a7c1123e4aaa592",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T115824Z-1569-correctness-2cdf80",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T11:58:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The transition fails when the new report\u2019s last-known-good commit equals the currently pinned old first-known-bad commit, a natural consecutive-cycle case.",
+ "transcript_blob": "52ba58af8083ab6987cea94bc1679de901c03eeaaf9f604fa254080f1c89ca34",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 127488,
+  "input_tokens": 173363,
+  "output_tokens": 1803,
+  "reasoning_output_tokens": 717
+ },
+ "verdict": "block"
+}
