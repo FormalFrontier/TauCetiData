@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.178374,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 29.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 59648,
+    "input_tokens": 83826,
+    "output_tokens": 922,
+    "reasoning_output_tokens": 256
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "26981d9433deb49139162d105657bfe2acf1290d",
+ "cost_estimated": true,
+ "cost_usd": 0.178374,
+ "dedupe_key": "TauCetiProject/TauCeti|1576|a5c7975ea992a684db90db44197ec30f862bc213|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "f225c64eea24f5c485463d13233d7982741e80015c49347d8ac9056dd30825a3",
+ "diff_sha256": "f225c64eea24f5c485463d13233d7982741e80015c49347d8ac9056dd30825a3",
+ "duration_s": 29.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Repository grep finds `prefixSets` only in its definition, the two supporting theorems, and the proof of `measure_eq_of_prefixPair_map_eq` at lines 172\u2013173.",
+   "file": "TauCeti/Probability/Exchangeability/FiniteMarginals.lean",
+   "fix": "Make all three declarations private; retain `prefixPair`, its measurable/composition API, and the public uniqueness theorem.",
+   "issue": "`prefixSets`, `isPiSystem_prefixSets`, and `generateFrom_prefixSets` expose the internal \u03c0-system proof apparatus although their only consumer is `measure_eq_of_prefixPair_map_eq`.",
+   "line": 106
+  },
+  {
+   "evidence": "The definitions occur at lines 59 and 65, their public restatements at lines 70\u201375, and all proofs in this PR already unfold through those restatements except direct `simp [prefixPair]`, which can use a dedicated lemma.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/PathDisintegration.lean",
+   "fix": "Remove these `@[expose]` attributes; add a `prefixPair_def`/application lemma if downstream simplification genuinely needs its formula.",
+   "issue": "`jointPathLaw` and `pathDisintegration` are marked `@[expose]` despite having explicit `jointPathLaw_def` and `pathDisintegration_def` unfolding lemmas; `prefixPair` is likewise exposed at `FiniteMarginals.lean:84` although its measurable and composition API can characterize its use.",
+   "line": 58
+  }
+ ],
+ "head_sha": "a5c7975ea992a684db90db44197ec30f862bc213",
+ "merge_base_sha": "26981d9433deb49139162d105657bfe2acf1290d",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1576,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9f54f25480953647ec501801658f1d944e8a904ad6866f50492108d13e0662b5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T180035Z-1576-api-design-bcc731",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T18:00:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The intended path-level API is present, but implementation machinery and definition bodies are unnecessarily public.",
+ "transcript_blob": "0c231a400a3f3c1e1d2248c4dc83c8acffcb6a1fe541e6d4d6ab3f777dd81098",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 59648,
+  "input_tokens": 83826,
+  "output_tokens": 922,
+  "reasoning_output_tokens": 256
+ },
+ "verdict": "request_changes"
+}
