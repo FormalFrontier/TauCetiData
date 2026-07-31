@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.508378,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 72.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 261376,
+    "input_tokens": 320768,
+    "output_tokens": 2691,
+    "reasoning_output_tokens": 931
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d18419b4e1a2497d075e91361ab65a32acd1b71",
+ "cost_estimated": true,
+ "cost_usd": 0.508378,
+ "dedupe_key": "TauCetiProject/TauCeti|1515|a0fa54020bf88612e1492c46189dad856326a9f4|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|6",
+ "diff_blob": "79d0de108aa1e2520a212d9657a644e22fd4200168a6b7e87433662b514b80d5",
+ "diff_sha256": "79d0de108aa1e2520a212d9657a644e22fd4200168a6b7e87433662b514b80d5",
+ "duration_s": 72.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 227\u2013234 prove `idealMap_mem_nonZeroDivisors`; lines 261\u2013264 repeat the same `Ideal.map_eq_bot_iff_of_injective` argument.",
+   "file": "TauCeti/NumberTheory/ClassGroup/Equiv.lean",
+   "fix": "Use `mem_nonZeroDivisors_iff_ne_zero.mp (idealMap_mem_nonZeroDivisors f I.2)` (or factor that result once).",
+   "issue": "`hmapne` repeats the nonzeroness computation already encapsulated by `ClassGroup.idealMap_mem_nonZeroDivisors` earlier in this file.",
+   "line": 261
+  },
+  {
+   "evidence": "`Mathlib/RingTheory/Ideal/Norm/RelNorm.lean:321\u2013324` states `relNorm R (I.map \u03c3) = relNorm R I`; the wrapper's body is precisely that theorem.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/Conjugation/Norm.lean",
+   "fix": "Delete the wrapper and rewrite line 170 directly with `Ideal.relNorm_map_algEquiv (ringOfIntegersQuadraticConj\u2090 hmin hgen) J`.",
+   "issue": "Private `relNorm_map_eq` is exactly a specialization of Mathlib's public `[simp]` theorem `Ideal.relNorm_map_algEquiv`.",
+   "line": 132
+  },
+  {
+   "evidence": "`Mathlib/RingTheory/Ideal/Maps.lean:1308\u20131315` provides an instance `(I.map f).IsPrincipal` from `[I.IsPrincipal]`; lines 157\u2013160 reconstruct its span-map proof.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/Conjugation/Norm.lean",
+   "fix": "After unfolding `A`, install `IsPrincipalIdealRing.principal (Ideal.relNorm \u2124 J)` as the source ideal's instance and discharge the mapped ideal with `infer_instance`.",
+   "issue": "`hAprin` manually proves that mapping a principal ideal remains principal, duplicating Mathlib's `Ideal.IsPrincipal` map instance.",
+   "line": 157
+  }
+ ],
+ "head_sha": "a0fa54020bf88612e1492c46189dad856326a9f4",
+ "merge_base_sha": "7d18419b4e1a2497d075e91361ab65a32acd1b71",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1515,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "d6a41521096046eac0d667d3e4748f6c0b9d8152f1618b0e0300271fd46376e7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 6,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f0cf746096a8637b7a1703911a0c02a5ec93283c",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T030810Z-1515-reuse-a75bb6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T03:08:10Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs rederive existing Mathlib or newly introduced API instead of reusing it.",
+ "transcript_blob": "c128ba084c8774efa6eb22a3d6e4658dd34ef9a3458c94d687e159ae4a3846fb",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 261376,
+  "input_tokens": 320768,
+  "output_tokens": 2691,
+  "reasoning_output_tokens": 931
+ },
+ "verdict": "request_changes"
+}
