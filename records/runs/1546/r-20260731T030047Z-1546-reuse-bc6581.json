@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.29522,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 51.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 83200,
+    "input_tokens": 124666,
+    "output_tokens": 1543,
+    "reasoning_output_tokens": 647
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7ff153cee4558dbc7e004f0ee5c7260b2b991852",
+ "cost_estimated": true,
+ "cost_usd": 0.29522,
+ "dedupe_key": "TauCetiProject/TauCeti|1546|9e9f4e9d2d4ff4e67c10a08285b4e70204277729|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "14103123c0e951759a13d370295fadba234feadab780f69ddf33a32dc20d15fd",
+ "diff_sha256": "14103123c0e951759a13d370295fadba234feadab780f69ddf33a32dc20d15fd",
+ "duration_s": 51.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Analysis/Normed/Lp/lpSpace.lean:468` defines `lp.hasSum_norm`; Mathlib already uses exactly this construction for Hilbert-basis coordinates in `Analysis/Fourier/AddCircle.lean:440-445`.",
+   "file": "TauCeti/Analysis/InnerProductSpace/Parseval.lean",
+   "fix": "Prove the theorem by applying `lp.hasSum_norm` to `b.repr x`, then simplify with `HilbertBasis.repr_apply_apply` and the isometry\u2019s norm preservation.",
+   "issue": "`hasSum_norm_sq_inner` manually descends polarized Parseval although Mathlib already provides the required coordinate sum as `lp.hasSum_norm` applied to `b.repr x`.",
+   "line": 36
+  },
+  {
+   "evidence": "Lines 80-82 prove it solely by `rw [tsum_norm_sq_inner_hermiteFunctionLp, norm_hermiteFunctionLp_zero, one_pow]`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Hermite/Function/Parseval.lean",
+   "fix": "Remove this composite theorem; consumers can use `tsum_norm_sq_inner_hermiteFunctionLp` followed by `norm_hermiteFunctionLp_zero`.",
+   "issue": "`tsum_norm_sq_inner_hermiteFunctionLp_zero` merely specializes `tsum_norm_sq_inner_hermiteFunctionLp` and rewrites with the existing `norm_hermiteFunctionLp_zero`, adding no separate API content.",
+   "line": 80
+  }
+ ],
+ "head_sha": "9e9f4e9d2d4ff4e67c10a08285b4e70204277729",
+ "merge_base_sha": "87b9d6bc81b1bae29bb74ee3e7b7588603184b87",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1546,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4f7b3418f24102c5bdd8ada7268ebf1b067e93ff1408bff847f6c0fa0d0db26e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f0cf746096a8637b7a1703911a0c02a5ec93283c",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260731T030047Z-1546-reuse-bc6581",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-07-31T03:00:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic proof re-derives Mathlib\u2019s \u2113\u00b2 norm summation, and the \u03c8\u2080 theorem is a redundant specialization of an immediately preceding result.",
+ "transcript_blob": "15de71db0d4c963a9e4b645b464402fc5fb78ba0ecd11c765e478deb299a424d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 83200,
+  "input_tokens": 124666,
+  "output_tokens": 1543,
+  "reasoning_output_tokens": 647
+ },
+ "verdict": "request_changes"
+}
