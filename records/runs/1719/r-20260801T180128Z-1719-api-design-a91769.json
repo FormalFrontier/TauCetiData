@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.203314,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 44.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 89088,
+    "input_tokens": 113060,
+    "output_tokens": 1297,
+    "reasoning_output_tokens": 510
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08ba43d3965dec26a56d2a5686a09498825baaf4",
+ "cost_estimated": true,
+ "cost_usd": 0.203314,
+ "dedupe_key": "TauCetiProject/TauCeti|1719|7bb358e91fad914c3cbb13ad3995f303d7388c33|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "ad95b4a899d5c5de7e4cf5075f828b1d5983269c06aa73cec46ea93ac07be463",
+ "diff_sha256": "ad95b4a899d5c5de7e4cf5075f828b1d5983269c06aa73cec46ea93ac07be463",
+ "duration_s": 44.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 283\u2013291 define the total function and expose only its positive branch; the underlying API exposes both branches at lines 86\u201393.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean",
+   "fix": "Add `resolventFun_of_nonpos {lambda} (h : lambda \u2264 0) : S.resolventFun lambda = 0`, derived from `StronglyContinuousSemigroup.resolventFun_of_le`.",
+   "issue": "`ContractionSemigroup.resolventFun` has `resolventFun_of_pos` but no characteristic lemma for `lambda \u2264 0`, forcing consumers to unfold the definition to establish its junk value.",
+   "line": 283
+  },
+  {
+   "evidence": "The confirmed declarations are at lines 86, 91, and 287; their hypotheses are disjoint and each rewrites `resolventFun` to the underlying resolvent or zero.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean",
+   "fix": "Mark all branch-reduction lemmas, including the new nonpositive contraction lemma, `@[simp]`.",
+   "issue": "The branch equations `StronglyContinuousSemigroup.resolventFun_of_lt`, `resolventFun_of_le`, and `ContractionSemigroup.resolventFun_of_pos` are safe normal-form lemmas but lack `@[simp]`.",
+   "line": 86
+  }
+ ],
+ "head_sha": "7bb358e91fad914c3cbb13ad3995f303d7388c33",
+ "merge_base_sha": "6ea72fbc7339e1fc3a69270dc0f392de8b5099b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1719,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b129a08c28d0c043f70287095a4e29d49546e151b2124a3398bafcfe1d6dd418",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T180128Z-1719-api-design-a91769",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T18:01:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The global piecewise resolvent API is missing one contraction-case branch and its branch-reduction lemmas are not registered as normal-form simplifications.",
+ "transcript_blob": "0329230d909138eeb9ab9b043d4d15df4c52d3d1f90b2eb31956ca8a463970f4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 89088,
+  "input_tokens": 113060,
+  "output_tokens": 1297,
+  "reasoning_output_tokens": 510
+ },
+ "verdict": "request_changes"
+}

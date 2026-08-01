@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.122433,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 31.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 32256,
+    "input_tokens": 48219,
+    "output_tokens": 883,
+    "reasoning_output_tokens": 360
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08ba43d3965dec26a56d2a5686a09498825baaf4",
+ "cost_estimated": true,
+ "cost_usd": 0.122433,
+ "dedupe_key": "TauCetiProject/TauCeti|1719|7bb358e91fad914c3cbb13ad3995f303d7388c33|proof-quality|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "ad95b4a899d5c5de7e4cf5075f828b1d5983269c06aa73cec46ea93ac07be463",
+ "diff_sha256": "ad95b4a899d5c5de7e4cf5075f828b1d5983269c06aa73cec46ea93ac07be463",
+ "duration_s": 31.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 241\u2013245 contain the rewrite chain followed by `congr`, `push_cast`, and `ring`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean",
+   "fix": "Factor the scalar factorial/sign identity into a small lemma proved with `simp [Nat.factorial_succ, pow_succ]` and `ring`, then rewrite once with that lemma.",
+   "issue": "The iterated-derivative induction closes via a long chain of coercion and smul rewrites (`Nat.cast_smul_eq_nsmul`, `smul_neg`, `smul_smul`, `neg_smul`, `push_cast`) tied to representation details.",
+   "line": "241"
+  },
+  {
+   "evidence": "Line 255 rewrites through `Real.norm_eq_abs`, `abs_mul`, `abs_pow`, `abs_neg`, `abs_one`, `one_pow`, `one_mul`, and `Nat.abs_cast`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean",
+   "fix": "Replace the chain with a `simp`-based proof (supplying only the essential absolute-value/factorial facts if needed).",
+   "issue": "The norm of the scalar coefficient is proved by eight consecutive named rewrites, making a routine normalization sensitive to lemma names and simp-normal forms.",
+   "line": "255"
+  }
+ ],
+ "head_sha": "7bb358e91fad914c3cbb13ad3995f303d7388c33",
+ "merge_base_sha": "6ea72fbc7339e1fc3a69270dc0f392de8b5099b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1719,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "00694e3fa4321cafdfaafa5125b4df01cdf41c375cd588b0a88ee3148dd1fec6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T180452Z-1719-proof-quality-b6cea0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T18:04:52Z",
+ "submitted_by": "kim-em",
+ "summary": "Two scalar-normalization arguments use brittle chains of implementation-level rewrite lemmas where simplification should handle the bookkeeping robustly.",
+ "transcript_blob": "ded8f78591bf7e226d9766e9a816d5c564a07b5bf0b86754c73630088612a99a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 32256,
+  "input_tokens": 48219,
+  "output_tokens": 883,
+  "reasoning_output_tokens": 360
+ },
+ "verdict": "request_changes"
+}
