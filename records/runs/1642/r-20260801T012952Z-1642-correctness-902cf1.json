@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.214102,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 93184,
+    "input_tokens": 118382,
+    "output_tokens": 1384,
+    "reasoning_output_tokens": 428
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7b703ec0f60bb412a25c8c6076deab7c0a110f44",
+ "cost_estimated": true,
+ "cost_usd": 0.214102,
+ "dedupe_key": "TauCetiProject/TauCeti|1642|feff104b29256e365073c0e38a691b3450f0075f|correctness|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "e12126cfa2f88bce56f437605c5fea41f20b43d5e64a7bffef0b86c93e6c7ef9",
+ "diff_sha256": "e12126cfa2f88bce56f437605c5fea41f20b43d5e64a7bffef0b86c93e6c7ef9",
+ "duration_s": 36.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Analysis/Calculus/DiffContOnCl.lean:33 defines `DiffContOnCl` with field `continuousOn : ContinuousOn f (closure s)`; Crosscut.lean:413 and :433 assume it, while `closure_ball c hr.ne' = closedBall c r` is established in both proofs.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut.lean",
+   "fix": "Replace `DiffContOnCl` with interior holomorphicity plus only the local boundary regularity genuinely needed to apply the maximum principle on each crosscut region; then derive the boundary limits and extension without assuming continuity on the whole closed disc.",
+   "issue": "`exists_tendsto_nhdsWithin_ball` and `exists_continuousOn_closedBall_eqOn` are circular: `DiffContOnCl \u2102 f (ball c r)` already includes `ContinuousOn f (closure (ball c r))`, hence the boundary limit follows by restriction and the extension theorem is witnessed by `F = f`, independently of `h`.",
+   "line": 413
+  }
+ ],
+ "head_sha": "feff104b29256e365073c0e38a691b3450f0075f",
+ "merge_base_sha": "09e4cb201f6fda2b44f98d1e77ff6bcf8b7cc6ed",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1642,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "839af876f7a1b5e64d7544b2e4cdb72dcff3e1146afb06d3e20558063037ed63",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T012952Z-1642-correctness-902cf1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T01:29:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The boundary-limit mechanism assumes continuity on the closed disc, so its advertised limit and extension conclusions are already hypotheses rather than consequences of the crosscut estimates.",
+ "transcript_blob": "5ede01a9aa507e98f7d73d3a85c6130aee2089cf192f0d7ade446f877b117368",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 93184,
+  "input_tokens": 118382,
+  "output_tokens": 1384,
+  "reasoning_output_tokens": 428
+ },
+ "verdict": "block"
+}
