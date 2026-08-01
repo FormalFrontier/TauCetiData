@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.243011,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 43.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 74752,
+    "input_tokens": 107161,
+    "output_tokens": 1453,
+    "reasoning_output_tokens": 441
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32b95315ec125e298534d5e1360be3beb05d951e",
+ "cost_estimated": true,
+ "cost_usd": 0.243011,
+ "dedupe_key": "TauCetiProject/TauCeti|1747|b1d345ef63b2c71c0c213cb2f145770f74c5008f|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "41b0c28bf9af58fe2e9a5f6680be5eda016be47e5453012f37780eff51a42368",
+ "diff_sha256": "41b0c28bf9af58fe2e9a5f6680be5eda016be47e5453012f37780eff51a42368",
+ "duration_s": 43.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The diff defines `toDeckHom_apply`, `toDeckHom_symm_apply`, `deckMulEquiv_apply`, and `deckMulEquiv_symm_apply`; the specialized file similarly has `antipode_apply` and `deckMulEquiv_apply`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Deck/Quotient/ActingGroup.lean",
+   "fix": "Remove these `@[expose]` attributes; prove public computation lemmas without downstream unfolding, adding any missing lemma instead.",
+   "issue": "`toDeckHom` and `deckMulEquiv` (line 110), plus `RealProjectiveSpace.antipode` and its `deckMulEquiv` (lines 78 and 104), are marked `@[expose]`, making consumers depend on construction bodies although characteristic lemmas are available.",
+   "line": 65
+  },
+  {
+   "evidence": "Generic `IsQuotientCoveringMap.deckMulEquiv_symm_apply` exists at ActingGroup.lean:122, but this file provides only `deckMulEquiv_apply` for its specialized wrapper.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/RealProjective/Deck.lean",
+   "fix": "Add a specialized simp lemma such as `(deckMulEquiv n hn).symm \u03c6 \u2022 x = \u03c6.1 x`, then keep the definition opaque.",
+   "issue": "The specialized `deckMulEquiv` API characterizes only its forward map; consumers can characterize the inverse only by unfolding the exposed wrapper.",
+   "line": 110
+  },
+  {
+   "evidence": "The file already marks `antipode_apply`, `antipode_mul_self`, and `deckMulEquiv_apply` as simp lemmas, while these two parallel normalization results are unannotated.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/RealProjective/Deck.lean",
+   "fix": "Mark both theorems `@[simp]`; their orientations reduce compound expressions and do not create loops.",
+   "issue": "`antipode_ne_one` and `deckMulEquiv_neg_one` (line 116) are canonical normal-form rewrites but lack `@[simp]`.",
+   "line": 93
+  }
+ ],
+ "head_sha": "b1d345ef63b2c71c0c213cb2f145770f74c5008f",
+ "merge_base_sha": "32b95315ec125e298534d5e1360be3beb05d951e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1747,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8b7113d08311d089e9053454ff3946c3a118138b2f260a3814e5482c2053ba2f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T233213Z-1747-api-design-8d9493",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T23:32:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The new API exposes implementation bodies despite providing pointwise characterization lemmas, and the specialized equivalence lacks a body-independent inverse characterization. Two normal-form lemmas also lack `@[simp]`.",
+ "transcript_blob": "9d9224613bbf266ecb7fcc8401fec117f5da77a8c20b767b1e73685fbf905ac5",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 74752,
+  "input_tokens": 107161,
+  "output_tokens": 1453,
+  "reasoning_output_tokens": 441
+ },
+ "verdict": "request_changes"
+}
