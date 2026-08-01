@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.183378,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 91136,
+    "input_tokens": 111972,
+    "output_tokens": 1121,
+    "reasoning_output_tokens": 368
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08ba43d3965dec26a56d2a5686a09498825baaf4",
+ "cost_estimated": true,
+ "cost_usd": 0.183378,
+ "dedupe_key": "TauCetiProject/TauCeti|1719|ea35e079a4acfeeb0d39d6210c8cc363896a2f16|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "b19818dff037f2a03a1b3a6f268fa8b0ca3b8d0388909b1066f0809c38f429cd",
+ "diff_sha256": "b19818dff037f2a03a1b3a6f268fa8b0ca3b8d0388909b1066f0809c38f429cd",
+ "duration_s": 42.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 386\u2013390 explicitly say exposure is for `Resolvent/Deriv.lean`; lines 242\u2013261 there prove all contraction corollaries by definitional reduction to `toStronglyContinuousSemigroup`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean",
+   "fix": "Remove `@[expose]`, add a public lemma equating it with the strongly-continuous-semigroup wrapper, and rewrite the corollaries through that lemma.",
+   "issue": "`ContractionSemigroup.resolventFun` is `@[expose]` solely so downstream derivative corollaries can unfold it, making consumers depend on its implementation.",
+   "line": "388"
+  },
+  {
+   "evidence": "`Defs.lean` lines 7\u201310 list its public imports and line 14 claims to re-export the Laplace-transform resolvent API; grep finds `Resolvent.Deriv` imported only by `Deriv.lean` itself.",
+   "file": "TauCeti/Analysis/Semigroups/Defs.lean",
+   "fix": "Replace or supplement the Identity import with a public import of `TauCeti.Analysis.Semigroups.Resolvent.Deriv`.",
+   "issue": "The standard module that claims to re-export the resolvent API still imports `Resolvent.Identity`, so the new derivative and smoothness declarations are unavailable through it.",
+   "line": "7"
+  }
+ ],
+ "head_sha": "ea35e079a4acfeeb0d39d6210c8cc363896a2f16",
+ "merge_base_sha": "6ea72fbc7339e1fc3a69270dc0f392de8b5099b5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1719,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "c510a85c9a6386de2fbb875aac6a02b29d10456facf2bcc2aee30647c22ada50",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T192407Z-1719-api-design-1f6e44",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T19:24:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The branch API is now complete and simplified, but the wrapper still exposes its body unnecessarily and the new public calculus API is absent from the semigroup re-export module.",
+ "transcript_blob": "ced5f1fbb48f6bdd433702513c80768df4445f9c71295d0eaf3fc0af6fac7ef1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 91136,
+  "input_tokens": 111972,
+  "output_tokens": 1121,
+  "reasoning_output_tokens": 368
+ },
+ "verdict": "request_changes"
+}
