@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.272908,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 46.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 115456,
+    "input_tokens": 150998,
+    "output_tokens": 1249,
+    "reasoning_output_tokens": 395
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "245789e076b7de048a4574c530765006ce5298e9",
+ "cost_estimated": true,
+ "cost_usd": 0.272908,
+ "dedupe_key": "TauCetiProject/TauCeti|1696|c713234b9223fe16fade527a132d3fb4d697fc3f|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "7c2ce39df44ffbab63cb9a1764bcd0e560f089a0532662a323ece3642ef98673",
+ "diff_sha256": "7c2ce39df44ffbab63cb9a1764bcd0e560f089a0532662a323ece3642ef98673",
+ "duration_s": 46.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 195\u2013200 expose the structure body, while lines 205\u2013216 provide `scalarExtensionAutomorphismsFunctor_obj` and `_map`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/ScalarExtension.lean",
+   "fix": "Remove `@[expose]`; prove the projection lemmas opaquely with `:= (rfl)` if needed.",
+   "issue": "`scalarExtensionAutomorphismsFunctor` is marked `@[expose]`, allowing downstream code to unfold its implementation even though public `obj` and `map` lemmas already characterize it.",
+   "line": 195
+  },
+  {
+   "evidence": "The only characteristic hits are `_tmul` at line 123 and `_apply_scalarExtensionMap` at line 151; `rg` finds no uniqueness or extensionality lemma for `mapScalarExtensionAutomorphisms`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/ScalarExtension.lean",
+   "fix": "Add a theorem showing that a target automorphism (or linear map) satisfying the canonical-map intertwining equation equals `mapScalarExtensionAutomorphisms \u03c6 g`.",
+   "issue": "The scalar-extension morphism has computation and intertwining lemmas but no uniqueness/extensional characterization, so consumers must reconstruct a tensor-product induction to identify a candidate map with it.",
+   "line": 109
+  }
+ ],
+ "head_sha": "c713234b9223fe16fade527a132d3fb4d697fc3f",
+ "merge_base_sha": "245789e076b7de048a4574c530765006ce5298e9",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1696,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "427fdf27d4d0b1cafde9d8fb572302985416326e6c4b0d57608263afa132445f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T142503Z-1696-api-design-598e65",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T14:25:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The functor body is unnecessarily exposed despite projection lemmas, and the advertised uniqueness interface is absent.",
+ "transcript_blob": "08f1c73f2a05cb8ba7e340af7675f51ec7ad029ece74b7345315fa6fec59c5c4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 115456,
+  "input_tokens": 150998,
+  "output_tokens": 1249,
+  "reasoning_output_tokens": 395
+ },
+ "verdict": "request_changes"
+}
