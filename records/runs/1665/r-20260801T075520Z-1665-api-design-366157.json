@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.689737,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 91.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 44451,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 44451,
+    "cache_read_input_tokens": 108180,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4934,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4934,
+      "cache_read_input_tokens": 55696,
+      "input_tokens": 2,
+      "output_tokens": 2277,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7083,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8d568add6d52d619d4d3afe262408c54792e3995",
+ "cost_usd": 0.689737,
+ "dedupe_key": "TauCetiProject/TauCeti|1665|6b3e4b5444dde41595f9a755c798dda8c8c49f5f|api-design|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "00e0acae180209ca78038d8feb266d585a2beedbf581358dacde458a4c25c9d3",
+ "diff_sha256": "00e0acae180209ca78038d8feb266d585a2beedbf581358dacde458a4c25c9d3",
+ "duration_s": 91.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "DiagonalCartan.lean:257 is the only `@[expose]` in Algebra/Lie; RootSpace.lean uses `glRoot_apply`/`glRoot_def`/`glRoot_self` (e.g. lines 162, 244, 319) and never unfolds glRoot.",
+   "file": "TauCeti/Algebra/Lie/GeneralLinear/DiagonalCartan.lean",
+   "fix": "Drop `@[expose]` from `glRoot`. `glRoot_def := rfl` still proves in-file, so the API is unaffected.",
+   "issue": "`glRoot` is marked `@[expose]`, but it is `noncomputable` and has a complete characteristic API (`glRoot_def`, `glRoot_apply`, `glRoot_self`, `glRoot_eq_glRoot_iff`). The only downstream consumer, RootSpace.lean, uses those lemmas exclusively and never unfolds the body; the peer def `glWeightEquiv` is not exposed. Exposing the body needlessly lets consumers depend on its defeq.",
+   "line": "257"
+  },
+  {
+   "evidence": "Used only at RootSpace.lean:125, 143, 159 within the same file; no external role.",
+   "file": "TauCeti/Algebra/Lie/GeneralLinear/RootSpace.lean",
+   "fix": "Mark it `private` (it serves only this file's proofs).",
+   "issue": "`toEnd_diagonalCartan_sub_smul_pow_apply` is a pure induction scaffold for `mem_genWeightSpaceOf_diagonalCartan_iff` with no independent mathematical content, yet it is public.",
+   "line": "101"
+  }
+ ],
+ "head_sha": "6b3e4b5444dde41595f9a755c798dda8c8c49f5f",
+ "merge_base_sha": "17315820494585d8716dd895d5011c175f8bc949",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1665,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ce300e8af7b2070e44752c76425a72c44c92bc47ab4ec455bd6f44145359843f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T075520Z-1665-api-design-366157",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T07:55:20Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API for glRoot is complete and correctly annotated, but glRoot's body is exposed via @[expose] with no consumer that needs to unfold or compute it. A purely technical induction helper is also left public.",
+ "transcript_blob": "248c96b414ba124bb13403eed54b301238297bc5c4de53409dbd6068f3bb1fc9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 44451,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 44451,
+  "cache_read_input_tokens": 108180,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4934,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4934,
+    "cache_read_input_tokens": 55696,
+    "input_tokens": 2,
+    "output_tokens": 2277,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7083,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
