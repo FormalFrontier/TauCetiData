@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.176832,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 48.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 53504,
+    "input_tokens": 73542,
+    "output_tokens": 1663,
+    "reasoning_output_tokens": 777
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f1046f6d2eace3d5f89cac400fc92e33819507c8",
+ "cost_estimated": true,
+ "cost_usd": 0.176832,
+ "dedupe_key": "TauCetiProject/TauCeti|1637|f899f30f2cbf8bc4731b9f0eb5e76635dd4614f2|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "c3d593e14e12881641a870157c14e705e72d9d83e26544e6c3ae7e211c2fc049",
+ "diff_sha256": "c3d593e14e12881641a870157c14e705e72d9d83e26544e6c3ae7e211c2fc049",
+ "duration_s": 48.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 87\u2013101 define the partial inverse; every use found by `rg` is within this new file.",
+   "file": "TauCeti/GroupTheory/GroupExtension/FactorSetOfSection.lean",
+   "fix": "Make `inlInv`, `inlInv_inl`, `inl_inlInv`, and `inlInv_one` private, retaining public range-safe characterizations for `factorSetFun` and `sectionDiff`.",
+   "issue": "`inlInv` and its helper API publicly expose an arbitrary `Function.invFun` value outside `inl.range`, although the docstring confirms it is file-local junk.",
+   "line": 87
+  },
+  {
+   "evidence": "The annotations occur at lines 130, 217, 244, and 258; lines 139, 225, 254, and 265 provide their public computation lemmas.",
+   "file": "TauCeti/GroupTheory/GroupExtension/FactorSetOfSection.lean",
+   "fix": "Remove all four `@[expose]` annotations and define the corresponding rfl lemmas with `:= (rfl)` where needed to avoid downstream reliance on definitional unfolding.",
+   "issue": "`@[expose]` unnecessarily publishes bodies for `conjActOfSection`, `factorSet`, `ofFactorSetHom`, and `groupExtensionEquiv`, despite public apply/coercion lemmas already characterizing them.",
+   "line": 131
+  },
+  {
+   "evidence": "Lines 274\u2013282 expose only `normalizeSection_one`; `rg` finds no `normalizeSection_apply` or nonidentity elimination lemma.",
+   "file": "TauCeti/GroupTheory/GroupExtension/FactorSetOfSection.lean",
+   "fix": "Add a simp theorem characterizing `normalizeSection \u03c3 g` as `if g = 1 then 1 else \u03c3 g` (and optionally a simp corollary for `g \u2260 1`).",
+   "issue": "`normalizeSection` has no general application lemma, so consumers cannot determine its value away from `1` without unfolding its hidden body.",
+   "line": 274
+  }
+ ],
+ "head_sha": "f899f30f2cbf8bc4731b9f0eb5e76635dd4614f2",
+ "merge_base_sha": "fc6480b710bc05f4b79d3eeb137ad56b348ec2bf",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1637,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b0cf6f4d65e18b350c8cb89cd8aff2097fd2240b3a9f156b2da02aa730cfdb65",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T002021Z-1637-api-design-281c74",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T00:20:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes internal implementation details and lacks characteristic lemmas for two public constructions.",
+ "transcript_blob": "879a6a62a5a2af86e03ff22cb62f8b04b5050525ec99ee43aa0be7be389fe3cf",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 53504,
+  "input_tokens": 73542,
+  "output_tokens": 1663,
+  "reasoning_output_tokens": 777
+ },
+ "verdict": "request_changes"
+}
