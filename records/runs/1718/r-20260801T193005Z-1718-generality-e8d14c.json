@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.384012,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 64.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 193024,
+    "input_tokens": 237480,
+    "output_tokens": 2174,
+    "reasoning_output_tokens": 778
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ea72fbc7339e1fc3a69270dc0f392de8b5099b5",
+ "cost_estimated": true,
+ "cost_usd": 0.384012,
+ "dedupe_key": "TauCetiProject/TauCeti|1718|65a525433451c51dcb149c2525f6b16a4f3d6634|generality|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "0a360aee9a106682c66764984a4f652a3329628408f4eef37f94d75a998d30bb",
+ "diff_sha256": "0a360aee9a106682c66764984a4f652a3329628408f4eef37f94d75a998d30bb",
+ "duration_s": 64.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declaration at lines 87\u201388 has `(S : Submodule R R)`, while its proof already uses `IsSemisimpleRing.exists_linearEquiv_ideal_of_isSimpleModule` to replace an arbitrary simple module by an ideal.",
+   "file": "TauCeti/RingTheory/Semisimple/SimpleArtinian.lean",
+   "fix": "State it for `(S : Type*) [AddCommGroup S] [Module R S] [IsSimpleModule R S]`; use `exists_linearEquiv_ideal_of_isSimpleModule` for both `S` and each simple submodule of `M`, then compare the resulting ideals with `IsSimpleRing.isIsotypic`.",
+   "issue": "`IsIsotypicOfType.of_isSimpleRing` restricts the reference simple module `S` to a submodule of the regular module, although the natural statement accepts any simple `R`-module.",
+   "line": 87
+  },
+  {
+   "evidence": "Mathlib/RingTheory/SimpleRing/Basic.lean defines protected `RingHom.injective` for a hom from an `IsSimpleRing` into a nontrivial semiring, and Mathlib/LinearAlgebra/FiniteDimensional/Defs.lean:85\u201387 provides `FiniteDimensional.of_injective`.",
+   "file": "TauCeti/Algebra/CentralSimple/SkolemNoether.lean",
+   "fix": "Remove `[FiniteDimensional K B]`; split on `Nontrivial A`, derive it with `RingHom.injective f.toRingHom` and `FiniteDimensional.of_injective f.toLinearMap`, and handle the subsingleton case directly. Update the claim at lines 177\u2013178 that the explicit hypothesis cannot be dropped.",
+   "issue": "`[FiniteDimensional K B]` is stronger than necessary once `f : B \u2192\u2090[K] A` and finite-dimensional `A` are present; for nontrivial `A`, simplicity of `B` makes `f` injective, so `B` inherits finite-dimensionality, while the subsingleton-target case is immediate.",
+   "line": 180
+  }
+ ],
+ "head_sha": "65a525433451c51dcb149c2525f6b16a4f3d6634",
+ "merge_base_sha": "ac7293ba6d7805379b69aeefbf1395547ef3691e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1718,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "eaf228fc82da80a7ef334e2640d0aa8abb754f99034f184c5320944d7286f23e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T193005Z-1718-generality-e8d14c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T19:30:05Z",
+ "submitted_by": "kim-em",
+ "summary": "Two exported statements are unnecessarily specialized: the isotypic theorem only accepts minimal left ideals, and Skolem\u2013Noether explicitly requires source finite-dimensionality even though an embedding into the finite-dimensional target supplies it in the nontrivial case.",
+ "transcript_blob": "9875151c2032138017efeac776484714193cad781aabf1fb5a511ef89718bacb",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 193024,
+  "input_tokens": 237480,
+  "output_tokens": 2174,
+  "reasoning_output_tokens": 778
+ },
+ "verdict": "request_changes"
+}
