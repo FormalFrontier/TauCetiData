@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.305103,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 55.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 146176,
+    "input_tokens": 182691,
+    "output_tokens": 1648,
+    "reasoning_output_tokens": 545
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "17315820494585d8716dd895d5011c175f8bc949",
+ "cost_estimated": true,
+ "cost_usd": 0.305103,
+ "dedupe_key": "TauCetiProject/TauCeti|1663|e7be1c941307ea7890f4cc92dc2fa509c83a8bed|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "8a694b56e4dad9104bb4480087523c48b8e3eb06d4f97406846d4796e1776d00",
+ "diff_sha256": "8a694b56e4dad9104bb4480087523c48b8e3eb06d4f97406846d4796e1776d00",
+ "duration_s": 55.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The definition at lines 745\u2013747 is exactly `(conjNormalFDRepFunctor g).mapIso e`; Mathlib/CategoryTheory/Iso.lean:477 provides `Functor.mapIso_hom`. Its only substantive consumer is Inertia.lean:95.",
+   "file": "TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "fix": "Remove both declarations; use `(conjNormalFDRepFunctor g).mapIso e` directly and `Functor.mapIso_hom` when its hom component must be simplified.",
+   "issue": "`conjNormalFDRepMapIso` directly wraps `CategoryTheory.Functor.mapIso`, while `conjNormalFDRepMapIso_hom_hom` merely exposes its definitional reduction.",
+   "line": 745
+  },
+  {
+   "evidence": "Mathlib/CategoryTheory/Skeletal.lean:176 defines `Functor.mapSkeleton`, and lines 182\u2013184 prove `mapSkeleton_obj_toSkeleton`; line 95 recreates its quotient-object map manually.",
+   "file": "TauCeti/RepresentationTheory/Induction/Inertia.lean",
+   "fix": "Define the action through `(conjNormalFDRepFunctor g).mapSkeleton.obj` and use `Functor.mapSkeleton_obj_toSkeleton` for its behavior on representatives and the action-law proofs.",
+   "issue": "The Skeleton action manually descends each conjugation functor with `Quotient.map`, duplicating Mathlib\u2019s existing skeleton-map combinator.",
+   "line": 95
+  }
+ ],
+ "head_sha": "e7be1c941307ea7890f4cc92dc2fa509c83a8bed",
+ "merge_base_sha": "17972dabc3852e1b8084363e175531b8f8950403",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1663,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8485d0d9268b153d9427a637a8128d711c4ebd2c439a56c80d93df93a8ba6064",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T094812Z-1663-reuse-6659c4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T09:48:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The revised construction uses Mathlib\u2019s stabilizer API, but still adds a directly redundant isomorphism wrapper and manually reconstructs Mathlib\u2019s map on skeletons.",
+ "transcript_blob": "2afa1e5504a872292bd211112006ae7f2f09029618930e0a619c2ad73ea8c65d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 146176,
+  "input_tokens": 182691,
+  "output_tokens": 1648,
+  "reasoning_output_tokens": 545
+ },
+ "verdict": "block"
+}
