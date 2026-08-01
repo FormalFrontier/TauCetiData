@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.181406,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 50.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 60672,
+    "input_tokens": 82204,
+    "output_tokens": 1447,
+    "reasoning_output_tokens": 677
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "01444c341de43e7ea72fc90934ab93ffe2bf58d9",
+ "cost_estimated": true,
+ "cost_usd": 0.181406,
+ "dedupe_key": "TauCetiProject/TauCeti|1684|7c8ffb983673382d3903a1960017de545d1c6538|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "550ab6af7b494cbcfe9750974b9d54a0bfe2bd0866550bb0c148cc7fdad57e13",
+ "diff_sha256": "550ab6af7b494cbcfe9750974b9d54a0bfe2bd0866550bb0c148cc7fdad57e13",
+ "duration_s": 50.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`roadmap/.../Suggested.lean:107` declares `def kostkaNumber {n : \u2115} (\u03bc \u03bd : n.Partition)`, but `Kostka.lean:212` declares the general function and line 248 uses `partitionKostkaNumber` for partitions.",
+   "file": "TauCeti/Combinatorics/Young/Kostka.lean",
+   "fix": "Rename the general definition (for example to `diagramKostkaNumber`) and expose the partition specialization as `kostkaNumber`, updating theorem names accordingly.",
+   "issue": "`kostkaNumber` takes a `YoungDiagram` and weight function, while the roadmap\u2019s public target is `kostkaNumber {n} (\u03bc \u03bd : n.Partition)`; the required partition API is instead exposed under the unexpected name `partitionKostkaNumber`.",
+   "line": 212
+  },
+  {
+   "evidence": "The only grep hits after the definitions are the diagonal and dominance consequences; the proof at lines 232\u2013233 itself unfolds the count via `Nat.card_ne_zero`, but no public theorem packages this defining behavior.",
+   "file": "TauCeti/Combinatorics/Young/Kostka.lean",
+   "fix": "Add `kostkaNumber_def` and the corresponding partition specialization lemma, plus a theorem such as `kostkaNumber_ne_zero_iff` characterizing existence of a tableau with the prescribed content.",
+   "issue": "The opaque counting definitions have no characteristic restatements or existence/vanishing interface, so consumers cannot directly establish or eliminate a Kostka count without relying on implementation unfolding.",
+   "line": 212
+  },
+  {
+   "evidence": "Lines 68\u201376 expose the body and immediately restate the same equation as `content_def`; all later uses shown in this file rewrite through that lemma.",
+   "file": "TauCeti/Combinatorics/Young/Kostka.lean",
+   "fix": "Remove `@[expose]` and retain `content_def` as the supported unfolding lemma.",
+   "issue": "`content` is marked `@[expose]` even though `content_def` already provides its defining equation, unnecessarily making consumers depend on the implementation body.",
+   "line": 68
+  }
+ ],
+ "head_sha": "7c8ffb983673382d3903a1960017de545d1c6538",
+ "merge_base_sha": "e323ce3ac228ab84387cdae0b2eebf72aed8a548",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1684,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0de24d8332eee41c74781b336a1cc3ae2071371675464ae075c93067f347b924",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "222eed046013fbee91239aea4a5186b12f086e65",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T112233Z-1684-api-design-5c3861",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T11:22:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The public Kostka interface does not match the roadmap target, exposes an unnecessary implementation body, and lacks the basic counting API needed by downstream consumers.",
+ "transcript_blob": "baa46d93509a2a2499357afb24fef4ba9b9c7f440037087e1a40bd1ed0265d71",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 60672,
+  "input_tokens": 82204,
+  "output_tokens": 1447,
+  "reasoning_output_tokens": 677
+ },
+ "verdict": "request_changes"
+}
