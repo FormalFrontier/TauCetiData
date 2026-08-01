@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.19486,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 43.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 61440,
+    "input_tokens": 86768,
+    "output_tokens": 1250,
+    "reasoning_output_tokens": 442
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ab89a9c807b1dfaa0b43a5bb10a10a5490c2c0e6",
+ "cost_estimated": true,
+ "cost_usd": 0.19486,
+ "dedupe_key": "TauCetiProject/TauCeti|1741|8adfde1cb4d0d08273702ad5a859a7a3414d6204|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "c88e86ce64bfbc022c655b0be9541b8ce1c6b7b35c906ba13ce603fac014b121",
+ "diff_sha256": "c88e86ce64bfbc022c655b0be9541b8ce1c6b7b35c906ba13ce603fac014b121",
+ "duration_s": 43.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 363\u2013369 define the public `LinearEquiv`, while grep finds application lemmas only for `derivationMulEquivTangentKer` and `derivationAddEquivTangent_symm_apply`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent.lean",
+   "fix": "Add `[simp]` lemmas characterizing the linear equivalence in both directions (in particular its second component and inverse evaluation), analogous to lines 316 and 324.",
+   "issue": "`derivationLinearEquivTangent` has no forward or inverse pointwise characterization, so consumers cannot simplify its application without unfolding its opaque construction; the only new `[simp]` lemma targets the intermediate `derivationAddEquivTangent`.",
+   "line": "363"
+  },
+  {
+   "evidence": "The only grep hits for `derivationAddEquivTangent` are its definition, its single lemma, the transported `Module` instance, and construction of `derivationLinearEquivTangent` on lines 342\u2013369.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent.lean",
+   "fix": "Make this transport helper private (or inline it) and expose the characteristic lemmas on `derivationLinearEquivTangent` instead.",
+   "issue": "`derivationAddEquivTangent` duplicates the additive equivalence already exported as `(derivationLinearEquivTangent R A B).toAddEquiv` and otherwise only serves construction of the instance and final linear equivalence.",
+   "line": "342"
+  }
+ ],
+ "head_sha": "8adfde1cb4d0d08273702ad5a859a7a3414d6204",
+ "merge_base_sha": "81796c0cf75a9b67ac6544de6c9461b4daed4130",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1741,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "068d77fc0191a6f3fcffb1fc4d3815758412fa816ff70e4d815a24d7d2f01ead",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260801T213600Z-1741-api-design-c45697",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-01T21:36:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The exported linear equivalence lacks characteristic simp lemmas, while a redundant intermediate additive equivalence is exposed.",
+ "transcript_blob": "0c7f5c513256be02924df5045d3e83faa7453cd9c5068d24a662fd4ae751e701",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 61440,
+  "input_tokens": 86768,
+  "output_tokens": 1250,
+  "reasoning_output_tokens": 442
+ },
+ "verdict": "request_changes"
+}
