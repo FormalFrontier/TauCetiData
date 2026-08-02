@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.240265,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 53.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 101120,
+    "input_tokens": 129557,
+    "output_tokens": 1584,
+    "reasoning_output_tokens": 479
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2fd72ca8ef63caef2bb62c9be132ca1fd5fb850b",
+ "cost_estimated": true,
+ "cost_usd": 0.240265,
+ "dedupe_key": "TauCetiProject/TauCeti|1753|99d4503b9838656bd16e146ac96fdda8a73c6634|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "2a01c261d369ad4c3e587665830b4968b242e8463b397dd1e460e0f08964522a",
+ "diff_sha256": "2a01c261d369ad4c3e587665830b4968b242e8463b397dd1e460e0f08964522a",
+ "duration_s": 53.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/Algebra/AlgebraicGroup/Tangent/Basic.lean:225` proves `fst_apply_of_mem_ker (h : \u03c8 \u2208 tangentKer R A B) (x : A)`; `Map.lean:133` supplies exactly `(tangentKerMap \u03c6 \u03c8).2`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent/Map.lean",
+   "fix": "Make `fst_apply_of_mem_ker` public (with the identity-point RHS form if desired) and use it directly; delete the map-specific restatement.",
+   "issue": "`tangentKerMap_apply_fst` is a specialization of the existing generic `fst_apply_of_mem_ker` for the kernel element `tangentKerMap \u03c6 \u03c8`, creating overlapping private/public APIs.",
+   "line": "129"
+  },
+  {
+   "evidence": "The proof at lines 157\u2013158 consists solely of those two existing lemmas; `rg` finds no consumer beyond this declaration and its documentation.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent/Map.lean",
+   "fix": "Delete it and have consumers rewrite with `tangentKerMap_apply_val_ofConv` followed by `derivationMulEquivTangentKer_apply_snd`.",
+   "issue": "`tangentKerMap_derivationMulEquivTangentKer_apply_snd` is an unused composite restatement already discharged by existing public reduction lemmas.",
+   "line": "151"
+  }
+ ],
+ "head_sha": "99d4503b9838656bd16e146ac96fdda8a73c6634",
+ "merge_base_sha": "2fd72ca8ef63caef2bb62c9be132ca1fd5fb850b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1753,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9e156c29e81ececc274f4193ad322e5deea18f8df3eae82155ccddf5a2906e2b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260802T030328Z-1753-reuse-7eeaf5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-02T03:03:28Z",
+ "submitted_by": "kim-em",
+ "summary": "Both additions duplicate existing tangent APIs: the first specializes an existing generic kernel lemma, and the second merely composes two public simp lemmas.",
+ "transcript_blob": "ded866e5710c7ff99a323089b17f2cef1aa3851515d77b8781986915b30f791c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 101120,
+  "input_tokens": 129557,
+  "output_tokens": 1584,
+  "reasoning_output_tokens": 479
+ },
+ "verdict": "block"
+}
