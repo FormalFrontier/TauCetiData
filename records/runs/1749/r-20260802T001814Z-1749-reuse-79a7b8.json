@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.228771,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 52.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 84992,
+    "input_tokens": 113241,
+    "output_tokens": 1501,
+    "reasoning_output_tokens": 465
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dc432deabb02e0af2ad62b1bc0130624b76ac908",
+ "cost_estimated": true,
+ "cost_usd": 0.228771,
+ "dedupe_key": "TauCetiProject/TauCeti|1749|8615a2ecace59b8d1d039fe3466009ab8d7bbb98|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "55abaa36c149b6d204400de1b5794532b5c6e37e77d56c5cb5dd722a2c28f9cd",
+ "diff_sha256": "55abaa36c149b6d204400de1b5794532b5c6e37e77d56c5cb5dd722a2c28f9cd",
+ "duration_s": 52.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Analysis/SpecialFunctions/Trigonometric/Bounds.lean:260` states `\u2016Complex.exp (I * x) - 1\u2016 \u2264 \u2016x\u2016`; the factorization already used at SmallArc.lean:130 reduces the claimed two-point inequality to it.",
+   "file": "TauCeti/Topology/JordanCurve/SmallArc.lean",
+   "fix": "Prove the distance bound directly with `Real.norm_exp_I_mul_ofReal_sub_one_le` after factoring by `Circle.exp b`, or keep that use local to the diameter proof if no independent API consumer exists.",
+   "issue": "`dist_circleExp_le` re-derives Mathlib's exponential norm bound through the chord formula.",
+   "line": "145"
+  },
+  {
+   "evidence": "`TauCeti/Topology/JordanCurve/Separation.lean:136-155` defines exactly this map and these properties; SmallArc.lean:266-276 repeats the same definitions and proofs.",
+   "file": "TauCeti/Topology/JordanCurve/SmallArc.lean",
+   "fix": "Expose the existing parametrization and required lemmas within a shared internal namespace, then reuse `jordanParam`, `continuous_jordanParam`, `injective_jordanParam`, `range_jordanParam`, and `jordanParam_apply` here.",
+   "issue": "The main transport recreates `g` and its continuity, injectivity, and range proofs, duplicating the `jordanParam` scaffolding in `Separation.lean`.",
+   "line": "266"
+  }
+ ],
+ "head_sha": "8615a2ecace59b8d1d039fe3466009ab8d7bbb98",
+ "merge_base_sha": "32b95315ec125e298534d5e1360be3beb05d951e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1749,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "d16862db4e0f4addb20ee8569a3f1fdbca6f88e06791dc9e444e53f514d687e9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260802T001814Z-1749-reuse-79a7b8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-02T00:18:14Z",
+ "submitted_by": "kim-em",
+ "summary": "Two parts still duplicate located Mathlib/TauCeti infrastructure: the chord bound reproves an existing norm inequality, and the transport reconstructs the Jordan parametrization API already present in Separation.",
+ "transcript_blob": "a97cd66224626cf83b1ba04f314a9e9bf72d40530f75094f95d4533ca18999da",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 84992,
+  "input_tokens": 113241,
+  "output_tokens": 1501,
+  "reasoning_output_tokens": 465
+ },
+ "verdict": "request_changes"
+}
