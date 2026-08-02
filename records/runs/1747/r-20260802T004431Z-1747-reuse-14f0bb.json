@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.402566,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 75.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 219392,
+    "input_tokens": 263650,
+    "output_tokens": 2386,
+    "reasoning_output_tokens": 634
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f804a544f92759904578622f0804e80dab1a3036",
+ "cost_estimated": true,
+ "cost_usd": 0.402566,
+ "dedupe_key": "TauCetiProject/TauCeti|1747|84e2e2bc7e3fcb890c76bf96ff990c9e3c054021|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "716e4e3ff25ac212bd89615e3d39f9703114c3edc7d4f451aafb9d8d96dd7a07",
+ "diff_sha256": "716e4e3ff25ac212bd89615e3d39f9703114c3edc7d4f451aafb9d8d96dd7a07",
+ "duration_s": 75.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Deck/FundamentalGroup/UniversalCover.lean:52-93` independently builds `loopDeck` and `loopDeckHom`; `rg` finds no consumer of `loopDeckHom` outside that defining block, while `Action.lean:154-159` provides the required quotient-covering map.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Deck/Quotient/ActingGroup.lean",
+   "fix": "Refactor `loopDeck`, `loopDeckHom`, and their elementary laws to aliases/specializations of `IsQuotientCoveringMap.toDeckHom (UniversalCover.isQuotientCoveringMap x\u2080)`; retain compatibility names if needed.",
+   "issue": "`toDeckHom` duplicates the existing universal-cover specialization `UniversalCover.loopDeckHom`, including separately proved one/multiplication laws.",
+   "line": "71"
+  },
+  {
+   "evidence": "`Deck/FundamentalGroup/UniversalCover.lean:110-118` manually uses `proj_eq_iff_mem_orbit` and `loopDeck`; `Action.lean:154-159` already packages that action as an `IsQuotientCoveringMap`, exactly the input of the new theorem.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Deck/Quotient/Covering.lean",
+   "fix": "Keep `isRegular_proj` as the public specialization, but prove it directly with `IsQuotientCoveringMap.isRegular (UniversalCover.isQuotientCoveringMap x\u2080)`.",
+   "issue": "The generalized `IsQuotientCoveringMap.isRegular` makes the existing proof of `UniversalCover.isRegular_proj` an unnecessary rederivation of regularity from orbit transitivity.",
+   "line": "66"
+  }
+ ],
+ "head_sha": "84e2e2bc7e3fcb890c76bf96ff990c9e3c054021",
+ "merge_base_sha": "f804a544f92759904578622f0804e80dab1a3036",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1747,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8cae896b6a05db19a14b12a2931ddf6c41747fbb8f7d7a4cbacdea309282991a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260802T004431Z-1747-reuse-14f0bb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-02T00:44:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic acting-group API leaves existing universal-cover code as a parallel hand-built specialization instead of reusing it.",
+ "transcript_blob": "bf8dbf404a12bfb431b8ab5057d7b5cb46ae0edd1d52e944f7a9dcc3c62a3d52",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 219392,
+  "input_tokens": 263650,
+  "output_tokens": 2386,
+  "reasoning_output_tokens": 634
+ },
+ "verdict": "request_changes"
+}
