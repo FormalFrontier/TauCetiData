@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.201491,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 48.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 55552,
+    "input_tokens": 81517,
+    "output_tokens": 1463,
+    "reasoning_output_tokens": 621
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0db508b4f5e216c56fc1cfe2013ded3777fef0bc",
+ "cost_estimated": true,
+ "cost_usd": 0.201491,
+ "dedupe_key": "TauCetiProject/TauCeti|1795|8a611278c378016c90cbd38616c6adbd2d31b480|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "6f6330c8b6bf8ec355f8094adaecab393ce6936fe7fb4a80938ce67aeea41ba2",
+ "diff_sha256": "6f6330c8b6bf8ec355f8094adaecab393ce6936fe7fb4a80938ce67aeea41ba2",
+ "duration_s": 48.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 146\u2013209 expose the construction body, while lines 211\u2013218 provide the complete pointwise equation consumers need.",
+   "file": "TauCeti/Geometry/Lie/Tangent/LeftInvariantDerivation.lean",
+   "fix": "Remove `@[expose]`; retain the pointwise simp theorem, proving it internally with `:= (rfl)` if needed.",
+   "issue": "`@[expose]` makes the full proof-built body of `tangentToLeftInvariantDerivation` unfoldable downstream even though `tangentToLeftInvariantDerivation_apply` already characterizes its behavior.",
+   "line": "146"
+  },
+  {
+   "evidence": "The declaration at lines 231\u2013239 is public, and `rg` finds no corresponding `_apply` lemma.",
+   "file": "TauCeti/Geometry/Lie/Tangent/LeftInvariantDerivation.lean",
+   "fix": "Add `@[simp] theorem tangentToLeftInvariantDerivationLinear_apply (v) : tangentToLeftInvariantDerivationLinear v = tangentToLeftInvariantDerivation v := (rfl)`.",
+   "issue": "The public `tangentToLeftInvariantDerivationLinear` has no application theorem, so downstream code cannot normalize its opaque coercion to `tangentToLeftInvariantDerivation`.",
+   "line": "231"
+  },
+  {
+   "evidence": "Lines 257\u2013264 define the forward map as that composite, but the sole API theorem at lines 267\u2013279 covers only `.symm`.",
+   "file": "TauCeti/Geometry/Lie/Tangent/LeftInvariantDerivation.lean",
+   "fix": "Add a `[simp]` forward-application theorem stating that the equivalence applied to `D` equals `pointDerivationEquivTangentSpace 1 BoundarylessManifold.isInteriorPoint (LeftInvariantDerivation.evalAt 1 D)`.",
+   "issue": "The canonical equivalence is characterized only on its inverse; its forward application remains opaque, preventing users from rewriting it to evaluation at `1` followed by `pointDerivationEquivTangentSpace`.",
+   "line": "257"
+  }
+ ],
+ "head_sha": "8a611278c378016c90cbd38616c6adbd2d31b480",
+ "merge_base_sha": "bd7d7d66ea722244d75700cd6c7fa182ddd34c4b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1795,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d8ee03fee51ff80402b98ddf7e2126e5a92fb634635156cc68874ebfa14c9d90",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260802T125424Z-1795-api-design-81e915",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-02T12:54:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The construction exposes its implementation despite having a pointwise API, while two public linear maps lack characteristic application lemmas.",
+ "transcript_blob": "50cc12f8d73ce75e9c452bb0f2f25bf92afeaa8a925302eaea6c1975e5732465",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 55552,
+  "input_tokens": 81517,
+  "output_tokens": 1463,
+  "reasoning_output_tokens": 621
+ },
+ "verdict": "request_changes"
+}
