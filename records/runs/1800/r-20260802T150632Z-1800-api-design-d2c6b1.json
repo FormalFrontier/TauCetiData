@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.226639,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 69888,
+    "input_tokens": 100181,
+    "output_tokens": 1341,
+    "reasoning_output_tokens": 425
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "edc9224cf6b931d5b2dd2ba10bdcef56b3f54c8d",
+ "cost_estimated": true,
+ "cost_usd": 0.226639,
+ "dedupe_key": "TauCetiProject/TauCeti|1800|8cd7748caa16b2af018d7417b3b2b2274bba39dc|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "1f62f317c5d98f02be201563caf1942ffd82727d5cba2d8903dcd3dd1d3ce86f",
+ "diff_sha256": "1f62f317c5d98f02be201563caf1942ffd82727d5cba2d8903dcd3dd1d3ce86f",
+ "duration_s": 49.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declaration at lines 257\u2013259 returns `\u2203 v : Circle`; by `geodesicLine_def` (lines 93\u201396) and `coe_radialGeodesic` in `Poincare/Geodesic.lean:171`, time reversal changes `u * tanh t` canonically to `(-u) * tanh t`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Poincare/Line.lean",
+   "fix": "Prove public lemmas such as `geodesicLine_neg (a) (u) (t) : geodesicLine a (-u) t = geodesicLine a u (-t)` and the corresponding range equality; use them in the incidence proof and remove or derive the existential wrapper.",
+   "issue": "`exists_geodesicLine_neg` exposes only an unspecified existential direction, although reversal is canonically the antipodal direction `-u`; consumers cannot rewrite or name the reversed parametrization directly.",
+   "line": "257"
+  },
+  {
+   "evidence": "Lines 101\u2013104 reduce an equivalence applied to its inverse, and lines 114\u2013118 reduce the origin-based general line to `radialGeodesic`; both are one-way canonical normal forms, matching existing `@[simp]` characteristic lemmas `coe_radialGeodesic` and `radialGeodesic_zero` in `Poincare/Geodesic.lean:170\u2013180`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Poincare/Line.lean",
+   "fix": "Add `@[simp]` to both lemmas (or document a concrete reason either rewrite is unsafe).",
+   "issue": "The characteristic normalization lemmas `unitDiscMoebiusIsometryEquiv_geodesicLine` and `geodesicLine_toPoincare_zero` (line 114) are not tagged `@[simp]`, so routine straightening and origin specialization do not normalize automatically.",
+   "line": "101"
+  }
+ ],
+ "head_sha": "8cd7748caa16b2af018d7417b3b2b2274bba39dc",
+ "merge_base_sha": "3db6bbada12d055a5a8a41c61d5ca923c52b076d",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1800,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1d204066755faa2ca209011c4e9b8bc357a7dc36224d47b47d7ff1f0908943a7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260802T150632Z-1800-api-design-d2c6b1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-02T15:06:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The reversal API hides the canonical opposite direction, and key normalization lemmas lack automation annotations.",
+ "transcript_blob": "fb41aeeeae630ce2389a2fe34a7efe5a0a1c0cc0f16a9c49b776aa967e9bd0f6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 69888,
+  "input_tokens": 100181,
+  "output_tokens": 1341,
+  "reasoning_output_tokens": 425
+ },
+ "verdict": "request_changes"
+}
