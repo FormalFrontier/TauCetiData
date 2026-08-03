@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.255661,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 62.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 99072,
+    "input_tokens": 129407,
+    "output_tokens": 1815,
+    "reasoning_output_tokens": 849
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1f55a87ca0ca0c64550c374d78dfe8e701a4ccfc",
+ "cost_estimated": true,
+ "cost_usd": 0.255661,
+ "dedupe_key": "TauCetiProject/TauCeti|1880|d6be3e0033522d8f1b46767be95e8f70238372c6|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "2ca809af3edf589d2f1a99b2bb86fcf2d9fc66c0f7149b20caa57c1bc76f459a",
+ "diff_sha256": "2ca809af3edf589d2f1a99b2bb86fcf2d9fc66c0f7149b20caa57c1bc76f459a",
+ "duration_s": 62.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The bound is proved only internally by `LinearMap.mkContinuous L 1` at lines 155\u2013165; the sole public theorem, `unitIntervalIntegral_apply` at line 169, exposes only evaluation.",
+   "file": "TauCeti/Analysis/Calculus/ContinuousMap.lean",
+   "fix": "Add a theorem such as `norm_unitIntervalIntegral_le : \u2016unitIntervalIntegral (E := E)\u2016 \u2264 1` (or the equivalent pointwise norm estimate).",
+   "issue": "`unitIntervalIntegral` lacks a public operator-norm bound, so consumers cannot directly use its advertised nonexpansiveness without reproving the construction estimate.",
+   "line": 132
+  },
+  {
+   "evidence": "`fderivComp_apply` at lines 192\u2013196 fully characterizes evaluation; the only later body-dependent use is the local equality `hfamily` proved by `ext t; rfl`.",
+   "file": "TauCeti/Analysis/Calculus/ContinuousMap.lean",
+   "fix": "Remove `@[expose]` and replace the downstream definitional `rfl` use with `ext t; simp [df]` or the existing application theorem.",
+   "issue": "`fderivComp` is marked `@[expose]` despite having the characteristic simp theorem `fderivComp_apply`, unnecessarily making its body part of the public interface.",
+   "line": 185
+  }
+ ],
+ "head_sha": "d6be3e0033522d8f1b46767be95e8f70238372c6",
+ "merge_base_sha": "1f55a87ca0ca0c64550c374d78dfe8e701a4ccfc",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1880,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2fcb6be6e360feb1471641d8ae9668ec7548b5a8e30fca45c1333b0ae40893e2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260803T094742Z-1880-api-design-d121a3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-03T09:47:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The operator\u2019s quantitative bound is not exposed, while an unrelated implementation body is unnecessarily exposed.",
+ "transcript_blob": "520619912963533005474d06c6e83d81c6b54c78312a03300a5f913152c68194",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 99072,
+  "input_tokens": 129407,
+  "output_tokens": 1815,
+  "reasoning_output_tokens": 849
+ },
+ "verdict": "request_changes"
+}
