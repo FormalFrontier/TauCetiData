@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3359964999999994,
+   "model": "claude-opus-4-8",
+   "returncode": 0,
+   "secs": 176.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 105242,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 105242,
+    "cache_read_input_tokens": 1904899,
+    "inference_geo": "not_available",
+    "input_tokens": 34,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1125,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1125,
+      "cache_read_input_tokens": 120296,
+      "input_tokens": 2,
+      "output_tokens": 3374,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11588,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e5e059ed6cd264cf967926f91470e246b66f33ad",
+ "cost_usd": 2.335996,
+ "dedupe_key": "TauCetiProject/TauCeti|1892|569fea00aca068bcfa57de47a0002bf7efda871a|proof-quality|claude-opus-4-8|8e496a4454cfbac9|production|1",
+ "diff_blob": "1d1f1b3f4cceca5a61344239f32ab0ee84a476653fbcf5dcec0bd0ae2c388499",
+ "diff_sha256": "1d1f1b3f4cceca5a61344239f32ab0ee84a476653fbcf5dcec0bd0ae2c388499",
+ "duration_s": 176.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Theorem spans lines 45\u2013282; `have hEq : \u2026 := by` at 144 closes at 242 with no `--` comments in between.",
+   "file": "TauCeti/Geometry/Lie/Exponential/Smoothness.lean",
+   "fix": "Extract the ODE-uniqueness bridge (`hEq`: the Picard solution `\u03b3 p 1` equals the coordinate integral-curve value via `ODE_solution_unique_of_mem_Icc_right`, comparing `g` and `a`) into a named preliminary lemma, and add short comments delineating the remaining phases (build F, Picard germ, Lipschitz/uniqueness, rescale).",
+   "issue": "contMDiffAt_mulInvariantExp_zero (lines 45\u2013282) is ~230 lines; its `hcoord` block (63\u2013274) runs ~210 lines and contains a ~100-line `hEq` sub-proof (144\u2013242) with essentially no inline structural comments. This is exactly the case the rubric flags: long proofs should factor intermediate steps or document global structure.",
+   "line": "63"
+  },
+  {
+   "evidence": "grep of `change`/`show`: documented uses carry adjacent comments; 117/140/182/225/230/239/269 do not.",
+   "file": "TauCeti/Geometry/Lie/Exponential/Smoothness.lean",
+   "fix": "Add a one-line justification to each, or replace with an explicit rewrite (e.g. `simp only [harg]` at 269; `show` on the let-bodies at 225/230/239).",
+   "issue": "Undocumented `change`/`show` steps, contrary to the rubric's requirement to comment why the goal cannot be reached otherwise. Locations: Smoothness.lean 117, 225, 230, 239, 269 (reorienting a beta-redex before `rw [harg]`, and unfolding local `let`s g/a); ParameterDependence.lean 140 (`show E from \u2026` crossing TangentSpace/E) and 182 (unfolding `IsInteriorPoint`). The delicate ones elsewhere (91, 196\u2013198; IntegralCurve 81, 84) are documented, so this is an inconsistency.",
+   "line": "269"
+  },
+  {
+   "evidence": "Lines 128\u2013134 and 150\u2013156 are identical `have hprimitive \u2026 convert h using 1` blocks.",
+   "file": "TauCeti/Analysis/ODE/SmoothParameter.lean",
+   "fix": "Factor the primitive's `HasDerivAt` (and the integrand-continuity fact) into a shared private lemma and reuse it.",
+   "issue": "The `hprimitive` derivation (fundamental theorem of calculus for `x\u2080 + \u222b v`) is duplicated verbatim in `hasDerivAt_of_forall_eq_picard` (128\u2013134) and `hasDerivWithinAt_Ici_of_forall_eq_picard` (150\u2013156); the `hcontinuous` block is likewise repeated at 297\u2013300 and 306\u2013309.",
+   "line": "128"
+  }
+ ],
+ "head_sha": "569fea00aca068bcfa57de47a0002bf7efda871a",
+ "merge_base_sha": "e5e059ed6cd264cf967926f91470e246b66f33ad",
+ "mode": "commit",
+ "model": "claude-opus-4-8",
+ "pr": 1892,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9a63b24ac5f91d2b5566bbcaab4b74e4fab53e0c48d2be1302fddafaa2a0b22d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260803T234116Z-1892-proof-quality-24eefc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-03T23:41:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The exponential-smoothness proof is a ~230-line monolith with a ~100-line unnamed sub-proof and no structural comments, which the rubric asks to factor or annotate. Several change/show steps lack the documenting comments the rubric requires, and one derivation is duplicated verbatim.",
+ "transcript_blob": "7a4fbe5b157e35130bfb9b320e5774de9e8b0d12dd59545356eb4bd2ce9b5033",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 105242,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 105242,
+  "cache_read_input_tokens": 1904899,
+  "inference_geo": "not_available",
+  "input_tokens": 34,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1125,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1125,
+    "cache_read_input_tokens": 120296,
+    "input_tokens": 2,
+    "output_tokens": 3374,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11588,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
