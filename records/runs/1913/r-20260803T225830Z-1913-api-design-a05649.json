@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.2186,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 30.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 67840,
+    "input_tokens": 97366,
+    "output_tokens": 1235,
+    "reasoning_output_tokens": 391
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fd5e9a59aeff9db446770e2883ec120e40bbf249",
+ "cost_estimated": true,
+ "cost_usd": 0.2186,
+ "dedupe_key": "TauCetiProject/TauCeti|1913|0d706fe92d8cf8df3f52057ae1e7eae0a311aa27|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "defd3d0b13efc74b31e14b4346fffb79de5bf276a0f2efa0f8c3e91c7d640cfd",
+ "diff_sha256": "defd3d0b13efc74b31e14b4346fffb79de5bf276a0f2efa0f8c3e91c7d640cfd",
+ "duration_s": 30.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only hits for `pslSmul`/`pslSmul_coe` are lines 85\u2013106 constructing `instMulActionPSL2Z`; the public action lemma is line 111.",
+   "file": "TauCeti/Analysis/Complex/UpperHalfPlane/PSLAction.lean",
+   "fix": "Make `pslSmul` and `pslSmul_coe` private, retaining `PSL_smul_coe` as the public representative API.",
+   "issue": "`pslSmul` and `pslSmul_coe` expose the quotient-lift implementation even though consumers use the `MulAction` and `PSL_smul_coe`.",
+   "line": 85
+  },
+  {
+   "evidence": "Definitions occur at lines 320 and 358, but grep finds no `glPosToSL2R_apply` or `glPosToPSL2R_apply`; line 363 is the characteristic action equality without `@[simp]`, unlike line 283.",
+   "file": "TauCeti/Analysis/Complex/UpperHalfPlane/PSLAction.lean",
+   "fix": "Add simp application/coercion lemmas for `glPosToSL2R` and `glPosToPSL2R`, and mark `glPosToPSL2R_smul` `@[simp]`.",
+   "issue": "The public normalization homs have no application lemmas characterizing their values without unfolding; `glPosToPSL2R_smul` also omits the normal-form `@[simp]` annotation used by the parallel `psl2zToPSL2R_smul_eq`.",
+   "line": 320
+  },
+  {
+   "evidence": "The declaration at lines 298\u2013302 assumes only `hc : c \u2260 0`; its proof uses `Units.mk0 c hc` and never positivity.",
+   "file": "TauCeti/Analysis/Complex/UpperHalfPlane/PSLAction.lean",
+   "fix": "Rename it to reflect nonzero scalar/projective invariance, or strengthen its hypothesis to `0 < c` if positivity is intended.",
+   "issue": "`GL_smul_pos_eq` advertises positive rescaling, but accepts every nonzero scalar, making the public interface materially misleading.",
+   "line": 298
+  }
+ ],
+ "head_sha": "0d706fe92d8cf8df3f52057ae1e7eae0a311aa27",
+ "merge_base_sha": "e5e059ed6cd264cf967926f91470e246b66f33ad",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1913,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d01a2d7fefdf0eb74c754e8adfb1eeba8030cc0a265bd8c4f53b78d7ebb092dc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260803T225830Z-1913-api-design-a05649",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-03T22:58:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The action is exposed through an unnecessary implementation function, while the normalization maps lack characteristic simp API and one public lemma is misleadingly named.",
+ "transcript_blob": "ca66cc7dbcaab4f7538cab9a387e2dbedc4d9c5c4792768f25775f60f6250fdc",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 67840,
+  "input_tokens": 97366,
+  "output_tokens": 1235,
+  "reasoning_output_tokens": 391
+ },
+ "verdict": "request_changes"
+}
