@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.29152,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 116480,
+    "input_tokens": 152774,
+    "output_tokens": 1727,
+    "reasoning_output_tokens": 562
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "67b570cb7c78d8f6a9da546ef7fce3c73515b5e7",
+ "cost_estimated": true,
+ "cost_usd": 0.29152,
+ "dedupe_key": "TauCetiProject/TauCeti|1850|c8586b79a6f6173422ad83cf49877cb7655f4575|reuse|gpt-5.6-sol|8e496a4454cfbac9|production|2",
+ "diff_blob": "bf29b6f6a48f2307bbe497eb8f0cd2d06adb29894d9eb532254ef15144f783d7",
+ "diff_sha256": "bf29b6f6a48f2307bbe497eb8f0cd2d06adb29894d9eb532254ef15144f783d7",
+ "duration_s": 49.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Analysis/Normed/Algebra/Exponential.lean:520` defines `NormedSpace.exp_add_of_commute {x y} (hxy : Commute x y) : exp (x + y) = exp x * exp y`; the new lemma at lines 77\u201379 proves exactly that statement.",
+   "file": "TauCeti/Analysis/Semigroups/BoundedGenerator/Basic.lean",
+   "fix": "Delete this lemma and use `NormedSpace.exp_add_of_commute hcomm` in `norm_exp_yosidaApprox_le_one`.",
+   "issue": "`StronglyContinuousSemigroup.exp_add_of_commute` directly duplicates Mathlib's `NormedSpace.exp_add_of_commute` with the same commuting-exponential statement.",
+   "line": 77
+  },
+  {
+   "evidence": "`Dissipative/Basic.lean:204\u2013230` constructs `S := lambda \u2022 A.domain.subtype - A.toFun`, `e := LinearEquiv.ofBijective S hbij`, and `J := A.domain.subtype \u2218\u2097 e.symm`, then applies `mkContinuous`; `YosidaApproximation.lean:76\u2013127` repeats the same sequence.",
+   "file": "TauCeti/Analysis/Semigroups/YosidaApproximation.lean",
+   "fix": "Extract the common canonical inverse construction in `Dissipative/Basic.lean` and reuse it both in `exists_bounded_rightInverse` and here, rather than maintaining two parallel implementations.",
+   "issue": "The private `smulSubLinear`/`smulSubEquiv`/`resolventLinear` scaffolding re-derives the same inverse and bounded-operator construction already implemented by `IsDissipative.exists_bounded_rightInverse`.",
+   "line": 76
+  }
+ ],
+ "head_sha": "c8586b79a6f6173422ad83cf49877cb7655f4575",
+ "merge_base_sha": "67b570cb7c78d8f6a9da546ef7fce3c73515b5e7",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1850,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "32601fc88712c67398f6145d37494af44aebf72da09f12fd831bc41c7cbb30c2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260803T034328Z-1850-reuse-9b8b5e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-03T03:43:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The Yosida API is new, but the PR exports a direct duplicate of Mathlib and repeats the existing bounded-right-inverse construction.",
+ "transcript_blob": "4f170dfed3c62ae7f4ef15c6ee1c6b8cf816d00445fc33e0dec436c814675cbb",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 116480,
+  "input_tokens": 152774,
+  "output_tokens": 1727,
+  "reasoning_output_tokens": 562
+ },
+ "verdict": "block"
+}
