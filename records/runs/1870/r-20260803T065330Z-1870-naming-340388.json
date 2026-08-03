@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.376997,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 61.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 162304,
+    "input_tokens": 210727,
+    "output_tokens": 1791,
+    "reasoning_output_tokens": 457
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "77567be50a467db25fa7a1a373dbff3f715e9cf9",
+ "cost_estimated": true,
+ "cost_usd": 0.376997,
+ "dedupe_key": "TauCetiProject/TauCeti|1870|dcbcec3a35cdff4765714f887b7fac2f6b80637e|naming|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "e7953c391f14511fa154518509103d39e7c261bdfafbbd229212768608a5fd38",
+ "diff_sha256": "e7953c391f14511fa154518509103d39e7c261bdfafbbd229212768608a5fd38",
+ "duration_s": 61.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 59 concludes `\u2026 = Nat.card (orbitRel.Quotient \u2026) * Nat.card G`; Mathlib/GroupTheory/GroupAction/Quotient.lean:272 has `sum_card_fixedBy_eq_card_orbits_mul_card_group`.",
+   "file": "TauCeti/GroupTheory/GroupAction/Burnside.lean",
+   "fix": "Rename it along the lines of `sum_card_fixedBy_mul_card_fixedBy_eq_card_orbits_mul_card_group`.",
+   "issue": "`sum_card_fixedBy_mul_card_fixedBy` omits the conclusion `= card_orbits * card_group`; the existing Mathlib theorem names that conclusion explicitly.",
+   "line": 59
+  },
+  {
+   "evidence": "Lines 117\u2013119 equate two cardinalities, while lines 127\u2013129 conclude the fixed-point sum equals `card (DoubleCoset.Quotient \u2026) * card G`.",
+   "file": "TauCeti/GroupTheory/DoubleCoset.lean",
+   "fix": "Use conclusion-describing names such as `card_doubleCosetQuotient_eq_card_orbitQuotient` and append `_eq_card_doubleCosetQuotient_mul_card_group` to the sum theorem.",
+   "issue": "`card_doubleCosetQuotient` does not name its equality with the orbit-quotient cardinality; the same omission occurs in `sum_card_fixedBy_quotient_mul_card_fixedBy_quotient` at line 127.",
+   "line": 117
+  },
+  {
+   "evidence": "The four conclusions are respectively orbit count times group order, orbit count, and two double-coset counts; TauCeti/RepresentationTheory/CharacterTable/Pairing.lean:205 names the analogous result `characterPairing_ofCharacter_eq_finrank`.",
+   "file": "TauCeti/RepresentationTheory/Induction/DoubleCosetPairing.lean",
+   "fix": "Add conclusion suffixes such as `_eq_card_orbits_mul_card_group`, `_eq_card_orbits`, and `_eq_card_doubleCosetQuotient`; follow adjacent `characterPairing_ofCharacter_eq_finrank`.",
+   "issue": "All four public names at lines 90, 106, 122, and 133 describe the summed/paired inputs but omit their orbit- or double-coset-count conclusions.",
+   "line": 90
+  }
+ ],
+ "head_sha": "dcbcec3a35cdff4765714f887b7fac2f6b80637e",
+ "merge_base_sha": "77567be50a467db25fa7a1a373dbff3f715e9cf9",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1870,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5faf59ace05a1c4710c6524ec65575f09d5fa4858ccb15c21f44d4d1fd931b9e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260803T065330Z-1870-naming-340388",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-03T06:53:30Z",
+ "submitted_by": "kim-em",
+ "summary": "Several public theorem names describe only their left-hand side or inputs, omitting the substantive counting conclusion contrary to Mathlib\u2019s conclusion-outward convention and adjacent API.",
+ "transcript_blob": "e58e3a0816dcd08847ef8c8f4cd95dbd3a41143604e85a33b9c7298afafad006",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 162304,
+  "input_tokens": 210727,
+  "output_tokens": 1791,
+  "reasoning_output_tokens": 457
+ },
+ "verdict": "request_changes"
+}
