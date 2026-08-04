@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.275806,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 37.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 61952,
+    "input_tokens": 104954,
+    "output_tokens": 994,
+    "reasoning_output_tokens": 503
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5af271444074c189a17ff697f03b3aeb21e5374",
+ "cost_estimated": true,
+ "cost_usd": 0.275806,
+ "dedupe_key": "TauCetiProject/TauCeti|1932|090948bfc46485b90bda22515d8b95db283275a7|api-design|gpt-5.6-sol|0ae18a15bfad5bef|production|3",
+ "diff_blob": "e885b9b0264d69e00bd10cffcb92e56e79f50a39a628955b6465c2e19afc65d8",
+ "diff_sha256": "e885b9b0264d69e00bd10cffcb92e56e79f50a39a628955b6465c2e19afc65d8",
+ "duration_s": 37.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg \"piecewise_gluing_aux\" code/TauCeti` finds only the declaration and calls at PiecewiseC1On.lean:281 and RealIntegral/OnCurve.lean:315, both inside private theorems.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Keep the induction private; expose a semantic bounded-derivative theorem if cross-file reuse is needed, or move that specialization beside the induction.",
+   "issue": "`piecewise_gluing_aux` exposes breakpoint-induction scaffolding; its only callers are the private `intervalIntegrable_deriv_aux` and private `isBounded_image_deriv_aux`.",
+   "line": "239"
+  },
+  {
+   "evidence": "`rg \"sorted_crossing_gluing_aux\" code/TauCeti` finds only this declaration and the private `intervalIntegrable_along_sorted` call at RealIntegral/OnCurve.lean:278.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Make it private and place the private specialization in the same file, or move the generic induction into OnCurve where its sole consumer lives.",
+   "issue": "`sorted_crossing_gluing_aux` similarly exposes raw sorted-list induction machinery solely to implement a private interval-integrability proof.",
+   "line": "121"
+  }
+ ],
+ "head_sha": "090948bfc46485b90bda22515d8b95db283275a7",
+ "merge_base_sha": "151d9fbb4c1f522e547d43d8465bdf6c67771a23",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1932,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "df852bd51fe3cacdf0a62f5e5ff08bf6ffebf157de6a1949265ae9982ab30674",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "5da9c0cc8ba80ed125f9e9ddb3c5448c820b2c52",
+ "rubrics_version": "0ae18a15bfad5bef",
+ "run_id": "r-20260804T122924Z-1932-api-design-93a7fb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-04T12:29:24Z",
+ "submitted_by": "kim-em",
+ "summary": "Two generic proof-induction helpers are public despite serving only private implementation proofs, unnecessarily expanding the supported API.",
+ "transcript_blob": "36e2701c4c8459c62afacb7bbdec7b071a77cd5bf0511a19cd999ade058cfc24",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 61952,
+  "input_tokens": 104954,
+  "output_tokens": 994,
+  "reasoning_output_tokens": 503
+ },
+ "verdict": "request_changes"
+}
