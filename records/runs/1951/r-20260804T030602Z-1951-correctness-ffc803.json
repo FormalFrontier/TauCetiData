@@ -1,0 +1,76 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.455529,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 43.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 211968,
+    "input_tokens": 274515,
+    "output_tokens": 1227,
+    "reasoning_output_tokens": 466
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "06ff5ae909cc6cce4de8406a2983eee536f8fd77",
+ "cost_estimated": true,
+ "cost_usd": 0.455529,
+ "dedupe_key": "TauCetiProject/TauCeti|1951|02b231e6e7bd6e9e6869836f03de5daa53f13567|correctness|gpt-5.6-sol|0ae18a15bfad5bef|production|1",
+ "diff_blob": "3ddadd17c8a24deb0e669d8edfec865531bd5d3b3de3ba5722903dc62ac4c1d6",
+ "diff_prompt_sha256": "d621029d739a4b64528882ed685556a31836898c59d0b04618be5c4294000767",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "3ddadd17c8a24deb0e669d8edfec865531bd5d3b3de3ba5722903dc62ac4c1d6",
+ "duration_s": 43.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`scripts/pr_status/labels.py:72-73,88-91` shows pending review alternates between `review-in-progress` and `awaiting-review` solely based on the live marker, while `review_cycle_metrics` at lines 321\u2013324 counts every reapplication. The generated JSON\u2019s 1,766 transitions since the 2026-07-22 label epoch is consistent with this inflation.",
+   "file": "scripts/pr_stats_graphs.py",
+   "fix": "Reconstruct state intervals using both labeled and unlabeled events, and count/reset only transitions from an author-action/new-commit state into a genuinely new review cycle.",
+   "issue": "Counting every `awaiting-review` application as a new review cycle overcounts a single cycle whenever `review-in-progress` replaces that label and reconciliation later restores it; the same restoration also resets the current in-review clock at lines 301\u2013304.",
+   "line": 320
+  },
+  {
+   "evidence": "Lines 243\u2013259 filter only by marker and parse every `issue_url` suffix as a PR number; `scripts/housekeeping.py:27-30,120-126` confirms canonical scoreboards require a repo-associated author and shared metadata validation.",
+   "file": "scripts/pr_stats_graphs.py",
+   "fix": "Restrict comments to numbers present in the fetched PR set and apply the repository\u2019s canonical scoreboard trust/metadata validation before attribution.",
+   "issue": "`fetch_scoreboards` counts any repository issue comment containing the public marker, including comments on non-PR issues and marker comments from untrusted external users, so the chart is not a count of canonical PR review scoreboards.",
+   "line": 238
+  }
+ ],
+ "head_sha": "02b231e6e7bd6e9e6869836f03de5daa53f13567",
+ "merge_base_sha": "06ff5ae909cc6cce4de8406a2983eee536f8fd77",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1951,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a404ae2d2f1dbc2b58f830de207dc2aa466dcda720d5775c8b14c6fd758e5ced",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "4660e1f1039e8dc3c639624bea8986d1587d84eb",
+ "rubrics_version": "0ae18a15bfad5bef",
+ "run_id": "r-20260804T030602Z-1951-correctness-ffc803",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-04T03:06:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The review-cycle and contributor-review charts do not faithfully measure review cycles or canonical PR scoreboards.",
+ "transcript_blob": "6b981d66ddb524019258cf6ff928d394d4139df227d9cd55485d12e2e29ea3c8",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 211968,
+  "input_tokens": 274515,
+  "output_tokens": 1227,
+  "reasoning_output_tokens": 466
+ },
+ "verdict": "block"
+}
