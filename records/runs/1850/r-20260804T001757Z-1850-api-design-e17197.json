@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.223291,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 70912,
+    "input_tokens": 100127,
+    "output_tokens": 1392,
+    "reasoning_output_tokens": 450
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5378036e0a823a797769b145bf71e0053b741c83",
+ "cost_estimated": true,
+ "cost_usd": 0.223291,
+ "dedupe_key": "TauCetiProject/TauCeti|1850|523dab01dd2255ad66527812d962cee15c1279f5|api-design|gpt-5.6-sol|8e496a4454cfbac9|production|3",
+ "diff_blob": "9ff8a30e4a39efb09adc830e3cfd7dd81cf3ac36e1df3f7595a76419e4ab1971",
+ "diff_sha256": "9ff8a30e4a39efb09adc830e3cfd7dd81cf3ac36e1df3f7595a76419e4ab1971",
+ "duration_s": 40.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Repository grep finds these declarations used only within `Dissipative/Basic.lean`; external code uses the high-level `IsMDissipative.resolvent` declarations at lines 403\u2013430.",
+   "file": "TauCeti/Analysis/Semigroups/Dissipative/Basic.lean",
+   "fix": "Make this construction chain private (or place it in a private namespace), exposing only the reusable `IsMDissipative.resolvent` API.",
+   "issue": "The implementation chain `smulSubLinear`, `coe_smulSubLinear`, `smulSubEquiv`, `smul_sub_symm_smulSubEquiv`, `norm_symm_smulSubEquiv_le`, and `resolventOfBijective` plus its helper lemmas is public although it only constructs the m-dissipative resolvent and the existing private Neumann-series helper.",
+   "line": 153
+  },
+  {
+   "evidence": "The only equality with the exponential is the local `have h` at lines 211\u2013213; grep finds no exported `yosidaSemigroup_*` API.",
+   "file": "TauCeti/Analysis/Semigroups/YosidaApproximation.lean",
+   "fix": "Add a characteristic `@[simp] yosidaSemigroup_apply` theorem (and, if downstream generator reasoning needs it, a theorem identifying its underlying strongly continuous semigroup with `ofBounded`).",
+   "issue": "`yosidaSemigroup` has no public application theorem, so consumers cannot establish `yosidaSemigroup t = exp (t \u2022 yosidaApprox)` without unfolding its body; this also obstructs reuse of the `ofBounded` generator/domain API without definitional unfolding.",
+   "line": 206
+  },
+  {
+   "evidence": "Both rewrite a headed construction to a strictly simpler expression; the parallel semigroup-resolvent `resolventLeftInv` declarations are `@[simp]` at `Resolvent/Identity.lean:97` and `:242`, and `ofBounded_apply` is `@[simp]` at `BoundedGenerator/Basic.lean:105`.",
+   "file": "TauCeti/Analysis/Semigroups/YosidaApproximation.lean",
+   "fix": "Mark `yosidaApprox_apply` and `IsMDissipative.resolventLeftInv` `@[simp]`.",
+   "issue": "The pointwise normal form `yosidaApprox_apply` is not tagged `@[simp]`; likewise the inverse normal form `IsMDissipative.resolventLeftInv` at `Dissipative/Basic.lean:420` lacks the annotation used by the parallel resolvent API.",
+   "line": 89
+  }
+ ],
+ "head_sha": "523dab01dd2255ad66527812d962cee15c1279f5",
+ "merge_base_sha": "67b570cb7c78d8f6a9da546ef7fce3c73515b5e7",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1850,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4cd3975b35b1e7622c1dabcc336507f79b507a044d799f462aa04e7b097dffbe",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "c58f8540512445617dc89c74261970b3cbabdbb0",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260804T001757Z-1850-api-design-e17197",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-04T00:17:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes proof machinery while leaving the principal semigroup without a usable characteristic API. Normal-form lemmas also lack expected simplifier annotations.",
+ "transcript_blob": "3ef5ca0f1bfb8ed1cf189d94ee6db3cfe50cc154158d4724a647464f248359e1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 70912,
+  "input_tokens": 100127,
+  "output_tokens": 1392,
+  "reasoning_output_tokens": 450
+ },
+ "verdict": "request_changes"
+}
