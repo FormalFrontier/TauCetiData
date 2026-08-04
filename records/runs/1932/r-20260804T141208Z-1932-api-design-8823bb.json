@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.36336,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 33.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 174080,
+    "input_tokens": 222354,
+    "output_tokens": 1165,
+    "reasoning_output_tokens": 269
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5af271444074c189a17ff697f03b3aeb21e5374",
+ "cost_estimated": true,
+ "cost_usd": 0.36336,
+ "dedupe_key": "TauCetiProject/TauCeti|1932|a62957228558f55d97cf9dafa0eb2798c84fba05|api-design|gpt-5.6-sol|0ae18a15bfad5bef|production|7",
+ "diff_blob": "98e0aab2664a4f3bf567a00907dbbc6835a661c4038b7ba6bdc6873298910f3c",
+ "diff_sha256": "98e0aab2664a4f3bf567a00907dbbc6835a661c4038b7ba6bdc6873298910f3c",
+ "duration_s": 33.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds only `isBounded_intervalIntegrable_windingNumber_eq_real_integral_of_closed_crossings` at line 431 and no declaration named `windingNumber_eq_real_integral_of_closed_of_interior_crossings`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Add `windingNumber_eq_real_integral_of_closed_of_interior_crossings` with the same hypotheses, proved by projecting `.2.2` from the bundled theorem.",
+   "issue": "The winding-number formula is available only as the third projection of a conjunction bundling boundedness and integrability; there is no direct characteristic theorem for the advertised equality.",
+   "line": "431"
+  },
+  {
+   "evidence": "Its only calls are private `intervalIntegrable_deriv_aux` at line 281 and private `isBounded_image_deriv_aux` in `Winding/RealIntegral/OnCurve.lean:319`.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Make the helper private, leaving the semantic `IsPiecewiseC1On.intervalIntegrable_deriv` API public.",
+   "issue": "`piecewise_gluing_induction` publicly exposes raw breakpoint/cardinality induction although all current consumers are private implementation proofs.",
+   "line": "239"
+  },
+  {
+   "evidence": "Its sole call is private `intervalIntegrable_along_sorted` in `Winding/RealIntegral/OnCurve.lean:282`.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Make the induction helper private; expose semantic crossing-window gluing results when an external consumer requires them.",
+   "issue": "`sorted_crossing_gluing_induction` publicly exposes sorted-list recursion solely as scaffolding for a private integrability proof.",
+   "line": "121"
+  }
+ ],
+ "head_sha": "a62957228558f55d97cf9dafa0eb2798c84fba05",
+ "merge_base_sha": "151d9fbb4c1f522e547d43d8465bdf6c67771a23",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1932,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "df039180510ff6711944ed10bae6608a742d27864775e866212c8e67c8d0e113",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 7,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "5da9c0cc8ba80ed125f9e9ddb3c5448c820b2c52",
+ "rubrics_version": "0ae18a15bfad5bef",
+ "run_id": "r-20260804T141208Z-1932-api-design-8823bb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-04T14:12:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The roadmap formula still lacks a direct public theorem, and two generic induction helpers expose implementation scaffolding used only by private proofs.",
+ "transcript_blob": "707a88cc1b5f1c94ab93e0f1fb3a0c7a700a162cbd4d4dfa9617ad26b53f33a4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 174080,
+  "input_tokens": 222354,
+  "output_tokens": 1165,
+  "reasoning_output_tokens": 269
+ },
+ "verdict": "request_changes"
+}
