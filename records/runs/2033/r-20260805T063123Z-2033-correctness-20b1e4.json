@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.351815,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 193280,
+    "input_tokens": 234817,
+    "output_tokens": 1583,
+    "reasoning_output_tokens": 671
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "cost_estimated": true,
+ "cost_usd": 0.351815,
+ "dedupe_key": "TauCetiProject/TauCeti|2033|0eea5be5df8f121c82d49947ca5e7138a8683033|correctness|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9a8b87fe6aa3e54eb668010d0fd23602802a36fbb3fb38cfa23546f0996d9097",
+ "diff_sha256": "9a8b87fe6aa3e54eb668010d0fd23602802a36fbb3fb38cfa23546f0996d9097",
+ "duration_s": 56.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only fetched historical state is the current `refs/pull/*/head` (lines 160\u2013167); `createdAt` is fetched at line 188 but never bounds replay, while lines 245\u2013252 explicitly convert commits into purported push epochs and lines 267\u2013270 unconditionally label the next epoch a push resolution.",
+   "file": "scripts/pr_status/conflict_stats.py",
+   "fix": "Base epochs on actual recorded PR-head transitions and verify the next head is mergeable before ending an episode; if those transitions are unavailable historically, remove the claimed baseline rather than inferring them from commit dates.",
+   "issue": "`pr_heads` treats every surviving commit timestamp as a time that commit was the published PR head; local commits may be pushed together, timestamps can predate PR creation, and old force-pushed heads are absent. Lines 267\u2013270 then count every following commit as a conflict-resolving push even when its head remains conflicting, producing invented episodes and durations.",
+   "line": 160
+  },
+  {
+   "evidence": "`episodes()` iterates `open_prs()` at line 456, and its own lines 450\u2013451 confirm merged/closed PR histories are intentionally excluded.",
+   "file": "scripts/pr_status/conflicts.py",
+   "fix": "Query all PRs relevant to the requested time window and read their marker comments, classifying live state separately from PR lifecycle.",
+   "issue": "`report` reads markers only from currently open PRs, so resolved episodes vanish as soon as their PR merges or closes; the reported median and tail cannot measure conflict-to-resolution over a week as claimed.",
+   "line": 456
+  }
+ ],
+ "head_sha": "0eea5be5df8f121c82d49947ca5e7138a8683033",
+ "merge_base_sha": "4012ece765f747a28c8f5a983930b0cc348ee94b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2033,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "80b09c4361b331ce1ac6071ae5b88b8c53edccd63cec2288731a6f54e9c855a3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "40ab8bc5c6f31bc49d89fa5b0996150f0a783e1c",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T063123Z-2033-correctness-20b1e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T06:31:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The historical replay does not reconstruct PR-head history, and the ongoing report discards completed PRs, so both advertised conflict-latency measurements are semantically invalid.",
+ "transcript_blob": "782834f18f4556a5dadfde7c50c3590da48e324cf0f9c065ad18dedc67b0bd38",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 193280,
+  "input_tokens": 234817,
+  "output_tokens": 1583,
+  "reasoning_output_tokens": 671
+ },
+ "verdict": "block"
+}
