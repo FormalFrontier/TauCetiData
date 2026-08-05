@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.237954,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 99328,
+    "input_tokens": 128184,
+    "output_tokens": 1467,
+    "reasoning_output_tokens": 821
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ead2aeb3722a0a3c5195a2f208632ecb6d899c1d",
+ "cost_estimated": true,
+ "cost_usd": 0.237954,
+ "dedupe_key": "TauCetiProject/TauCeti|2025|d5cba79f0d555d415f69c071a71eaffc02dc189a|correctness|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "8a97680bf3f993f1341b9680fc2b92084dbb3e1224d2b3d1a205982f4cd8f37a",
+ "diff_sha256": "8a97680bf3f993f1341b9680fc2b92084dbb3e1224d2b3d1a205982f4cd8f37a",
+ "duration_s": 49.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 422 constructs `f\"/repos/{repo}/branches/{ref}\"`; the repository itself uses slash-bearing branch names such as `hopscotch/lkg-bump`, and GitHub's get-branch endpoint requires slashes in its `{branch}` path parameter to be URL-encoded.",
+   "file": "scripts/pr_status/stuck_alerts.py",
+   "fix": "Percent-encode the complete branch ref as one path component (for example `quote(ref, safe='')`) and add a test using a slash-containing ref.",
+   "issue": "`ref` is interpolated unescaped into `/branches/{ref}`; refs such as `agent/foo` become extra URL path segments and the resulting API miss is silently treated as an unreadable branch.",
+   "line": "422"
+  }
+ ],
+ "head_sha": "d5cba79f0d555d415f69c071a71eaffc02dc189a",
+ "merge_base_sha": "03d22616846ee20538ce0fb76ee1ec7bd51cc309",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2025,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "995d4a9ec6b4d50cfd57f20711c71b7eaaa62d7e5c11338e3159d4075044092c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "40ab8bc5c6f31bc49d89fa5b0996150f0a783e1c",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T053420Z-2025-correctness-975fcc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T05:34:20Z",
+ "submitted_by": "kim-em",
+ "summary": "The diverged-head detector cannot reliably inspect branch names containing slashes, so it misses a common form of the state it claims to detect.",
+ "transcript_blob": "690b7b0d3fb50b2bcc1dd9bf384890bfaf8546a4488110af2e2557ba4ab8879a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 99328,
+  "input_tokens": 128184,
+  "output_tokens": 1467,
+  "reasoning_output_tokens": 821
+ },
+ "verdict": "block"
+}
