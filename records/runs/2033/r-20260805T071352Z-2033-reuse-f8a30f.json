@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.440706,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 58.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 301312,
+    "input_tokens": 348960,
+    "output_tokens": 1727,
+    "reasoning_output_tokens": 576
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "cost_estimated": true,
+ "cost_usd": 0.440706,
+ "dedupe_key": "TauCetiProject/TauCeti|2033|db27d9e603505518b64088e7f991d83965ba7396|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "739d6a4b8ea789e05ba07174041d048c44845c223111bf2b7a10d5e28b5ddf36",
+ "diff_sha256": "739d6a4b8ea789e05ba07174041d048c44845c223111bf2b7a10d5e28b5ddf36",
+ "duration_s": 58.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`scripts/pr_stats_graphs.py:465-475` already sorts the values and interpolates the midpoint; at `q = 0.5` its odd/even results exactly match `conflicts.median`.",
+   "file": "scripts/pr_status/conflicts.py",
+   "fix": "Use `percentile(values, 0.5)`, factoring the existing function into a shared statistics helper if cross-script importing is undesirable.",
+   "issue": "`median` directly duplicates `pr_stats_graphs.percentile(values, 0.5)`.",
+   "line": 674
+  },
+  {
+   "evidence": "`scripts/pr_stats_graphs.py:157-168` already assembles `gh api graphql` variables, parses JSON, and rejects GraphQL-level errors; `conflicts.py:215-222` reimplements the same plumbing.",
+   "file": "scripts/pr_status/conflicts.py",
+   "fix": "Factor `pr_stats_graphs.graphql` into a shared GitHub helper and use it here, adjusting callers for its returned `data` object.",
+   "issue": "`_graphql` creates a parallel GraphQL execution API to `pr_stats_graphs.graphql`, while omitting its integer-variable handling and GraphQL `errors` check.",
+   "line": 215
+  }
+ ],
+ "head_sha": "db27d9e603505518b64088e7f991d83965ba7396",
+ "merge_base_sha": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2033,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cdc5427f8609b0acc29de5931bd4ffe48d864d2188979a54763a05775c1f879d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "40ab8bc5c6f31bc49d89fa5b0996150f0a783e1c",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T071352Z-2033-reuse-f8a30f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T07:13:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces duplicate statistics and GraphQL helper APIs instead of reusing existing TauCeti implementations.",
+ "transcript_blob": "4c1765669ab35d375a957ccdd4a4e2bc7ae7a009a91edffbb5f73ae4a3c78725",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 301312,
+  "input_tokens": 348960,
+  "output_tokens": 1727,
+  "reasoning_output_tokens": 576
+ },
+ "verdict": "block"
+}
