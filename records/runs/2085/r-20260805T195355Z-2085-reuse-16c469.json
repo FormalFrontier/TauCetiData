@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.322483,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 156416,
+    "input_tokens": 196151,
+    "output_tokens": 1520,
+    "reasoning_output_tokens": 397
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3a1499bb4c21f988d2c7b83422ff57736dbf7598",
+ "cost_estimated": true,
+ "cost_usd": 0.322483,
+ "dedupe_key": "TauCetiProject/TauCeti|2085|d213b9ebf8646ae2ab9f3392a328ed63536bbbff|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "006409eb7df9e4e3b22777bd1a183364d69dc4d836db5a7db91ff939647b3ec6",
+ "diff_sha256": "006409eb7df9e4e3b22777bd1a183364d69dc4d836db5a7db91ff939647b3ec6",
+ "duration_s": 41.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The same direct `RingHom.map_det` application already appears in `GLn/Basic.lean:201` and `GLn/Basic.lean:242`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean",
+   "fix": "Delete it and use `by simpa [RingHom.mapMatrix_apply] using (RingHom.map_det (Int.castRingHom \u211a) A).symm` at its three call sites.",
+   "issue": "`det_map_ratCast` is a private restatement of `RingHom.map_det`.",
+   "line": 199
+  },
+  {
+   "evidence": "Mathlib defines `Matrix.map_mul` in `Mathlib/Data/Matrix/Mul.lean:439`; TauCeti already uses exactly `simp only [\u2190 Int.coe_castRingHom, \u2190 Matrix.map_mul]` in `GLn/Basic.lean:273`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean",
+   "fix": "Remove it and rewrite the two products with `\u2190 Matrix.map_mul`.",
+   "issue": "The local `h_map_mul` reproves matrix-map preservation of multiplication entrywise.",
+   "line": 221
+  },
+  {
+   "evidence": "`HeckeCoset.rep_mem` is defined in `HeckeRing/Basic.lean:84`, while `diagCoset_toSet` at line 144 identifies the required underlying set.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean",
+   "fix": "Replace the proof with `by simpa only [diagCoset_toSet] using HeckeCoset.rep_mem (diagCoset a)`.",
+   "issue": "`diagCoset_rep_mem` spends several lines reconstructing what `HeckeCoset.rep_mem` and `diagCoset_toSet` already state.",
+   "line": 160
+  }
+ ],
+ "head_sha": "d213b9ebf8646ae2ab9f3392a328ed63536bbbff",
+ "merge_base_sha": "3a1499bb4c21f988d2c7b83422ff57736dbf7598",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2085,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "167938aae1e2d98a445f17279eea6fb7256b01b61ff4ba661104245a96a1d5bd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e5329fd2f08fa293b5298c9c36e3b907dad03407",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T195355Z-2085-reuse-16c469",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T19:53:55Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proof helpers rederive existing matrix and Hecke-coset lemmas instead of using them directly.",
+ "transcript_blob": "d3d9b958340cf3a001b1fe97303b91a886055d8ccaba63de5c9f738a89aa162d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 156416,
+  "input_tokens": 196151,
+  "output_tokens": 1520,
+  "reasoning_output_tokens": 397
+ },
+ "verdict": "request_changes"
+}
