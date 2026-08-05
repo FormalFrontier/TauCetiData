@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.197182,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 49664,
+    "input_tokens": 78890,
+    "output_tokens": 874,
+    "reasoning_output_tokens": 516
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "cost_estimated": true,
+ "cost_usd": 0.197182,
+ "dedupe_key": "TauCetiProject/TauCeti|2036|abd0cb1ae355c6801faf2d4f2a1e03b92ebc3b02|correctness|gpt-5.6-sol|ce88b39773d791a9|production|4",
+ "diff_blob": "bb46f650ad5add0096081793cb1f36cd78d6ab8aab6e5dfb95e9a16d46670d5e",
+ "diff_sha256": "bb46f650ad5add0096081793cb1f36cd78d6ab8aab6e5dfb95e9a16d46670d5e",
+ "duration_s": 32.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`pr_epochs` builds `{sha: actor}` at line 459, while retained A\u2192B\u2192A epochs can contain A twice; lines 711 and 719 look up both occurrences through `actors.get(sha)`.",
+   "file": "scripts/pr_status/conflict_stats.py",
+   "fix": "Store actor metadata per epoch/ledger occurrence and have `attribute` index it by epoch, not SHA.",
+   "issue": "`actors` is keyed only by SHA, so repeated occurrences of the same head overwrite each other\u2019s actor; `attribute` then assigns that actor to every occurrence and may invent a prior same-actor push, misclassifying a return as a continuation.",
+   "line": 459
+  }
+ ],
+ "head_sha": "abd0cb1ae355c6801faf2d4f2a1e03b92ebc3b02",
+ "merge_base_sha": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2036,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "a6b166b3e0b3757b309450f4d7db9e765febdfb8b3b039ea6b90a66c77e5f389",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "40ab8bc5c6f31bc49d89fa5b0996150f0a783e1c",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T110646Z-2036-correctness-adb70a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T11:06:46Z",
+ "submitted_by": "kim-em",
+ "summary": "Repeated SHA transitions are retained, but their actors are still conflated, making session attribution incorrect for A\u2192B\u2192A histories.",
+ "transcript_blob": "7fc9d31cd0cfeb76e4acb6acec9852c21f916a80995394b661f87c6a45095bf9",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 49664,
+  "input_tokens": 78890,
+  "output_tokens": 874,
+  "reasoning_output_tokens": 516
+ },
+ "verdict": "block"
+}
