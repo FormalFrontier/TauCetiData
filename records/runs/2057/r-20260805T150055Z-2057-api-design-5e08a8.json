@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.182366,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 58.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 88832,
+    "input_tokens": 105976,
+    "output_tokens": 1741,
+    "reasoning_output_tokens": 821
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "12b94b9e8f30ae8f2207be5a74ac741a2feb8ca6",
+ "cost_estimated": true,
+ "cost_usd": 0.182366,
+ "dedupe_key": "TauCetiProject/TauCeti|2057|b8dc2de3025bf440b9e9c9dd61647392c23d9212|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "974e72752a1895e30e61cc9eac225e681d5ab8eb88215c96f7a5c69597dd129e",
+ "diff_sha256": "974e72752a1895e30e61cc9eac225e681d5ab8eb88215c96f7a5c69597dd129e",
+ "duration_s": 58.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only `Tuple.sort`/`Tuple.monotone_sort` uses are in the proof at lines 114\u2013115, while neither new declaration\u2019s type mentions them.",
+   "file": "TauCeti/Probability/Exchangeability/Cylinder.lean",
+   "fix": "Change this to an ordinary `import`; the public theorem statement does not require the sorting module.",
+   "issue": "`Mathlib.Data.Fin.Tuple.Sort` is publicly re-exported even though sorting appears only in the proof body, making unrelated `Tuple.sort` API transitively available to every cylinder consumer.",
+   "line": 9
+  },
+  {
+   "evidence": "The proof supplies the conjunct solely as `fun g => Equiv.prod_comp _ ...`; its only uses are destructuring `hprod` in `ConditionalCommonEnding.lean:141` and `BlockFactorization.lean:247`.",
+   "file": "TauCeti/Probability/Exchangeability/Cylinder.lean",
+   "fix": "Drop the product conjunct and have the two consumers invoke `Equiv.prod_comp` directly, or keep the combined reduction in a non-public internal module.",
+   "issue": "The public sorting lemma bundles an `\u211d\u22650\u221e` product equality that is merely `Equiv.prod_comp`, duplicating existing API and arbitrarily specializing an otherwise general cylinder-permutation result.",
+   "line": 109
+  }
+ ],
+ "head_sha": "b8dc2de3025bf440b9e9c9dd61647392c23d9212",
+ "merge_base_sha": "12b94b9e8f30ae8f2207be5a74ac741a2feb8ca6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2057,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "06bf203e393a5351d8546bbe66c8090fd9a92441e4f4641ee17b61ff7e262ab1",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e5329fd2f08fa293b5298c9c36e3b907dad03407",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T150055Z-2057-api-design-5e08a8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T15:00:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactor unnecessarily broadens the canonical public surface with a proof-only import and a specialized duplicate of an existing product-reindexing theorem.",
+ "transcript_blob": "1916b9d30426def78534ad47aa56dc6cd624fc041430c9d34727976b97b8c394",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 88832,
+  "input_tokens": 105976,
+  "output_tokens": 1741,
+  "reasoning_output_tokens": 821
+ },
+ "verdict": "request_changes"
+}
