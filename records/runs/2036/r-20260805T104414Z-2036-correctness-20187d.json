@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.205608,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 34.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 47616,
+    "input_tokens": 77832,
+    "output_tokens": 1024,
+    "reasoning_output_tokens": 478
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "cost_estimated": true,
+ "cost_usd": 0.205608,
+ "dedupe_key": "TauCetiProject/TauCeti|2036|0b484721d1cf7ec33a21bbdcab72de3a95bd93ac|correctness|gpt-5.6-sol|ce88b39773d791a9|production|3",
+ "diff_blob": "f927d56aa439c1f64213b92ae5a7bd2136e7cea5f1044f54b265142fda9fb856",
+ "diff_sha256": "f927d56aa439c1f64213b92ae5a7bd2136e7cea5f1044f54b265142fda9fb856",
+ "duration_s": 34.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 665-675 retain only the earliest run for each key, while `ledger_index`/`pr_epochs` reconstruct epochs solely from those retained rows. A branch reset to an earlier SHA has the same key but is a real transition.",
+   "file": "scripts/pr_status/conflict_stats.py",
+   "fix": "Use event data that distinguishes synchronize transitions from reruns/lifecycle events and preserve every ordered head occurrence; if historical actions are unavailable, do not claim a complete push ledger or exact resolution attribution.",
+   "issue": "Deduplicating by `(owner, branch, sha)` loses legitimate repeated head transitions such as A\u2192B\u2192A; the second A can resolve a conflict but is discarded as if it were a rerun or reopen.",
+   "line": 665
+  },
+  {
+   "evidence": "`fetch_prs` marks open PRs with stale `closedAt` as `_reopened` at lines 276-277 and `ended` becomes `now` at lines 485-487, but lines 530-535 still select `closed` whenever `closedAt` is non-null.",
+   "file": "scripts/pr_status/conflict_stats.py",
+   "fix": "Choose `still-open` from `state == \"OPEN\"` (or `_reopened` with no later closure), and use `closedAt` only for PRs whose current state is closed.",
+   "issue": "A currently open, previously reopened PR with an unresolved conflict is labeled `closed`, so it is censored and omitted from the live-conflict tail.",
+   "line": 530
+  }
+ ],
+ "head_sha": "0b484721d1cf7ec33a21bbdcab72de3a95bd93ac",
+ "merge_base_sha": "63ecaaa3646ebfba304dfae860d1a492434d698c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2036,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0f1c355090ea8a6e2d534cf667a3da65033ff63cbfefb59dfc0145122cdbc076",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "40ab8bc5c6f31bc49d89fa5b0996150f0a783e1c",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T104414Z-2036-correctness-20187d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T10:44:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The workflow-run ledger still does not faithfully represent push transitions, and reopened open PRs are misclassified as closed.",
+ "transcript_blob": "9ca79b038385366d49844bf2dfa8f8c90fa5f6f76574a4c6f31c51c54730274e",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 47616,
+  "input_tokens": 77832,
+  "output_tokens": 1024,
+  "reasoning_output_tokens": 478
+ },
+ "verdict": "block"
+}
