@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.234805,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 83200,
+    "input_tokens": 113771,
+    "output_tokens": 1345,
+    "reasoning_output_tokens": 526
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c7f3b6ba1b9d2a92f2cf3d47d3efab13ee72c21f",
+ "cost_estimated": true,
+ "cost_usd": 0.234805,
+ "dedupe_key": "TauCetiProject/TauCeti|2015|efac11615f3041e1ed915d3e84cbc5959dacb6c9|generality|gpt-5.6-sol|ce88b39773d791a9|production|5",
+ "diff_blob": "57283797826ae0a427632be52a68c5ef1a7f8c5e2348fa12deb63228cc4c9c2e",
+ "diff_sha256": "57283797826ae0a427632be52a68c5ef1a7f8c5e2348fa12deb63228cc4c9c2e",
+ "duration_s": 40.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 602\u2013676 use only ring operations, `mul_eq_zero`, and `Nat.cast_ne_zero`; line 633 already omits `CharZero K` from `eigenspace_diag_eq_bot`, but the enclosing `[Field K]` remains.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Standard.lean",
+   "fix": "State them over `[CommRing K] [IsDomain K]`, adding `[CharZero K]` only to `eigenspace_diag` and `eq_smul_basis_zero_of_raise_eq_zero`; keep field assumptions on the irreducibility results that invert coefficients.",
+   "issue": "`eigenspace_diag`, `eigenspace_diag_eq_bot` (line 638), and `eq_smul_basis_zero_of_raise_eq_zero` (line 654) unnecessarily require `Field K`; their coordinate proofs only use cancellation/no zero divisors (and characteristic zero where coefficients must be distinct or nonzero).",
+   "line": "602"
+  },
+  {
+   "evidence": "The proof at line 819 calls `Module.End.eigenvectors_linearIndependent'`; Mathlib/LinearAlgebra/Eigenspace/Basic.lean:726 gives its assumptions as `[IsDomain R] [IsTorsionFree R M]`. Lines 836 and 866 then use only that independence, spanning, and the ring-level `lieHomOfSl2Basis`.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Standard.lean",
+   "fix": "Generalize these reusable declarations to `[CommRing K] [IsDomain K] [CharZero K] [IsTorsionFree K L]`; retain `[Field K]` only for `exists_isIrreducible_hasPrimitiveVectorWith`, whose proof needs coefficient inverses.",
+   "issue": "`linearIndependent_isSl2Triple` and consequently `basisOfIsSl2Triple`/`repOfIsSl2Triple` are stated only over a field, although the Mathlib eigenvector theorem used here is formulated over a domain with a torsion-free module.",
+   "line": "817"
+  }
+ ],
+ "head_sha": "efac11615f3041e1ed915d3e84cbc5959dacb6c9",
+ "merge_base_sha": "0a869a47a030d43f050d22e3843194c0a4444132",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2015,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e76270d2c1728521998c9becd1341b2cfc0f6a03506dbc8f8d611c1faffc2fa3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e5329fd2f08fa293b5298c9c36e3b907dad03407",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260805T143820Z-2015-generality-577838",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-05T14:38:20Z",
+ "submitted_by": "kim-em",
+ "summary": "Several reusable algebraic lemmas inherit an unnecessarily strong field assumption from their enclosing sections, although their proofs only require domain/torsion-free hypotheses.",
+ "transcript_blob": "a1d8445a4b68e0d157f330d89f6da96ea20fc32130eb4df784ac32b08d35f33b",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 83200,
+  "input_tokens": 113771,
+  "output_tokens": 1345,
+  "reasoning_output_tokens": 526
+ },
+ "verdict": "request_changes"
+}
