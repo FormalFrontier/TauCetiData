@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4388684999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 235.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 66474,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 66474,
+    "cache_read_input_tokens": 662757,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1624,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1624,
+      "cache_read_input_tokens": 81057,
+      "input_tokens": 2,
+      "output_tokens": 5587,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17146,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8181480e846dc04db333e7e718fb6f61b5307a0",
+ "cost_usd": 1.438868,
+ "dedupe_key": "TauCetiProject/TauCeti|2129|67f9da376ccfa69cd614e23ece4f02d6ae4427a0|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "diff_sha256": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "duration_s": 235.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Spectrum.lean:84-87 `variable {K} [CommRing K] [IsDomain K] [CharZero K] \u2026 [IsTorsionFree K M] [IsNoetherian K M]`; contrast Spectrum.lean:296-299 where the diagonalizability section really does assume `[Field K] [IsAlgClosed K] [FiniteDimensional K M]`. Same mismatch in the module docstring: l.12 \"Fix \u2026 a finite-dimensional `L`-module `M`\" and l.27-28 \"it works over any field of characteristic zero\", which also misframes the Ladder section (l.210-213: `[CommRing K]`, no finiteness at all).",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Describe the actual hypotheses, as the sibling file already does (`Classification.lean:84` \"Every nonzero triangularizable module\", `:113` \"has rank n + 1\", header l.30-32 \"a nonzero triangularizable Noetherian module suffices\"): say \"Noetherian torsion-free module over a characteristic-zero domain\" (mentioning finite-dimensionality only as the typical case), or add the `FiniteDimensional`/field hypotheses if the wider generality is unintended.",
+   "issue": "The Raising-section docstrings state hypotheses the theorems do not have: `exists_int_of_hasEigenvalue` (l.139-140 \"on a finite-dimensional module\", l.142 \"the field need not be algebraically closed\"), `exists_nat_sub_two_mul_of_lie_h_eq_smul` (l.122 \"in a finite-dimensional module\"), `exists_int_of_lie_h_eq_smul` (l.132-133 \"in a finite-dimensional module\") and the Main results bullet (l.46-47). The section variables (l.84-87) are `[CommRing K] [IsDomain K] [CharZero K]` and `[IsTorsionFree K M] [IsNoetherian K M]` \u2014 `K` need not be a field and `M` need not be finite-dimensional.",
+   "line": 140
+  },
+  {
+   "evidence": "Classification.lean:53-56 \"\u2026 is `TauCeti.exists_int_of_hasEigenvalue_slFinTwo` in `TauCeti/Algebra/Lie/Sl2/Spectrum.lean`\"; grep of Spectrum.lean:41-57 shows no occurrence of `slFinTwo` or `eigenspaceSup` in the Main results block.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Add bullets for the two `slFinTwo` specializations and for `eigenspaceSup`/`eigenspaceSup_toSubmodule`, and mention the specialization to `sl (Fin 2) K` in the module docstring's overview.",
+   "issue": "The `## Main results` list (l.41-57) omits the entire `### The model sl\u2082` section \u2014 `exists_int_of_hasEigenvalue_slFinTwo` (l.381) and `isInternal_eigenspace_toEnd_intCast_slFinTwo` (l.393) \u2014 and the public definition `eigenspaceSup` (l.253) with its stated abstraction boundary `eigenspaceSup_toSubmodule`. Classification.lean's edited header sends readers here specifically for `TauCeti.exists_int_of_hasEigenvalue_slFinTwo`, which this file's header never mentions.",
+   "line": 41
+  }
+ ],
+ "head_sha": "67f9da376ccfa69cd614e23ece4f02d6ae4427a0",
+ "merge_base_sha": "b6dc995ac0f2d67a543474452c9c948e776df695",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2129,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a1f13b169e46f60c452e23b106482d12f3432e882cb95f7cd618b63f3fca65f6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T093831Z-2129-documentation-cd4fda",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T09:38:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The docstrings of the Raising section (and the module docstring's framing) describe hypotheses the declarations do not have \u2014 \"finite-dimensional module\" over \"a field of characteristic zero\" where the actual assumptions are a Noetherian torsion-free module over a characteristic-zero domain \u2014 understating the generality of the file's headline results. The Main results list also omits the file's `sl (Fin 2) K` specializations, one of which Classification.lean now redirects readers to.",
+ "transcript_blob": "f57fecbeaba7677de88f5158a829bf29ef98918fc3645d83cdf261906b414c88",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 66474,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 66474,
+  "cache_read_input_tokens": 662757,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1624,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1624,
+    "cache_read_input_tokens": 81057,
+    "input_tokens": 2,
+    "output_tokens": 5587,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17146,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

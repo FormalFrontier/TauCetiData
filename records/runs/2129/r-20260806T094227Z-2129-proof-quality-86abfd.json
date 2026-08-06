@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4242639999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 230.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59655,
+    "cache_read_input_tokens": 889000,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 763,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 763,
+      "cache_read_input_tokens": 75099,
+      "input_tokens": 1,
+      "output_tokens": 5040,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14755,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8181480e846dc04db333e7e718fb6f61b5307a0",
+ "cost_usd": 1.424264,
+ "dedupe_key": "TauCetiProject/TauCeti|2129|67f9da376ccfa69cd614e23ece4f02d6ae4427a0|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "diff_sha256": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "duration_s": 230.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Spectrum.lean:253-273 vs WeightString.lean:90-121; `grep -n \"LieSubmodule K (t.toLieSubalgebra\" TauCeti/` returns exactly these two sites. Spectrum imports CompleteReducibility \u2192 Classification \u2192 Standard \u2192 WeightString, so a shared helper is reachable from both.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Extract a reusable constructor into `TauCeti/Algebra/Lie/Sl2/Basic.lean` (or WeightString.lean), e.g. `def lieSubmoduleOfInvariant (t : IsSl2Triple h e f) (S : Submodule K M) (he : \u2200 y \u2208 S, \u2045e, y\u2046 \u2208 S) (hf : \u2200 y \u2208 S, \u2045f, y\u2046 \u2208 S) (hh : \u2200 y \u2208 S, \u2045h, y\u2046 \u2208 S) : LieSubmodule K (t.toLieSubalgebra K) M` with a `_toSubmodule` simp lemma, and define both `weightStringSubmodule` and `eigenspaceSup` through it.",
+   "issue": "The `lie_mem` proof of `eigenspaceSup` repeats `weightStringSubmodule.lie_mem` (WeightString.lean:93-121) almost verbatim: the same `set S`, the same `key : \u2200 z : L, \u2026 \u2192 \u2200 y \u2208 S, \u2045z, y\u2046 \u2208 S` helper, the same `IsSl2Triple.mem_toLieSubalgebra_iff.1 x.2` destructuring, the same `rw [add_lie, add_lie, smul_lie, smul_lie, smul_lie, t.lie_e_f]` and the same triple `Submodule.add_mem`/`smul_mem` finish. The substantial reasoning is not factored.",
+   "line": 255
+  },
+  {
+   "evidence": "Spectrum.lean:175-202 (`private theorem` \u00d75). The repo has several `htop`-gated results that would consume them: `basisOfIsSl2Triple` (Basic.lean:362), `lie_eq_zero_of_lie_lie_eq_zero` (Basic.lean:399), `sl2Casimir_injective` (Casimir.lean:284), `exists_isCompl_of_toLieSubalgebra_eq_top` (CompleteReducibility.lean:316).",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Make `isSl2Triple_restrict` and `toLieSubalgebra_isSl2Triple_restrict_eq_top` (and the three membership lemmas they depend on) public, and state them in `TauCeti/Algebra/Lie/Sl2/Basic.lean` next to `toLieSubalgebra_isSl2Triple_single_eq_top`.",
+   "issue": "`isSl2Triple_restrict` and `toLieSubalgebra_isSl2Triple_restrict_eq_top` are `private`, yet they are the general bridge (every sl\u2082 triple generates the subalgebra it spans) that lets any `htop : t.toLieSubalgebra K = \u22a4` result apply to an arbitrary triple. Keeping them private hides a reusable fact behind one call site, forcing the next caller to re-derive it.",
+   "line": 187
+  },
+  {
+   "evidence": "Spectrum.lean:116; `Nat.exists_not_and_succ_of_not_zero_of_exists {p : \u2115 \u2192 Prop} (H' : \u00ac p 0) \u2026` at mathlib/Mathlib/Data/Nat/Order/Lemmas.lean:43, with `p := fun k \u21a6 (toEnd K L M e ^ k) m = 0` fixed by `hzero`.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Pass the coercion explicitly: `Nat.exists_not_and_succ_of_not_zero_of_exists (by simpa using hm0) hzero` (or `by rwa [pow_zero, Module.End.one_apply]`).",
+   "issue": "`Nat.exists_not_and_succ_of_not_zero_of_exists hm0 hzero` expects `\u00ac ((toEnd K L M e ^ 0) m = 0)` but is fed `hm0 : m \u2260 0`; the two match only by unfolding `pow_zero` and `Module.End.one_apply`. This undocumented defeq across the `Module.End` monoid wrapper is not visible in the script.",
+   "line": 116
+  }
+ ],
+ "head_sha": "67f9da376ccfa69cd614e23ece4f02d6ae4427a0",
+ "merge_base_sha": "b6dc995ac0f2d67a543474452c9c948e776df695",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2129,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9a991f5cf9d2b1e0ca3d3f2108f11dd5baf23463335b6d6ef91e2b66dcda940e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T094227Z-2129-proof-quality-86abfd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T09:42:27Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are readable and free of `change`/`show`, but the Lie-submodule invariance argument is duplicated near-verbatim from `WeightString.lean`, and the reusable triple-restriction bridge is buried in `private` lemmas.",
+ "transcript_blob": "0fc9a96fa92ccdcc339d6f33503612658e70d429e1fed65855bfe088fd5c59a7",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59655,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59655,
+  "cache_read_input_tokens": 889000,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 763,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 763,
+    "cache_read_input_tokens": 75099,
+    "input_tokens": 1,
+    "output_tokens": 5040,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14755,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

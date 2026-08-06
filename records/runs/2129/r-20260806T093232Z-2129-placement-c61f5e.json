@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3033435,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 195.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 53664,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 53664,
+    "cache_read_input_tokens": 870193,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4057,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4057,
+      "cache_read_input_tokens": 65814,
+      "input_tokens": 1,
+      "output_tokens": 2275,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12682,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8181480e846dc04db333e7e718fb6f61b5307a0",
+ "cost_usd": 1.303343,
+ "dedupe_key": "TauCetiProject/TauCeti|2129|67f9da376ccfa69cd614e23ece4f02d6ae4427a0|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "diff_sha256": "c7ad7362e153238ab9bb9110ddaf32d2b6d993be71652e8196fbfe9bac5ccd6c",
+ "duration_s": 195.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Spectrum.lean:169-172 declares only `[CommRing K]`, `[LieRing L] [LieAlgebra K L]`, `{h e f : L}` \u2014 no module, no field, no spectrum hypothesis; every proof body uses only `IsSl2Triple.mem_toLieSubalgebra_iff` from `Mathlib/Algebra/Lie/Sl2.lean:139`, which Basic.lean already imports (Basic.lean:7 `public import Mathlib.Algebra.Lie.Sl2`). The section's own docstring (Spectrum.lean:196-197) states the general purpose: \"This is what lets the results proved for a generating triple be applied to an arbitrary one.\"",
+   "file": "TauCeti/Algebra/Lie/Sl2/Spectrum.lean",
+   "fix": "Move the five declarations into the `GeneratingTriple` section of `TauCeti/Algebra/Lie/Sl2/Basic.lean` and drop `private`, so the restriction bridge sits with the other `toLieSubalgebra` facts and is available to CompleteReducibility and later layers; Spectrum.lean then just applies `toLieSubalgebra_isSl2Triple_restrict_eq_top`.",
+   "issue": "The `Restrict` section (lines 167-204: `e_mem_toLieSubalgebra`, `f_mem_toLieSubalgebra`, `h_mem_toLieSubalgebra`, `isSl2Triple_restrict`, `toLieSubalgebra_isSl2Triple_restrict_eq_top`) is generic `IsSl2Triple` theory over a bare `[CommRing K]` with no reference to eigenvalues, eigenspaces or modules. Its canonical home is `TauCeti/Algebra/Lie/Sl2/Basic.lean`, whose `GeneratingTriple` section already collects exactly this material (`toLieSubalgebra_isSl2Triple_single_eq_top` at Basic.lean:269, `basisOfIsSl2Triple` at Basic.lean:362). It is the general bridge that makes every `htop : t.toLieSubalgebra K = \u22a4` result in the repo applicable to an arbitrary triple \u2014 `lie_eq_zero_of_lie_lie_eq_zero` (Basic.lean:400), `exists_isCompl_of_toLieSubalgebra_eq_top` (CompleteReducibility.lean), the WeightString results \u2014 yet it is `private` inside a spectrum file, so no other file can reach it and the next caller must re-prove it.",
+   "line": 167
+  }
+ ],
+ "head_sha": "67f9da376ccfa69cd614e23ece4f02d6ae4427a0",
+ "merge_base_sha": "b6dc995ac0f2d67a543474452c9c948e776df695",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2129,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4ddf5bb20d7ce64796823b722a65678386f5c0cd675668ebebd4206c4c01a8e0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T093232Z-2129-placement-c61f5e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T09:32:32Z",
+ "submitted_by": "kim-em",
+ "summary": "Placement is otherwise correct: the file joins the existing Sl2/ directory, its single import is used, and the deleted Classification lemma has no surviving references. The `Restrict` section, however, is general sl\u2082-triple theory with no connection to spectra and belongs in Sl2/Basic.lean.",
+ "transcript_blob": "cb1952f2d5fa1e0fdb0383ec0a51a12c9ba8fc657b9f53fb8bb08df1b07282e9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53664,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 53664,
+  "cache_read_input_tokens": 870193,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4057,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4057,
+    "cache_read_input_tokens": 65814,
+    "input_tokens": 1,
+    "output_tokens": 2275,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12682,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
