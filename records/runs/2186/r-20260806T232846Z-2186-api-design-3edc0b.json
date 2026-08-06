@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.153413,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 34.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 56576,
+    "input_tokens": 74305,
+    "output_tokens": 1216,
+    "reasoning_output_tokens": 494
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_estimated": true,
+ "cost_usd": 0.153413,
+ "dedupe_key": "TauCetiProject/TauCeti|2186|d4ea11c39c1f9002159ca9040663b066d00d5272|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9f529cdd046f2a2f1834d235c02e8019e0853a7c51ffc9360a9681a0f75bb8d4",
+ "diff_sha256": "9f529cdd046f2a2f1834d235c02e8019e0853a7c51ffc9360a9681a0f75bb8d4",
+ "duration_s": 34.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The file declares `coe_toCocycles\u2082`, `cohomologyClass_def`, `coe_ofIsMulCocycle\u2082`, and `cohomologous_iff_cohomologyClass_eq`, so none of these four bodies needs cross-module unfolding.",
+   "file": "TauCeti/GroupTheory/GroupExtension/Cohomology.lean",
+   "fix": "Remove `@[expose]` from lines 98, 108, 153, and 193; use the existing coercion/definition/iff lemmas wherever downstream proofs need access.",
+   "issue": "`toCocycles\u2082`, `cohomologyClass`, `ofIsMulCocycle\u2082`, and `Cohomologous` are all `@[expose]`, making consumers depend on representation details even though lines 103, 112, 163, and 197 provide their public characterizations.",
+   "line": 98
+  },
+  {
+   "evidence": "The setoid proof at lines 207\u2013212 repeatedly invokes this exact equivalence manually, and equality of `cohomologyClass` is the relation\u2019s canonical characterization.",
+   "file": "TauCeti/GroupTheory/GroupExtension/Cohomology.lean",
+   "fix": "Add `@[simp]` so goals involving the quotient relation normalize to equality of cohomology classes without unfolding `Cohomologous`.",
+   "issue": "`cohomologous_iff_cohomologyClass_eq` is the characteristic normal-form lemma for `Cohomologous` but is not tagged `@[simp]`.",
+   "line": 197
+  }
+ ],
+ "head_sha": "d4ea11c39c1f9002159ca9040663b066d00d5272",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2186,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a7d45e4fc21c5dfd2141c2a6fffde1c8e464868e457bac448ecc1cd9096de569",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T232846Z-2186-api-design-3edc0b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T23:28:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API unnecessarily exposes four implementation bodies despite already providing characteristic lemmas. The cohomology relation\u2019s canonical characterization also lacks the expected simplification annotation.",
+ "transcript_blob": "1b254340eba74370325c0f94a84cb22c955bfb88f04d44f58fa5e9ba4c71bdac",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 56576,
+  "input_tokens": 74305,
+  "output_tokens": 1216,
+  "reasoning_output_tokens": 494
+ },
+ "verdict": "request_changes"
+}
