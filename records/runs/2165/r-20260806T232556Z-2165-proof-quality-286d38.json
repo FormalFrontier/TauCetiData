@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.263887,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 213.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 60858,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 60858,
+    "cache_read_input_tokens": 437774,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2421,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2421,
+      "cache_read_input_tokens": 74644,
+      "input_tokens": 2,
+      "output_tokens": 6203,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16928,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 1.263887,
+ "dedupe_key": "TauCetiProject/TauCeti|2165|c412a7e3093e3192b30c7e4558df5bb7d3f92007|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "dade2d3c68869a073eb21faeba2822371df1bf5649e4b7fd520597e1a2dc0e8c",
+ "diff_sha256": "dade2d3c68869a073eb21faeba2822371df1bf5649e4b7fd520597e1a2dc0e8c",
+ "duration_s": 213.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`happ` at Simple.lean:278-281 duplicates the content needed at 339; Mathlib has `LinearMap.ker_toSpanSingleton` (Mathlib/LinearAlgebra/Span/Basic.lean:856) and `range_toSpanSingleton` (:787), applicable over a field via `DivisionSemiring.to_moduleIsTorsionFree` (Mathlib/Algebra/Module/Torsion/Field.lean:27).",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Simple.lean",
+   "fix": "Export `happ` as `simpleRepHom_app_self` (after `M.map_id`), then prove `IsIso ((simpleRepHom hQ x hM).app i)` as a standalone lemma: injectivity from `LinearMap.ker_eq_bot.1 (LinearMap.ker_toSpanSingleton k hx)`, surjectivity from `LinearMap.range_toSpanSingleton x` together with `hspan`. That deletes lines 342-357 and drops the classification below the length guideline.",
+   "issue": "The formula for the component at `i`, `(simpleRepHom hQ x hM).app i = eqToHom _ \u226b ofHom (LinearMap.toSpanSingleton k _ x)`, is proved as a local `have happ` and never exported. Because it is unavailable downstream, `hisoi` (lines 339-357) re-derives bijectivity of `toSpanSingleton` by hand through `exists_eq_smul_simpleRepGenerator` and `smul_eq_zero`, and the main proof runs to 74 lines (296-369), past the 50-line guideline.",
+   "line": 278
+  },
+  {
+   "evidence": "`simpleRepSelfEquiv` is `(eqToIso (simpleRep_obj_self i)).toLinearEquiv` (Simple.lean:129-130); `@[simp] lemma toLinearEquiv_apply (i : X \u2245 Y) (x) : i.toLinearEquiv x = i.hom x := rfl` at Mathlib/Algebra/Category/ModuleCat/Basic.lean:292.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Simple.lean",
+   "fix": "Add a one-line `theorem simpleRepSelfEquiv_apply (y) : simpleRepSelfEquiv k i y = eqToHom (simpleRep_obj_self i) y := rfl` (the single documented defeq) and `rw [\u2190 simpleRepSelfEquiv_apply]`, or rewrite with the existing `ModuleCat.Iso.toLinearEquiv_apply` and `eqToIso.hom`.",
+   "issue": "Undocumented `change` that conjures `simpleRepSelfEquiv k i` out of `eqToHom (simpleRep_obj_self i) \u226b ofHom (...)` applied to an element. It relies on defeq across `eqToIso`, `Iso.toLinearEquiv`, `ModuleCat.ofHom` and `\u226b`-as-application at once; nothing in the file explains why the goal cannot be reached by rewriting.",
+   "line": 283
+  },
+  {
+   "evidence": "`@[simp] theorem coe_restrict_apply {f} (hf) (x : p) : \u2191(f.restrict hf x) = f x := rfl` at Mathlib/Algebra/Module/Submodule/LinearMap.lean:214-217; `\u03b9_app_apply` is already `@[simp]` at Subrepresentation.lean:120-123.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Subrepresentation.lean",
+   "fix": "Use the explicit simp lemma: `simp [LinearMap.coe_restrict_apply, M.map_id]` / `simp [LinearMap.coe_restrict_apply, M.map_comp]` for 96-105, `simp [M.map_comp]` after `Quiver.Path.length_comp` at 201, and `\u03b9_app_apply` in the calc at 148. Where a `change` genuinely remains, add the comment saying which rewrite is unavailable.",
+   "issue": "`change` steps unfolding `LinearMap.restrict`/`ModuleCat.ofHom` by defeq, with no comment: lines 98 and 103 (`map_id`/`map_comp` of `toQuiverRep`), line 201 (inside `pathSpan.map_mem`, which also closes with a bare `rfl` for `(f \u226b g) x = g (f x)`), and the two `rfl`s in `\u03b9_eq_zero_iff` at 148-149 which restate the file's own `\u03b9_app_apply`. The module's implementation note only covers changing a goal into vertex-indexed form; these unfold submodule-restriction and hom coercions instead.",
+   "line": 98
+  },
+  {
+   "evidence": "Simple.lean:308-315 and 318-323 differ only in which disjunct is discharged; both end in `(Submodule.mem_bot k).1 hmem`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Representation/Simple.lean",
+   "fix": "Add one lemma to `QuiverSubrep`, e.g. `theorem toSubmodule_eq_top_of_mem [Simple M] (N : QuiverSubrep M) {x : M.obj i} (hx : x \u2260 0) (h : x \u2208 N.toSubmodule i) : \u2200 a, N.toSubmodule a = \u22a4`, and derive both `h0` (from `mem_pathSpan_zero`) and `h1` (contrapositive, via `pathSpan_one_self_of_isAcyclic`) from it.",
+   "issue": "`h1` (307-315) and `h0` (317-323) repeat the same argument \u2014 apply `toSubmodule_eq_bot_or_eq_top`, produce `x` in the submodule at `i`, contradict `hx` via `Submodule.mem_bot` \u2014 with only the branch swapped.",
+   "line": 307
+  }
+ ],
+ "head_sha": "c412a7e3093e3192b30c7e4558df5bb7d3f92007",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2165,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e46a53721e9b59dce7676623e2bbb6a5988890de8449a002a6c6bfa509ecd56f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T232556Z-2165-proof-quality-286d38",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T23:25:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The component formula for `simpleRepHom` is buried in a `have` inside `simpleRepHom_app_generator`, forcing a 19-line hand-rolled re-proof of `toSpanSingleton` bijectivity inside an already 74-line classification proof. Several `change`/`rfl` steps cross `LinearMap.restrict`, `ofHom` and `eqToIso`/`toLinearEquiv` wrappers by undocumented defeq where explicit Mathlib simp lemmas exist.",
+ "transcript_blob": "95cce37ca3c7dd268e5af2c62465a3d84b1e8f2f760c64f0604bd64d932c2eff",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 60858,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 60858,
+  "cache_read_input_tokens": 437774,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2421,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2421,
+    "cache_read_input_tokens": 74644,
+    "input_tokens": 2,
+    "output_tokens": 6203,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16928,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
