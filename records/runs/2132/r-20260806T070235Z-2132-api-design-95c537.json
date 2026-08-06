@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.221578,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 51456,
+    "input_tokens": 83930,
+    "output_tokens": 1116,
+    "reasoning_output_tokens": 437
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a2e633ed07b45471738e8f2f88e5319efded5eb4",
+ "cost_estimated": true,
+ "cost_usd": 0.221578,
+ "dedupe_key": "TauCetiProject/TauCeti|2132|c8bb13f48bc7ffb4a0c4400106bfcf38431dc8ea|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "f26a7b684b69cc0ebbe7cd7d81bb638221f4ef5ae4f63a7963df817d0d6b8a66",
+ "diff_sha256": "f26a7b684b69cc0ebbe7cd7d81bb638221f4ef5ae4f63a7963df817d0d6b8a66",
+ "duration_s": 41.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 90\u201394 declare both `@[expose] noncomputable def twoWeylVector` and the exact equation `twoWeylVector_eq_sum`; internal proofs at lines 133 and 153 already rewrite through that lemma.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/WeylVector.lean",
+   "fix": "Remove `@[expose]` and use `twoWeylVector_eq_sum` as the public unfolding API.",
+   "issue": "`twoWeylVector` is `@[expose]` even though `twoWeylVector_eq_sum` already provides its defining equation, making the implementation body unnecessarily reducible to downstream users.",
+   "line": 90
+  },
+  {
+   "evidence": "The sole repository use is at line 135 inside `coroot'_twoWeylVector`; no roadmap consumer names or requires the erased-finset formulation.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/WeylVector.lean",
+   "fix": "Make this theorem `private`; retain `coroot'_twoWeylVector` as the reusable public consequence.",
+   "issue": "`sum_pairing_posRootsFinset_erase_eq_zero` exposes a proof-specific erased-finset cancellation result that is used only to establish the characteristic pairing theorem.",
+   "line": 103
+  }
+ ],
+ "head_sha": "c8bb13f48bc7ffb4a0c4400106bfcf38431dc8ea",
+ "merge_base_sha": "e488feada93155919fd6f9e394dba5d64d0dc145",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2132,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "65b68906f24dcb3ce5c4fc633ed4b6a4fa6b24a6581409467c8b249aa5f0a1eb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260806T070235Z-2132-api-design-95c537",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-06T07:02:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The new public surface exposes an implementation body unnecessarily and leaves a proof-specific cancellation lemma public.",
+ "transcript_blob": "878bc71913d2d94027bb2287546c01fa84b414993f8007fe2f77fb95f6badd97",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 51456,
+  "input_tokens": 83930,
+  "output_tokens": 1116,
+  "reasoning_output_tokens": 437
+ },
+ "verdict": "request_changes"
+}
