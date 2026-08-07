@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.3933050000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 456.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 98860,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 98860,
+    "cache_read_input_tokens": 3272682,
+    "inference_geo": "not_available",
+    "input_tokens": 82,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3726,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3726,
+      "cache_read_input_tokens": 111341,
+      "input_tokens": 1,
+      "output_tokens": 5322,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 30225,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a737cb9dd90b4360d853585e47bcd4a2e719b407",
+ "cost_usd": 3.393305,
+ "dedupe_key": "TauCetiProject/TauCeti|2227|4f8dd10616f010b9ee65f11d77cd77f38647fb68|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "10ae085f8579626565f9133a6c00942933c2b96b3dccf7dc66eb8b2c5f58789b",
+ "diff_sha256": "10ae085f8579626565f9133a6c00942933c2b96b3dccf7dc66eb8b2c5f58789b",
+ "duration_s": 456.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/RingTheory/Ideal/Int.lean:38 `instance Int.ideal_span_isMaximal_of_prime (p : \u2115) [Fact (Nat.Prime p)] : (Ideal.span {(p : \u2124)}).IsMaximal`. It is transitively imported: TauCeti/NumberTheory/NumberField/RamifiedPrimes.lean imports Mathlib.NumberTheory.NumberField.Discriminant.Different, which imports Mathlib.RingTheory.Ideal.Norm.RelNorm, which imports Mathlib.RingTheory.Ideal.Int.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/TotalRamification.lean",
+   "fix": "Delete it; write `haveI := Fact.mk hp` at the three use sites (lines 85, 201, and to discharge the `[(span {(p:\u2124)}).IsMaximal]` argument at line 71) and let instance resolution supply it. `span_natCast_ne_bot` (line 64) is likewise a single-use restatement of `Ideal.span_singleton_eq_bot`; inline it.",
+   "issue": "`isMaximal_span_natCast` restates the Mathlib instance `Int.ideal_span_isMaximal_of_prime : (Ideal.span {(p : \u2124)}).IsMaximal` (for `p : \u2115`, `[Fact p.Prime]`), with the same proof shape.",
+   "line": 57
+  },
+  {
+   "evidence": "Mathlib/RingTheory/DedekindDomain/Factorization.lean:809 `theorem Ideal.map_algebraMap_eq_finsetProd_pow {p : Ideal S} [p.IsMaximal] (hp : p \u2260 0) : map (algebraMap S R) p = \u220f P \u2208 p.primesOver R, P ^ P.ramificationIdx S`, with `[IsDedekindDomain R] [Algebra S R] [Algebra.IsIntegral S R] [IsDomain S] [Module.IsTorsionFree S R]` (line 799) \u2014 all satisfied by `S = \u2124`, `R = \ud835\udcde K`.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/TotalRamification.lean",
+   "fix": "Prove it as `rw [Ideal.map_algebraMap_eq_finsetProd_pow (span_natCast_ne_bot hp), primesOver_eq_singleton_of_mem_ramifiedPrimes hK hp hmem \ud835\udd2d]` and finish with `ramificationIdx_eq_two_of_mem_ramifiedPrimes` (`simp`), since the product over the singleton `{\ud835\udd2d}` is `\ud835\udd2d ^ e(\ud835\udd2d \u2223 p) = \ud835\udd2d ^ 2`.",
+   "issue": "`map_span_eq_sq_of_mem_ramifiedPrimes` re-derives the factorization of `p \ud835\udcde K` from `normalizedFactors` (33 lines: `hfac`, `hcount`, `hcard`, `hrep`, `prod_normalizedFactors`), which is exactly Mathlib's `Ideal.map_algebraMap_eq_finsetProd_pow`.",
+   "line": 187
+  },
+  {
+   "evidence": "Mathlib/RingTheory/DedekindDomain/Ideal/Lemmas.lean:155 `theorem Ideal.mem_primesOver_iff_mem_normalizedFactors {p : Ideal R} [p.IsMaximal] [Algebra R A] [IsDomain R] [IsTorsionFree R A] (hp : p \u2260 \u22a5) {P : Ideal A} : P \u2208 p.primesOver A \u2194 P \u2208 normalizedFactors (map (algebraMap R A) p)`.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/TotalRamification.lean",
+   "fix": "Replace lines 197\u2013204 with `(Ideal.mem_primesOver_iff_mem_normalizedFactors (\ud835\udcde K) hP0).mpr hq`, then rewrite with `primesOver_eq_singleton_of_mem_ramifiedPrimes`. (Moot if the previous finding is applied.)",
+   "issue": "The `hfac` block (lines 196\u2013206) manually derives `q.under \u2124 = span {p}` from `I \u2264 q` to conclude that a normalized factor of `p \ud835\udcde K` lies over `p`; that equivalence is a named Mathlib lemma.",
+   "line": 196
+  }
+ ],
+ "head_sha": "4f8dd10616f010b9ee65f11d77cd77f38647fb68",
+ "merge_base_sha": "a737cb9dd90b4360d853585e47bcd4a2e719b407",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2227,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fb588b4401112f88b107d96b0eacbd04b5d97da7f7f8fff819a811a697d3a5e7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T111615Z-2227-reuse-3312e2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T11:16:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The main results are new and reuse Mathlib's ramification/inertia toolchain, but the private `isMaximal_span_natCast` restates a Mathlib instance verbatim, and the `p \ud835\udcde K = \ud835\udd2d ^ 2` proof hand-rolls two located Mathlib lemmas.",
+ "transcript_blob": "acc3483bc60a8a5869161c37056202daa32af359c8d140c2beed7e9c8fdf2cd4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 98860,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 98860,
+  "cache_read_input_tokens": 3272682,
+  "inference_geo": "not_available",
+  "input_tokens": 82,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3726,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3726,
+    "cache_read_input_tokens": 111341,
+    "input_tokens": 1,
+    "output_tokens": 5322,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 30225,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
