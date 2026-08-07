@@ -1,0 +1,181 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 4.1994425,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 559.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 130350,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 130350,
+    "cache_read_input_tokens": 3598693,
+    "inference_geo": "not_available",
+    "input_tokens": 69,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3518,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3518,
+      "cache_read_input_tokens": 143039,
+      "input_tokens": 2,
+      "output_tokens": 8466,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 43087,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 4.199442,
+ "dedupe_key": "TauCetiProject/TauCeti|2188|f30a85c74f49cf03b3a3d32ce884039775a4c42f|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "b344fc3c91cd785cebe340182bd9ca84ac9786b498b79fdeb75e9c0650b2cb5b",
+ "diff_sha256": "b344fc3c91cd785cebe340182bd9ca84ac9786b498b79fdeb75e9c0650b2cb5b",
+ "duration_s": 559.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Data/Int/Init.lean:293 `lemma dvd_div_of_mul_dvd (h : a * b \u2223 c) : b \u2223 c / a := dvd_ediv_of_mul_dvd h` (namespace `Int`, opened at line 28). With `a = (d : \u2124)`, `b = (M : \u2124)` this is the stated conclusion `(M : \u2124) \u2223 c / d`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Delete it and use `Int.dvd_div_of_mul_dvd` at both call sites (lines 131 and 178), pushing the cast first: `Int.dvd_div_of_mul_dvd (by exact_mod_cast h)`.",
+   "issue": "`natCast_dvd_ediv_of_mul_dvd` restates Mathlib's `Int.dvd_div_of_mul_dvd`; the `[NeZero d]` binder is not needed either.",
+   "line": 117
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Int/Init.lean:284 `lemma dvd_mul_of_div_dvd (h : b \u2223 a) (hdiv : a / b \u2223 c) : a \u2223 b * c`; line 210 `lemma natCast_div (m n : \u2115) : ((m / n : \u2115) : \u2124) = m / n`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Delete it; at line 490 use `Int.dvd_mul_of_div_dvd (Int.natCast_dvd_natCast.mpr h_dvd) (by rwa [\u2190 Int.natCast_div])`.",
+   "issue": "`natCast_dvd_levelRaiseConj_lower_left` restates `Int.dvd_mul_of_div_dvd` composed with `Int.natCast_div`.",
+   "line": 435
+  },
+  {
+   "evidence": "TauCeti/NumberTheory/ModularForms/Basic.lean:57-60 `@[simp] lemma \u03c3_mapGL_real_eq_refl (s : SL(2, \u2124)) : UpperHalfPlane.\u03c3 (mapGL \u211d s) = ContinuousAlgEquiv.refl \u211d \u2102`; imported at LevelRaise.lean:11.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Delete lines 262-265 and use `\u03c3_mapGL_real_eq_refl \u03b3` (or let `simp` close it) in the `rw` at line 269.",
+   "issue": "The `have h\u03c3\u03b3 : UpperHalfPlane.\u03c3 (mapGL \u211d \u03b3) = ContinuousAlgEquiv.refl \u211d \u2102` re-proves a `@[simp]` lemma this file already imports.",
+   "line": 262
+  },
+  {
+   "evidence": "mathlib/Mathlib/NumberTheory/ModularForms/QExpansion.lean:672-677: \"Specialized version of `UpperHalfPlane.hasSum_qExpansion` for modular forms, with many arguments filled in automatically\", proof `\u03c4.hasSum_qExpansion hh (periodic_comp_ofComplex f h\u0393) (holo f) (bdd_at_infty f)`. The `[Fact (IsCusp \u221e \u0393)]` it needs is already resolving here, since line 550 uses `ModularFormClass.bdd_at_infty f`, which carries the same instance (Mathlib/NumberTheory/ModularForms/Basic.lean:698, 702).",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Replace lines 548-551 with `ModularForm.hasSum_qExpansion (f := f) hh_pos hh_period_N (levelRaiseMatrix d \u2022 \u03c4)` (adjust `\u2022`/`*` with `smul_eq_mul`).",
+   "issue": "`hfsum` reconstructs, argument for argument, the body of Mathlib's specialized `ModularForm.hasSum_qExpansion`.",
+   "line": 548
+  },
+  {
+   "evidence": "LevelRaise.lean:430-433 `dvd_lower_left_of_dvd {l N : \u2115} (h_dvd : l \u2223 N) (h\u03b3 : \u03b3 \u2208 Gamma0 N) : (l : \u2124) \u2223 \u03b3.val 1 0`; mathlib/Mathlib/NumberTheory/ModularForms/CongruenceSubgroups.lean:154 `theorem Gamma1_in_Gamma0 (N : \u2115) : Gamma1 N \u2264 Gamma0 N`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Move `dvd_lower_left_of_dvd` above line 91 and delete both: at lines 115/198 use `dvd_lower_left_of_dvd (dvd_mul_right d M) (Gamma1_in_Gamma0 _ h\u03b3)`, at line 129 use `dvd_lower_left_of_dvd (dvd_mul_right d M) h\u03b3`.",
+   "issue": "`Gamma1_dmul_lower_left_dvd` (line 91) and `Gamma0_dmul_lower_left_dvd` (line 97) are the `l = d, N = d*M` instances of this file's own `dvd_lower_left_of_dvd` (line 430); three lemmas for one fact.",
+   "line": 91
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/SpecialLinearGroup.lean:411-416 `lemma isCoprime_col (A : SL(2, R)) (j : Fin 2) : IsCoprime (A 0 j) (A 1 j)`, whose `j = 0` branch is `\u27e8A 1 1, -(A 0 1), _\u27e9` \u2014 the same pair `(d, -b)`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Pass `\u03b3'.isCoprime_col 0` instead of the hand-built anonymous constructor.",
+   "issue": "The `IsCoprime a c` witness `\u27e8d, -b, by linear_combination hdet\u27e9` is exactly Mathlib's `isCoprime_col` witness for `SL(2, R)`.",
+   "line": 479
+  },
+  {
+   "evidence": "LevelRaise.lean:419-427 and the call at 478-479 `shiftJ_spec (Int.isCoprime_iff_gcd_eq_one.mp (exists_shift_isCoprime ...))`; `IsCoprime x y` unfolds to `\u2203 a b, a * x + b * y = 1`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Delete both private declarations; from `hcop : IsCoprime \u03b1 (l : \u2124)` do `obtain \u27e8u, v, huv\u27e9 := hcop`, set `j := u * \u03b2`, and get `\u03b2 - j * \u03b1 = (\u03b2 * v) * l` by `linear_combination \u03b2 * huv`.",
+   "issue": "`shiftJ`/`shiftJ_spec` re-derive B\u00e9zout via `Int.gcdA`/`Int.gcdB` after the caller round-trips `IsCoprime \u03b1 l` through `Int.isCoprime_iff_gcd_eq_one`; `IsCoprime` is definitionally the B\u00e9zout identity already available at line 478.",
+   "line": 419
+  },
+  {
+   "evidence": "mathlib/Mathlib/Analysis/Complex/UpperHalfPlane/MoebiusAction.lean:183 `instance glAction : MulAction (GL (Fin 2) \u211d) \u210d`, so `smul_inv_smul` applies to `levelRaiseMatrix l : GL (Fin 2) \u211d`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "`\u27e8(levelRaiseMatrix l)\u207b\u00b9 \u2022 \u03c4', smul_inv_smul _ _\u27e9`.",
+   "issue": "`exists_levelRaiseMatrix_smul_eq` re-derives surjectivity of a group action by hand (explicit `\u03c4'/l` witness plus an im-positivity proof).",
+   "line": 308
+  },
+  {
+   "evidence": "mathlib/Mathlib/NumberTheory/ModularForms/Basic.lean:508-514 `CuspForm.mcast` (\"useful for avoiding `Heq`s. Optionally transports along an equality of subgroups\"); TauCeti/NumberTheory/ModularForms/Basic.lean:64-65 `CuspForm.mcast_apply ... : CuspForm.mcast h f h\u0393 z = f z`, imported at LevelRaise.lean:11.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "State `levelRaise_levelRaise` with `CuspForm.mcast rfl _ (by rw [heq3])` and discharge the pointwise step with the existing `CuspForm.mcast_apply`; delete `eqRec_cuspForm_apply`.",
+   "issue": "`eqRec_cuspForm_apply` introduces a second idiom for transporting a cusp form across an index equality, parallel to the `mcast` API the repo already uses.",
+   "line": 357
+  },
+  {
+   "evidence": "LevelRaise.lean:135-139 vs 171-172; both are `(levelRaiseConjOfDvd d \u03b3 _).val 1 1 = \u03b3.val 1 1` proved by `rfl`, and `levelRaiseConj` is by definition `levelRaiseConjOfDvd` (line 113-115).",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Use `levelRaiseConjOfDvd_lower_right d \u03b3 _` in place of `h11`.",
+   "issue": "The local `have h11` restates the public `levelRaiseConjOfDvd_lower_right` (line 135) up to unfolding `levelRaiseConj`.",
+   "line": 171
+  },
+  {
+   "evidence": "TauCeti/RepresentationTheory/ClassicalGroups/Diagonal.lean:51 `def diagGL : (Fin n \u2192 k\u02e3) \u2192* GL (Fin n) k` (any `CommRing k`), with `diagGL_apply` (line 63) and `det_diagGL` (line 70); already used from NumberTheory in TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean:67, so the import is permitted.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Define `levelRaiseMatrix d := TauCeti.diagGL ![Units.mk0 (d : \u211d) (by ...), 1]`; then `det_diagGL` gives `levelRaiseMatrix_det_pos`/`abs_levelRaiseMatrix_det_val`, `diagGL_apply` gives the entry computations, and `map_mul` gives `levelRaiseMatrix d * levelRaiseMatrix d' = levelRaiseMatrix (d * d')` used at line 337.",
+   "issue": "`levelRaiseMatrix` builds the diagonal element `diag(d, 1)` from a raw matrix literal plus `mkOfDetNeZero`, duplicating the repo's diagonal-embedding combinator and forcing hand proofs of its determinant.",
+   "line": 54
+  }
+ ],
+ "head_sha": "f30a85c74f49cf03b3a3d32ce884039775a4c42f",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2188,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7c58fff97e3dac66d47032402d4817d2986244c83ead48f13059eb16c3b5b2d7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T002235Z-2188-reuse-03c694",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T00:22:35Z",
+ "submitted_by": "kim-em",
+ "summary": "Several helpers restate existing Mathlib/TauCeti API verbatim: the private division helpers are `Int.dvd_div_of_mul_dvd`/`Int.dvd_mul_of_div_dvd`, the `h\u03c3\u03b3` proof is the imported `\u03c3_mapGL_real_eq_refl`, the q-expansion HasSum term is `ModularForm.hasSum_qExpansion` word for word, and the B\u00e9zout witness is `Matrix.SpecialLinearGroup.isCoprime_col`. Two of the file's own divisibility lemmas are also special cases of its later `dvd_lower_left_of_dvd`.",
+ "transcript_blob": "8f27e68d312c8c7f49153dead417f61ecd6021a0ad8199f5487cfd1dc8ce0a71",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 130350,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 130350,
+  "cache_read_input_tokens": 3598693,
+  "inference_geo": "not_available",
+  "input_tokens": 69,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3518,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3518,
+    "cache_read_input_tokens": 143039,
+    "input_tokens": 2,
+    "output_tokens": 8466,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 43087,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}

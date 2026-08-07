@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4982940000000005,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 431.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 91642,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 91642,
+    "cache_read_input_tokens": 1555590,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 309,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 309,
+      "cache_read_input_tokens": 107540,
+      "input_tokens": 2,
+      "output_tokens": 3421,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 31397,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 2.498294,
+ "dedupe_key": "TauCetiProject/TauCeti|2188|f30a85c74f49cf03b3a3d32ce884039775a4c42f|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "b344fc3c91cd785cebe340182bd9ca84ac9786b498b79fdeb75e9c0650b2cb5b",
+ "diff_sha256": "b344fc3c91cd785cebe340182bd9ca84ac9786b498b79fdeb75e9c0650b2cb5b",
+ "duration_s": 431.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `code/TauCeti/NumberTheory/ModularForms/Basic.lean:172: def ofLe (h : \u0393' \u2264 \u0393) (f : CuspForm \u0393 k) : CuspForm \u0393' k`; the PR diff adds only LevelRaise.lean, so `ofLe` is pre-existing.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Drop the `CuspForm.ofLe` bullet, add `modularFormLevelRaise`, and add a `## Main results` section for the three theorems.",
+   "issue": "The module docstring lists `CuspForm.ofLe` under \"Main definitions\" of this file, but this file does not define it; it already exists at TauCeti/NumberTheory/ModularForms/Basic.lean:172. The same section also omits the public `modularFormLevelRaise` (line 224), and there is no \"Main results\" section for `qExpansion_modularFormLevelRaise_coeff'`, `qExpansion_one_modularFormLevelRaise_coeff` and `exists_T_levelRaiseConj_T_factor`.",
+   "line": 33
+  },
+  {
+   "evidence": "Line 501-503: `lemma qParam_nat_mul_eq_pow (h : \u211d) (d : \u2115) (z : \u2102)` \u2014 no `0 < h`, no `0 < d`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Rewrite as \"for any real `h` and any `d : \u2115`, `qParam h (d * z) = (qParam h z) ^ d`\".",
+   "issue": "`qParam_nat_mul_eq_pow`'s docstring says \"For positive `N : \u211d` and positive integer `d`\", but the lemma has no positivity hypotheses at all and no binder named `N` (the period binder is `h`). The identity holds for every real `h` and every `d : \u2115`, so the doc advertises a strictly weaker lemma than the one stated.",
+   "line": 499
+  },
+  {
+   "evidence": "Lines 346-347 vs. line 350.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "State the doc as `(\u03b9_d \u2218 \u03b9_{d'}) f = \u03b9_{d\u00b7d'} f`, or swap the arguments in the statement to match the prose.",
+   "issue": "`levelRaiseFun_levelRaiseFun`'s docstring describes the LHS as `(\u03b9_{d'} \u2218 \u03b9_d) f` (\"raising by `d'` after `d`\"), but the statement is `levelRaiseFun d k (levelRaiseFun d' k f)`, i.e. `\u03b9_d \u2218 \u03b9_{d'}`. The composition order in the doc is the reverse of the statement.",
+   "line": 345
+  },
+  {
+   "evidence": "`CuspForm` (Mathlib) takes only `(\u0393 : Subgroup (GL (Fin 2) \u211d)) (k : \u2124)`, no `NeZero`; `NeZero.mul` is an instance at mathlib/Mathlib/Algebra/GroupWithZero/Basic.lean:89.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Remove `[NeZero B]` from `eqRec_cuspForm_apply` and `[NeZero M]` from `levelRaise_levelRaise`; both then hold at the generality they actually have, consistent with the PR's stated NeZero-pruning.",
+   "issue": "`eqRec_cuspForm_apply` carries `[NeZero B]`, which neither the statement type (`CuspForm ((Gamma1 B).map (mapGL \u211d)) k` needs no instance on `B`) nor the proof (`subst heq; rfl`) uses. This spurious binder then forces the equally unnecessary `[NeZero M]` on `levelRaise_levelRaise` (line 367), since `NeZero (d * M)` is derived from it via `NeZero.mul` purely to discharge `[NeZero B]`.",
+   "line": 357
+  },
+  {
+   "evidence": "grep for `\u03b4_d` hits only lines 102, 111, 126, 162; grep for `\u03b1_d` hits the module header and lines 141, 221, 253, 295.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/LevelRaise.lean",
+   "fix": "Replace `\u03b4_d` with `\u03b1_d` in both docstrings.",
+   "issue": "The docstrings of `levelRaiseConjOfDvd` (line 102) and `levelRaiseConj` (line 111) describe the construction as `\u03b4_d \u03b3 \u03b4_d\u207b\u00b9`, but `\u03b4_d` is never defined anywhere in the file; the matrix is `levelRaiseMatrix d`, written `\u03b1_d` everywhere else (module header, lines 141-144, 252-256).",
+   "line": 102
+  }
+ ],
+ "head_sha": "f30a85c74f49cf03b3a3d32ce884039775a4c42f",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2188,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7088c6a025049503fcd2df43ba000ca436f921cc2c9b7deab98d84bba552f119",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T001524Z-2188-correctness-e58150",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T00:15:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is faithful: the conjugation step, the d^{1-k} normalisation, the T-factorisation and the q-expansion dilation all check out, and the primed q-expansion theorem is non-vacuous (h = 1 witnesses it). Remaining defects are docstrings that describe declarations and hypotheses that do not exist, plus one unnecessary typeclass binder.",
+ "transcript_blob": "21320ba50614aa5375f236a5491b5fbc2c33193cb33ac29ca6410d4bbbf8f761",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 91642,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 91642,
+  "cache_read_input_tokens": 1555590,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 309,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 309,
+    "cache_read_input_tokens": 107540,
+    "input_tokens": 2,
+    "output_tokens": 3421,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 31397,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
