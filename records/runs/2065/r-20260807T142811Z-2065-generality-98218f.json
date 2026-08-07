@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2955875,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 216.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 58255,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 58255,
+    "cache_read_input_tokens": 634255,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1153,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1153,
+      "cache_read_input_tokens": 73309,
+      "input_tokens": 2,
+      "output_tokens": 4570,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15473,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7d8a780289d8ede93253d16ed14e8bdd892f19ab",
+ "cost_usd": 1.295587,
+ "dedupe_key": "TauCetiProject/TauCeti|2065|7b0dc850b682c22ab3e2beaad3757fe15ba0056c|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "af2255d0ca32928573cb7514b6403bab0c8786605d9ef30f35fc8fed0c135e33",
+ "diff_sha256": "af2255d0ca32928573cb7514b6403bab0c8786605d9ef30f35fc8fed0c135e33",
+ "duration_s": 216.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Dynamics/BirkhoffSum/Basic.lean:31 `birkhoffSum (f : \u03b1 \u2192 \u03b1) (g : \u03b1 \u2192 M) n x = \u2211 k \u2208 range n, g (f^[k] x)` and Average.lean:46 are generic in `f` and `g`; TauCeti/Probability/Ergodic/CondExpProjection.lean:133 `tendsto_eLpNorm_birkhoffAverage_sub_condExp (T : \u03a9 \u2192 \u03a9) (hT : MeasurePreserving T \u03bc \u03bc)` and MeanErgodic.lean:90 already state the mean ergodic theorem for an arbitrary map and observable, so the specialized bridge is a strict step down from the surrounding API level; `shift_iterate_apply` (PathSpace/Shift.lean:49) is already `@[simp]`, so the specialization is two lines.",
+   "file": "TauCeti/Probability/DeFinetti/ViaKoopman/Invariant/BlockTransport.lean",
+   "fix": "Prove the general form `birkhoffAverage \u211d T F n = prefixAverage (fun i x => F (T^[i] x)) n` (`funext x; rw [birkhoffAverage, birkhoffSum, prefixAverage_apply, smul_eq_mul]; congr 1; exact (Finset.sum_range _).symm`), then derive the coordinate form from it by `simp [shift_iterate_apply]`.",
+   "issue": "`birkhoffAverage_coord_eq_prefixAverage` is under-generalized: it fixes the map to `shift \u03b1` and the observable to `fun x => f (x 0)`, but the identity is `birkhoffAverage \u211d T F n = prefixAverage (fun i x => F (T^[i] x)) n` for any `T : \u03a9 \u2192 \u03a9` and `F : \u03a9 \u2192 \u211d` \u2014 the proof uses no property of the shift and no property of the coordinate form except one `shift_iterate_apply` rewrite. A consumer with a block observable (`g (x 0) * h (x 1)`, i.e. exactly the disjoint-block factorization this file exists to serve, and exactly the shape of `g : (Fin m \u2192 \u03b1) \u2192 \u211d\u22650\u221e` in the file's other lemma) cannot use it and must redo the proof.",
+   "line": "90"
+  },
+  {
+   "evidence": "Transport.lean:76-77 uses `h\u03c1`/`h\u03c6_mono` only via `h\u03c1.measurePreserving_reindex h\u03c6_mono`; the remaining steps are `preimage_reindex_eq_of_measurableSet_invariants_of_eventually_add` (line 79) and `hmp.setLIntegral_comp_preimage` (line 85). `contractableLaw_iff_forall_measurePreserving_reindex` (PathSpace/ContractableLaw.lean:73) confirms the two hypotheses are just the packaged form of that single `MeasurePreserving` fact.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/Transport.lean",
+   "fix": "Take `hmp : MeasurePreserving (fun x : \u2115 \u2192 \u03b1 => fun k => x (\u03c6 k)) \u03c1 \u03c1` as the hypothesis and drop `h\u03c6_mono`; keep the `ContractableLaw` form as a one-line corollary (`h\u03c1.measurePreserving_reindex h\u03c6_mono`) for the block lemma, or inline that term at the call site.",
+   "issue": "`setLIntegral_comp_reindex_eq_of_measurableSet_invariants` assumes `ContractableLaw \u03c1` (invariance under *every* strictly increasing reindexing) plus `StrictMono \u03c6`, but both are consumed in a single step to obtain `MeasurePreserving (fun x k => x (\u03c6 k)) \u03c1 \u03c1`. Stated that way the lemma is inapplicable to a merely shift-invariant law with `\u03c6 = (\u00b7 + C)` (which satisfies `h\u03c6_add` with `m = 0` and is preserved by any shift-invariant `\u03c1`), even though that instance is exactly what the proof supports.",
+   "line": "70"
+  }
+ ],
+ "head_sha": "7b0dc850b682c22ab3e2beaad3757fe15ba0056c",
+ "merge_base_sha": "7d8a780289d8ede93253d16ed14e8bdd892f19ab",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2065,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9e8e9712aae4b236e9cc0aa2f83dd6585169f220de8459c16ea12cbf2eafe403",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T142811Z-2065-generality-98218f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T14:28:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The Birkhoff/prefix-average bridge is stated for the shift and a single-coordinate observable although the identity holds verbatim for any self-map and any real observable, which is the level the repo's own mean ergodic theorems already use and the level the block factorization this file serves will need. The transport theorem likewise assumes full contractability plus strict monotonicity where measure preservation by the one reindexing is all the proof uses.",
+ "transcript_blob": "0cb966cec7055de2663f68ca082eb6b5aa47b74f512ed574c8f3b7171c836fb3",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58255,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 58255,
+  "cache_read_input_tokens": 634255,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1153,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1153,
+    "cache_read_input_tokens": 73309,
+    "input_tokens": 2,
+    "output_tokens": 4570,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15473,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
