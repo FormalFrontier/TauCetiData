@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2274495,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 154.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 71440,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 71440,
+    "cache_read_input_tokens": 428037,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2141,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2141,
+      "cache_read_input_tokens": 85506,
+      "input_tokens": 2,
+      "output_tokens": 3663,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11418,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "cost_usd": 1.22745,
+ "dedupe_key": "TauCetiProject/TauCeti|2215|acbb442e82c69e4dca17adce9d940942dd96413d|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4afff7ca29cdd938aeebf08258ee44eeca12111b7a7a8f34e157baaf750a73e3",
+ "diff_sha256": "4afff7ca29cdd938aeebf08258ee44eeca12111b7a7a8f34e157baaf750a73e3",
+ "duration_s": 154.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"IntervalIntegrable\" TauCeti/Analysis/Complex/Conformal/` returns hits only in Length.lean; `hyperbolicLength_add` (line 282) has no in-repo caller.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Hyperbolic/Length.lean",
+   "fix": "Make it public (e.g. `TauCeti.intervalIntegrable_norm_div_one_sub_norm_sq`) and add the `deriv`-form corollary the proof already writes twice \u2014 `(hderiv : \u2200 t \u2208 uIoo a b, HasDerivAt \u03b3 (\u03b3' t) t) \u2192 IntervalIntegrable (fun t => \u2016deriv \u03b3 t\u2016 / (1 - \u2016\u03b3 t\u2016 ^ 2)) volume a b` \u2014 then use it for `hint1`/`hint2` instead of the two inline `congr_uIoo` blocks.",
+   "issue": "`intervalIntegrable_norm_div_one_sub_norm_sq` is the only lemma in the repo that produces the integrability the public `hyperbolicLength_add` (line 282) demands, and it stays `private`. The PR generalises it to `uIcc` and drops `hab`, i.e. makes it exactly the reusable statement, yet keeps it hidden \u2014 so an external caller of `hyperbolicLength_add` (used nowhere in-repo, hence purely API-facing) must reprove it. Additionally it is stated for an explicit `\u03b3'` while `hyperbolicLength_add` and `densityLength_le_densityLength` ask for the `deriv` form, and the PR inlines that bridge twice at lines 440-452.",
+   "line": 262
+  },
+  {
+   "evidence": "DensityLength.lean:100 `{\u03c1 \u03c1' : F \u2192 \u211d} {\u03b3 \u03b4 : \u211d \u2192 F}`; line 152 states the congruence in `F` only; lines 202-203 rebind `\u03c1'`/`\u03b4` at `G`; line 194 calls the congruence \"the inequality counterpart\".",
+   "file": "TauCeti/Analysis/Calculus/DensityLength.lean",
+   "fix": "Pick one generality for the pair: either add `{G} {\u03c1' : G \u2192 \u211d} {\u03b4 : \u211d \u2192 G}` to `densityLength_congr_of_eqOn` as well, or drop `G` from the new lemma and use the section variables.",
+   "issue": "`densityLength_le_densityLength` introduces a fresh `{G : Type*}` for the smaller path, shadowing the section's `\u03c1' : F \u2192 \u211d`, `\u03b4 : \u211d \u2192 F` (line 100), while its stated equality counterpart `densityLength_congr_of_eqOn` (line 151) is confined to two paths in the same space `F`. The docstrings of both files present the two as the equality/inequality pair of one statement, but only one of them applies across spaces.",
+   "line": 202
+  }
+ ],
+ "head_sha": "acbb442e82c69e4dca17adce9d940942dd96413d",
+ "merge_base_sha": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2215,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1cd14caa603e7d39afd8936b4b60d79a7998a50d08be50eb93a2ff23ecbbfc5a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T101044Z-2215-api-design-0ef7ca",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T10:10:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new general comparison lemma is well-shaped and correctly public, but the PR leaves the public `hyperbolicLength_add` with an integrability hypothesis that no public lemma can discharge \u2014 the helper it reshaped to exactly the right generality stays `private` \u2014 and it introduces a generality asymmetry with its own stated equality counterpart.",
+ "transcript_blob": "45b4f556cba37382af8e315ecb21a09e0e4e9b7f88ba799d1b3e318842f5a7de",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71440,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 71440,
+  "cache_read_input_tokens": 428037,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2141,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2141,
+    "cache_read_input_tokens": 85506,
+    "input_tokens": 2,
+    "output_tokens": 3663,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11418,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
