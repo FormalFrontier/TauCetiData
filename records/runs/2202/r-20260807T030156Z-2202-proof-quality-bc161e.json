@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7237575000000005,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 421.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 92099,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 92099,
+    "cache_read_input_tokens": 2130289,
+    "inference_geo": "not_available",
+    "input_tokens": 54,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6700,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6700,
+      "cache_read_input_tokens": 101606,
+      "input_tokens": 2,
+      "output_tokens": 2866,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 29243,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bc749ef44e169137f73df43fd305f66451f1061b",
+ "cost_usd": 2.723758,
+ "dedupe_key": "TauCetiProject/TauCeti|2202|a4a76b76b653e224c531182b1955aa1711fdc3ef|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "b09b7659a07fda614a82cd0c98f3973325d943471b6fff30d6fc8e0402f86d8f",
+ "diff_sha256": "b09b7659a07fda614a82cd0c98f3973325d943471b6fff30d6fc8e0402f86d8f",
+ "duration_s": 421.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n 'private lemma .*_T' TauCeti/NumberTheory/HeckeRing/` returns exactly one hit in this file after the diff: Associativity.lean:388; the diff deletes the other five.",
+   "file": "TauCeti/NumberTheory/HeckeRing/Associativity.lean",
+   "fix": "Move it into the new `Eval` section of `Basic.lean` as public `HeckeCosetModule.sum_smul_index` and cite it from the three use sites, so no `_T` restatement remains in the file.",
+   "issue": "`sum_smul_index_T` is left as a private wrapper restatement \u2014 same species as the five the PR promotes, with the verbatim same docstring pattern (\"restated for the wrapper type `HeckeCosetModule \u0394 H\u2081 H\u2082 R`\"). It is used three times (lines 398, 443, 444) and the PR's own rationale (\"every consumer re-derives its own private copies\") applies to it unchanged.",
+   "line": 388
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Finsupp/Defs.lean:144 `theorem zero_apply`, mathlib/Mathlib/Algebra/Group/Finsupp.lean:56 `lemma add_apply`, mathlib/Mathlib/Data/Finsupp/SMulWithZero.lean:59 `theorem smul_apply` \u2014 all applicable at the wrapper by defeq, exactly as the three siblings already are.",
+   "file": "TauCeti/NumberTheory/HeckeRing/Basic.lean",
+   "fix": "Prove the three from `Finsupp.zero_apply`, `Finsupp.add_apply`, `Finsupp.smul_apply` (the last composed with `smul_eq_mul`, or state the RHS with `\u2022`), so the wrapper lemmas depend on Mathlib's stated API rather than on how `Finsupp`'s `0`, `+` and `\u2022` happen to be defined.",
+   "issue": "`smul_apply`, `zero_apply` (357) and `add_apply` (361) are proved by bare `(rfl)`, i.e. by unfolding Mathlib's implementation, while the three siblings in the same section cite the Mathlib lemma (`Finsupp.mem_support_iff` 330, `Finsupp.notMem_support_iff` 335, `Finsupp.sum_apply` 347). `smul_apply` is the worst case: its RHS `a * f D` additionally bakes in the `Semiring.toModule`/`Mul.toSMul` defeq `a \u2022 f D = a * f D`, which no comment documents and which is not the shape of any Mathlib statement.",
+   "line": 371
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Finsupp/Defs.lean `@[simp] theorem mem_support_iff`; mathlib/Mathlib/Algebra/BigOperators/Finsupp/Basic.lean:276-279 `@[simp] theorem sum_apply`. `HeckeCosetModule` is a plain `def` with no `support`/`sum` of its own (mathlib/Mathlib/NumberTheory/HeckeRing/Defs.lean:183).",
+   "file": "TauCeti/NumberTheory/HeckeRing/Basic.lean",
+   "fix": "Drop `@[simp]` from these two (keep them for `rw`/`simp only`), or leave the goals to Mathlib's versions; the coercion lemmas `zero_apply`/`add_apply`/`smul_apply` do not have this problem, since their LHS head mentions `HeckeCosetModule`'s own `FunLike` instance.",
+   "issue": "`mem_support_iff` and `sum_apply` (343) are marked `@[simp]` but their LHS patterns are literally Mathlib's: `f.support` and `f.sum` on a `HeckeCosetModule` elaborate to `Finsupp.support`/`Finsupp.sum` (there is no `HeckeCosetModule.support`/`.sum`), and Mathlib's `Finsupp.mem_support_iff`/`Finsupp.sum_apply` are `@[simp]` too. The two rewrites differ only in which `FunLike` instance the resulting coercion carries, and only the wrapper form is matched by the other new wrapper simp lemmas, so a downstream `simp` gets a normal form the proof does not control.",
+   "line": 328
+  },
+  {
+   "evidence": "Associativity.lean:41 `open Subgroup DoubleCoset Finsupp`; the new declarations sit in `namespace HeckeCosetModule` (Basic.lean:237) with names `smul_apply`, `sum_apply`, `zero_apply`, `notMem_support_iff` that all exist in `Finsupp`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/Associativity.lean",
+   "fix": "Qualify the wrapper lemmas at the use sites (`HeckeCosetModule.smul_apply`, `HeckeCosetModule.sum_apply`, ...) at lines 446-453. Also drop `zero_apply` from the two `simp` sets at 449/452 \u2014 it is `@[simp]` now.",
+   "issue": "The rewritten step cites `smul_apply`, `sum_apply`, `zero_apply` and `notMem_support_iff` unqualified in a file that has `open ... Finsupp` (line 41). All four names exist in both `Finsupp` and `HeckeCosetModule` after this PR, and both alternatives typecheck here, so which lemma the proof applies rests on name-resolution precedence rather than on anything the script states.",
+   "line": 446
+  }
+ ],
+ "head_sha": "a4a76b76b653e224c531182b1955aa1711fdc3ef",
+ "merge_base_sha": "bc749ef44e169137f73df43fd305f66451f1061b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2202,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "337da3ed1be47a78a070fa334c89ea06f59288210da6d35dfaadea9393b60413",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T030156Z-2202-proof-quality-bc161e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T03:01:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The consolidation is left half-done (a sixth identical private wrapper restatement stays behind), three of the new lemmas unfold to bare `rfl` where the corresponding Mathlib lemma would serve as the proof term, and two of them collide with Mathlib simp lemmas of the same name and LHS.",
+ "transcript_blob": "a2424dc9666be6322d0698a6decf9a7c37bbee7fd2548ec57a91ba7dc8f05a4f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 92099,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 92099,
+  "cache_read_input_tokens": 2130289,
+  "inference_geo": "not_available",
+  "input_tokens": 54,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6700,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6700,
+    "cache_read_input_tokens": 101606,
+    "input_tokens": 2,
+    "output_tokens": 2866,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 29243,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

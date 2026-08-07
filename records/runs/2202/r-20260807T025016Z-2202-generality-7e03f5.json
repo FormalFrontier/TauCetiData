@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.527804,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 258.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72245,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72245,
+    "cache_read_input_tokens": 638676,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6430,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6430,
+      "cache_read_input_tokens": 82022,
+      "input_tokens": 1,
+      "output_tokens": 3350,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19193,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bc749ef44e169137f73df43fd305f66451f1061b",
+ "cost_usd": 1.527804,
+ "dedupe_key": "TauCetiProject/TauCeti|2202|a4a76b76b653e224c531182b1955aa1711fdc3ef|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "b09b7659a07fda614a82cd0c98f3973325d943471b6fff30d6fc8e0402f86d8f",
+ "diff_sha256": "b09b7659a07fda614a82cd0c98f3973325d943471b6fff30d6fc8e0402f86d8f",
+ "duration_s": 258.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Associativity.lean:387-391 `private lemma sum_smul_index_T ... := Finsupp.sum_smul_index h0`; uses at 398, 443-444. Mathlib original: Mathlib/Data/Finsupp/SMul.lean:181 `theorem sum_smul_index [MulZeroClass R] [AddCommMonoid M]`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/Associativity.lean",
+   "fix": "Move it to `section EvalSMul` in `Basic.lean` as `HeckeCosetModule.sum_smul_index` (statement unchanged; `[Semiring R]` is forced by `instModule`) and delete the private copy, citing the public name at the three use sites.",
+   "issue": "`private lemma sum_smul_index_T` is the sixth wrapper restatement of a `Finsupp` lemma (`Finsupp.sum_smul_index`, one-line citation, docstring 'restated for the wrapper type `HeckeCosetModule \u0394 H\u2081 H\u2082 R`') and is left private in a downstream file while its five siblings are promoted to the public `Eval` block. It is load-bearing at lines 398, 443, 444 and for the public `smul_mul`, so any further consumer re-derives it \u2014 exactly the duplication this PR exists to remove.",
+   "line": 387
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Finsupp/Defs.lean:156-157 `@[simp, grind =] theorem mem_support_iff {f : \u03b1 \u2192\u2080 M} : a \u2208 f.support \u2194 f a \u2260 0`; grep for `mem_support_iff`/`add_apply` under TauCeti/NumberTheory/HeckeRing returns only the Basic.lean declarations.",
+   "file": "TauCeti/NumberTheory/HeckeRing/Basic.lean",
+   "fix": "Drop `mem_support_iff` (or at minimum its `@[simp]`), and drop `add_apply` until a consumer needs it. Keep `notMem_support_iff`: it is used at Associativity.lean:449/452 and its wrapper-coercion RHS is what the goal there requires.",
+   "issue": "`@[simp] mem_support_iff` is not a reachability fix: its LHS `D \u2208 f.support` elaborates to `@Finsupp.support (HeckeCoset \u0394 H\u2081 H\u2082) R _ f`, with the wrapper type appearing only in `f`'s ascription, so Mathlib's `@[simp, grind =] Finsupp.mem_support_iff` already matches wrapper goals. The two now share a discrimination key with different RHS coercions (wrapper `FunLike` vs `Finsupp`), making the simp normal form order-dependent. It also has no in-repo consumer; `add_apply` (line 360) likewise has none.",
+   "line": 328
+  }
+ ],
+ "head_sha": "a4a76b76b653e224c531182b1955aa1711fdc3ef",
+ "merge_base_sha": "bc749ef44e169137f73df43fd305f66451f1061b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2202,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f5a4db8ac86d1af822745f9eaeb94b4929680cb1bb6debef43c25b250b9ae139",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T025016Z-2202-generality-7e03f5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T02:50:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The public Eval set stops one short: sum_smul_index_T survives as a private wrapper restatement of the same species in Associativity.lean, so the next consumer still writes copy #6. mem_support_iff duplicates a Mathlib simp lemma whose LHS already matches at the wrapper type, and it and add_apply have no consumer.",
+ "transcript_blob": "ad920e939bbadf2e0da2ffdde0cecd8b2fb5b585d30090f6a0a05de2bc51e11d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72245,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72245,
+  "cache_read_input_tokens": 638676,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6430,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6430,
+    "cache_read_input_tokens": 82022,
+    "input_tokens": 1,
+    "output_tokens": 3350,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19193,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
