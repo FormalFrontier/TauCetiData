@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2543615,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 189.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 65531,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 65531,
+    "cache_read_input_tokens": 403475,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2009,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2009,
+      "cache_read_input_tokens": 79729,
+      "input_tokens": 2,
+      "output_tokens": 4147,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15134,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.254361,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 189.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib puts the analogous statement in `Real`: Mathlib/Analysis/SpecialFunctions/Gamma/Basic.lean:464 `lemma integral_rpow_mul_exp_neg_mul_Ioi {a r : \u211d} (ha : 0 < a) (hr : 0 < r)` inside `namespace Real`. The new lemma's binders are `(n : \u2115) {a : \u211d} (ha : 0 < a)` only.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Move the declaration above `namespace StronglyContinuousSemigroup` (file-level `private`, or into the `Real` namespace) so the name matches its content, keeping the Mathlib-style name.",
+   "issue": "`integral_pow_mul_exp_neg_mul_Ioi` is declared inside `namespace StronglyContinuousSemigroup` (opened line 51, closed line 338) but its statement `\u222b t in Ioi 0, t ^ n * Real.exp (-a * t) = n ! / a ^ (n + 1)` mentions no semigroup and takes no `S`; the full name `TauCeti.Semigroups.StronglyContinuousSemigroup.integral_pow_mul_exp_neg_mul_Ioi` advertises semigroup content it does not have, and `S.integral_pow_mul_exp_neg_mul_Ioi` dot-notation would be meaningless.",
+   "line": 56
+  },
+  {
+   "evidence": "Basic.lean:65-68 `lemma StronglyContinuousSemigroup.integrable_resolvent_integrand \u2026 : IntegrableOn (fun t => Real.exp (-(lambda * t)) \u2022 S.realOperator t x) (Set.Ioi 0)`; Mathlib names `IntegrableOn` results `integrableOn_\u2026` (e.g. `exp_neg_integrableOn_Ioi`, used at Basic.lean:71).",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Unify on the Mathlib prefix for `IntegrableOn`: keep the new `integrableOn_\u2026` name and rename the existing `integrable_resolvent_integrand` to `integrableOn_resolvent_integrand`, updating its uses in the same PR.",
+   "issue": "`integrableOn_pow_mul_resolvent_integrand` and the pre-existing `StronglyContinuousSemigroup.integrable_resolvent_integrand` are in the same namespace, prove the same predicate (`IntegrableOn \u2026 (Set.Ioi 0)`) about the same integrand up to the `t ^ n` factor, but use different prefixes, so neither is findable from the other by tab completion.",
+   "line": 75
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d80238372a995bfab0362cef7a767cb445ae83d6c606528db4db1a99fcb8e036",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T164051Z-2234-naming-6f9ac8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:40:51Z",
+ "submitted_by": "kim-em",
+ "summary": "Names generally describe their conclusions and follow the adjacent contraction-case precedent, and no notation is added. Two namespace/consistency problems: a pure real-analysis Gamma integral is named inside the semigroup namespace, and the new integrability lemma uses a different prefix from the existing sibling for the same predicate.",
+ "transcript_blob": "d13213a5d39dfd0f7d4e0aa3093dcd5e56675c62299673ef19d58cd4bb7f2677",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 65531,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 65531,
+  "cache_read_input_tokens": 403475,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2009,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2009,
+    "cache_read_input_tokens": 79729,
+    "input_tokens": 2,
+    "output_tokens": 4147,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15134,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

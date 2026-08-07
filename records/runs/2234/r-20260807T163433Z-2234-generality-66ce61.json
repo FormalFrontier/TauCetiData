@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2538885,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 203.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 61127,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 61127,
+    "cache_read_input_tokens": 486745,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2798,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2798,
+      "cache_read_input_tokens": 74536,
+      "input_tokens": 2,
+      "output_tokens": 3042,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15522,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.253888,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 203.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PowerBounds.lean:329-336 (`hn` used only by `Nat.exists_eq_succ_of_ne_zero`); PowerBounds.lean:347-348 handles `zero` via `ContinuousLinearMap.norm_id_le`; GrowthBound.lean:45 `HasGrowthBound.one_le : 1 \u2264 M`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Drop `hn` and state `\u2016S.resolvent hb lambda hlambda ^ n\u2016 \u2264 M / (lambda - omega) ^ n` for all `n : \u2115`; add a `cases n` with `zero => ContinuousLinearMap.norm_id_le.trans (by simpa using hb.one_le)`. `ContractionSemigroup.resolvent_pow_norm_le` then loses its `cases n` split entirely.",
+   "issue": "`resolvent_pow_norm_le` assumes `hn : 1 \u2264 n`, but the statement holds for `n = 0`: `R^0 = 1`, `\u2016(1 : X \u2192L[\u211d] X)\u2016 \u2264 1` (`ContinuousLinearMap.norm_id_le`), and `M / (lambda - omega)^0 = M \u2265 1` by `hb.one_le` (GrowthBound.lean:45). The contraction specialization in the same file (line 344) is stated for all `n`, so the general theorem is strictly weaker than its own special case.",
+   "line": 329
+  },
+  {
+   "evidence": "Deriv.lean:189-206 vs PowerBounds.lean:229-251; `ContinuousLinearMap.apply` is Mathlib/Analysis/Normed/Operator/Bilinear.lean:263.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Derive it from `S.iteratedDeriv_resolventFun hb n hl` by commuting `iteratedDeriv` with the evaluation map `ContinuousLinearMap.apply \u211d X x`, using `ContinuousLinearMap.iteratedFDeriv_comp_left` (Mathlib/Analysis/Calculus/ContDiff/Basic.lean:255) plus `iteratedDeriv_eq_iteratedFDeriv`, with `ContDiffAt` from `S.contDiffOn_resolventFun` on the open set `Set.Ioi omega` (Deriv.lean:222).",
+   "issue": "`iteratedDeriv_resolventFun_apply_eq_pow` re-runs, at a point `x`, the exact induction already carried out at operator level by `StronglyContinuousSemigroup.iteratedDeriv_resolventFun` (Deriv.lean:189-206, same statement `((-1)^n * n!) \u2022 R^(n+1)`, same `heq`/`hasDerivAt_resolventFun_pow` steps). A special case is being proved from scratch instead of derived from the existing general result.",
+   "line": 229
+  },
+  {
+   "evidence": "PowerBounds.lean:97-108, 165-176, 309-320; PowerBounds.lean:81-84, 131-136, 288-293; Basic.lean:47-62 and Basic.lean:65-88.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "State once in `Resolvent/Basic.lean` (upstream of this file) the general lemmas `\u2016(t^n * exp(-l*t)) \u2022 S.realOperator t x\u2016 \u2264 M*\u2016x\u2016*(t^n * exp(-(l-omega)*t))` for `0 < t`, the scalar `IntegrableOn (fun t => t^n * exp(-b*t)) (Ioi 0)` for `0 < b`, and the vector `integrableOn_pow_mul_resolvent_integrand`; make `norm_resolvent_integrand_le` and `integrable_resolvent_integrand` their `n = 0` instances, and use them at the three sites here.",
+   "issue": "The pointwise integrand bound `t^n * exp(-l*t) * \u2016S(t)x\u2016 \u2264 M\u2016x\u2016 * (t^n * exp(-(l-omega)t))` is written out three times verbatim (lines 97-108, 165-176, 309-320), differing only in `n` vs `n+1` and `lambda` vs `l`; the `n = 0` case is a fourth copy in Basic.lean:47 (`norm_resolvent_integrand_le`). Likewise the scalar integrability `IntegrableOn (fun t => t^n * exp(-b*t)) (Ioi 0)` is re-derived from `integrableOn_rpow_mul_exp_neg_mul_rpow` three times (lines 81-84, 131-136, 288-293), and the new general `integrableOn_pow_mul_resolvent_integrand` leaves Basic.lean:65 `integrable_resolvent_integrand` as a separately proved `n = 0` duplicate.",
+   "line": 97
+  },
+  {
+   "evidence": "Deriv.lean:208-219 uses `norm_pow_le'` + `resolventFun_norm_le`, giving `(M/(lambda-omega))^(n+1)`; PowerBounds.lean:327-336 gives `M/(lambda-omega)^n` with `M \u2265 1`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean",
+   "fix": "Add the sharp corollary `\u2016iteratedDeriv n (S.resolventFun hb) lambda\u2016 \u2264 n ! * M / (lambda - omega)^(n+1)` in PowerBounds.lean (from `iteratedDeriv_resolventFun` and `resolvent_pow_norm_le`), remove the weaker statement from Deriv.lean, and re-derive `ContractionSemigroup.norm_iteratedDeriv_resolventFun_le` (Deriv.lean:256) from the sharp version.",
+   "issue": "`norm_iteratedDeriv_resolventFun_le` still states the submultiplicative bound `n! * (M/(lambda-omega))^(n+1)`, i.e. `M^(n+1)`. The PR's own `resolvent_pow_norm_le` plus `iteratedDeriv_resolventFun` give the sharp `n! * M / (lambda-omega)^(n+1)`, so the general derivative bound is now a strictly weaker duplicate of a result in this PR (the PR did update the contraction power bound this way, but not this one).",
+   "line": 211
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "70a454502d43f6af29dbdc83b81a602198083d86c4acb97edf66d3adade6cb7a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T163433Z-2234-generality-66ce61",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:34:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The sharp bound carries an unnecessary `1 \u2264 n` hypothesis, and the PR re-proves by induction a pointwise special case of the operator-level `iteratedDeriv_resolventFun` that already exists in Deriv.lean. The integrand estimate and its scalar integrability are each proved three more times here on top of the `n = 0` copies already in Resolvent/Basic.lean, and the now-superseded weaker `M^(n+1)` derivative bound is left in place.",
+ "transcript_blob": "0e6505b1ce9bdc13542ea01e7a808ef653f2d2cb06dd3b421587e20e3c1730e0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61127,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 61127,
+  "cache_read_input_tokens": 486745,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2798,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2798,
+    "cache_read_input_tokens": 74536,
+    "input_tokens": 2,
+    "output_tokens": 3042,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15522,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

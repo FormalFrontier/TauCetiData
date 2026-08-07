@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2234774999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 144.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 66470,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 66470,
+    "cache_read_input_tokens": 525011,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5825,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5825,
+      "cache_read_input_tokens": 76852,
+      "input_tokens": 2,
+      "output_tokens": 3142,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11395,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.223477,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 144.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 97-108, 165-176, 309-320 differ only in the exponent (`n` vs `n + 1`) and the parameter name (`lambda` vs `l`); each ends with the identical `have hexponent \u2026 rw [hexponent, Real.exp_add]; ring`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Extract one private lemma `\u2016(t ^ k * Real.exp (-l * t)) \u2022 S.realOperator t x\u2016 \u2264 M * \u2016x\u2016 * (t ^ k * Real.exp (-(l - omega) * t))` for `0 \u2264 t`, and use it at all three sites (it also subsumes Basic.lean's private `norm_resolvent_integrand_le`).",
+   "issue": "The two-step domination calc `t^k * exp(-l*t) * \u2016S.realOperator t x\u2016 \u2264 t^k * exp(-l*t) * (M * exp(omega*t) * \u2016x\u2016) = M * \u2016x\u2016 * (t^k * exp(-(l-omega)*t))` appears verbatim three times: lines 97-108, 165-176, 309-320. Basic.lean:47 `norm_resolvent_integrand_le` is already the `k = 0` case of the same fact.",
+   "line": 97
+  },
+  {
+   "evidence": "Lines 81-84, 131-136, 288-293 are the same four-line pattern; only `s`, `b`, and the `simpa only` argument list (extra `neg_mul` at line 136) differ.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Add a private lemma `integrableOn_pow_mul_exp_neg_mul_Ioi (k : \u2115) {b : \u211d} (hb : 0 < b) : IntegrableOn (fun t : \u211d => t ^ k * Real.exp (-b * t)) (Set.Ioi 0)` and call it at the three sites.",
+   "issue": "The derivation of `IntegrableOn (fun t => t ^ k * Real.exp (-b * t)) (Set.Ioi 0)` from `integrableOn_rpow_mul_exp_neg_mul_rpow` is repeated three times: lines 79-84, 131-136, 285-294, each with the same `(p := 1)`, `Nat.cast_nonneg`, `Real.rpow_one, Real.rpow_natCast` incantation.",
+   "line": 79
+  },
+  {
+   "evidence": "Lines 87-92, 141-146, 148-153 are character-for-character identical apart from the surrounding `filter_upwards`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Extract a private lemma giving `AEStronglyMeasurable (fun t => (t ^ k * Real.exp (-l * t)) \u2022 S.realOperator t x) (volume.restrict (Set.Ioi 0))` (or a `ContinuousOn` lemma for `fun t => S.realOperator t x` on `Set.Ioi 0`) and reuse it.",
+   "issue": "The `AEStronglyMeasurable` argument (`ContinuousOn.aestronglyMeasurable \u2026 ContinuousOn.smul \u2026 fun_prop \u2026 realOperator_continuousWithinAt \u2026 mono Set.Ioi_subset_Ici_self`) is duplicated three times: lines 87-92, 141-146, 147-153.",
+   "line": 87
+  },
+  {
+   "evidence": "Proof body runs from line 120 (`by`) to line 206; the only non-code annotation is the docstring.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "After extracting the lemmas above, the remaining body should be well under 50 lines; add a leading comment naming the differentiation-under-the-integral lemma being fed and why `delta = (lambda - omega)/2` is the right ball radius (uniform domination on the ball).",
+   "issue": "`hasDerivAt_resolventMoment` spans lines 120-206 (86 lines) with no comments describing the global structure; the reader has to reconstruct that `hbound_int`/`hF_meas`/`hF'_meas`/`hdom`/`hdiff` are the five hypotheses of `hasDerivAt_integral_of_dominated_loc_of_deriv_le`.",
+   "line": 117
+  },
+  {
+   "evidence": "Deriv.lean:189-206 `iteratedDeriv_resolventFun` proves `iteratedDeriv n (S.resolventFun hb) lambda = ((-1)^n * n !) \u2022 S.resolventFun hb lambda ^ (n+1)`; Deriv.lean:222 `contDiffOn_resolventFun` gives the smoothness. Mathlib/Analysis/Calculus/ContDiff/Basic.lean:255 `ContinuousLinearMap.iteratedFDeriv_comp_left`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Prove the commutation `iteratedDeriv n (fun l => f l x) lambda = (iteratedDeriv n f lambda) x` once for a smooth CLM-valued `f` (via `ContinuousLinearMap.apply \u211d X x` and `ContinuousLinearMap.iteratedFDeriv_comp_left`, using the existing `contDiffOn_resolventFun` on the open `Set.Ioi omega`), then obtain this lemma by applying `iteratedDeriv_resolventFun` at `x`.",
+   "issue": "`iteratedDeriv_resolventFun_apply_eq_pow` re-runs the whole induction (`iteratedDeriv_succ`, `filter_upwards`, `hasDerivAt_resolventFun_pow`, `push_cast [Nat.factorial_succ]`, `module`) that Deriv.lean:189-206 already performs for the operator-valued `iteratedDeriv_resolventFun`.",
+   "line": 229
+  },
+  {
+   "evidence": "Line 277 `_ = _ := rfl`; `resolventMoment` is defined at lines 111-113 and elsewhere unfolded via `simpa only [resolventMoment, \u2026]` (line 206), so the file is inconsistent about how it unfolds the definition.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Replace with an explicit step, e.g. `_ = (1 / (n.factorial : \u211d)) \u2022 \u222b t in Set.Ioi 0, \u2026 := by rw [resolventMoment]`, or add a `resolventMoment` unfolding lemma and use it here and at line 206.",
+   "issue": "The final calc step `_ = _ := rfl` closes the goal by definitional unfolding of the private `resolventMoment`, with both sides elided; nothing on the line tells the reader what is being identified.",
+   "line": 277
+  },
+  {
+   "evidence": "Line 160 `dsimp [delta] at *`, inside the `hdom` block of the 86-line `hasDerivAt_resolventMoment`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Target it: `dsimp only [delta] at hl \u22a2` (or state `hdelta`/`hlower` in terms of `(lambda - omega) / 2` directly and drop the `dsimp`).",
+   "issue": "`dsimp [delta] at *` unfolds the local `let` in every hypothesis and the goal; it is sensitive to the ambient hypothesis list and to unrelated later edits of the proof.",
+   "line": 160
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ec534329c0142f58189bf9cd3dae2887749c44552978485cbda570acff6e9a51",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T164622Z-2234-proof-quality-8dd275",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:46:22Z",
+ "submitted_by": "kim-em",
+ "summary": "Three separate blocks of reasoning (the growth-bound domination calc, the scalar integrability derivation, and the strong-measurability of the integrand) are copy-pasted three times each, which is what makes hasDerivAt_resolventMoment an 86-line uncommented proof; the pointwise iterated-derivative induction also re-proves the operator-valued result already in Deriv.lean.",
+ "transcript_blob": "c16e9a3d05b4641109c3fc538cb36cde2379917dee3577b7c785de839969cc1c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 66470,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 66470,
+  "cache_read_input_tokens": 525011,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5825,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5825,
+    "cache_read_input_tokens": 76852,
+    "input_tokens": 2,
+    "output_tokens": 3142,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11395,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

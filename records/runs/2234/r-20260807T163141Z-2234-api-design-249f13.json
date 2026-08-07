@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.365256,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 171.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 74448,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 74448,
+    "cache_read_input_tokens": 556370,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2582,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2582,
+      "cache_read_input_tokens": 88073,
+      "input_tokens": 2,
+      "output_tokens": 2822,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13238,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.365256,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 171.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PowerBounds.lean:78,259 `Real.exp (-lambda * t)` vs Basic.lean:96,129 `Real.exp (-(lambda * t))`; Mathlib/Algebra/Ring/Defs.lean:286 `@[simp] theorem neg_mul (a b : \u03b1) : -a * b = -(a * b)`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "State both public lemmas with `Real.exp (-(lambda * t))` (and adjust the internal `resolventMoment`/proof rewrites accordingly) so the whole Resolvent directory shares one normal form for the integrand.",
+   "issue": "`resolvent_pow_succ_apply` (line 259) and `integrableOn_pow_mul_resolvent_integrand` (line 78) state the Laplace weight as `Real.exp (-lambda * t)`, while the existing public lemmas `StronglyContinuousSemigroup.resolvent_apply`, `resolventFun_apply` and `integrable_resolvent_integrand` in Basic.lean use `Real.exp (-(lambda * t))`. Since `neg_mul` is `@[simp]`, the new statements are not simp-normal, so a goal normalized by `simp` no longer matches them and `rw [resolvent_apply]` does not connect to the new integral formula (in particular the n = 0 case does not visibly agree with `resolvent_apply`).",
+   "line": 259
+  },
+  {
+   "evidence": "Identity.lean:233 `private theorem resolvent_eq_stronglyContinuousSemigroup_resolvent`; Basic.lean:392 public `ContractionSemigroup.resolventFun_eq`; Basic.lean:344 defines `ContractionSemigroup.resolvent` directly as the general resolvent.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Make the bridge lemma public and place it in Basic.lean next to `ContractionSemigroup.resolventFun_eq` (proved by `(rfl)`, per the comment there), update Identity.lean's uses, and replace `heq` here with it.",
+   "issue": "`ContractionSemigroup.resolvent_pow_norm_le` re-proves `S.toStronglyContinuousSemigroup.resolvent S.hasGrowthBound lambda hlambda = S.resolvent lambda hlambda` by hand (`heq`, lines 352\u2013357), because the canonical identification `ContractionSemigroup.resolvent_eq_stronglyContinuousSemigroup_resolvent` is `private` in Identity.lean:233. Every consumer specializing a general resolvent result to the contraction case must repeat this ad-hoc `ext` proof; the analogous `resolventFun_eq` is public.",
+   "line": 352
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c0f427feb463435340aa3b4a720036c71d2c29d213fe1de1656cfc609c7289c8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T163141Z-2234-api-design-249f13",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:31:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The new surface is minimal and correctly scoped (helpers private, no exposed bodies, no compatibility artifacts), but the integral formulas are stated with a non-simp-normal exponent that clashes with the existing resolvent integral lemmas, and the contraction/general resolvent bridge is still private so this PR re-derives it inline.",
+ "transcript_blob": "73c50d9b8cc37686762b8e3595f3d01df14d786d6397ee79141d49498afa7c5b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 74448,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 74448,
+  "cache_read_input_tokens": 556370,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2582,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2582,
+    "cache_read_input_tokens": 88073,
+    "input_tokens": 2,
+    "output_tokens": 2822,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13238,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5938005,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 175.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78503,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78503,
+    "cache_read_input_tokens": 953239,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1106,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1106,
+      "cache_read_input_tokens": 93604,
+      "input_tokens": 1,
+      "output_tokens": 2045,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12820,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.5938,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 175.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PowerBounds.lean:75-108 uses only `S.realOperator`, `S.realOperator_continuousWithinAt` (Semigroups/Basic.lean), `hb.bound` (GrowthBound.lean) and the Mathlib integrability lemma; Resolvent/Basic.lean:63-83 states the same fact for n = 0 (`integrable_resolvent_integrand`), and Resolvent/Basic.lean:17-19 declares integrability of the Laplace-transform integrand as that file's topic.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Move `integrableOn_pow_mul_resolvent_integrand` into `TauCeti/Analysis/Semigroups/Resolvent/Basic.lean` beside `integrable_resolvent_integrand` (adding the `Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral` import there), and keep only the power-bound material in PowerBounds.lean.",
+   "issue": "`integrableOn_pow_mul_resolvent_integrand` is public and uses no theory later than `Semigroups/Basic.lean` and `GrowthBound.lean` (only `realOperator`, `realOperator_continuousWithinAt`, `hb.bound` \u2014 not even `resolvent`). It generalizes `StronglyContinuousSemigroup.integrable_resolvent_integrand` (Resolvent/Basic.lean:65), but sits in PowerBounds.lean, which imports Resolvent/Deriv \u2192 Identity \u2192 Basic, so any later consumer of this integrability fact must pull in the whole derivative theory.",
+   "line": 75
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3a7386b5df2b5c8855a7ab58780caf20a5304804d8c9c820760c60b78a3eebbf",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T163756Z-2234-placement-bc3268",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:37:56Z",
+ "submitted_by": "kim-em",
+ "summary": "Imports are correct and used. One placement issue: the public general-n integrability lemma for the Laplace integrand belongs in Resolvent/Basic.lean next to the n = 0 lemma it generalizes, not behind the resolvent-identity and derivative modules.",
+ "transcript_blob": "e69a577093aae0921b4b7641f8a168c2d717484ae34946cb04427de142bc4165",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78503,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78503,
+  "cache_read_input_tokens": 953239,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1106,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1106,
+    "cache_read_input_tokens": 93604,
+    "input_tokens": 1,
+    "output_tokens": 2045,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12820,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

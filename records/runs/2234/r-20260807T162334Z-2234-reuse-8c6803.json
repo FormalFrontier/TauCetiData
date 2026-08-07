@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.30744,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 285.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 95460,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 95460,
+    "cache_read_input_tokens": 1576564,
+    "inference_geo": "not_available",
+    "input_tokens": 36,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2036,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2036,
+      "cache_read_input_tokens": 109631,
+      "input_tokens": 1,
+      "output_tokens": 5127,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22110,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 2.30744,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|4d14257772e959ffa6a7e2a49c9928d4081a14e8|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "diff_sha256": "8625e43844852d6477a6e3767eda99666856fa664dcf1777cbe6ffcd94069835",
+ "duration_s": 285.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Analysis/Semigroups/Basic.lean:449-453: `theorem StronglyContinuousSemigroup.realOperator_continuousOn_Ici (S) (x) : ContinuousOn (fun t : \u211d => S.realOperator t x) (Set.Ici 0) := by intro t ht; exact S.realOperator_continuousWithinAt x t ht`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Replace all three with `(S.realOperator_continuousOn_Ici x).mono Set.Ioi_subset_Ici_self`.",
+   "issue": "`have hcont : ContinuousOn (fun t => S.realOperator t x) (Set.Ici 0) := fun t ht => S.realOperator_continuousWithinAt x t ht` is written out three times (lines 90-92, 144-146, 151-153). This is verbatim the existing `StronglyContinuousSemigroup.realOperator_continuousOn_Ici`.",
+   "line": 90
+  },
+  {
+   "evidence": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean:47-61 `private lemma StronglyContinuousSemigroup.norm_resolvent_integrand_le ... \u2016Real.exp (-(lambda * t)) \u2022 S.realOperator t x\u2016 \u2264 M * \u2016x\u2016 * Real.exp (-(lambda - \u03c9) * t)` \u2014 same calc, `n = 0`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Extract one lemma `\u2016(t ^ n * Real.exp (-l * t)) \u2022 S.realOperator t x\u2016 \u2264 M * \u2016x\u2016 * (t ^ n * Real.exp (-(l - omega) * t))` (parametric in `l`, `n`, `t > 0`) and use it in all three places; state it as the generalization of `norm_resolvent_integrand_le` in `Resolvent/Basic.lean` and drop that `n = 0`-only private lemma.",
+   "issue": "The growth-bound estimate `t^n * exp(-l*t) * \u2016S(t)x\u2016 \u2264 M\u2016x\u2016 * (t^n * exp(-(l-omega)*t))` is proved by the same 10-line `calc` three times: lines 97-108, 165-176, 309-320. Its `n = 0` case is already the private `norm_resolvent_integrand_le`.",
+   "line": 97
+  },
+  {
+   "evidence": "Mathlib/Analysis/SpecialFunctions/Gaussian/GaussianIntegral.lean:74 `integrableOn_rpow_mul_exp_neg_mul_rpow`; the three near-identical `have h := integrableOn_rpow_mul_exp_neg_mul_rpow (p := 1) ... simpa only [Real.rpow_one, Real.rpow_natCast]` blocks in the diff.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Add one private lemma `integrableOn_pow_mul_exp_neg (n : \u2115) {b : \u211d} (hb : 0 < b) : IntegrableOn (fun t : \u211d => t ^ n * Real.exp (-b * t)) (Set.Ioi 0)` and one private measurability lemma for `fun t => (t ^ n * Real.exp (-l * t)) \u2022 S.realOperator t x`, then call them from all sites.",
+   "issue": "The conversion of `integrableOn_rpow_mul_exp_neg_mul_rpow` to the natural-power form `IntegrableOn (fun t => t ^ n * Real.exp (-b * t)) (Set.Ioi 0)` appears three times (79-84, 130-137, 285-294); 285-294 is literally the same instance (`n`, `b = lambda - omega`) as 79-84. The `AEStronglyMeasurable`/`ContinuousOn.smul` block is likewise copied three times (87-92, 141-146, 147-153).",
+   "line": 79
+  },
+  {
+   "evidence": "TauCeti/Analysis/Semigroups/Resolvent/Deriv.lean:189-206 `iteratedDeriv_resolventFun ... = ((-1)^n * n !) \u2022 S.resolventFun hb lambda ^ (n+1)`; Deriv.lean:222 `contDiffOn_resolventFun`; Mathlib/Analysis/Calculus/ContDiff/Basic.lean:255 `ContinuousLinearMap.iteratedFDeriv_comp_left`; Mathlib/Analysis/Calculus/IteratedDeriv/Defs.lean:227 `iteratedDeriv_eq_iteratedFDeriv`; Mathlib/Analysis/Normed/Operator/Bilinear.lean:269 `ContinuousLinearMap.apply_apply`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Derive it: `fun l => S.resolventFun hb l x = (ContinuousLinearMap.apply \u211d X x) \u2218 S.resolventFun hb`, so by `ContinuousLinearMap.iteratedFDeriv_comp_left` (with `S.contDiffOn_resolventFun` at `lambda \u2208 Ioi omega`) and `iteratedDeriv_eq_iteratedFDeriv` the pointwise iterated derivative is the evaluation of `S.iteratedDeriv_resolventFun hb n hlambda`; finish with `ContinuousLinearMap.apply_apply` and `ContinuousLinearMap.smul_apply`. Then `hasDerivAt_resolventFun_pow`/`clm_apply` scaffolding at 242-247 is unneeded.",
+   "issue": "`iteratedDeriv_resolventFun_apply_eq_pow` re-proves, by a fresh induction with its own `filter_upwards`/`push_cast [Nat.factorial_succ]` skeleton, the pointwise instance of the already-proved operator-level formula `iteratedDeriv_resolventFun`.",
+   "line": 229
+  },
+  {
+   "evidence": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean:65-68 `integrable_resolvent_integrand ... IntegrableOn (fun t => Real.exp (-(lambda * t)) \u2022 S.realOperator t x) (Set.Ioi 0)`, identical to the new lemma at `n = 0` since `-lambda * t = -(lambda * t)` (`neg_mul`).",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Move the general `t ^ n` version into `Resolvent/Basic.lean` (adding the `GaussianIntegral` import there), delete `StronglyContinuousSemigroup.integrable_resolvent_integrand`, and update its uses in `Resolvent/Basic.lean:97,98,181,198` and `Resolvent/Identity.lean:113,114` to the general lemma at `n = 0` (`simpa using ...`).",
+   "issue": "The public `integrableOn_pow_mul_resolvent_integrand` is a strict generalization of the public `integrable_resolvent_integrand` (its `n = 0` case up to `neg_mul`), leaving two parallel public integrability lemmas for the same integrand family in the same directory.",
+   "line": 75
+  },
+  {
+   "evidence": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean:344-346 `noncomputable def ContractionSemigroup.resolvent S lambda hlam := S.toStronglyContinuousSemigroup.resolvent S.hasGrowthBound lambda (by simpa using hlam)`; cf. Basic.lean:392-396 `resolventFun_eq := (rfl)`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Replace the `heq` proof by `(rfl)` (the parenthesization idiom already used for `ContractionSemigroup.resolventFun_eq`), since `ContractionSemigroup.resolvent` unfolds to the general resolvent and Lean's proof irrelevance identifies the two `0 < lambda` / `0 < lambda` witnesses.",
+   "issue": "`heq : S.toStronglyContinuousSemigroup.resolvent S.hasGrowthBound lambda hlambda = S.resolvent lambda hlambda` is proved by `ext x; rw [resolvent_apply, resolvent_apply]`, re-deriving what the definition already gives.",
+   "line": 352
+  }
+ ],
+ "head_sha": "4d14257772e959ffa6a7e2a49c9928d4081a14e8",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2ca31b1e8491168321f9ae4a9b4ed55ecb013718da3630b611b364fd0f422daf",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T162334Z-2234-reuse-8c6803",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:23:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorems (power formula, sharp M/(\u03bb-\u03c9)^n bound) are genuinely new and correctly reuse Mathlib's Gamma and parametric-integral API, but the proofs re-derive existing TauCeti lemmas: the orbit-continuity lemma is restated inline three times, the growth-bound integrand estimate and the integrability conversion are each copied three times, and the pointwise iterated-derivative formula is re-proved by induction although Deriv.lean already proves it in operator form.",
+ "transcript_blob": "fd07be4ae11ccbc1a21a2fded17018e9b2bb2e49cd7ae8536972ca405428dd43",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 95460,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 95460,
+  "cache_read_input_tokens": 1576564,
+  "inference_geo": "not_available",
+  "input_tokens": 36,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2036,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2036,
+    "cache_read_input_tokens": 109631,
+    "input_tokens": 1,
+    "output_tokens": 5127,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22110,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
