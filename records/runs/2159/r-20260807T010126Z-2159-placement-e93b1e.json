@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7856809999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 238.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75636,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75636,
+    "cache_read_input_tokens": 1087754,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2993,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2993,
+      "cache_read_input_tokens": 88850,
+      "input_tokens": 2,
+      "output_tokens": 3730,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18291,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 1.785681,
+ "dedupe_key": "TauCetiProject/TauCeti|2159|40ee330a3234dde5e1c10ad50594bcd0139804ed|placement|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "diff_sha256": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "duration_s": 238.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The scalar proofs use only `degree_diagCoset_const` (line 145), `natDiagGL_const_comm` (line 127), `natDiagGL_mul` (line 122) and `transposeAntiInvolution_onHeckeCoset_eq_self` (line 205); `exists_mul_congMod_of_coprime` is first used at line 315, in the coprime section.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Split the scalar section into `TauCeti/NumberTheory/HeckeRing/GLn/ScalarMul.lean` importing only `GLn/Degree`, `GLn/TransposeAntiInvolution` and (privately) `Multiplicity/Support`; let `CoprimeMul.lean` import it if it needs anything.",
+   "issue": "`section Scalar` (lines 57-210: `diagElem_const_mul`, `diagElem_mul_const` and their helpers) has no dependency on coprimality or the CRT splitting, yet lives in a file whose whole point is the coprime rule and which `public import`s `SpecialLinearGroup/CongruenceSplit`. Anyone wanting `T(c,\u2026,c)\u00b7T(b) = T(cb)` drags in the transvection/CRT development.",
+   "line": 57
+  },
+  {
+   "evidence": "Grep for `natDiagGL_const_coe` across `TauCeti/` returns only its definition at CoprimeMul.lean:60. `exists_rep_diagCoset_eq_mul_natDiagGL_mul` proves itself from `diagCoset_toSet` (DiagonalCosets.lean:182), `HeckeCoset.rep_mem` (HeckeRing/Basic.lean:92) and `mem_doubleCoset`, all available in `DiagonalCosets.lean`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Move the three to `DiagonalCosets.lean` \u2014 the first two beside `natDiagGL_const_comm` (line 131), the rep decomposition beside `diagCoset_toSet` (line 182) \u2014 or drop `natDiagGL_const_coe` if it has no consumer.",
+   "issue": "`natDiagGL_const_coe` (60), `natDiagGL_const_conj_eq` (66) and `exists_rep_diagCoset_eq_mul_natDiagGL_mul` (80) are plain `natDiagGL`/`diagCoset` API with no Hecke-multiplication content; they belong in `GLn/DiagonalCosets.lean`, the file this PR already moved `natDiagGL_const_comm` into. `natDiagGL_const_coe` is used nowhere in the repository.",
+   "line": 60
+  },
+  {
+   "evidence": "Degree.lean:54-59 proves `natDiagGL n (fun _ \u21a6 c) \u2208 Subgroup.normalizer (SLnZ n)` from `natDiagGL_const_comm` and closes with `Subgroup.conjAct_pointwise_smul_eq_self` \u2014 the exact content of CoprimeMul.lean:72-77. Grep for `conjAct_rep_diagCoset_const_smul_eq` returns only its definition at line 93.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Move both to `GLn/Degree.lean` next to `degree_diagCoset_const` and use `conjAct_natDiagGL_const_smul_eq` in that proof instead of the inline `hnorm`, or delete them if nothing consumes them.",
+   "issue": "`conjAct_natDiagGL_const_smul_eq` (72) and `conjAct_rep_diagCoset_const_smul_eq` (93) restate downstream the centrality/normalizer fact that `degree_diagCoset_const` re-derives inline, and neither is used by any result in this PR or the repo (the second is used nowhere; the first only feeds the second).",
+   "line": 72
+  },
+  {
+   "evidence": "`linear_combination` appears only at CongruenceSplit.lean:59 (proof body). The sibling `TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Basic.lean:11` imports the same module non-publicly, which is the repo-wide convention for tactic imports.",
+   "file": "TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/CongruenceSplit.lean",
+   "fix": "Make it a plain `import Mathlib.Tactic.LinearCombination`.",
+   "issue": "`public import Mathlib.Tactic.LinearCombination` exports a tactic-only module into this file's public interface; the tactic is used solely inside the proof of the private `transvection_CRT`.",
+   "line": 8
+  }
+ ],
+ "head_sha": "40ee330a3234dde5e1c10ad50594bcd0139804ed",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2159,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5f6db8fee5ec8ae11f2d3a52e53afcda06265c375c2691f4964aa82c76746f9a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T010126Z-2159-placement-e93b1e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T01:01:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The scalar row of the multiplication table (Shimura 3.17) is placed in CoprimeMul.lean behind the CRT/transvection import it does not use, and several natDiagGL/diagCoset lemmas belong in the earlier DiagonalCosets.lean or Degree.lean \u2014 two of them are used nowhere at all. A tactic-only import is made public against the repo convention.",
+ "transcript_blob": "cdbcec176eefe1e16a96a7fda1d07ca3b96db5824de67e4cb638c412f47857ca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75636,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75636,
+  "cache_read_input_tokens": 1087754,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2993,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2993,
+    "cache_read_input_tokens": 88850,
+    "input_tokens": 2,
+    "output_tokens": 3730,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18291,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

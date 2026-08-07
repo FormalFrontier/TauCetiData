@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7906195,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 321.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 132417,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 132417,
+    "cache_read_input_tokens": 1663095,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5520,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5520,
+      "cache_read_input_tokens": 143104,
+      "input_tokens": 2,
+      "output_tokens": 4188,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24286,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 2.79062,
+ "dedupe_key": "TauCetiProject/TauCeti|2159|40ee330a3234dde5e1c10ad50594bcd0139804ed|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "diff_sha256": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "duration_s": 321.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 165-196 vs 626-656 are token-identical modulo `(diagCoset fun _ \u21a6 c)`/`(diagCoset a)`. `grep structureConstants TauCeti/NumberTheory/HeckeRing` shows no such general lemma exists; the roadmap (ModularForms README, Layer 2(a)) asks that structural facts be \"proved once, at the generality where they live\".",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "State once next to `HeckeCosetModule.structureConstants_one_right` (`HeckeRing/One.lean`): given `hconst : \u2200 p, HeckeCoset.mulMap H\u2081 H\u2082 H\u2083 g\u2081 g\u2082 p = D` and `multiplicity H\u2081 H\u2082 H\u2083 g\u2081 g\u2082 D.rep \u2264 1`, conclude `structureConstants R H\u2081 H\u2082 H\u2083 g\u2081 g\u2082 = single R D 1`; derive both theorems from it with `mulMap_const_eq` / `mulMap_coprime_eq`.",
+   "issue": "The `hSC` block in `diagElem_const_mul` (165-196) and in `diagElem_mul_of_coprime` (626-656) is the same proof twice, only the coset names differ; it is a general Hecke-triple fact, not a GL_n one.",
+   "line": 165
+  },
+  {
+   "evidence": "Proof body (142-157) uses only `Fintype.card_le_one_iff_subsingleton`, `Subsingleton.elim`, and `DoubleCoset.snd_eq_of_fst_eq`; the general companions `subsingleton_decompQuotient` and `snd_eq_of_fst_eq` are already at `Multiplicity/Basic.lean:48,84`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Add `multiplicity_le_one_of_subsingleton` (hypothesis `Subsingleton (DecompQuotient \u0393\u2081 \u0393\u2082 g)`) to `HeckeRing/Multiplicity/Basic.lean`, and let this lemma be `degree_diagCoset_const` + that.",
+   "issue": "`multiplicity_const_le_one` is a GL_n-specific instance of a general fact: if `DecompQuotient H\u2081 H\u2082 g\u2081` is subsingleton (degree 1) then `multiplicity H\u2081 H\u2082 H\u2083 g\u2081 g\u2082 d \u2264 1` for every `d`. Nothing in the proof is about diagonal cosets.",
+   "line": 137
+  },
+  {
+   "evidence": "grep over `TauCeti/` for each name returns only these definition sites plus the internal 66\u219272\u219293 chain; `Degree.lean:55-59` already derives the normalizer statement directly from `natDiagGL_const_comm`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Delete all four; nothing in the PR's actual results (`mulMap_const_eq`, `multiplicity_const_le_one`, `diagElem_const_mul`) uses them.",
+   "issue": "Dead speculative API: `natDiagGL_const_coe` (60), `natDiagGL_const_conj_eq` (66), `conjAct_natDiagGL_const_smul_eq` (72) and `conjAct_rep_diagCoset_const_smul_eq` (93) are public, feed only each other, and the terminal one has no consumer at all; they restate centrality already carried by `natDiagGL_const_comm` / `natDiagGL_const_eq_scalar`.",
+   "line": 60
+  },
+  {
+   "evidence": "The two proofs differ only in `M i j = a i * \u03c4 i j / a j` vs `N i j = b j * \u03c4 i j / b i` and the side of `Matrix.diagonal`; `TransposeAntiInvolution.lean:70,89` supplies the transpose stability of `SLnZ n` and `natDiagGL n a`, and that file is a `public import` of this one.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Keep one lemma and derive the other by applying it to `\u03c4\u1d40` and transposing back, using the already-imported `transposeGLEquiv_natDiagGL` / `transposeGLEquiv_mem_SLnZ` and `SpecialLinearGroup.transpose`.",
+   "issue": "`inv_conjugate_congruent_mem_SLnZ` (261-297) duplicates the 35-line integer-division argument of `conjugate_congruent_mem_SLnZ` (226-259); the two statements are transposes of each other (`(D\u207b\u00b9 \u03c4 D)\u1d40 = D \u03c4\u1d40 D\u207b\u00b9`, `D` diagonal), and the congruence hypothesis is transpose-stable.",
+   "line": 261
+  }
+ ],
+ "head_sha": "40ee330a3234dde5e1c10ad50594bcd0139804ed",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2159,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d09adfbc9b8859242cd906456146ce701093522bbd6e623e5bcbd3ce35d91d43",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T005605Z-2159-generality-7de76a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T00:56:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The two main theorems repeat the same structure-constants endgame verbatim, and two Hecke-triple-level facts (constant `mulMap` \u21d2 single product; degree-one left coset \u21d2 multiplicity \u2264 1) are stated only in GL_n-specific form. Also a dead chain of four public scalar-conjugation lemmas and a mirror-duplicated conjugation proof.",
+ "transcript_blob": "26a7b0a136e9d8ff060e1b29702f1f9029c670dac22d504f987ab88d98393d1e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 132417,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 132417,
+  "cache_read_input_tokens": 1663095,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5520,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5520,
+    "cache_read_input_tokens": 143104,
+    "input_tokens": 2,
+    "output_tokens": 4188,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24286,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

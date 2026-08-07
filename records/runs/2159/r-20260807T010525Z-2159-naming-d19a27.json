@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9543765,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 215.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 101904,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 101904,
+    "cache_read_input_tokens": 940563,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2201,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2201,
+      "cache_read_input_tokens": 115910,
+      "input_tokens": 2,
+      "output_tokens": 3350,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17182,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 1.954376,
+ "dedupe_key": "TauCetiProject/TauCeti|2159|40ee330a3234dde5e1c10ad50594bcd0139804ed|naming|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "diff_sha256": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "duration_s": 215.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Data/Matrix/Mul.lean:381 `theorem diagonal_mul_diagonal (d\u2081 d\u2082 : n \u2192 \u03b1) : diagonal d\u2081 * diagonal d\u2082 = diagonal (d\u2081 * d\u2082)` \u2014 and it is the lemma used in this proof (DiagonalCosets.lean:95).",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean",
+   "fix": "Rename to `natDiagGL_mul_natDiagGL`.",
+   "issue": "`natDiagGL_mul` states `natDiagGL a * natDiagGL b = natDiagGL (a * b)`, but the `f_mul` pattern (`Nat.cast_mul`, `map_mul`) means `f (a * b) = f a * f b`, i.e. the name advertises the reverse orientation. Mathlib's name for this exact shape is `diagonal_mul_diagonal`.",
+   "line": "91"
+  },
+  {
+   "evidence": "Statement at CoprimeMul.lean:309-310; listed under `## Main results` at line 38. Contrast in-file neighbours that do name their subject (`natDiagGL_mem_posDetInt`, DiagonalCosets.lean:104).",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Rename to name the actual left-hand side, e.g. `natDiagGL_mul_mapGL_mul_natDiagGL_mem_doubleCoset_of_coprime`.",
+   "issue": "`mul_mem_doubleCoset_of_coprime` is a public main result whose name reads as \"a product lies in the double coset\", i.e. a closure property of `doubleCoset` under multiplication. Nothing in the name identifies the subject `natDiagGL n a * mapGL \u211a \u03c4 * natDiagGL n b`.",
+   "line": "306"
+  },
+  {
+   "evidence": "`private def congMod` at CongruenceSplit.lean:44; public `lemma exists_mul_congMod_of_coprime` at line 137 with the divisibility written out at lines 140-141.",
+   "file": "TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/CongruenceSplit.lean",
+   "fix": "Either make the predicate part of the public API (and state the lemma in terms of it), or name the lemma after what it actually says, e.g. `exists_mul_dvd_sub_one_of_coprime`.",
+   "issue": "The public `exists_mul_congMod_of_coprime` is named after `congMod`, which is a `private def` (line 44) and does not appear in the statement \u2014 the statement spells out `(d : \u2124) \u2223 (\u03c4\u2081 i j - if i = j then 1 else 0)`. A user cannot resolve the `congMod` component of the name.",
+   "line": "137"
+  },
+  {
+   "evidence": "CoprimeMul.lean:504 and 535 conclude `\u2208 SLnZ n`; sibling helpers `conjugate_congruent_mem_SLnZ` (226), `inv_conjugate_congruent_mem_SLnZ` (261), `mem_SLnZ_of_coprime_scaling` (374). `_mem_H` is only otherwise used in Commutativity.lean, where `H : Subgroup G` is an actual variable.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Rename to `..._mem_SLnZ`, e.g. `diagConj_mem_SLnZ_of_coprime` and `out_conj_natDiagGL_mem_SLnZ`.",
+   "issue": "`coprime_coupling_mem_H` and `out_conj_diagA_mem_H` (line 526) conclude `\u2208 SLnZ n`, but name the group `H`, which is not bound anywhere in this file; `diagA` likewise names no declaration (it is the local `\u03b4a`). Neighbours in the same file use `_mem_SLnZ`.",
+   "line": "498"
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/Subgroup/Pointwise.lean:569 `lemma conjAct_pointwise_smul_eq_self`, invoked at CoprimeMul.lean:101.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Rename to `natDiagGL_const_conj_eq_self`, `conjAct_natDiagGL_const_smul_eq_self`, `conjAct_rep_diagCoset_const_smul_eq_self`.",
+   "issue": "`natDiagGL_const_conj_eq` (66), `conjAct_natDiagGL_const_smul_eq` (72) and `conjAct_rep_diagCoset_const_smul_eq` (93) end in a bare `_eq` that names no right-hand side; all three conclude `= <the argument itself>`. Mathlib's name for exactly this shape is `_eq_self`, and that very lemma is used in the proof at line 101.",
+   "line": "66"
+  },
+  {
+   "evidence": "No `CRT` in any Mathlib declaration name; `chineseRemainder` at mathlib/Mathlib/Data/Nat/ModEq.lean:464 and mathlib/Mathlib/Data/ZMod/Basic.lean:885. Public downstream lemma is `exists_mul_congMod_of_coprime` (line 137).",
+   "file": "TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/CongruenceSplit.lean",
+   "fix": "Rename to the `exists_mul_congMod_*` family, e.g. `exists_mul_congMod_of_coprime_transvection` and `exists_mul_congMod_mul`.",
+   "issue": "`transvection_CRT` and `crtProd_mul` (123) use the acronym `CRT`/`crt`, which appears in no Mathlib declaration name; the standard term is `chineseRemainder`. `crtProd` also names no declaration, and `transvection_CRT` proves an existence statement without the `exists_` prefix its own downstream lemma uses.",
+   "line": "57"
+  },
+  {
+   "evidence": "Statements at CoprimeMul.lean:412-414 and 438-440; naming-conventions rule \"`_`-separated strings in a lemma name correspond to a definition name or connective\".",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "Rename after the conclusion, e.g. `exists_intCast_eq_prod_mul_natDiagGL_conj_apply` and `exists_intCast_eq_prod_mul_natDiagGL_sandwich_apply`.",
+   "issue": "`diagConj_scaling` and `diagSandwich_scaling` (436) describe the proof idea rather than the conclusion, which is `\u2203 z : \u2124, (\u220f k, (a k : \u211a)) * C i j = z` \u2014 an integrality statement. `diagConj` and `diagSandwich` also correspond to no declaration, contrary to the rule that `_`-separated components match a definition name or connective.",
+   "line": "410"
+  }
+ ],
+ "head_sha": "40ee330a3234dde5e1c10ad50594bcd0139804ed",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2159,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cc1bebc679b6d72c9bffda2eb19c28c85d22ae6aa44bde15a39534a88a54019e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T010525Z-2159-naming-d19a27",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T01:05:25Z",
+ "submitted_by": "kim-em",
+ "summary": "Several introduced names misdescribe their statements: `natDiagGL_mul` advertises the opposite orientation from Mathlib's `diagonal_mul_diagonal` precedent, `mul_mem_doubleCoset_of_coprime` reads as a closure property, a public lemma is named after a private predicate, and helper names use an undefined `H` and a non-Mathlib `CRT` acronym.",
+ "transcript_blob": "1bb278f65d617a886993c222e91ed67330a6b72c8a373eb4d44e509320afee28",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 101904,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 101904,
+  "cache_read_input_tokens": 940563,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2201,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2201,
+    "cache_read_input_tokens": 115910,
+    "input_tokens": 2,
+    "output_tokens": 3350,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17182,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

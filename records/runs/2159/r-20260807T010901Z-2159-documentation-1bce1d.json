@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4492855000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 158.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 89727,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 89727,
+    "cache_read_input_tokens": 427117,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 8251,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 8251,
+      "cache_read_input_tokens": 97683,
+      "input_tokens": 1,
+      "output_tokens": 4353,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12431,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_usd": 1.449286,
+ "dedupe_key": "TauCetiProject/TauCeti|2159|40ee330a3234dde5e1c10ad50594bcd0139804ed|documentation|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "diff_sha256": "289911553c80a415656f0f9df61ee84d27ce6a189949a7a64aa135d419152363",
+ "duration_s": 158.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/NumberTheory/HeckeRing/GLn/TransposeAntiInvolution.lean:113-115: `lemma transposeAntiInvolution_onHeckeCoset_eq_self (D : HeckeCoset (posDetInt n) (SLnZ n) (SLnZ n)) : (transposeAntiInvolution n).onHeckeCoset D = D`; its own docstring (line 111) reads \"Transposition fixes every double coset\".",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CoprimeMul.lean",
+   "fix": "State the result only: \"**The scalar product, on the right**: `T(b) \u00b7 T(c,...,c) = T(b\u00b7c)`.\" If the commutativity remark is kept, correct it to \"transposition fixes every double coset\" and reference `commSemiringIntegralHeckeRing`.",
+   "issue": "The docstring of `diagElem_mul_const` describes the proof (\"so this is the left-hand case read backwards\") rather than the result, and its parenthetical is wrong: it says \"transposition fixes every diagonal double coset\", but the lemma actually used, `transposeAntiInvolution_onHeckeCoset_eq_self`, fixes every double coset of `(posDetInt n, SLnZ n)`, diagonal or not.",
+   "line": 198
+  },
+  {
+   "evidence": "Module doc line 12 `# Chinese-remainder splitting of \\`SL(\u03b9, \u2124)\\`` / lines 14\u201318 vs. section doc line 38 `## Chinese-remainder splitting of \\`SL(\u03b9, \u2124)\\`` / lines 40\u201341; the file contains no other section.",
+   "file": "TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/CongruenceSplit.lean",
+   "fix": "Delete lines 38\u201341; the module docstring already covers the whole (single-topic) file.",
+   "issue": "The section docstring at lines 38\u201341 restates the module docstring (lines 12\u201318) verbatim in content \u2014 same title `## Chinese-remainder splitting of SL(\u03b9, \u2124)`, same statement, same proof sketch. It is a leftover from when this material sat inside `CoprimeMul.lean` as a section, copied without being adapted to the new standalone file.",
+   "line": 38
+  },
+  {
+   "evidence": "`DiagonalCosets.lean:65-68`: `noncomputable def natDiagGL (a : Fin n \u2192 \u2115) : GL (Fin n) \u211a := if h : \u2200 i, 0 < a i then \u2026 else 1`; `natDiagGL_mul` (line 91) takes `(ha : \u2200 i, 0 < a i) (hb : \u2200 i, 0 < b i)`, `natDiagGL_const_coe` (CoprimeMul.lean:60) takes `(hc : 0 < c)`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/DiagonalCosets.lean",
+   "fix": "Say \"for positive tuples\" / \"for `0 < c`\" in both docstrings, matching the convention this file already uses in `natDiagGL_mem_posDetInt` (\"Membership \u2026 is unconditional: the junk value is the identity\") and `degree_diagCoset_const` (\"The statement is unconditional in `c` \u2026\").",
+   "issue": "Overclaiming: \"The diagonal element is multiplicative in its tuple of entries\" is false in general because `natDiagGL` has a junk branch \u2014 for `a` with a zero entry, `natDiagGL n a * natDiagGL n b = natDiagGL n b` while `natDiagGL n (a * b) = 1`. The statement requires `ha`/`hb`. Same overclaim at `CoprimeMul.lean:59`, where \"The scalar diagonal element is the scalar multiple of the identity matrix\" fails for `c = 0` (`natDiagGL = 1`, but `(0 : \u211a) \u2022 1 = 0`).",
+   "line": 89
+  },
+  {
+   "evidence": "pr_desc.txt: \"# feat(HeckeRing): scalar multiplication in the GL_n Hecke ring\" with no mention of coprimality as delivered; vs. `CoprimeMul.lean:620-624` `theorem diagElem_mul_of_coprime \u2026 : diagElem a * diagElem b = diagElem (a * b)` and the new file `TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/CongruenceSplit.lean` (154 lines).",
+   "file": "",
+   "fix": "Update the title and description to state both deliverables (Propositions 3.17 and 3.16) and the new `SpecialLinearGroup/CongruenceSplit.lean` prerequisite, or split the PR.",
+   "issue": "The PR description documents only the scalar case (Shimura 3.17) and explicitly frames the coprime product as downstream work (\"the coprime product `T(a) \u00b7 T(b) = T(a\u00b7b)` for coprime determinants (Shimura 3.16) \u2026 build on it\"), but the PR delivers Shimura 3.16 as `diagElem_mul_of_coprime` plus a whole new file `CongruenceSplit.lean`. Neither is mentioned.",
+   "line": 0
+  }
+ ],
+ "head_sha": "40ee330a3234dde5e1c10ad50594bcd0139804ed",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2159,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "10502383eac3c9612677ab8e53fc5f63b2000ab68219ec11aff7ad2434e2df90",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T010901Z-2159-documentation-1bce1d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T01:09:01Z",
+ "submitted_by": "kim-em",
+ "summary": "Every new public declaration and file carries a docstring, but three are inaccurate: a section docstring in CongruenceSplit.lean duplicates the module docstring verbatim, diagElem_mul_const's docstring narrates the proof and misstates the fact it cites, and two docstrings assert unconditionally what their statements only deliver under positivity. The PR description also describes only half of what the PR delivers.",
+ "transcript_blob": "c09b029aa368c9bfae7ce104e5825ec6e4bf11401b648da60c3f816bd11becce",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 89727,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 89727,
+  "cache_read_input_tokens": 427117,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8251,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 8251,
+    "cache_read_input_tokens": 97683,
+    "input_tokens": 1,
+    "output_tokens": 4353,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12431,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
