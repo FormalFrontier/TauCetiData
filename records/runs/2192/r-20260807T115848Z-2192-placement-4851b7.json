@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3048739999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 175.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 51885,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 51885,
+    "cache_read_input_tokens": 885170,
+    "inference_geo": "not_available",
+    "input_tokens": 32,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 689,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 689,
+      "cache_read_input_tokens": 67403,
+      "input_tokens": 2,
+      "output_tokens": 1627,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13205,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "cost_usd": 1.304874,
+ "dedupe_key": "TauCetiProject/TauCeti|2192|702d333ecc92632b27433ee55db36c5967ae8d80|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "diff_sha256": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "duration_s": 175.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Both proofs are `rw [DihedralGroup.exponent]; decide` against `Mathlib/GroupTheory/SpecificGroups/Dihedral.lean:211` (`Monoid.exponent (DihedralGroup n) = lcm n 2`); neither statement nor proof mentions anything from `Dixon/Prime.lean`. `grep -rn \"Monoid.exponent\" TauCeti` shows no other in-repo consumer, and the file's own imports (line 8-9) are the whole Dixon chain.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Dihedral.lean",
+   "fix": "Move both to a new `TauCeti/GroupTheory/SpecificGroups/Dihedral.lean` importing only `Mathlib.GroupTheory.SpecificGroups.Dihedral`, mirroring Mathlib's path (`TauCeti/GroupTheory/` already exists), and import that from `Dixon/Dihedral.lean`.",
+   "issue": "`exponent_dihedralGroup_four` (line 30) and `exponent_dihedralGroup_three` (line 74) are pure group theory \u2014 numeric specializations of `DihedralGroup.exponent` \u2014 with no dependence on representations, characters, or Dixon primes, yet they are public `@[simp]` lemmas in the root `TauCeti` namespace exported from a character-table module. Using either now requires pulling in Maschke, `PrimesCongruentOne`, and `Values.lean` (complex character values).",
+   "line": 30
+  }
+ ],
+ "head_sha": "702d333ecc92632b27433ee55db36c5967ae8d80",
+ "merge_base_sha": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2192,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3c40cec93a1b89860521071c9643c592c52fb29e94a929721a788d20eee0c772",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T115848Z-2192-placement-4851b7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T11:58:48Z",
+ "submitted_by": "kim-em",
+ "summary": "Placement and imports are otherwise sound \u2014 the Dixon material sits where the roadmap prescribes and every import is used and narrow \u2014 but two general dihedral group-theory facts are published as global @[simp] lemmas from a character-table module.",
+ "transcript_blob": "c811d6120c7aba70207253adacfadd0a1eeb0068d629cdc78f82cca8edf16748",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 51885,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 51885,
+  "cache_read_input_tokens": 885170,
+  "inference_geo": "not_available",
+  "input_tokens": 32,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 689,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 689,
+    "cache_read_input_tokens": 67403,
+    "input_tokens": 2,
+    "output_tokens": 1627,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13205,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

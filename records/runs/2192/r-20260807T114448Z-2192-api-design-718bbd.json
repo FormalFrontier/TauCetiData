@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.9532125000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 517.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 96598,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 96598,
+    "cache_read_input_tokens": 1964143,
+    "inference_geo": "not_available",
+    "input_tokens": 46,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4233,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4233,
+      "cache_read_input_tokens": 108572,
+      "input_tokens": 2,
+      "output_tokens": 6198,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 39668,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "cost_usd": 2.953213,
+ "dedupe_key": "TauCetiProject/TauCeti|2192|702d333ecc92632b27433ee55db36c5967ae8d80|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "diff_sha256": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "duration_s": 517.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Prime.lean:274-277 is the whole of `DixonPrimeData`'s exported API. `Mathlib/GroupTheory/OrderOfElement.lean` states `pow_orderOf_eq_one (a) : a ^ orderOf a = 1`; matching it against `d.root ^ Monoid.exponent G` requires `Monoid.exponent G` to be syntactically `orderOf d.root`, which `orderOf_root` rewrites away from, not toward.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Add `@[simp] theorem pow_exponent_root : d.root ^ Monoid.exponent G = 1 := d.isPrimitiveRoot_root.pow_eq_one` and `theorem isUnit_root : IsUnit d.root` (with `root_ne_zero` if wanted), next to `orderOf_root`.",
+   "issue": "`DixonPrimeData`'s only exported lemma is `@[simp] orderOf_root : orderOf d.root = Monoid.exponent G`. The defining property of the carried root, `d.root ^ Monoid.exponent G = 1`, has no lemma, and this simp lemma's left-to-right direction makes it unreachable by `simp`: a goal containing `d.root ^ Monoid.exponent G` never matches Mathlib's `@[simp] pow_orderOf_eq_one : a ^ orderOf a = 1` (the exponent appears as `Monoid.exponent G`, not `orderOf d.root`), and `orderOf_root` has nothing to rewrite. Every downstream `simp` over the finite-field computation is left with an unreduced `d.root ^ e`. `IsUnit d.root` / `d.root \u2260 0` are likewise absent, though any division in the eigenvector search needs them.",
+   "line": 276
+  },
+  {
+   "evidence": "`grep -rn \"pow_sub_one_eq_one\" TauCeti/` returns only the declaration at Prime.lean:119. `isSemisimple_\u03c1` (Prime.lean:222-225) calls `hp.natCast_orderOf_ne_zero`, which is proved from `hp.orderOf_dvd_sub_one` (Prime.lean:203-211).",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Delete `pow_sub_one_eq_one`, or keep it and drop the false claim about the eigenvalue arguments from its docstring.",
+   "issue": "`IsGoodDixonPrime.pow_sub_one_eq_one` has no use anywhere in the repository, and its docstring tells the reader it \"is the reformulation of `Monoid.exponent G \u2223 p - 1` that the eigenvalue arguments use\" \u2014 but the file's eigenvalue argument (`natCast_orderOf_ne_zero` \u2192 `isSemisimple_\u03c1`) goes through `orderOf_dvd_sub_one` and `pow_orderOf_eq_one` instead. The docstring misdescribes the interface it documents.",
+   "line": 119
+  }
+ ],
+ "head_sha": "702d333ecc92632b27433ee55db36c5967ae8d80",
+ "merge_base_sha": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2192,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c2e0a9d456b6349c26e2cef4828d225e52fa5f7abcc886832dd90d62ef8e216a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T114448Z-2192-api-design-718bbd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T11:44:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is otherwise minimal and correctly annotated, but `DixonPrimeData` exports only `orderOf_root`, and the direction of that simp lemma leaves the most basic characteristic fact `d.root ^ e = 1` unreachable by `simp`; separately `IsGoodDixonPrime.pow_sub_one_eq_one` is dead public API whose docstring asserts a use it does not have.",
+ "transcript_blob": "d7ee0ac4768cc1b642522286502dd1e988212fb3015f4ba3c6e78d906ed5d23d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 96598,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 96598,
+  "cache_read_input_tokens": 1964143,
+  "inference_geo": "not_available",
+  "input_tokens": 46,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4233,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4233,
+    "cache_read_input_tokens": 108572,
+    "input_tokens": 2,
+    "output_tokens": 6198,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 39668,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

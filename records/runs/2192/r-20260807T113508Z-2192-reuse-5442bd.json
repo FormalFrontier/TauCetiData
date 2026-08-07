@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4035889999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 360.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 93707,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 93707,
+    "cache_read_input_tokens": 1510348,
+    "inference_geo": "not_available",
+    "input_tokens": 38,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1772,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1772,
+      "cache_read_input_tokens": 108142,
+      "input_tokens": 1,
+      "output_tokens": 3023,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27915,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "cost_usd": 2.403589,
+ "dedupe_key": "TauCetiProject/TauCeti|2192|702d333ecc92632b27433ee55db36c5967ae8d80|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "diff_sha256": "4c5b61e8ab61b480abe2dbcbfdeb92a77312d9215e1889c5f24621f2a64f38a6",
+ "duration_s": 360.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib: `X_pow_sub_one_splits` at Mathlib/RingTheory/Polynomial/Cyclotomic/Basic.lean:144, `IsPrimitiveRoot.card_nthRootsFinset` at Mathlib/RingTheory/RootsOfUnity/PrimitiveRoots.lean:687, `HasEnoughRootsOfUnity.of_dvd` at Mathlib/RingTheory/RootsOfUnity/EnoughRootsOfUnity.lean:42. TauCeti already states its eigenspace API in terms of the class: `variable [HasEnoughRootsOfUnity K (Monoid.exponent G)]` at TauCeti/LinearAlgebra/Eigenspace/JointEigenvector.lean:327. Grep shows no consumer of the three lemmas outside Dixon/Prime.lean.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Export the instance instead: `theorem hasEnoughRootsOfUnity (hp : IsGoodDixonPrime G p) [Fact p.Prime] : HasEnoughRootsOfUnity (ZMod p) (Monoid.exponent G) := HasEnoughRootsOfUnity.of_dvd _ hp.exponent_dvd`. Keep `exists_isPrimitiveRoot` (used to build `DixonPrimeData`) as `HasEnoughRootsOfUnity.exists_primitiveRoot _ _`, and drop `splits_X_pow_exponent_sub_one` and `card_nthRootsFinset`, which have no in-repo consumer and are `Polynomial.X_pow_sub_one_splits h\u03b6` / `h\u03b6.card_nthRootsFinset` at the use site.",
+   "issue": "`exists_isPrimitiveRoot_of_dvd_exponent` constructs `HasEnoughRootsOfUnity (ZMod p) (Monoid.exponent G)` inside its proof and throws it away; the file then exports `exists_isPrimitiveRoot` (136), `splits_X_pow_exponent_sub_one` (163) and `card_nthRootsFinset` (173), each a one-line restatement of a Mathlib lemma that the instance already supplies. This sets up a second, weaker way of saying \"ZMod p has the e-th roots\" parallel to the class TauCeti already uses downstream.",
+   "line": 132
+  },
+  {
+   "evidence": "`IsPrimitiveRoot.mk_of_lt (\u03b6 : M) (hk : 0 < k) (h1 : \u03b6 ^ k = 1) (h : \u2200 l : \u2115, 0 < l \u2192 l < k \u2192 \u03b6 ^ l \u2260 1) : IsPrimitiveRoot \u03b6 k` at Mathlib/RingTheory/RootsOfUnity/PrimitiveRoots.lean:107 (iff form `IsPrimitiveRoot.iff` at :218); every hypothesis is decidable for a numeral in `ZMod 5`/`ZMod 7`.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Dihedral.lean",
+   "fix": "Use `IsPrimitiveRoot.mk_of_lt`: `exponent_dihedralGroup_four \u25b8 .mk_of_lt 2 (by norm_num) (by decide) fun l hl0 hl4 => by interval_cases l <;> decide`, and the same for `(3 : ZMod 7)` with `k = 6`; this removes both copies of the `orderOf` detour.",
+   "issue": "The primitive-root certificate is proved by computing `orderOf (2 : ZMod 5) = 4` through `orderOf_eq_of_pow_and_pow_div_prime` plus an `interval_cases q` prime-divisor bash, then transporting along `IsPrimitiveRoot.orderOf`. The identical six-line block is repeated at lines 99-104 for `(3 : ZMod 7)`. Mathlib's constructor proves the goal directly.",
+   "line": 59
+  },
+  {
+   "evidence": "TauCeti/RepresentationTheory/CharacterTable/Values.lean:226-233 (`FDRep.isSemisimple_\u03c1`, `obtain \u27e8m, hm\u27e9 := orderOf_dvd_natCard g; intro h; exact NeZero.ne (Nat.card G : k) ...`) versus Dixon/Prime.lean:203-211; both feed `Representation.isSemisimple_of_pow_eq_one` (Values.lean:111).",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Factor the shared step once \u2014 a lemma `(hmn : m \u2223 n) (hn : (n : k) \u2260 0) : (m : k) \u2260 0` next to `Representation.isSemisimple_of_pow_eq_one` in `Values.lean` \u2014 and use it both at Values.lean:229-233 and here, obtaining the Dixon instance from `hp.neZero_natCast_natCard`; delete the bespoke `p - 1` derivation.",
+   "issue": "`natCast_orderOf_ne_zero` re-derives `(orderOf g : ZMod p) \u2260 0` in eight lines via `orderOf g \u2223 p - 1`, duplicating the derivation already in the imported `Values.lean`, which gets the same fact from `[NeZero (Nat.card G : k)]` and `orderOf_dvd_natCard`; this file itself already proves `neZero_natCast_natCard` (147). Two in-repo routes to the same hypothesis of `Representation.isSemisimple_of_pow_eq_one`.",
+   "line": 203
+  },
+  {
+   "evidence": "grep for `pow_sub_one_eq_one` under `TauCeti/` returns only its own definition at Dixon/Prime.lean:119.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Delete it; `Monoid.exponent_dvd_iff_forall_pow_eq_one.1 hp.exponent_dvd g` is the one-liner at any future use site.",
+   "issue": "`pow_sub_one_eq_one` is a restatement of the `exponent_dvd` field through Mathlib's `Monoid.exponent_dvd_iff_forall_pow_eq_one` and has no consumer anywhere in the repo (`orderOf_dvd_sub_one` is the one actually used).",
+   "line": 119
+  }
+ ],
+ "head_sha": "702d333ecc92632b27433ee55db36c5967ae8d80",
+ "merge_base_sha": "cf9e61d235197874982b4456398a3791f36ff11b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2192,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9fa90d2dc3d6cd93f9cf4b1bda5492ffca74ce02e25cf59d913b42f0a50a0915",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T113508Z-2192-reuse-5442bd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T11:35:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The core material (the good-prime predicate, the residue-window lemmas, the two dihedral certificates) is new and reuses Maschke, `HasEnoughRootsOfUnity` and `Nat.exists_prime_gt_modEq_one` correctly. But the file discards the `HasEnoughRootsOfUnity (ZMod p) e` instance it builds and re-exports three consumer-less restatements of located Mathlib lemmas instead, the `(orderOf g : k) \u2260 0` step is derived a second time alongside the one in `Values.lean`, and both dihedral primitive-root proofs hand-roll a computation `IsPrimitiveRoot.mk_of_lt` does directly.",
+ "transcript_blob": "7ce84ac3f354ffdbcc905e4146bd1de3ce261407b723d391a954927a1acbfb98",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 93707,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 93707,
+  "cache_read_input_tokens": 1510348,
+  "inference_geo": "not_available",
+  "input_tokens": 38,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1772,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1772,
+    "cache_read_input_tokens": 108142,
+    "input_tokens": 1,
+    "output_tokens": 3023,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27915,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
