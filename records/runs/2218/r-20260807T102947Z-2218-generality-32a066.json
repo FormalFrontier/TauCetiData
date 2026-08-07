@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.234958,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 70656,
+    "input_tokens": 101678,
+    "output_tokens": 1484,
+    "reasoning_output_tokens": 532
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "cost_estimated": true,
+ "cost_usd": 0.234958,
+ "dedupe_key": "TauCetiProject/TauCeti|2218|bd9758c14286806ca07f6e1796f1d9acb562d9a9|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "6bae0f70ed2d5bb1a77631d71f7e0af7fb6d534371bcc917b1f4c94d69184b39",
+ "diff_sha256": "6bae0f70ed2d5bb1a77631d71f7e0af7fb6d534371bcc917b1f4c94d69184b39",
+ "duration_s": 41.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib's `IsQuotientCoveringMap` extends `ContinuousConstSMul G E`; `TauCeti/.../ActingGroup.lean:68` derives the instance from `hf` rather than requiring it separately.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Deck/Quotient/Normalizer.lean",
+   "fix": "Remove these section-level typeclass assumptions and install `letI := hp.toContinuousConstSMul` locally where continuity is needed, as `ActingGroup.lean` does for `toDeckHom`.",
+   "issue": "The entire `DeckHom` section, and likewise the `Normal` section at line 260, publicly requires `[ContinuousConstSMul \u0393 E]` even though `hp : IsQuotientCoveringMap p \u0393` already contains that structure.",
+   "line": "136"
+  },
+  {
+   "evidence": "The nearby general theorem `toDeckHom_surjective` in `Deck/Quotient/ActingGroup.lean:99` uses exactly this empty/nonempty split and requires only `[PreconnectedSpace E]`.",
+   "file": "TauCeti/AlgebraicTopology/UniversalCover/Deck/Quotient/Normalizer.lean",
+   "fix": "Assume only `[PreconnectedSpace E]` and split on `isEmpty_or_nonempty E`; in the empty case, surjectivity of `q` makes `F` empty, so every deck transformation equals the identity, while the existing proof handles the nonempty case.",
+   "issue": "`normalizerDeckHom_surjective` unnecessarily assumes `[Nonempty E]`; the same overrestriction is inherited by `deckHomOfNormal_surjective` at line 296.",
+   "line": "198"
+  }
+ ],
+ "head_sha": "bd9758c14286806ca07f6e1796f1d9acb562d9a9",
+ "merge_base_sha": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2218,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "75b71538f5a5b12a2ff69d54262202e661b28a4732cbd8d48b14bd9d60c9296f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T102947Z-2218-generality-32a066",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T10:29:47Z",
+ "submitted_by": "kim-em",
+ "summary": "Several general APIs impose assumptions already supplied by their hypotheses or unnecessary for surjectivity.",
+ "transcript_blob": "fc843cd7e9921a70d05c80ee4183ca2c1423f930358450af162245b86bfe9b6d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 70656,
+  "input_tokens": 101678,
+  "output_tokens": 1484,
+  "reasoning_output_tokens": 532
+ },
+ "verdict": "request_changes"
+}
