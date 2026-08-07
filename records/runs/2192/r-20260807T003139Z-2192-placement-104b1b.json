@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.321943,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 151296,
+    "input_tokens": 191747,
+    "output_tokens": 1468,
+    "reasoning_output_tokens": 381
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_estimated": true,
+ "cost_usd": 0.321943,
+ "dedupe_key": "TauCetiProject/TauCeti|2192|d39d45c7d9740badbe3fe0ebd0030bef04e8f3da|placement|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "184ce6ef767af90fb5c915ac7331fa32f67ca0200ebce7750aed23140f1a9cc9",
+ "diff_sha256": "184ce6ef767af90fb5c915ac7331fa32f67ca0200ebce7750aed23140f1a9cc9",
+ "duration_s": 42.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declaration at lines 85\u201394 mentions only `F`, `Field`, `Finite`, units, and `IsPrimitiveRoot`; the repository already has `TauCeti/RingTheory/RootsOfUnity/PrimitiveRoots.lean` for generic primitive-root results.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Move it to `TauCeti/RingTheory/RootsOfUnity/PrimitiveRoots.lean` (adding the finite-field import there) and import that module from `Dixon/Prime.lean`.",
+   "issue": "`exists_isPrimitiveRoot_of_dvd_card_units` is a group-independent finite-field theorem, so its placement inside character-table/Dixon theory hides broadly reusable infrastructure.",
+   "line": "85"
+  },
+  {
+   "evidence": "Lines 306\u2013364 are the only `DihedralGroup` uses, while line 9 publicly imports the Dihedral module solely for them.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "fix": "Move lines 301\u2013364 to a separate `CharacterTable/Dixon/Dihedral.lean` (or examples module) importing `Dixon.Prime` and the Dihedral module; remove the Dihedral import from `Prime.lean`.",
+   "issue": "The two Dihedral worked instances are group-specific examples in the core prime API, forcing every importer of `Dixon.Prime` to receive the unrelated public `Mathlib.GroupTheory.SpecificGroups.Dihedral` dependency.",
+   "line": "301"
+  }
+ ],
+ "head_sha": "d39d45c7d9740badbe3fe0ebd0030bef04e8f3da",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2192,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7b98e2b5c83390b4966d423aeff68f2e5e50833b2a6be4922800e3de38f3dd32",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T003139Z-2192-placement-104b1b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T00:31:39Z",
+ "submitted_by": "kim-em",
+ "summary": "Generic finite-field infrastructure and group-specific examples are mixed into the core Dixon-prime module, imposing misplaced dependencies on downstream users.",
+ "transcript_blob": "067bb902b5800ec97a55b67185672b2183718606029d4ff9a5fd45b5a72bb2a7",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 151296,
+  "input_tokens": 191747,
+  "output_tokens": 1468,
+  "reasoning_output_tokens": 381
+ },
+ "verdict": "request_changes"
+}
