@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9207145,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 152.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 53871,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 53871,
+    "cache_read_input_tokens": 109859,
+    "inference_geo": "not_available",
+    "input_tokens": 5,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 11930,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 11930,
+      "cache_read_input_tokens": 58148,
+      "input_tokens": 2,
+      "output_tokens": 4042,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12556,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "cost_usd": 0.920714,
+ "dedupe_key": "TauCetiProject/TauCeti|2226|bf10cd2e86365a608f80174693162a74dee57821|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9c088831d9c8b0f530f4708ff295c75b3acc2f7325bc4ff8f1f312a58c553075",
+ "diff_sha256": "9c088831d9c8b0f530f4708ff295c75b3acc2f7325bc4ff8f1f312a58c553075",
+ "duration_s": 152.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 475-478 of the same file prove precisely this from `hj` inside `apply_eq_zero_of_apply_mul_apply_eq_three`; `h.apply_self : A i i = 2` at line 132. (By contrast `hik` and `hjk` are genuinely needed, and in `apply_mul_apply_le_one_of_two_le_of_ne` `hij` is needed since `2 \u2264 4` holds at `i = j`.)",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Drop `hij` from the statement and derive it in the proof, exactly as the conditional version does: `have hij : i \u2260 j := by rintro rfl; rw [h.apply_self] at hj; omega`.",
+   "issue": "`apply_eq_zero_of_apply_mul_apply_eq_three_of_ne` takes a redundant hypothesis `hij : i \u2260 j`; it follows from `hj : A i j * A j i = 3` since `A i i = 2` makes the product `4`.",
+   "line": 492
+  },
+  {
+   "evidence": "Lines 345-353 and 379-384: the three `linear_combination (-(d _ * \u2191(T _ _))) * hsymm _ _` blocks differ only in the index pair.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Extract a private lemma `(hsymm : d q * (A q p : \u211a) = d p * (A p q : \u211a)) : (d p * (A p q : \u211a)) ^ 2 = d p * d q * ((A p q : \u211a) * (A q p : \u211a))` and instantiate it three times; the `ea'`-style scalings then become one-line `rw`s or hints.",
+   "issue": "`ea`, `eb`, `ec` (lines 345-353) are three copies of the same reusable fact `(d p * A p q) ^ 2 = d p * d q * (A p q * A q p)`, each closed by the same `linear_combination`, and then rescaled by three more near-identical `ea'`/`eb'`/`ec'` (lines 379-384). This buries the identity that carries the estimate inside a 67-line private proof (over the 50-line guideline).",
+   "line": 345
+  },
+  {
+   "evidence": "Identical statement and proof at lines 248-249 (`sum_apply_mul_apply_lt_four`) and 323-324 (`apply_eq_zero_of_fin_three`).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Factor it as a private lemma taking `hpd : (Matrix.of fun i j \u21a6 d i * (A i j : \u211a)).PosDef` and use it at both sites (it would also feed the lemma in the previous finding).",
+   "issue": "The symmetrizer-commutation derivation `have hsymm : \u2200 p q, d q * (A q p : \u211a) = d p * (A p q : \u211a) := fun p q \u21a6 by simpa using hpd.isHermitian.apply p q` is now duplicated verbatim in two proofs.",
+   "line": 323
+  }
+ ],
+ "head_sha": "bf10cd2e86365a608f80174693162a74dee57821",
+ "merge_base_sha": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2226,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d5525a0d3968f174f72928f77f14d456199ebb5df7b26f4934a9bd1285472e26",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T110831Z-2226-proof-quality-1c02b5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T11:08:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The new estimate uses robust automation and is well commented, but the 67-line core proof repeats one reusable identity three times (plus a duplicated symmetrizer-commutation derivation), and the new unconditional triple-edge lemma carries a hypothesis its own sibling proves.",
+ "transcript_blob": "e6e0b577c18f8835f9436005bdc8a5886808ab9787d7fb4fe7df4cc54de747fc",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53871,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 53871,
+  "cache_read_input_tokens": 109859,
+  "inference_geo": "not_available",
+  "input_tokens": 5,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 11930,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 11930,
+    "cache_read_input_tokens": 58148,
+    "input_tokens": 2,
+    "output_tokens": 4042,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12556,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

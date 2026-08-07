@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8024555,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 229.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79774,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79774,
+    "cache_read_input_tokens": 1078741,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1026,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1026,
+      "cache_read_input_tokens": 94955,
+      "input_tokens": 2,
+      "output_tokens": 3362,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18070,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "cost_usd": 1.802455,
+ "dedupe_key": "TauCetiProject/TauCeti|2226|bf10cd2e86365a608f80174693162a74dee57821|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9c088831d9c8b0f530f4708ff295c75b3acc2f7325bc4ff8f1f312a58c553075",
+ "diff_sha256": "9c088831d9c8b0f530f4708ff295c75b3acc2f7325bc4ff8f1f312a58c553075",
+ "duration_s": 229.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `apply_mul_apply_le_one_of_two_le` across `TauCeti/` hits only FiniteType.lean:49 (docstring), 441 (decl), 456 (docstring), 458 (`_of_ne` decl), 465 (its single use). The PR itself applies exactly this policy to `card_le_three_of_pairwise_apply_eq_zero`, which it deleted rather than keeping alongside `card_le_three`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Mark `apply_mul_apply_le_one_of_two_le` `private` (it is still the proof step for the `_of_ne` form) and drop it from the module docstring's main-results list, leaving `apply_mul_apply_le_one_of_two_le_of_ne` as the single public statement.",
+   "issue": "`apply_mul_apply_le_one_of_two_le` (conditional, hypothesis `A j k = 0`) and the new `apply_mul_apply_le_one_of_two_le_of_ne` (line 458) are the same fact as parallel public API. The conditional form is now derivable from the unconditional one: `j \u2260 k` follows from `A j k = 0` and `apply_self`; if `i = j` the conclusion is `simp [h0]`; if `i = k` then `apply_eq_zero_symm h0` contradicts `2 \u2264 A i j * A j i`. Grep shows the conditional form has no consumer outside this file and only one inside it (line 465).",
+   "line": 441
+  },
+  {
+   "evidence": "grep for `apply_eq_zero_of_apply_mul_apply_eq_three` hits FiniteType.lean:50, 471 (decl), 490, 492 (`_of_ne` decl), 498 (its single use). No use elsewhere in `TauCeti/`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Mark `apply_eq_zero_of_apply_mul_apply_eq_three` `private` and remove it from the docstring's main-results list; keep `apply_eq_zero_of_apply_mul_apply_eq_three_of_ne` as the public statement.",
+   "issue": "Same duplication: `apply_eq_zero_of_apply_mul_apply_eq_three` and the new `apply_eq_zero_of_apply_mul_apply_eq_three_of_ne` (line 492) are two public forms of one fact. The conditional form follows from the unconditional one \u2014 `i \u2260 j` from `apply_self` (product would be `4`, not `3`), `i \u2260 k` from `apply_eq_zero_symm h0` (product would be `0`), `j \u2260 k` from `A j k = 0` \u2014 and has no consumer outside this file.",
+   "line": 471
+  },
+  {
+   "evidence": "grep for `card_filter_le_three` across `TauCeti/` hits only FiniteType.lean:67 (docstring) and 517 (declaration) \u2014 no use sites.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType.lean",
+   "fix": "Delete `card_filter_le_three` and its docstring bullet (line 67); callers that want the neighbourhood form instantiate `card_le_three` with that filter in one line. Re-add it only when a downstream consumer of the classification actually needs the filter-shaped statement.",
+   "issue": "`card_filter_le_three` is a one-line specialization of `card_le_three` (line 504) at `s := Finset.univ.filter fun j \u21a6 j \u2260 i \u2227 A i j \u2260 0`, with no caller anywhere in the repository; its proof term is literally `h.card_le_three (by simp) fun j hj \u21a6 (Finset.mem_filter.mp hj).2.2`. It duplicates the degree bound as a second public main result while adding a `[DecidableEq B]` assumption the general form does not need.",
+   "line": 517
+  }
+ ],
+ "head_sha": "bf10cd2e86365a608f80174693162a74dee57821",
+ "merge_base_sha": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2226,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d3daeabd5086d511252684a10a32e96ff73e2481cf1851149f774b8fb076c7ee",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T104811Z-2226-reuse-a92f94",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T10:48:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The no-triangle theorem itself is new and reuses the file's existing star-bound and rank-two API correctly. But the PR leaves two public conditional lemmas standing next to their new unconditional replacements, and adds a one-line specialization of the degree bound with no consumer.",
+ "transcript_blob": "c9d3ff94486f922c55c24d9d036ef73cca7b65d311cd5f98b82792863f238184",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79774,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79774,
+  "cache_read_input_tokens": 1078741,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1026,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1026,
+    "cache_read_input_tokens": 94955,
+    "input_tokens": 2,
+    "output_tokens": 3362,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18070,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
