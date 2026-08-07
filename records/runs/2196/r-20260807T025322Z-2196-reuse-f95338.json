@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.374485,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 55.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 186880,
+    "input_tokens": 230159,
+    "output_tokens": 2155,
+    "reasoning_output_tokens": 777
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_estimated": true,
+ "cost_usd": 0.374485,
+ "dedupe_key": "TauCetiProject/TauCeti|2196|59261b2aae701ebc2c0a25548f314c2459bbed43|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "91c6ae5562afff2774c02fa4a68cf423e6ee376d8e8a526e31cd3e2df34a1c59",
+ "diff_sha256": "91c6ae5562afff2774c02fa4a68cf423e6ee376d8e8a526e31cd3e2df34a1c59",
+ "duration_s": 55.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Analysis/Calculus/FDeriv/Mul.lean:655 provides `hasFDerivAt_ringInverse`, while Mathlib/Topology/Algebra/Module/Equiv.lean:1216 identifies ring inversion with `ContinuousLinearMap.inverse`.",
+   "file": "TauCeti/Analysis/Calculus/ContinuousLinearMapInverse.lean",
+   "fix": "Compose `hasFDerivAt_ringInverse` with `hA`, rewrite using `ContinuousLinearMap.ringInverse_eq_inverse` and `hA0`, then apply `HasDerivAt.clm_apply`; remove the redundant hypotheses.",
+   "issue": "`clm_inverse_apply` manually derives the inverse-family derivative and consequently requires redundant `hInvDiff` and `hAInv` hypotheses.",
+   "line": 49
+  },
+  {
+   "evidence": "Line 81 is exactly `hA.clm_inverse_apply ... (hW.comp_hasDerivAt 0 hz)`, and grep finds only the declaration plus the single use at ParametricPullback.lean:74.",
+   "file": "TauCeti/Analysis/Calculus/ContinuousLinearMapInverse.lean",
+   "fix": "Delete this wrapper and call `clm_inverse_apply` with `hW.comp_hasDerivAt 0 hz` directly at its sole consumer in `ParametricPullback.lean`.",
+   "issue": "`clm_inverse_apply_comp` is only a one-line restatement of `clm_inverse_apply` after the standard chain rule.",
+   "line": 73
+  }
+ ],
+ "head_sha": "59261b2aae701ebc2c0a25548f314c2459bbed43",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2196,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8c2a7133b88faa6d59ee0e7f40637cacf81d5002114a88cd17eb18a46865ec63",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T025322Z-2196-reuse-f95338",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T02:53:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The inverse-map calculation re-derives Mathlib\u2019s general derivative of ring inversion, and the chain-rule variant is an unnecessary thin wrapper.",
+ "transcript_blob": "aa7007fac5a3c838c68234b87a9fa85077dcc4f891f55976746da95e960f97f1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 186880,
+  "input_tokens": 230159,
+  "output_tokens": 2155,
+  "reasoning_output_tokens": 777
+ },
+ "verdict": "request_changes"
+}
