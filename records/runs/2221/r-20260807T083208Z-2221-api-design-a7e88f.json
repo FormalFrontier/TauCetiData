@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.152742,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 26.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 34304,
+    "input_tokens": 55590,
+    "output_tokens": 972,
+    "reasoning_output_tokens": 420
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c548b4611a109bfe7088d4115d44957f7bbede34",
+ "cost_estimated": true,
+ "cost_usd": 0.152742,
+ "dedupe_key": "TauCetiProject/TauCeti|2221|68c12545edbabf060275f88d1e2f7e6f705c9322|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "59ada01e29001a39ecbd08e1af72f1397270161628a5c2c92965733ea1cb5c1a",
+ "diff_sha256": "59ada01e29001a39ecbd08e1af72f1397270161628a5c2c92965733ea1cb5c1a",
+ "duration_s": 26.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 76, 86, and 95 expose the three bodies; grep finds `toPerm_ofPerm` and operation lemmas but no `TimePerm.ext` or `toPerm_injective`.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Exchangeable/Ergodic.lean",
+   "fix": "Remove these `@[expose]` annotations and add an `@[ext]` theorem (or `toPerm_injective`) establishing equality from equality of underlying permutations; keep the existing constructor/projection simp lemmas as the opaque API.",
+   "issue": "`TimePerm`, `toPerm`, and `ofPerm` are all `@[expose]`, and no `TimePerm.ext` or injectivity theorem characterizes equality through `toPerm`; downstream equality proofs therefore depend on unfolding the synonym.",
+   "line": "76"
+  },
+  {
+   "evidence": "Line 94 has `@[expose] def finitary`; lines 103\u2013106 immediately provide the `[simp]` membership characterization.",
+   "file": "TauCeti/Algebra/GroupAction/FiniteSupportPerm.lean",
+   "fix": "Remove `@[expose]` from `finitary`; define `mem_finitary` with an opaque-safe proof such as `:= (Iff.rfl)` if needed.",
+   "issue": "`Equiv.Perm.finitary` exposes its structure body even though `mem_finitary` already provides its characteristic membership API.",
+   "line": "94"
+  }
+ ],
+ "head_sha": "68c12545edbabf060275f88d1e2f7e6f705c9322",
+ "merge_base_sha": "2a2040bfe38e57b1bd304908ac8d640962142ea2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2221,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bc89ff9855ce97d3b1f93f5c11010aa597367fc7f6eb0dcc820deb13fc8a626a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T083208Z-2221-api-design-a7e88f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T08:32:08Z",
+ "submitted_by": "kim-em",
+ "summary": "The new action types expose implementation bodies while lacking the extensionality API needed to use them opaquely.",
+ "transcript_blob": "670edded8b0b8f574cf564531e4dd1f930acdb444dc21329e69701982e2080f6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 34304,
+  "input_tokens": 55590,
+  "output_tokens": 972,
+  "reasoning_output_tokens": 420
+ },
+ "verdict": "request_changes"
+}
