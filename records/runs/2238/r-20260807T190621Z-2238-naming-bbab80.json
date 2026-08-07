@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.474852,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 62.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 244224,
+    "input_tokens": 302490,
+    "output_tokens": 2047,
+    "reasoning_output_tokens": 734
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "45b6e260b9b94ff6903a8d203b2cbafb53913e1c",
+ "cost_estimated": true,
+ "cost_usd": 0.474852,
+ "dedupe_key": "TauCetiProject/TauCeti|2238|e2bf324eafb3558e8e3ca938a6ee845f68a7bd49|naming|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "38d9b04ab461c7ffeff9b3abbe0bb87261593e79224b058068d3f0ffd23bcc36",
+ "diff_sha256": "38d9b04ab461c7ffeff9b3abbe0bb87261593e79224b058068d3f0ffd23bcc36",
+ "duration_s": 62.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "This file opens `namespace TauCeti` at line 43, while adjacent generic polynomial files `Card/BoundedCoeff.lean:54` and `Card/RootSetUnion.lean:52` use `namespace TauCeti.Polynomial`; Mathlib\u2019s inverse operation is `Polynomial.coeffList`.",
+   "file": "TauCeti/Algebra/Polynomial/CoeffList.lean",
+   "fix": "Place this file\u2019s generic API in `TauCeti.Polynomial` and update the cyclotomic file\u2019s uses.",
+   "issue": "All generic polynomial declarations are exposed directly under `TauCeti`, making APIs such as `TauCeti.ofCoeffList` and `TauCeti.divByMonicList` misplaced and harder to discover.",
+   "line": "43"
+  },
+  {
+   "evidence": "Lines 158\u2013159 state `(hlen : l.length = l'.length) \u2192 ofCoeffList l = ofCoeffList l' \u2192 l = l'`, while line 108 proves `ofCoeffList (0 :: l) = ofCoeffList l`, demonstrating failure of global injectivity.",
+   "file": "TauCeti/Algebra/Polynomial/CoeffList.lean",
+   "fix": "Rename it to a conditional equality name such as `eq_of_ofCoeffList_eq_of_length_eq`, reserving `_injective` for a `Function.Injective` conclusion as required by the structural-lemma convention.",
+   "issue": "`ofCoeffList_injective` advertises injectivity, but proves only equality for inputs separately assumed to have equal lengths; `ofCoeffList` itself is not injective because leading zeros are discarded.",
+   "line": "158"
+  }
+ ],
+ "head_sha": "e2bf324eafb3558e8e3ca938a6ee845f68a7bd49",
+ "merge_base_sha": "32f4306937eec152e1e558e7eb13b973a476ebbd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2238,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a3f44ec2342ce26ce21be6343fa0998a448d48e20e39a196759981d4ca8741be",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T190621Z-2238-naming-bbab80",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T19:06:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic coefficient-list API is placed in the wrong namespace, and one theorem overstates conditional cancellation as injectivity.",
+ "transcript_blob": "f10d479abb919dffc1eb35ad6bd49c4d4f351a7d15c41c7d7afd968f59b66bac",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 244224,
+  "input_tokens": 302490,
+  "output_tokens": 2047,
+  "reasoning_output_tokens": 734
+ },
+ "verdict": "request_changes"
+}
