@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8768670000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 243.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 77610,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 77610,
+    "cache_read_input_tokens": 1299326,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3092,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3092,
+      "cache_read_input_tokens": 90725,
+      "input_tokens": 2,
+      "output_tokens": 4539,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17734,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "77ccbae9990ff012f76dec53353ada6e9e630b71",
+ "cost_usd": 1.876867,
+ "dedupe_key": "TauCetiProject/TauCeti|2251|c4dd5fb318585c46c81701660f8ccae48b90f9d8|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "10379909dc54ec9b6407b41fbdd6d5b265e40bb45366235ed1f177f9ac439cdc",
+ "diff_sha256": "10379909dc54ec9b6407b41fbdd6d5b265e40bb45366235ed1f177f9ac439cdc",
+ "duration_s": 243.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Coordinate.lean:162 `private theorem coordinateAlgHom_ext`; the public unbundled analogue is `GeneralLinear/Coordinate/HopfAlgebra.lean:203 theorem algHom_ext_away {T : Type*} ... (h : f.comp (coordinateRingMap R n) = g.comp (coordinateRingMap R n)) : f = g`. The private proof is exactly `algHom_ext_away` + `MvPolynomial.algHom_ext` + `e.surjective`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Make it public as `GeneralLinear.algHom_ext` (agreement on `coordinateHopfAlgebraAlgEquiv R n (coordinateRingMap R n (MvPolynomial.X (i, j)))`), stated in `GeneralLinear/Coordinate/HopfAlgebra.lean` next to `algHom_ext_away`, and use it here.",
+   "issue": "`coordinateAlgHom_ext` is `private`, yet it is a general statement about `GeneralLinear.coordinateHopfAlgebra R n \u2192\u2090[R] A` with no comodule content \u2014 the bundled counterpart of the public `GeneralLinear.algHom_ext_away`. Without it, `coordinateBialgHom_X` is the only handle on `coordinateBialgHom` and no consumer can prove any equality of maps out of `O(GL\u2099)`.",
+   "line": 162
+  },
+  {
+   "evidence": "`GeneralLinear/Coordinate/HopfAlgebra.lean:389 @[simp] theorem coordinateHopfAlgebra_antipode_X ... = coordinateHopfAlgebraAlgEquiv R n ((localizedGenericMatrix R n)\u207b\u00b9 i j)`; `GeneralLinear/Coordinate/HopfAlgebra.lean:396 theorem adjoin_coordinateHopfAlgebra_X_union_antipode_X` generates the carrier from the `X`-range union the antipode range; `TauCeti/Algebra/HopfAlgebra/Basic.lean:154 @[simp] theorem BialgHomClass.map_antipode`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Add `@[simp] theorem coordinateBialgHom_antipode_X (rho) (i j) : coordinateBialgHom rho (GeneralLinear.coordinateHopfAlgebraAlgEquiv R n ((GeneralLinear.localizedGenericMatrix R n)\u207b\u00b9 i j)) = HopfAlgebra.antipode R (coordinateMatrix rho i j)`, proved by `rw [\u2190 GeneralLinear.coordinateHopfAlgebra_antipode_X, BialgHomClass.map_antipode, coordinateBialgHom_X]`.",
+   "issue": "Only the image of the generic entries is exposed; there is no lemma for the image of the antipode generators, and `simp` cannot derive it. `coordinateHopfAlgebra_antipode_X` is `@[simp]` and rewrites the inner subterm first, turning `antipode (e (coordinateRingMap (X (i,j))))` into `e ((localizedGenericMatrix R n)\u207b\u00b9 i j)`, after which `BialgHomClass.map_antipode` no longer applies and `coordinateBialgHom_X` does not match \u2014 the term is stuck. The public generation lemma for `O(GL\u2099)` uses precisely those generators.",
+   "line": 213
+  }
+ ],
+ "head_sha": "c4dd5fb318585c46c81701660f8ccae48b90f9d8",
+ "merge_base_sha": "f1d72f954880bb790cf4825443fe16e3d8aa8805",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2251,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1f0de347a7b2efd19a0dbfcac8d74b92665a79d43fa0bba8a0587bab9fcfa149",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T223426Z-2251-api-design-b5e921",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T22:34:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The construction is minimal and bodies are correctly unexposed, but two pieces of the characteristic API are missing: the extensionality lemma for maps out of O(GL\u2099) is private, and there is no lemma computing the image of the antipode generators, which the competing simp normal forms make unreachable by simp.",
+ "transcript_blob": "d1da368c545c37b88db212ea78e144b3ab2a1dd5741ae77f0f384a74f7c6d35d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 77610,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 77610,
+  "cache_read_input_tokens": 1299326,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3092,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3092,
+    "cache_read_input_tokens": 90725,
+    "input_tokens": 2,
+    "output_tokens": 4539,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17734,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

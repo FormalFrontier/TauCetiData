@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2526575,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 179.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64205,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64205,
+    "cache_read_input_tokens": 479479,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3202,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3202,
+      "cache_read_input_tokens": 77210,
+      "input_tokens": 2,
+      "output_tokens": 3164,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14236,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "77ccbae9990ff012f76dec53353ada6e9e630b71",
+ "cost_usd": 1.252657,
+ "dedupe_key": "TauCetiProject/TauCeti|2251|c4dd5fb318585c46c81701660f8ccae48b90f9d8|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "10379909dc54ec9b6407b41fbdd6d5b265e40bb45366235ed1f177f9ac439cdc",
+ "diff_sha256": "10379909dc54ec9b6407b41fbdd6d5b265e40bb45366235ed1f177f9ac439cdc",
+ "duration_s": 179.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Coordinate/HopfAlgebra.lean:268 `theorem map_antipode_localizedGenericMatrix : (localizedGenericMatrix R n).map (antipode R n) = \u2026`; likewise `map_counit_localizedGenericMatrix` (:260), `map_comul_localizedGenericMatrix` (:247). No declaration `antipodeMatrix` exists (grep over TauCeti finds it only in this file's two lemma names).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Rename to `coordinateMatrix_mul_map_antipode` and `map_antipode_mul_coordinateMatrix`, updating the `Main declarations` list (lines 37-38).",
+   "issue": "`coordinateMatrix_mul_antipodeMatrix` (and `antipodeMatrix_mul_coordinateMatrix`, line 128) name a nonexistent `antipodeMatrix`; the term is `(coordinateMatrix rho).map (HopfAlgebra.antipode R)`. Naming conventions require each `_`-separated segment to correspond to a definition or connective, and the repo already spells this shape `map_<f>_<matrix>`.",
+   "line": 112
+  },
+  {
+   "evidence": "MatrixCoefficient/Comul.lean:61 `theorem comul_matrixCoefficient \u2026 = TensorProduct.map \u2026 (coact \u2026)` vs :137 `theorem comul_matrixCoefficient_eq_sum \u2026 = \u2211 i, \u2026`; this file's line 97 discharges `comul_coordinateMatrix` by `comul_matrixCoefficient_eq_sum`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Rename to `comul_coordinateMatrix_eq_sum` (updating uses at lines 122, 138, 199).",
+   "issue": "`comul_coordinateMatrix` states the basis-expanded form `comul x = \u2211 k, \u2026 \u2297\u209c \u2026` but omits `_eq_sum`, while the upstream API it is proved from reserves the bare name for the unexpanded form and uses `_eq_sum` for the sum form; the same file uses `_eq_sum` at line 82.",
+   "line": 93
+  },
+  {
+   "evidence": "Lines 162-169: hypothesis and conclusion quantify over `{f g : GeneralLinear.coordinateHopfAlgebra R n \u2192\u2090[R] A}` with `A` arbitrary; `coordinateAlgHom` does not occur. Precedent: GeneralLinear/Coordinate/HopfAlgebra.lean:205 `theorem algHom_ext_away`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Rename to `coordinateHopfAlgebra_algHom_ext`, matching the existing `GeneralLinear.algHom_ext_away` it is built from.",
+   "issue": "`coordinateAlgHom_ext` is not an ext lemma about `coordinateAlgHom`; it says two arbitrary `AlgHom`s out of `GeneralLinear.coordinateHopfAlgebra R n` agreeing on the generic entries are equal. The name attributes the statement to the wrong subject.",
+   "line": 162
+  },
+  {
+   "evidence": "Entries are `matrixCoefficient (R := R) (C := H) ((Pi.basisFun R (Fin n)).coord i) (Pi.basisFun R (Fin n) j)` (lines 70-71); the cited source (Milne, *Algebraic Groups*, \u00a74.1) calls these matrix coefficients, not coordinates. `coordinateMatrix` occurs nowhere in Mathlib.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Comodule/Coordinate.lean",
+   "fix": "Rename to `coefficientMatrix` (entries are `matrixCoefficient`s), propagating to `coefficientMatrix_apply`, `comul_coefficientMatrix_eq_sum`, `counit_coefficientMatrix`, `isUnit_det_coefficientMatrix`, `coact_basis_eq_sum_coefficientMatrix`, and the module docstring; keep `coordinateBialgHom`, whose \"coordinate\" is correct.",
+   "issue": "`coordinateMatrix` uses \"coordinate\" for the matrix of matrix coefficients in `H`, while every other `coordinate*` name in this file (`coordinateRingMap`, `coordinateHopfAlgebra`, `coordinateBialgHom`) refers to the GL\u2099 coordinate ring. `comul_coordinateMatrix` reads as a statement about the generic matrix of `O(GL\u2099)` (`localizedGenericMatrix`), a different existing object.",
+   "line": 68
+  }
+ ],
+ "head_sha": "c4dd5fb318585c46c81701660f8ccae48b90f9d8",
+ "merge_base_sha": "f1d72f954880bb790cf4825443fe16e3d8aa8805",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2251,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bcf183270d84e22d11a3b726d68bef607f70b9dba4c06aae42fee3d15e82f64c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T224433Z-2251-naming-54ae1a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T22:44:33Z",
+ "submitted_by": "kim-em",
+ "summary": "Three names misdescribe their statements: `antipodeMatrix` denotes no declaration and contradicts the repo's own `map_antipode_localizedGenericMatrix` pattern, `comul_coordinateMatrix` drops the `_eq_sum` that the directly-reused `comul_matrixCoefficient_eq_sum` and the sibling lemma in the same file both carry, and `coordinateAlgHom_ext` names a general ext principle after an unrelated declaration. `coordinateMatrix` also overloads \"coordinate\", which already means the GL\u2099 coordinate ring throughout this file.",
+ "transcript_blob": "0a6bfd16e18c8d4574dfe21e2aa6ca27b2f6cb0b80d161c9b82796ef2d844140",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64205,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64205,
+  "cache_read_input_tokens": 479479,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3202,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3202,
+    "cache_read_input_tokens": 77210,
+    "input_tokens": 2,
+    "output_tokens": 3164,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14236,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
