@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.388303,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 52.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 133376,
+    "input_tokens": 186455,
+    "output_tokens": 1874,
+    "reasoning_output_tokens": 524
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "17e887905ac7c3e11e05f04e749e21a96a508fc3",
+ "cost_estimated": true,
+ "cost_usd": 0.388303,
+ "dedupe_key": "TauCetiProject/TauCeti|2281|31cce417491e0eff95b74034cfc2f1fd4dc008fa|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9c05e583ae0f37b7ee11348436091014e4ce019300b2fb173986d6612c81b6c6",
+ "diff_sha256": "9c05e583ae0f37b7ee11348436091014e4ce019300b2fb173986d6612c81b6c6",
+ "duration_s": 52.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/CategoryTheory/Preadditive/AdditiveFunctor.lean defines `instance ... [F.Additive] [G.Additive] : Additive (F \u22d9 G)`; Mathlib/Algebra/Category/ModuleCat/Sheaf.lean:144 makes `toSheaf` additive, and Mathlib/CategoryTheory/Sites/SheafCohomology/Basic.lean:159 makes `functorH` additive.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/Basic.lean",
+   "fix": "Delete this instance and let typeclass inference compose the existing additive instances for `SheafOfModules.toSheaf` and `Sheaf.functorH`.",
+   "issue": "The explicit `cohomologyFunctor` additive instance duplicates Mathlib's composition instance for additive functors.",
+   "line": 124
+  },
+  {
+   "evidence": "Mathlib/CategoryTheory/Preadditive/AdditiveFunctor.lean:69 supplies `Functor.map_zero` for every additive functor, which applies once the existing composite additive instance is inferred.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/Basic.lean",
+   "fix": "Prove it directly from `Functor.map_zero` for `cohomologyFunctor X i` (using `cohomologyFunctor_map_hom`/extensionality as needed).",
+   "issue": "`cohomologyMap_zero_apply` re-derives preservation of zero by cancellation from additivity.",
+   "line": 112
+  }
+ ],
+ "head_sha": "31cce417491e0eff95b74034cfc2f1fd4dc008fa",
+ "merge_base_sha": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2281,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "68fa399d720f8c79d5a1af05433c5c767b0608391c609d864cc061f721406dfb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T231022Z-2281-reuse-4119ff",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T23:10:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR redundantly reconstructs additivity infrastructure already supplied by Mathlib for composite additive functors.",
+ "transcript_blob": "3fc4a5c1506bb4feeb5e7823447f385513c67dce541ed79ce62b1e053c20bf20",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 133376,
+  "input_tokens": 186455,
+  "output_tokens": 1874,
+  "reasoning_output_tokens": 524
+ },
+ "verdict": "request_changes"
+}
