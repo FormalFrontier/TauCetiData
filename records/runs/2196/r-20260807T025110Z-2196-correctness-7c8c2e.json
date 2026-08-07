@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.236945,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 64.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 42240,
+    "input_tokens": 76969,
+    "output_tokens": 1406,
+    "reasoning_output_tokens": 704
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "cost_estimated": true,
+ "cost_usd": 0.236945,
+ "dedupe_key": "TauCetiProject/TauCeti|2196|59261b2aae701ebc2c0a25548f314c2459bbed43|correctness|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "91c6ae5562afff2774c02fa4a68cf423e6ee376d8e8a526e31cd3e2df34a1c59",
+ "diff_sha256": "91c6ae5562afff2774c02fa4a68cf423e6ee376d8e8a526e31cd3e2df34a1c59",
+ "duration_s": 64.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 45\u201349 take `hInvDiff : DifferentiableAt \u211d (fun t => (A t).inverse) 0` and immediately obtain `hInvRaw := hInvDiff.hasDerivAt`; lines 75\u201380 and ParametricPullback.lean:47,58 merely pass this assumption onward.",
+   "file": "TauCeti/Analysis/Calculus/ContinuousLinearMapInverse.lean",
+   "fix": "Prove differentiability of `t \u21a6 (A t).inverse` from differentiability at the identity, adding an appropriate completeness assumption on `E` if required by the inverse-map theorem, then remove `hInvDiff` from all three declarations.",
+   "issue": "`HasDerivAt.clm_inverse_apply` assumes `hInvDiff`, which already contains the difficult existence of the derivative of the inverse family; the proof only identifies that assumed derivative. The same assumption propagates into `clm_inverse_apply_comp` (line 75) and `hasDerivAt_pullback_parametric` (ParametricPullback.lean:47), leaving the claimed pullback theorem unavailable from ordinary smooth-family/invertibility data.",
+   "line": 45
+  }
+ ],
+ "head_sha": "59261b2aae701ebc2c0a25548f314c2459bbed43",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2196,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5656cf08e95bf00a8ffd6d8b69b32d0b92d8fbdf443784d62521981563a36473",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T025110Z-2196-correctness-7c8c2e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T02:51:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The central differentiability of the inverse Jacobian is assumed rather than established, so the PR does not supply its advertised analytic prerequisite.",
+ "transcript_blob": "464f2f6971c4ba0d025fb0a262aba761548c22702426819af261f11bbe524cb4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 42240,
+  "input_tokens": 76969,
+  "output_tokens": 1406,
+  "reasoning_output_tokens": 704
+ },
+ "verdict": "block"
+}
