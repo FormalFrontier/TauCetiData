@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.591756,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 197.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75962,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75962,
+    "cache_read_input_tokens": 865986,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 577,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 577,
+      "cache_read_input_tokens": 91592,
+      "input_tokens": 2,
+      "output_tokens": 2009,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15239,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.591756,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|2e69ed298050167a53bdf80a8b6ae21684067df3|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "ab5463dfec3de07125d429a521806e4ae592020b6cb6921021491adcfb0fe7ae",
+ "diff_sha256": "ab5463dfec3de07125d429a521806e4ae592020b6cb6921021491adcfb0fe7ae",
+ "duration_s": 197.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Analysis/Calculus/ContDiff/Basic.lean:255 `ContinuousLinearMap.iteratedFDeriv_comp_left` yields `g.compContinuousMultilinearMap (iteratedFDeriv \ud835\udd5c i f x)`; Mathlib/Analysis/Normed/Operator/Bilinear.lean:269 `ContinuousLinearMap.apply_apply` and `ContinuousLinearMap.compContinuousMultilinearMap_coe` (used e.g. Mathlib/Analysis/Calculus/AbsolutelyMonotone.lean:117) are the explicit lemmas for the two elided identifications.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Replace the `change` with an explicit function equality, e.g. `have hcomp : (fun l => S.resolventFun hb l x) = \u21d1ev \u2218 S.resolventFun hb := by funext l; simp [ev]` then `rw [hcomp, h]`, and close with `simp [ev, ContinuousLinearMap.compContinuousMultilinearMap_coe, ContinuousLinearMap.apply_apply]` instead of `rfl`.",
+   "issue": "`change (iteratedFDeriv \u211d n (ev \u2218 S.resolventFun hb) lambda) (fun _ => 1) = _` carries no comment, and the closing `rfl` (line 209) closes `(ev.compContinuousMultilinearMap (iteratedFDeriv \u2026)) (fun _ => 1) = (iteratedFDeriv \u2026) (fun _ => 1) x`. Both steps depend on Mathlib's bundled definitions of `ContinuousLinearMap.apply` and `compContinuousMultilinearMap` reducing definitionally; neither identification is stated anywhere in the proof.",
+   "line": 207
+  },
+  {
+   "evidence": "grep for `integrableOn_pow_mul_resolvent_integrand|norm_pow_mul_resolvent_integrand_le`: Basic.lean:109,112,131,195,212 and Identity.lean:113,114 all instantiate at `0` and each re-normalizes `t ^ 0` inline; the only genuinely general uses are PowerBounds.lean:97,174,269.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean",
+   "fix": "Add the one-line `n = 0` corollary `integrable_resolvent_integrand \u2026 := by simpa using S.integrableOn_pow_mul_resolvent_integrand hb 0 lambda hlam x` (and a matching `norm_resolvent_integrand_le`) and use them at those six sites, so the `t ^ 0` normalization is done once instead of per call.",
+   "issue": "Deleting the `n = 0` specialization pushes adapter glue into every scalar-resolvent call site: `convert S.norm_pow_mul_resolvent_integrand_le hb 0 lambda x ht using 1 <;> ring_nf` (Basic.lean:131, closing congruence goals under a `\u2016\u00b7\u2016` by `ring_nf`), and `by simpa using (\u2026 hb 0 \u2026)` at Basic.lean:109, 112, 195, 212 and Identity.lean:113-114 (the latter needing an extra `pow_zero, one_mul` in the simp set).",
+   "line": 131
+  }
+ ],
+ "head_sha": "2e69ed298050167a53bdf80a8b6ae21684067df3",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "639f327e1a8511fe62edad589fa71650668e72cb18eb4128eb385fdbacb2a245",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T173238Z-2234-proof-quality-c51cfa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T17:32:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior round's duplication and long-proof findings are fixed. Remaining: iteratedDeriv_resolventFun_apply uses an uncommented `change` plus a closing `rfl` that both rest on unfolding `ContinuousLinearMap.apply` and `compContinuousMultilinearMap`, and the deleted `n = 0` integrability specialization leaves ad-hoc `simpa`/`convert \u2026 ring_nf` glue at six call sites.",
+ "transcript_blob": "dd82ac8ef872ab774b2af4665d7dfbf3e0c74fd518724979ca6998a7c20b9ef5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75962,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75962,
+  "cache_read_input_tokens": 865986,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 577,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 577,
+    "cache_read_input_tokens": 91592,
+    "input_tokens": 2,
+    "output_tokens": 2009,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15239,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2936475,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 157.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69257,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69257,
+    "cache_read_input_tokens": 505681,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2966,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2966,
+      "cache_read_input_tokens": 82498,
+      "input_tokens": 2,
+      "output_tokens": 3117,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12930,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4058bf19b066a045eb774e0f1d63546580fe7324",
+ "cost_usd": 1.293648,
+ "dedupe_key": "TauCetiProject/TauCeti|2234|2e69ed298050167a53bdf80a8b6ae21684067df3|naming|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "ab5463dfec3de07125d429a521806e4ae592020b6cb6921021491adcfb0fe7ae",
+ "diff_sha256": "ab5463dfec3de07125d429a521806e4ae592020b6cb6921021491adcfb0fe7ae",
+ "duration_s": 157.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib's direct analogue is root-namespace: `mathlib/Mathlib/Analysis/SpecialFunctions/Gaussian/GaussianIntegral.lean:74 theorem integrableOn_rpow_mul_exp_neg_mul_rpow {p s b : \u211d} \u2026` (that file contains no `^namespace` line). This repo puts generic material upstream: `TauCeti/MeasureTheory/Integral/ENNRealProd.lean:39 namespace MeasureTheory`, `TauCeti/MeasureTheory/Integral/Bochner/Basic.lean:32 namespace MeasureTheory`. The new lemma's binders are `(n : \u2115) {b : \u211d} (hb : 0 < b)` only.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Basic.lean",
+   "fix": "Move the declaration outside `namespace TauCeti.Semigroups` \u2014 root namespace, matching Mathlib's sibling, or `namespace MeasureTheory` matching the repo's own generic-measure-theory files.",
+   "issue": "New public `integrableOn_pow_mul_exp_neg_mul_Ioi` is declared inside `namespace TauCeti.Semigroups` (opened line 37) but its statement `IntegrableOn (fun t : \u211d => t ^ n * Real.exp (-(b * t))) (Set.Ioi 0)` mentions no semigroup and takes no `S`; the full name `TauCeti.Semigroups.integrableOn_pow_mul_exp_neg_mul_Ioi` advertises semigroup content it does not have and is unfindable where a user would look for it.",
+   "line": 46
+  },
+  {
+   "evidence": "PowerBounds.lean:49 `namespace TauCeti.Semigroups`; line 54 binders are `(n : \u2115) {a : \u211d} (ha : 0 < a)`. Mathlib's counterpart lives in `Real`: `mathlib/Mathlib/Analysis/SpecialFunctions/Gamma/Basic.lean:464 lemma integral_rpow_mul_exp_neg_mul_Ioi {a r : \u211d} (ha : 0 < a) (hr : 0 < r)`.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/PowerBounds.lean",
+   "fix": "Declare it in the same non-semigroup namespace as the integrability lemma (root or `MeasureTheory`), alongside it rather than in the semigroup file.",
+   "issue": "Same problem, second instance: `integral_pow_mul_exp_neg_mul_Ioi` proves `\u222b t in Ioi 0, t ^ n * Real.exp (-(a * t)) = n! / a ^ (n + 1)`, again with no semigroup in the statement, yet resolves as `TauCeti.Semigroups.integral_pow_mul_exp_neg_mul_Ioi`. It is `private`, so this is the milder instance, but it should move with the one above.",
+   "line": 54
+  }
+ ],
+ "head_sha": "2e69ed298050167a53bdf80a8b6ae21684067df3",
+ "merge_base_sha": "2e60ddbc2f666712b576cc592daaa4997a2a199e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2234,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "cd693628e9c19b7d9e59c620a94c95e63d3f875ebb60b08cf311550cc610e88b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T172732Z-2234-naming-bd345f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T17:27:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The two prior naming findings are addressed (the old `integrable_resolvent_integrand` is gone, and the Gamma helper left the `StronglyContinuousSemigroup` namespace). One instance of the same namespace problem remains and one is newly introduced as public API: semigroup-free real-analysis lemmas carry the `TauCeti.Semigroups` prefix.",
+ "transcript_blob": "b895ce4867fd611b746b7704b7aac304e67ba59152a958a228c5868bebb5a9d8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69257,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69257,
+  "cache_read_input_tokens": 505681,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2966,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2966,
+    "cache_read_input_tokens": 82498,
+    "input_tokens": 2,
+    "output_tokens": 3117,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12930,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
