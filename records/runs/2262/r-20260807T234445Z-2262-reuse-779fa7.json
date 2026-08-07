@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.269942,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 113664,
+    "input_tokens": 147232,
+    "output_tokens": 1509,
+    "reasoning_output_tokens": 584
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ab8c88a57a716d158208f52431799a07b1a7e274",
+ "cost_estimated": true,
+ "cost_usd": 0.269942,
+ "dedupe_key": "TauCetiProject/TauCeti|2262|ae6dd9e0128d3a850558c402bf6366da38c2fae3|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "ff815ed3bf1f5fd0fda3085140ecccfc191777945bba84c2a6ea9c6c95d72e57",
+ "diff_sha256": "ff815ed3bf1f5fd0fda3085140ecccfc191777945bba84c2a6ea9c6c95d72e57",
+ "duration_s": 36.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/RingTheory/Valuation/ValuativeRel/Basic.lean:151` defines `@[simp, refl] lemma vle_refl`; the PR uses `(v.toValuativeRel.vle_total _ _).elim id id` at both sites.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/ValuationSpectrum.lean",
+   "fix": "Use `v.toValuativeRel.vle_refl _` in both proofs.",
+   "issue": "`basicOpen_one` and `basicOpen_self` (line 114) derive reflexivity from `vle_total`, duplicating `ValuativeRel.vle_refl`.",
+   "line": 106
+  },
+  {
+   "evidence": "Line 303 proves `localizationComapSection_def` by `rfl`; line 310 merely wraps `Mathlib/RingTheory/Valuation/ExtendToLocalization.lean:61`, and both lemmas are used only at lines 315\u2013316.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/ValuationSpectrum.lean",
+   "fix": "Unfold `localizationComapSection` directly in `comap_localizationComapSection` and apply `Valuation.ext` with `Valuation.extendToLocalization_apply_map_apply` there; delete both private wrappers.",
+   "issue": "The two single-use private lemmas at lines 300\u2013310 duplicate the definition of `localizationComapSection` and repackage an existing localization lemma.",
+   "line": 300
+  }
+ ],
+ "head_sha": "ae6dd9e0128d3a850558c402bf6366da38c2fae3",
+ "merge_base_sha": "f0516cb9e54d0a559a43659f8dd11afa594966b6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2262,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0261ed3165b949a4139668457033405018494a9badc58a75fb4d43c64adc41ad",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T234445Z-2262-reuse-779fa7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T23:44:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The new API is not duplicated in the pinned Mathlib, but several proofs and private scaffolding unnecessarily re-derive existing facts.",
+ "transcript_blob": "6b3b7831a8934924fa9145eac8ce758f26cea2cc1560f59e81c46095a09d1f55",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 113664,
+  "input_tokens": 147232,
+  "output_tokens": 1509,
+  "reasoning_output_tokens": 584
+ },
+ "verdict": "request_changes"
+}
