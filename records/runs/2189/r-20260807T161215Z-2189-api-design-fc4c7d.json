@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.164589,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 59648,
+    "input_tokens": 78915,
+    "output_tokens": 1281,
+    "reasoning_output_tokens": 460
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d7a6db22bf8866ab173fdba2a1f56f93bd5bd515",
+ "cost_estimated": true,
+ "cost_usd": 0.164589,
+ "dedupe_key": "TauCetiProject/TauCeti|2189|fbcafe094d755db82d84c85cba5a7872a7aeec3a|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "a135948539f97f11bee98225e188fb8f6d0a7694164909dc2068d48752a31004",
+ "diff_sha256": "a135948539f97f11bee98225e188fb8f6d0a7694164909dc2068d48752a31004",
+ "duration_s": 38.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 86\u2013239 and 269, 359\u2013438 declare the internal state/invariant and proof helpers inside `public section`; the roadmap target at `Suggested.lean:369\u2013371` requires only the eventual `kernelBasis`, not this internal sweep API.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Echelon/RowReduce.lean",
+   "fix": "Make the state, invariant, auxiliary sweep, row-space proof machinery, and their lemmas private; expose only `rowReduce` and reusable correctness results.",
+   "issue": "The public API includes implementation-only state machinery (`RowReduceState`, `rowReduceStep`, `rowReduceAux`, `IsRowReduceState`, its preservation proofs, `rowReduceAux_snd_eq_zero`, and `rowSpan` plus helper lemmas), with several bodies marked `@[expose]`. These artifacts serve only the implementation proof and unnecessarily commit downstream users to the sweep representation.",
+   "line": "86"
+  },
+  {
+   "evidence": "Lines 279 and 284 carry `@[expose]`; `rowReduceMatrix_apply` and `rowReducePivot_apply` immediately restate both definitions pointwise.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Echelon/RowReduce.lean",
+   "fix": "Remove `@[expose]` from both definitions and use their application lemmas as the supported interface.",
+   "issue": "`rowReduceMatrix` and `rowReducePivot` expose their bodies even though lines 292\u2013300 already provide their characteristic application lemmas.",
+   "line": "279"
+  },
+  {
+   "evidence": "Lines 292\u2013300 are unconditional pointwise equations in canonical simplifier orientation.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Echelon/RowReduce.lean",
+   "fix": "Add `@[simp]` to both application lemmas.",
+   "issue": "The pointwise characteristic lemmas `rowReduceMatrix_apply` and `rowReducePivot_apply` are not tagged `@[simp]`, so routine evaluation of these wrappers does not normalize through the supported API.",
+   "line": "292"
+  }
+ ],
+ "head_sha": "fbcafe094d755db82d84c85cba5a7872a7aeec3a",
+ "merge_base_sha": "d7a6db22bf8866ab173fdba2a1f56f93bd5bd515",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2189,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1588095d6056c0a7db775d69f03a88580447fa77b17f909816239523be3c5c5c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T161215Z-2189-api-design-fc4c7d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T16:12:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes proof machinery and definition bodies unnecessarily, and its basic projection lemmas lack normal-form annotations.",
+ "transcript_blob": "6afc442fa4f5739736d695be82286873c6565e9b9d74060ce9f85af48dd0a1d7",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 59648,
+  "input_tokens": 78915,
+  "output_tokens": 1281,
+  "reasoning_output_tokens": 460
+ },
+ "verdict": "request_changes"
+}
