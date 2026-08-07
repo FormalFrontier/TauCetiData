@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.425048,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 30.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 188416,
+    "input_tokens": 248284,
+    "output_tokens": 1050,
+    "reasoning_output_tokens": 139
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "249ffa1308e00d2ac4f4f1072ee067881d18db74",
+ "cost_estimated": true,
+ "cost_usd": 0.425048,
+ "dedupe_key": "TauCetiProject/TauCeti|1992|dc65f2acdce868012d508fd26c515071b17253d0|api-design|gpt-5.6-sol|ce88b39773d791a9|production|6",
+ "diff_blob": "59da60226b0edad81cb5f54fe9a4bf2ea58b670e06b067a705021e214a6fa4f2",
+ "diff_sha256": "59da60226b0edad81cb5f54fe9a4bf2ea58b670e06b067a705021e214a6fa4f2",
+ "duration_s": 30.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 88\u201395 retain only `L_R \u2260 0`, `L_L \u2260 0`, and the limit formula, while lines 96\u2013108 obtain and use the discarded `h_tend_R`, `h_tend_L`, `h_dR`, and `h_dL`; the sole external use is OnCurve.lean:479.",
+   "file": "TauCeti/Analysis/Contour/InvSubCPVExistence.lean",
+   "fix": "Either include the `Tendsto (deriv \u03b3)` or `HasDerivWithinAt` characterizations proved by `exists_one_sided_tangents`, or expose only the limit and real-part property actually needed by consumers.",
+   "issue": "`exists_radius_perWindow_tendsto_value` publicly calls `L_R` and `L_L` one-sided tangents but exposes only their nonzeroness, leaving callers unable to relate them to `\u03b3` except through the resulting limit expression.",
+   "line": 86
+  },
+  {
+   "evidence": "Repository grep finds only the conjunction-valued declaration at line 440; lines 450\u2013454 show the equality nested behind two conjunction projections.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Add a canonically named equality-only corollary obtained from `windingNumber_eq_real_integral_of_closed_interior_crossings` while retaining the bundled theorem for callers needing its auxiliary conclusions.",
+   "issue": "The only exported on-curve result returns boundedness and integrability conjoined with the formula, so callers needing the roadmap\u2019s formula have no equality-only theorem.",
+   "line": 440
+  }
+ ],
+ "head_sha": "dc65f2acdce868012d508fd26c515071b17253d0",
+ "merge_base_sha": "8373f6f00ded987fc9e0e31af441a99beecc93e2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 1992,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "f3c3a8c0d684ade21dca2ce633535181332952a25b52dd5ade064722fca05218",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 6,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T044712Z-1992-api-design-2e709b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T04:47:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The public crossing-value theorem exposes undercharacterized tangent witnesses, and the on-curve formula lacks an equality-only interface.",
+ "transcript_blob": "cb5d11978eda1c5fc31f076a2be219c267ecc8363be2ef877de0fce260702270",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 188416,
+  "input_tokens": 248284,
+  "output_tokens": 1050,
+  "reasoning_output_tokens": 139
+ },
+ "verdict": "request_changes"
+}
