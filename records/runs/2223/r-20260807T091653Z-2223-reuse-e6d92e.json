@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.394508,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 150016,
+    "input_tokens": 204106,
+    "output_tokens": 1635,
+    "reasoning_output_tokens": 534
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "cost_estimated": true,
+ "cost_usd": 0.394508,
+ "dedupe_key": "TauCetiProject/TauCeti|2223|5fde2c09af8fae69766597d893c00eefdcccdab8|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "bfe6982ee2dbc3b0f20e234ea80bd297322f41a8d15b5dfc638843bf0e662325",
+ "diff_sha256": "bfe6982ee2dbc3b0f20e234ea80bd297322f41a8d15b5dfc638843bf0e662325",
+ "duration_s": 49.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Existing declarations occur at `Identity.lean:134`, `Identity.lean:175`, and `Identity.lean:197`; the new parallel proofs occur here at lines 226, 248, and 255.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Unbounded.lean",
+   "fix": "Move the generic resolvent core below dependencies that do not import `Identity`, then rewrite `StronglyContinuousSemigroup.resolvent_sub_resolvent_apply`, `resolvent_sub_resolvent`, and `resolvent_comm` as specializations via `generator_resolvent_eq`.",
+   "issue": "The pointwise/operator resolvent identities and commutation proof duplicate the semigroup-specialized proofs already in `Resolvent/Identity.lean`.",
+   "line": 226
+  },
+  {
+   "evidence": "Mathlib defines `spectrum.mem_resolventSet_of_left_right_inverse` at `Mathlib/Algebra/Algebra/Spectrum/Basic.lean:139`; lines 365\u2013375 reproduce precisely that construction.",
+   "file": "TauCeti/Analysis/Semigroups/Resolvent/Unbounded.lean",
+   "fix": "After proving `hright` and `hleft`, use `spectrum.mem_resolventSet_of_left_right_inverse hright hleft` (or its result through `spectrum.mem_resolventSet_iff`) instead of constructing `Units` directly.",
+   "issue": "`isUnit_of_isResolventAt_toPMap_top` manually reconstructs a unit from left and right inverses, duplicating `spectrum.mem_resolventSet_of_left_right_inverse`.",
+   "line": 362
+  }
+ ],
+ "head_sha": "5fde2c09af8fae69766597d893c00eefdcccdab8",
+ "merge_base_sha": "44a1b033a72aee74668705424895c1ad12d402cd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2223,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "51593e4475c6df693315ecb0fead31ae79fa3ee725155139c0c8894d61d1f524",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260807T091653Z-2223-reuse-e6d92e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-07T09:16:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic API is new, but the PR leaves duplicated resolvent-identity proofs and reimplements an existing Mathlib inverse lemma.",
+ "transcript_blob": "cad48a2a70455a45e620d0059cdfee1525f208ac63652f288983cbf8d93cfea3",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 150016,
+  "input_tokens": 204106,
+  "output_tokens": 1635,
+  "reasoning_output_tokens": 534
+ },
+ "verdict": "request_changes"
+}
