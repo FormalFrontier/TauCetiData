@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.270143,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 44.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 125696,
+    "input_tokens": 158365,
+    "output_tokens": 1465,
+    "reasoning_output_tokens": 373
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9a6a72320c889342e2a959d9e6e5bb3c94cb7a56",
+ "cost_estimated": true,
+ "cost_usd": 0.270143,
+ "dedupe_key": "TauCetiProject/TauCeti|2336|8cafeb60fd9e6d284ff0a897abdd117a0f38c819|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "27f1284511e81b4b3fef8f0fcedbf6aa2667b15db6f8ad279d36785fb2a69956",
+ "diff_sha256": "27f1284511e81b4b3fef8f0fcedbf6aa2667b15db6f8ad279d36785fb2a69956",
+ "duration_s": 44.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib `Matrix/Determinant/Basic.lean:306` provides `Matrix.det_mul_column`; `Matrix/Cartan.lean:257,259` proves `CartanMatrix.G\u2082_det` and `CartanMatrix.F\u2084_det`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Dynkin.lean",
+   "fix": "Rewrite each determinant with `Matrix.det_mul_column`, then use `Int.cast_det` and `CartanMatrix.F\u2084_det` or `Matrix.det_transpose` plus `CartanMatrix.G\u2082_det`; discharge only the product of the positive symmetrizer entries.",
+   "issue": "The `hunit` proofs for both `F\u2084` (lines 160\u2013171) and `G\u2082` (lines 192\u2013201) expand concrete matrices and recompute determinants despite existing determinant APIs.",
+   "line": 160
+  },
+  {
+   "evidence": "The literals at lines 55\u201363, 84\u201392, and 113\u2013121 have identical first 6/7 columns; only the trailing columns differ.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Dynkin.lean",
+   "fix": "Define the E-series coordinate model once and obtain the rank-6 and rank-7 matrices by column restriction/submatrix, then reuse that definition in all three Gram proofs.",
+   "issue": "`rootsE6`, `rootsE7`, and `rootsE8` duplicate the same eight-dimensional coordinate matrix, with each later definition merely adding the next columns.",
+   "line": 55
+  }
+ ],
+ "head_sha": "8cafeb60fd9e6d284ff0a897abdd117a0f38c819",
+ "merge_base_sha": "c799b2ff081fddba4738128215a107219d7d970c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2336,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "887bcddbb2c39acebdec43d4741ccdb4f6e54646a8f08f30c7419afa98bde127",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T070123Z-2336-reuse-afdeda",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T07:01:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The exceptional results are new, but two proof blocks recompute determinants already exposed by Mathlib and the E-series coordinate data is triplicated.",
+ "transcript_blob": "ddc291a160f1d9fb134b48b3cd5597c44d3f85490c215d117f1ee4ff70c55db6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 125696,
+  "input_tokens": 158365,
+  "output_tokens": 1465,
+  "reasoning_output_tokens": 373
+ },
+ "verdict": "request_changes"
+}
