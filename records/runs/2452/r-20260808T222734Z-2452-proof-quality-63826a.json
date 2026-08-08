@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.151058,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 56576,
+    "input_tokens": 73480,
+    "output_tokens": 1275,
+    "reasoning_output_tokens": 556
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8a7c62595e39d6837eedaf9fb5065969530bca4",
+ "cost_estimated": true,
+ "cost_usd": 0.151058,
+ "dedupe_key": "TauCetiProject/TauCeti|2452|8e866f367e0075d0ad70edfe3ebda7c159593cb1|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "5a6ce3c72d1475e5345822a46200c3ccc87bfe1e9812cc22607c9d68e2995ada",
+ "diff_sha256": "5a6ce3c72d1475e5345822a46200c3ccc87bfe1e9812cc22607c9d68e2995ada",
+ "duration_s": 38.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 132\u2013136 rewrite the outer sums, then use `change` before `Finset.sum_const`; no comment explains the required definitional reduction.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Representation.lean",
+   "fix": "Replace it with an explicit rewriting/conversion lemma, or document why no rewrite or `convert` proof reaches this goal.",
+   "issue": "`finrank_forall_incoming` uses an uncommented `change`, making the proof depend opaquely on reduction of the sigma-indexed sum.",
+   "line": 134
+  },
+  {
+   "evidence": "`reflectRep_obj` at lines 234\u2013236 is the explicit bridge, but both following theorems omit it and elaborate only because `(reflectRep M hi).obj` reduces definitionally.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Representation.lean",
+   "fix": "Rewrite explicitly with `reflectRep_obj M hi _` before applying `reflectRepObj_self` or `reflectRepObj_of_ne`.",
+   "issue": "`reflectRep_obj_self` and `reflectRep_obj_of_ne` (lines 245\u2013251) apply `reflectRepObj_*` directly, relying on definitional equality through the `Paths.lift` wrapper despite already having `reflectRep_obj`.",
+   "line": 245
+  },
+  {
+   "evidence": "`hfin` is declared at line 303; the remainder of the proof, lines 304\u2013315, never references it.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Representation.lean",
+   "fix": "Remove `hfin`, or use it if an intended finiteness argument currently depends only implicitly on typeclass synthesis.",
+   "issue": "The local fact `hfin` in `dimVector_reflectRep_self_add` is never used, leaving redundant proof scaffolding.",
+   "line": 303
+  }
+ ],
+ "head_sha": "8e866f367e0075d0ad70edfe3ebda7c159593cb1",
+ "merge_base_sha": "9cccf6f1c6b8c92eea90b9bcaeef65d9ff9743d5",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2452,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e240c97cdd0342e1b7351a031e7a16c5e25f64cdfb3ad1262ddefd145f15aa77",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T222734Z-2452-proof-quality-63826a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T22:27:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs rely on undocumented definitional equality or retain unjustified proof scaffolding.",
+ "transcript_blob": "eebb56717d0e987c15215b9123367db9ff1fdbd6c8450a6e26323149466685be",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 56576,
+  "input_tokens": 73480,
+  "output_tokens": 1275,
+  "reasoning_output_tokens": 556
+ },
+ "verdict": "request_changes"
+}
