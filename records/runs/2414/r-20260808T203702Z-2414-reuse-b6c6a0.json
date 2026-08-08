@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.28916,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 121600,
+    "input_tokens": 157840,
+    "output_tokens": 1572,
+    "reasoning_output_tokens": 469
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2d95722ca83c1f4397dfd77a33eebd624026e189",
+ "cost_estimated": true,
+ "cost_usd": 0.28916,
+ "dedupe_key": "TauCetiProject/TauCeti|2414|210203afdb3633c927ee0e7c905f0f66d66586de|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "f8d7a00d0c9834e86ba693d2639d072a35ecf7ed4d011d206a8ab4c0aefddf6b",
+ "diff_sha256": "f8d7a00d0c9834e86ba693d2639d072a35ecf7ed4d011d206a8ab4c0aefddf6b",
+ "duration_s": 45.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/LinearAlgebra/Matrix/ToLin.lean:936-954` declares `leftMulMatrix` under `[CommSemiring R] [Semiring S] [Algebra R S]`, and lines 969-975 provide `leftMulMatrix_apply` and `leftMulMatrix_eq_repr_mul`.",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/FiniteField.lean",
+   "fix": "Delete `regularMatrix` and use `Algebra.leftMulMatrix (MonoidAlgebra.basis G k)` throughout; derive entries with `Algebra.leftMulMatrix_eq_repr_mul` and simplify the basis representation.",
+   "issue": "`regularMatrix` duplicates `Algebra.leftMulMatrix`; contrary to the module note, Mathlib permits an arbitrary `[Semiring S]`, so it applies to the noncommutative group algebra. `regularMatrix_apply` is corresponding duplicate scaffolding.",
+   "line": 80
+  },
+  {
+   "evidence": "`Mathlib/RingTheory/Nilpotent/Basic.lean:124` states `isReduced_iff_pow_one_lt [MonoidWithZero R] (k) (hk) : IsReduced R \u2194 \u2200 x, x ^ k = 0 \u2192 x = 0`.",
+   "file": "TauCeti/FieldTheory/Finite/PowFixed.lean",
+   "fix": "Delete the theorem and prove the use site via `(isReduced_iff_pow_one_lt q hq).2`, where `x ^ q = 0 \u2192 x = 0` follows immediately by rewriting with `h x`.",
+   "issue": "`isReduced_of_pow_eq_self` re-derives Mathlib\u2019s existing fixed-power reducedness criterion through a longer nilpotence argument.",
+   "line": 33
+  }
+ ],
+ "head_sha": "210203afdb3633c927ee0e7c905f0f66d66586de",
+ "merge_base_sha": "15e79f750e8ed532c82f89c87a4b168ce4696a3f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2414,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6f6d864b5ef48701e55e578add532ff7482b0e08d7dfe2d5b5e678b4ad8ed3dd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T203702Z-2414-reuse-b6c6a0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T20:37:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces a duplicate left-regular matrix API despite Mathlib\u2019s existing noncommutative-algebra construction, and also reproves an existing reducedness criterion.",
+ "transcript_blob": "d30b23a7f291ff315b147b37bd2caa9052b7a45456efc8239150ccb5f7c59a35",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 121600,
+  "input_tokens": 157840,
+  "output_tokens": 1572,
+  "reasoning_output_tokens": 469
+ },
+ "verdict": "block"
+}
