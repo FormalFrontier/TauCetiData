@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.1204855,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 223.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48287,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48287,
+    "cache_read_input_tokens": 432043,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3067,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3067,
+      "cache_read_input_tokens": 61427,
+      "input_tokens": 2,
+      "output_tokens": 2072,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16622,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c799b2ff081fddba4738128215a107219d7d970c",
+ "cost_usd": 1.120486,
+ "dedupe_key": "TauCetiProject/TauCeti|2281|8cef98c0cbfd147373a93764ebb56f26a520b113|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8c2db411cc17151901ae858f3f4ec9e0b9077be9d1cd1cfda989d1e9ce57599a",
+ "diff_sha256": "8c2db411cc17151901ae858f3f4ec9e0b9077be9d1cd1cfda989d1e9ce57599a",
+ "duration_s": 223.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 77 is literally `((functorH X i).mapIso e).addCommGroupIsoToAddEquiv`; the wrapper is the combinator chain under a new name.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/Basic.lean",
+   "fix": "Delete `cohomologyEquivOfIso` and use `((functorH X i).mapIso e).addCommGroupIsoToAddEquiv` at the call site.",
+   "issue": "`cohomologyEquivOfIso` is a one-line composite of two existing generic combinators, `CategoryTheory.Functor.mapIso` (Mathlib/CategoryTheory/Iso.lean:471, `@[simps]`) and `CategoryTheory.Iso.addCommGroupIsoToAddEquiv` (Mathlib/Algebra/Category/Grp/Basic.lean:532-537, `@[to_additive (attr := simps!)]`), both already applicable to `functorH X i` as declared on line 63. It has no consumer in the repository (grep for `Cohomology` outside this file returns only unrelated `Galois Cohomology` prose).",
+   "line": "75"
+  },
+  {
+   "evidence": "The proofs are `rw [\u2190 Functor.mapIso_hom]; exact ((functorH X i).mapIso e).addCommGroupIsoToAddEquiv_apply x` (lines 85-86, 94-95) \u2014 the Mathlib lemmas applied verbatim. `Iso.addCommGroupIsoToAddEquiv_apply` is used the same way in Mathlib/CategoryTheory/Sites/SheafCohomology/MayerVietoris.lean:55.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/Basic.lean",
+   "fix": "Delete both lemmas together with `cohomologyEquivOfIso`; `simp` closes the same goals from Mathlib's `mapIso_hom`/`mapIso_inv` and `addCommGroupIsoToAddEquiv_apply`/`_symm_apply`.",
+   "issue": "`cohomologyEquivOfIso_apply` and `cohomologyEquivOfIso_symm_apply` (lines 81-95) restate the already-simp `Iso.addCommGroupIsoToAddEquiv_apply`/`_symm_apply` composed with the already-simp `Functor.mapIso_hom`/`mapIso_inv`, and their simp-normal form `((functorH X i).map e.hom).hom x` is exactly the term that exists without the wrapper \u2014 the API eliminates its own definition.",
+   "line": "81"
+  },
+  {
+   "evidence": "Docstring lines 99-103 vs. the declarations at lines 109-125, whose proofs are exactly the instantiation the docstring describes.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/Basic.lean",
+   "fix": "Replace that docstring paragraph with a one-line pointer to `cohomologyZeroEquiv_naturality` and `cohomologyZeroEquiv_symm_naturality`.",
+   "issue": "The `cohomologyZeroEquiv` docstring (lines 99-103) still tells consumers to instantiate `Sheaf.H.equiv\u2080_naturality`/`_symm_naturality` manually with `isTerminalTop` and the mapped morphism, but `cohomologyZeroEquiv_naturality` and `cohomologyZeroEquiv_symm_naturality` are declared immediately below (lines 111, 120). The same fact is stated twice and the prose points away from the file's own API.",
+   "line": "99"
+  }
+ ],
+ "head_sha": "8cef98c0cbfd147373a93764ebb56f26a520b113",
+ "merge_base_sha": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2281,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2d4ee511fd8e8f9066bd5c6b1453e0b0766943ffceefa161315975237cb1965e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T144139Z-2281-reuse-a53bf6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T14:41:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The core definitions correctly reuse Mathlib's Sheaf.H / functorH / equiv\u2080 without vendoring. One thin wrapper remains: cohomologyEquivOfIso and its two simp lemmas add nothing over Functor.mapIso + Iso.addCommGroupIsoToAddEquiv, and the cohomologyZeroEquiv docstring still duplicates the naturality lemmas it now sits above.",
+ "transcript_blob": "94270415a27817f62edcffebc376d386ebc267e6bfcab5ab2a76b1793172071b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48287,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48287,
+  "cache_read_input_tokens": 432043,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3067,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3067,
+    "cache_read_input_tokens": 61427,
+    "input_tokens": 2,
+    "output_tokens": 2072,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16622,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
