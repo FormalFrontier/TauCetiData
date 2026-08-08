@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.242149,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 39.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 89088,
+    "input_tokens": 120155,
+    "output_tokens": 1409,
+    "reasoning_output_tokens": 558
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f6b7ee2e03b075c1a5a8bcbe0a67932442649b43",
+ "cost_estimated": true,
+ "cost_usd": 0.242149,
+ "dedupe_key": "TauCetiProject/TauCeti|2267|bf96c694b021166bc0604d28683c49b0448993f4|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "16936f9e791626c3de39906853b7edb0e612dc284a30283405d3a890fe78ed55",
+ "diff_sha256": "16936f9e791626c3de39906853b7edb0e612dc284a30283405d3a890fe78ed55",
+ "duration_s": 39.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 234\u2013249 explicitly say exposure is for `discrete_ringOfDefinition` and `discrete_idealOfDefinition`, both already stated as public `[simp]` lemmas.",
+   "file": "TauCeti/RingTheory/Huber/Basic.lean",
+   "fix": "Remove `@[expose]`; keep the definition opaque and prove the projection lemmas with `:= (rfl)` so consumers use those lemmas.",
+   "issue": "`PairOfDefinition.discrete` exposes its body solely to support projection lemmas, making downstream code depend on construction details despite the provided characteristic API.",
+   "line": 236
+  },
+  {
+   "evidence": "Repository grep finds its only use at line 206 inside `PairOfDefinition.toNonarchimedeanRing`.",
+   "file": "TauCeti/RingTheory/Huber/Basic.lean",
+   "fix": "Make it private (or construct the `OpenAddSubgroup` locally in `toNonarchimedeanRing`).",
+   "issue": "`PairOfDefinition.openAddSubgroup` is a public implementation helper with no external use or characteristic API.",
+   "line": 187
+  }
+ ],
+ "head_sha": "bf96c694b021166bc0604d28683c49b0448993f4",
+ "merge_base_sha": "f6b7ee2e03b075c1a5a8bcbe0a67932442649b43",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2267,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3cb5655de9a686392bc34c7a852020d06e9fdb4c05753292a9a4c77a791334c2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T191407Z-2267-api-design-e4f81f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T19:14:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR unnecessarily exposes two implementation details in the canonical public API.",
+ "transcript_blob": "9c944e42336388794fd1c165fa1683e0a157af9ed6fc39d7ddcdb5058ba2d589",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 89088,
+  "input_tokens": 120155,
+  "output_tokens": 1409,
+  "reasoning_output_tokens": 558
+ },
+ "verdict": "request_changes"
+}
