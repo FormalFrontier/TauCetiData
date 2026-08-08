@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.242065,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 44.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 160000,
+    "input_tokens": 183821,
+    "output_tokens": 1432,
+    "reasoning_output_tokens": 357
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "142b6d3f7fc181061dd49c11b3b519f8ec6a2e4e",
+ "cost_estimated": true,
+ "cost_usd": 0.242065,
+ "dedupe_key": "TauCetiProject/TauCeti|2449|d7228ab85e01c233b51f5ce81ef660e18206c8c0|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "ab3a680eaf57f294dc3012b27ce7f5c13a36344d4995761e7345dcbd78a254a1",
+ "diff_sha256": "ab3a680eaf57f294dc3012b27ce7f5c13a36344d4995761e7345dcbd78a254a1",
+ "duration_s": 44.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 75 is `change \u03c9 (\u21d1b \u2218 \u03c3) = ...`; the preceding `ext_alternating` goal reaches this only through reducible coercion/application details.",
+   "file": "TauCeti/LinearAlgebra/Determinant.lean",
+   "fix": "Avoid `change` via an explicit conversion/rewrite lemma, or add a comment explaining why the goal cannot otherwise be rewritten into the required form.",
+   "issue": "`eq_smulRight_basis_det` uses `change` to expose the permutation representation without documenting why this definitional equality is necessary.",
+   "line": 75
+  },
+  {
+   "evidence": "Both lines close non-obvious equalities between different map wrappers using unrestricted `simpa`; the relevant public application lemma is `LinearMap.compl\u2081\u2082_apply` in Mathlib/LinearAlgebra/BilinearMap.lean:337.",
+   "file": "TauCeti/LinearAlgebra/Determinant.lean",
+   "fix": "Use `simpa only` with the private application lemma, `AlternatingMap.compLinearMap_apply`, `LinearMap.compl\u2081\u2082_apply`, scalar-application lemmas, and the required `Fin 2` vector reductions explicitly listed.",
+   "issue": "The `simpa` proofs at lines 143 and 155 hide the bridge between alternating-map evaluation and `compl\u2081\u2082` behind the evolving global simp set.",
+   "line": 143
+  }
+ ],
+ "head_sha": "d7228ab85e01c233b51f5ce81ef660e18206c8c0",
+ "merge_base_sha": "4293ffa7f4f059e03184027e5641e519d77c9828",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2449,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e79cb3e921add25a7ba6225596d4ec7afcbf2e1c36ff48bb00963016756482d4",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T233535Z-2449-proof-quality-b882ae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T23:35:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The new proofs contain undocumented definitional-equality manipulation and two non-obvious `simpa` calls dependent on the global simp set.",
+ "transcript_blob": "1f0a3c1ebda66574bf35daa568253160a41ce08a03f9f66525e901f308c7132e",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 160000,
+  "input_tokens": 183821,
+  "output_tokens": 1432,
+  "reasoning_output_tokens": 357
+ },
+ "verdict": "request_changes"
+}
