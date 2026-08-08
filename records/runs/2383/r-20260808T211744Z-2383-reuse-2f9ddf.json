@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.296102,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 47.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 122624,
+    "input_tokens": 159688,
+    "output_tokens": 1649,
+    "reasoning_output_tokens": 544
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4293ffa7f4f059e03184027e5641e519d77c9828",
+ "cost_estimated": true,
+ "cost_usd": 0.296102,
+ "dedupe_key": "TauCetiProject/TauCeti|2383|5625265ddaa315ebb11f2018b13c9a9bf401ebfe|reuse|gpt-5.6-sol|ce88b39773d791a9|production|5",
+ "diff_blob": "161fdb8ff0b338c7780d7a2e7f00fd08f363982dd1347c7afa46f38bc214099f",
+ "diff_sha256": "161fdb8ff0b338c7780d7a2e7f00fd08f363982dd1347c7afa46f38bc214099f",
+ "duration_s": 47.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Matrix.lean:245-252` is exactly that two-line derivation; `rg coefficientMatrix_mem_matrixCoefficientSubalgebra` finds only its declaration.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/MatrixCoefficient/Matrix.lean",
+   "fix": "Delete it and use `rw [coefficientMatrix_apply]; exact matrixCoefficient_mem_subalgebra ...` where needed.",
+   "issue": "`coefficientMatrix_mem_matrixCoefficientSubalgebra` duplicates `matrixCoefficient_mem_subalgebra` after unfolding `coefficientMatrix_apply`; it has no consumers in the checkout.",
+   "line": "245"
+  },
+  {
+   "evidence": "`Coordinate.lean:68-86` proves each solely by rewriting `coefficientMatrix_apply` and applying the corresponding declarations from `Dual.lean:123` and `Dual.lean:134`; their only uses are at `Coordinate.lean:179-182`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Coordinate.lean",
+   "fix": "Delete both declarations and use `coefficientMatrix_apply` with `matrixCoefficient_mem_matrixCoefficientSubalgebraWithAntipode` and `antipode_matrixCoefficient_mem_matrixCoefficientSubalgebraWithAntipode` directly in `coordinateBialgHom_range`.",
+   "issue": "Both `coefficientMatrix_mem_matrixCoefficientSubalgebraWithAntipode` and its antipode variant at line 79 are thin restatements of the existing generic membership lemmas.",
+   "line": "68"
+  }
+ ],
+ "head_sha": "5625265ddaa315ebb11f2018b13c9a9bf401ebfe",
+ "merge_base_sha": "b5f14d9e8882ac59b56de0359fcebc3199cfdae8",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2383,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "10f07a292d92ef86deaf68cd3b0c8e4f59ece82d4f537f9a6c5829edf25ceda2",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T211744Z-2383-reuse-2f9ddf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T21:17:44Z",
+ "submitted_by": "kim-em",
+ "summary": "Three public coefficient-matrix membership lemmas are unnecessary thin specializations of existing matrix-coefficient lemmas.",
+ "transcript_blob": "d82ede5261f42bd3dabe9300df9acb3951b0f5e5b47813de2a3f5d56b351e66d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 122624,
+  "input_tokens": 159688,
+  "output_tokens": 1649,
+  "reasoning_output_tokens": 544
+ },
+ "verdict": "request_changes"
+}
