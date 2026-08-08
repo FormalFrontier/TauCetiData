@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7761609999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 253.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 81204,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 81204,
+    "cache_read_input_tokens": 1005928,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2905,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2905,
+      "cache_read_input_tokens": 94506,
+      "input_tokens": 2,
+      "output_tokens": 4424,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17440,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a9e83023d1bf4e9989b94604d6147aecd6c401e0",
+ "cost_usd": 1.776161,
+ "dedupe_key": "TauCetiProject/TauCeti|2258|53e2235b8848ed254cc3aa08cc0106f1602cfaf4|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "diff_sha256": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "duration_s": 253.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Spanning.lean:231 `(_ : \u2200 i, IsCyclic (C i))`; Spanning.lean:357 same; Artin.lean:205 same. Neighbouring names that do carry the restriction: `cyclicInduced_eq_top` (224), `cyclicInducedCharacters_eq_top` (346).",
+   "file": "TauCeti/RepresentationTheory/Induction/Spanning.lean",
+   "fix": "Include the family in the name, e.g. `exists_sum_smul_ind_cyclic`, `exists_sum_smul_ind_ofCharacter_cyclic`, `exists_zsmul_eq_sum_zsmul_ind_ofCharacter_cyclic`, matching the `cyclicInduced`/`cyclicInducedCharacters` definitions.",
+   "issue": "`exists_sum_smul_ind` (line 230), `exists_sum_smul_ind_ofCharacter` (line 355) and `ClassFunction.exists_zsmul_eq_sum_zsmul_ind_ofCharacter` (Artin.lean:203) omit `cyclic`, although `IsCyclic (C i)` is the entire content: without it each statement is trivial (take `n = 1`, `C 0 = \u22a4`). The file explicitly anticipates the elementary-subgroup (Brauer) analogues, which would want the same names.",
+   "line": 230
+  },
+  {
+   "evidence": "153 `_def` lemmas in `TauCeti/`; direct precedent unfolding to another named def: `characterGroupSchemeMap_def` (Algebra/AlgebraicGroup/DiagonalizableGroup/Scheme/Points.lean:382-385). Addendum: \"`_def`: restates a definition (`foo = <its definition>`), typically for rewriting.\"",
+   "file": "TauCeti/RepresentationTheory/Induction/Spanning.lean",
+   "fix": "Rename to `cyclicInduced_def` and `cyclicInducedCharacters_def`.",
+   "issue": "`cyclicInduced_eq_inducedFrom` (139) and `cyclicInducedCharacters_eq_inducedCharactersFrom` (265) are definitional unfolding lemmas (`rw [cyclicInduced]`, own docstring: \"this is what a downstream proof rewrites with\"), but do not use the `_def` suffix the repo and the naming addendum reserve for exactly this.",
+   "line": 139
+  },
+  {
+   "evidence": "Artin.lean:208 `\u2211 i, c i \u2022 ((ind (C i) (ofCharacter (\u03c1 i)) \u2026) : G \u2192 k) = d \u2022 f`; Spanning.lean:360 `\u2211 i, c i \u2022 ind (C i) (ofCharacter (\u03c1 i)) = f` named `exists_sum_smul_ind_ofCharacter`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "Either name it `exists_sum_zsmul_ind_ofCharacter_eq_zsmul(_cyclic)` or state the conclusion as `d \u2022 f = \u2211 i, c i \u2022 \u2026`.",
+   "issue": "`exists_zsmul_eq_sum_zsmul_ind_ofCharacter` names the equation in the opposite order to the statement, which is `\u2211 i, c i \u2022 ind \u2026 = d \u2022 f`, and to its sibling `exists_sum_smul_ind_ofCharacter` (sum on the left, no `eq_`).",
+   "line": 203
+  },
+  {
+   "evidence": "`CharacterTable/Table.lean:107` `def irreducibleCharacters : Set (G \u2192 k)`; `Induction/ClassFunction.lean:88,123,264` (`indTerm`, `indClassFun`, `ind`), `Induction/FiniteDimensional.lean:170,256,278` (`indSubtypeEquivPi`, `indFDRep`, `indFDRepMap`). Mathlib precedent for a span-valued def: `rootSpan` (Mathlib/Algebra/Lie/Weights/IsSimple.lean:66), `lieSpan` (Mathlib/Algebra/Lie/Submodule.lean:602).",
+   "file": "TauCeti/RepresentationTheory/Induction/Spanning.lean",
+   "fix": "Put the span in the name and keep the `ind` prefix, e.g. `indSpan \ud835\udcae` / `indSpanCyclic` / `indCharacterSpan \ud835\udcae` / `indCharacterSpanCyclic`, updating the derived lemma names (`ind_mem_indSpan`, `indSpan_eq_top`, \u2026).",
+   "issue": "`inducedFrom` (125), `cyclicInduced` (133), `inducedCharactersFrom` (253) and `cyclicInducedCharacters` (260) are `Submodule`s, but the names read as the generating sets: `f \u2208 cyclicInducedCharacters k G` reads \"f is a character induced from a cyclic subgroup\", which is strictly stronger than the span membership it means. The repo already uses a plural character-noun for the set itself (`irreducibleCharacters : Set (G \u2192 k)`), and the surrounding `Induction/` API prefixes induction-derived declarations with `ind`, not `induced`.",
+   "line": 125
+  }
+ ],
+ "head_sha": "53e2235b8848ed254cc3aa08cc0106f1602cfaf4",
+ "merge_base_sha": "f0516cb9e54d0a559a43659f8dd11afa594966b6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2258,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "dbcf4884754fa87ec64e7ff8b0726b26252d0ef0dd7706a839d7123b70425020",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T021903Z-2258-naming-4d594c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T02:19:03Z",
+ "submitted_by": "kim-em",
+ "summary": "Three explicit-form existentials omit the `cyclic` restriction that carries all their content, the two rfl-unfolding lemmas do not use the repo's `_def` suffix, the main theorem names its equation backwards, and the four new submodule-valued definitions read as sets of induced characters rather than as their span.",
+ "transcript_blob": "4a4b3d25a69afc04a42cc99d2cdcc830f0d4e6ebcf26f9e3d2de4cd4d67c00c1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 81204,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 81204,
+  "cache_read_input_tokens": 1005928,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2905,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2905,
+    "cache_read_input_tokens": 94506,
+    "input_tokens": 2,
+    "output_tokens": 4424,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17440,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

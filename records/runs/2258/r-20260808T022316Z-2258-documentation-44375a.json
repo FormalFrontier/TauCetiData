@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4456224999999994,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 357.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 82454,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 82454,
+    "cache_read_input_tokens": 1914837,
+    "inference_geo": "not_available",
+    "input_tokens": 47,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1155,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1155,
+      "cache_read_input_tokens": 97506,
+      "input_tokens": 2,
+      "output_tokens": 6353,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25846,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a9e83023d1bf4e9989b94604d6147aecd6c401e0",
+ "cost_usd": 2.445622,
+ "dedupe_key": "TauCetiProject/TauCeti|2258|53e2235b8848ed254cc3aa08cc0106f1602cfaf4|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "diff_sha256": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "duration_s": 357.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib Mathlib/RepresentationTheory/FDRep.lean:64 `abbrev FDRep (R : Type u) (G : Type v)`; Mathlib/RepresentationTheory/Rep/Basic.lean:30 `structure Rep (k : Type u) (G : Type v)`; TauCeti/RepresentationTheory/CharacterTable/VirtualCharacter.lean:91 `variable {k : Type u} {G : Type v}`; TauCeti/RepresentationTheory/Induction/FiniteDimensional.lean:256 and Induction/Character.lean:45 use `{k G : Type u}`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "Attribute the restriction to its real source: the FDRep-level induction API this file uses is stated in a single universe (`indFDRep {k G : Type u}`, `ClassFunction.ind_ofFDRep` in `Induction/Character.lean`, whose section variable is `{k G : Type u}`).",
+   "issue": "Implementation note says `k` and `G` must share a universe because \"the virtual-character lattice is defined through `FDRep k G`, and Mathlib's `Rep k G` puts the field and the group in a common universe\". Both halves are false: Mathlib has `abbrev FDRep (R : Type u) (G : Type v)` and `structure Rep (k : Type u) (G : Type v)`, and TauCeti's `virtualCharacters` is itself stated with `{k : Type u} {G : Type v}`.",
+   "line": 55
+  },
+  {
+   "evidence": "Spanning.lean:42-46 vs Spanning.lean:49-52 and Artin.lean:38-43 (\"nothing below identifies it with `|G|` or bounds it\").",
+   "file": "TauCeti/RepresentationTheory/Induction/Spanning.lean",
+   "fix": "Replace \"equivalently\" with the accurate relation: the rational form is equivalent to \"*some* nonzero integer multiple of \u03c7 is an integral combination\", and the `|G|` version is a strictly sharper statement not proved here.",
+   "issue": "The docstring states that \"`|G| \u2022 \u03c7` is a `\u2124`-linear combination ... and equivalently every character is a `\u211a`-linear combination of them\". These are not equivalent statements: clearing denominators from a rational combination yields some nonzero integer, and pinning it to `|G|` needs the extra Artin identity. Lines 49-52 of the same docstring then say the rational form is proved in `Artin.lean` while \"the sharp form, with the denominator identified as `|G|`, remains open\" \u2014 a reader is told both that the two are equivalent and that one is open.",
+   "line": 42
+  },
+  {
+   "evidence": "Spanning.lean:323-326 `theorem inducedCharactersFrom_eq_inducedFrom [IsAlgClosed k] {\ud835\udcae : Set (Subgroup G)} (h\ud835\udcae : \u2200 S \u2208 \ud835\udcae, IsUnit (Nat.card S : k))`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Spanning.lean",
+   "fix": "Add \"in which the orders of the members of `\ud835\udcae` are invertible\" to both places, as the docstrings of `inducedFrom_le_inducedCharactersFrom` (line 300) and `inducedCharactersFrom_eq_inducedFrom` (line 320) already do.",
+   "issue": "The `inducedCharactersFrom` docstring says \"over an algebraically closed field the two agree (`inducedCharactersFrom_eq_inducedFrom`)\", dropping that theorem's hypothesis `h\ud835\udcae : \u2200 S \u2208 \ud835\udcae, IsUnit (Nat.card S : k)`. Without it the claim is false (e.g. `k = F\u0304_p`, `S` of order `p`: the irreducible characters do not span the class functions of `S`). Same omission in the Main statements bullet at line 71.",
+   "line": 247
+  }
+ ],
+ "head_sha": "53e2235b8848ed254cc3aa08cc0106f1602cfaf4",
+ "merge_base_sha": "f0516cb9e54d0a559a43659f8dd11afa594966b6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2258,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "062227b734afa3460349f9df79b57de16b0691da3729db2a29d82f9271d40be6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T022316Z-2258-documentation-44375a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T02:23:16Z",
+ "submitted_by": "kim-em",
+ "summary": "Module and declaration docstrings are present throughout, but three claims are inaccurate: an implementation note misattributes the universe restriction to Mathlib, the Spanning docstring calls the |G|-form and the rational form \"equivalent\" while elsewhere saying one is proved and the other open, and two places state the induced-characters/class-functions agreement without its invertibility hypothesis.",
+ "transcript_blob": "524046248a0297ae6e1429e35e3cec515b6259d07fb017fbf2ba90616b2b1370",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 82454,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 82454,
+  "cache_read_input_tokens": 1914837,
+  "inference_geo": "not_available",
+  "input_tokens": 47,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1155,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1155,
+    "cache_read_input_tokens": 97506,
+    "input_tokens": 2,
+    "output_tokens": 6353,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25846,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

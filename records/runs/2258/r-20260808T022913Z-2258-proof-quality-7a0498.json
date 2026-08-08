@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6598450000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 257.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72980,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72980,
+    "cache_read_input_tokens": 939796,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1802,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1802,
+      "cache_read_input_tokens": 87385,
+      "input_tokens": 2,
+      "output_tokens": 4207,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17703,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a9e83023d1bf4e9989b94604d6147aecd6c401e0",
+ "cost_usd": 1.659845,
+ "dedupe_key": "TauCetiProject/TauCeti|2258|53e2235b8848ed254cc3aa08cc0106f1602cfaf4|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "diff_sha256": "f230fd0da2ca645da0b120c393eb2da661e49d1dad1c302f85bb2361298d2470",
+ "duration_s": 257.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/LinearAlgebra/Matrix/Basis.lean:157 and Mathlib/LinearAlgebra/Matrix/Adjugate.lean:333 use `RingHom.mapMatrix_apply`; `eq_intCast` is Mathlib/Data/Int/Cast/Lemmas.lean:336. Rubric: `show` without a documenting comment, and reliance on defeq across a wrapper/coercion.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "Use the explicit lemmas: `rw [\u2190 RingHom.mapMatrix_apply, \u2190 RingHom.map_det, eq_intCast]` (or `Int.coe_castRingHom`) instead of the `show ... from rfl` and the trailing `rfl`.",
+   "issue": "`hmap` is proved by `rw [show (N.map (Int.cast : \u2124 \u2192 k)) = (Int.castRingHom k).mapMatrix N from rfl, \u2190 RingHom.map_det]` followed by a bare `rfl`. Both steps rest on undocumented defeq: the first unfolds the bundled `RingHom.mapMatrix` wrapper plus the `FunLike` coercion, the second identifies `((N.det : \u2124) : k)` with `(Int.castRingHom k) N.det`. No comment justifies either.",
+   "line": 115
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/Matrix/Basis.lean:257-262 `Module.Basis.invertibleToMatrix (b b' : Basis \u03b9 R\u2082 M\u2082) : Invertible (b.toMatrix b')`; Mathlib/LinearAlgebra/Matrix/NonsingularInverse.lean:137 `Matrix.isUnit_det_of_invertible`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "Derive it from `Module.Basis.invertibleToMatrix B B'` and `Matrix.isUnit_det_of_invertible (B.toMatrix \u21d1B')`, then rewrite by `htoMatrix`, `Matrix.det_transpose`, `\u2190 hmap` and conclude with `IsUnit.ne_zero`; this drops the named-lemma chain and the by-contradiction step.",
+   "issue": "`hdet` rebuilds \"a change-of-basis matrix has nonzero determinant\" by hand: `congrArg Matrix.det (B.toMatrix_mul_toMatrix_flip B')`, then a chain of `det_mul`/`det_one`/`det_transpose` and a proof by contradiction ending in `zero_ne_one`. Mathlib already has this fact as an instance.",
+   "line": 118
+  },
+  {
+   "evidence": "Spanning.lean:253-256 vs Artin.lean:212-214 are the same set literal; `hmem` (Artin.lean:215-217) is `Iff.rfl`, which only typechecks because the two literals coincide.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "In Spanning.lean add a named generating set (e.g. `inducedCharactersSet k G \ud835\udcae`) with `inducedCharactersFrom k G \ud835\udcae = Submodule.span k (inducedCharactersSet k G \ud835\udcae)` and a `mem_inducedCharactersSet` characterization, as was already done for `cyclicInducedCharacters_eq_inducedCharactersFrom`; then Artin.lean gets `hspan` by rewriting `cyclicInducedCharacters_eq_top` rather than by duplicating the set and re-deriving spanning.",
+   "issue": "The local set `\ud835\udca2` (lines 212-214) re-spells, character for character, the generating set inside `inducedCharactersFrom` (Spanning.lean:254-256), and `hspan` (218-222) then rebuilds `Submodule.span k \ud835\udca2 = \u22a4` from `cyclicInducedCharacters_eq_top` through a term-mode `\u25b8` chain. The duplication exists only because Spanning.lean never names its generating set; the two copies must be kept in sync by hand.",
+   "line": 212
+  },
+  {
+   "evidence": "Artin.lean:228 defines `T := fun i => (e i : ClassFunction k G)`; line 232 asserts it equals `Subtype.val \u2218 e` by `rfl`. Rubric: flag any `show`/`change` used without a comment documenting why the goal cannot be reached otherwise.",
+   "file": "TauCeti/RepresentationTheory/Induction/Artin.lean",
+   "fix": "Introduce the equality as `have hT : \u21d1T = Subtype.val \u2218 e := funext fun _ => rfl` with a one-line comment, or define `T := Subtype.val \u2218 e` directly so no defeq step is needed.",
+   "issue": "`rw [show T = Subtype.val \u2218 e from rfl, ...]` closes the step by an undocumented definitional equality (eta-expansion of the `let`-bound `T`), with no comment saying why a lemma is unavailable \u2014 the same smell as line 115.",
+   "line": 232
+  }
+ ],
+ "head_sha": "53e2235b8848ed254cc3aa08cc0106f1602cfaf4",
+ "merge_base_sha": "f0516cb9e54d0a559a43659f8dd11afa594966b6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2258,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2856fea146ccf109e03eb24e37f3f07c832015191783731ce7d3c129bb615c0f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T022913Z-2258-proof-quality-7a0498",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T02:29:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The lattice-descent proof in Artin.lean twice closes goals by undocumented definitional equality (`show ... from rfl` across `RingHom.mapMatrix`/`Subtype.val \u2218 e`) where explicit Mathlib lemmas exist, hand-rolls the standard \"change-of-basis determinant is nonzero\" fact instead of using `Module.Basis.invertibleToMatrix`, and re-spells the generating set of `inducedCharactersFrom` verbatim because Spanning.lean never exposes it.",
+ "transcript_blob": "5e46fcc148a349424811689d1a66a7056ebabb7644e940699372466a63e4e2b9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72980,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72980,
+  "cache_read_input_tokens": 939796,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1802,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1802,
+    "cache_read_input_tokens": 87385,
+    "input_tokens": 2,
+    "output_tokens": 4207,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17703,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
