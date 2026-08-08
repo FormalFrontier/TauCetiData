@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9021095,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 262.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87680,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87680,
+    "cache_read_input_tokens": 1005341,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 659,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 659,
+      "cache_read_input_tokens": 103228,
+      "input_tokens": 2,
+      "output_tokens": 2097,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20419,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "cost_usd": 1.902109,
+ "dedupe_key": "TauCetiProject/TauCeti|2273|b8badf29029afa4cf19f41682faca53756509102|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e907371f8137e55627ecff864d615194cb9fe0281cbe03d7e2e6c15094901b1a",
+ "diff_sha256": "e907371f8137e55627ecff864d615194cb9fe0281cbe03d7e2e6c15094901b1a",
+ "duration_s": 262.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n hA TauCeti/Analysis/Semigroups/Generation/Yosida.lean` \u2192 the hypothesis is consumed only at line 86; lines 97, 176, 190 just forward it. Roadmap OneParameterSemigroups/README.md: \"theorem hilleYosida_generation (A : DenseLinearOperator X) (h\u03c1 : \u2200 l : \u211d, \u03c9 < l \u2192 l \u2208 resolventSet A) (hbound : ...)\" and \"\u26a0 Both are genuinely open / build-here, via the same Yosida approximation\".",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Replace `(hA : IsMDissipative A)` by `(hres : \u2016LinearPMap.resolvent A lambda\u2016 \u2264 lambda\u207b\u00b9)` in all four declarations (the wrappers at 195/203/210/219 then carry `hres` instead of `hA` unchanged), and recover the m-dissipative case at the call site from `hA.norm_resolvent_le hlambda`, added by this same PR in Dissipative/Basic.lean. The proofs go through verbatim: `norm_smul_resolvent_le_one` becomes `gcongr; exact hres`, and 90/138/181 already route through it. Note `yosidaApproximation_apply_eq_smul_apply_resolvent` (71) already keys on the weak hypothesis `lambda \u2208 LinearPMap.resolventSet A`, so the file is internally inconsistent about this.",
+   "issue": "`norm_smul_resolvent_le_one` (79), `norm_yosidaApproximation_le` (90), `norm_exp_yosidaApproximation_le_one` (138) and `yosidaSemigroup` (181) all assume `hA : IsMDissipative A`, but the only mathematical use of `hA` in the whole file is line 86, `exact hA.norm_resolvent_le hlambda`. The hypothesis is strictly stronger than what the proofs need, and it is the Lumer\u2013Phillips hypothesis set, not the Hille\u2013Yosida one the PR claims to advance: the roadmap's Hille\u2013Yosida milestone reads `(\u03c9,\u221e) \u2286 \u03c1(A)` plus `\u2016R(\u03bb,A)\u207f\u2016 \u2264 M/(\u03bb\u2212\u03c9)\u207f` with no dissipativity anywhere, so as stated none of this API applies under those hypotheses and the contraction estimate would have to be re-derived.",
+   "line": 79
+  },
+  {
+   "evidence": "mathlib/Mathlib/Analysis/Normed/Algebra/Exponential.lean:446-472 (`variable [NormedRing \ud835\udd38] [NormedAlgebra \ud835\udd42 \ud835\udd38]`, `expSeries_radius_eq_top`, `norm_expSeries_summable'`) and Mathlib/Analysis/Normed/Ring/Basic.lean:425 (`norm_pow_le'` for a seminormed ring); the only operator-specific step in the PR's proof is `ContinuousLinearMap.norm_id_le`, i.e. `\u20161\u2016 \u2264 1`.",
+   "file": "TauCeti/Analysis/Normed/Operator/Exponential.lean",
+   "fix": "State both over `{\ud835\udd38 : Type*} [NormedRing \ud835\udd38] [NormedAlgebra \u211d \ud835\udd38]`: `exp_add_of_commute [CompleteSpace \ud835\udd38] {x y : \ud835\udd38} (h : Commute x y) : exp (x + y) = exp x * exp y` (proof unchanged, `\ud835\udd38` in place of `X \u2192L[\u211d] X`), and `norm_exp_le_exp_norm (h1 : \u2016(1 : \ud835\udd38)\u2016 \u2264 1) (x : \ud835\udd38) : \u2016exp x\u2016 \u2264 Real.exp \u2016x\u2016` \u2014 the explicit `\u20161\u2016 \u2264 1` hypothesis avoids `[NormOneClass \ud835\udd38]`, which fails for trivial `X`, and the operator case is `norm_exp_le_exp_norm ContinuousLinearMap.norm_id_le`. Callers in BoundedGenerator/Basic.lean:104 and Yosida.lean:124,156 are unaffected up to that extra argument.",
+   "issue": "`exp_add_of_commute` (45) and `norm_exp_le_exp_norm` (28) are new public infrastructure in a general `Analysis/Normed/Operator` file but are stated only for the algebra `X \u2192L[\u211d] X`, while their proofs use nothing about operators: `exp_add_of_commute_of_mem_ball`, `expSeries_radius_eq_top`, `norm_expSeries_summable'`, `expSeries_summable'` and `norm_pow_le'` are all stated in Mathlib for `[NormedRing \ud835\udd38] [NormedAlgebra \ud835\udd42 \ud835\udd38]`. The narrow signature forces a re-proof for any other real Banach algebra.",
+   "line": 45
+  }
+ ],
+ "head_sha": "b8badf29029afa4cf19f41682faca53756509102",
+ "merge_base_sha": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2273,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cc260bdbf65e36391adc55294970066f36bf89ab7155d807e35fec9bc44cb975",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T085652Z-2273-generality-296092",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T08:56:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The Yosida API is keyed on `IsMDissipative A` although every proof uses only the resolvent bound `\u2016R(lambda,A)\u2016 \u2264 lambda\u207b\u00b9`, which is exactly the hypothesis of the roadmap's Hille\u2013Yosida milestone (no dissipativity); and the two new exponential lemmas are stated for `X \u2192L[\u211d] X` although their proofs are Banach-algebra-generic.",
+ "transcript_blob": "d89fc5612d27bc70d5324d1e3622ebc94ea2e738c1b09144503d0441b152169a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87680,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87680,
+  "cache_read_input_tokens": 1005341,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 659,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 659,
+    "cache_read_input_tokens": 103228,
+    "input_tokens": 2,
+    "output_tokens": 2097,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20419,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

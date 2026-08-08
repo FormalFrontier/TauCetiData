@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.507397,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 219.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 65259,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 65259,
+    "cache_read_input_tokens": 856056,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2864,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2864,
+      "cache_read_input_tokens": 78602,
+      "input_tokens": 1,
+      "output_tokens": 2069,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16578,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "cost_usd": 1.507397,
+ "dedupe_key": "TauCetiProject/TauCeti|2273|b8badf29029afa4cf19f41682faca53756509102|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e907371f8137e55627ecff864d615194cb9fe0281cbe03d7e2e6c15094901b1a",
+ "diff_sha256": "e907371f8137e55627ecff864d615194cb9fe0281cbe03d7e2e6c15094901b1a",
+ "duration_s": 219.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"exp.*smul_one|smul_one.*exp\" mathlib/Mathlib/Analysis` \u2192 no matches; Exponential.lean:26-49 holds the two facts this PR made public in the new file, Yosida.lean:127-135 holds an equally general third one as `private`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Move it to `TauCeti/Analysis/Normed/Operator/Exponential.lean` as a public theorem, and preferably also record the norm form `\u2016exp (c \u2022 (1 : X \u2192L[\u211d] X))\u2016 \u2264 Real.exp c` there, since that is what the only consumer actually needs.",
+   "issue": "`exp_smul_one_eq : exp (c \u2022 (1 : X \u2192L[\u211d] X)) = Real.exp c \u2022 1` is a general Banach-algebra fact with no Mathlib counterpart, but it is kept `private` in the Yosida file \u2014 while this same PR creates `TauCeti/Analysis/Normed/Operator/Exponential.lean` as the public home for exactly this kind of exponential fact (`norm_exp_le_exp_norm`, `exp_add_of_commute` are moved there).",
+   "line": 128
+  },
+  {
+   "evidence": "Yosida.lean:148-166: `_ = Real.exp (-(t*lambda)) * \u2016(1 : X \u2192L[\u211d] X)\u2016 * ...` then an inner `calc` of three steps, each `by gcongr`, with `hone`/`hexp` bound at 155-157 and never mentioned again.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "With `\u2016exp (c \u2022 1)\u2016 \u2264 Real.exp c` stated as a lemma (previous finding), lines 148-166 collapse to a single `gcongr`/`calc` step with no `\u20161\u2016` bookkeeping and no nested calc.",
+   "issue": "The calc step at 152-166 is a three-step nested calc whose only purpose is to eliminate the `\u2016(1 : X \u2192L[\u211d] X)\u2016` factor introduced by the rewrite at line 150; its two `have`s (`hone`, `hexp`) are never referenced by name and are consumed only through `gcongr`'s hypothesis matching, so a reader cannot see where they are used.",
+   "line": 152
+  },
+  {
+   "evidence": "Yosida.lean:173-176 `simpa [norm_smul, Real.norm_eq_abs, abs_of_pos hlambda] using norm_smul_resolvent_le_one hA hlambda`; Yosida.lean:92-98 `hres` rebuilds the same identity in the other direction; the same `norm_smul, Real.norm_eq_abs, abs_of_pos hlambda` triple recurs at lines 82, 96, 102, 175.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "State the scalar form `lambda * \u2016LinearPMap.resolvent A lambda\u2016 \u2264 1` (one line from `hA.norm_resolvent_le hlambda` and `mul_inv_cancel\u2080`) as the primitive and use it at both sites; derive the `\u2016lambda \u2022 R\u2016 \u2264 1` form from it if it is still wanted.",
+   "issue": "`norm_smul_resolvent_le_one` is stated in the packaged form `\u2016lambda \u2022 R(lambda,A)\u2016 \u2264 1`, and both consumers immediately unpack it back to `lambda * \u2016R\u2016 \u2264 1` by ad-hoc `norm_smul`/`Real.norm_eq_abs`/`abs_of_pos` rewriting \u2014 line 175 via a `simpa` that closes the goal only because simp re-normalizes the norm of a smul, and lines 92-98 via the inverse repackaging in `hres`. The round trip is brittle and repeated.",
+   "line": 175
+  },
+  {
+   "evidence": "Yosida.lean:187-189 vs `ofBounded_apply` (BoundedGenerator/Basic.lean:69) which is stated as `(ofBounded A) t = ...`; the field is `contracting : \u2200 t, \u2016toFun t\u2016 \u2264 1` (Basic.lean:176). Precedent: Identity.lean:69-72 documents the same crossing with an explicit comment before `change`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Document the defeq with a comment as the repo already does for this exact situation, or add a `@[simp] lemma coe_toFun (S : StronglyContinuousSemigroup X) (t) : S.toFun t = S t := rfl` in `Semigroups/Basic.lean` and rewrite with it before applying `ofBounded_apply`.",
+   "issue": "The `contracting` field proof writes its calc over the raw structure field `(...).toFun t` and then justifies the first step with `congrArg norm (ofBounded_apply _ t)`, a lemma about the `FunLike` coercion; the step typechecks only through the undocumented coercion-vs-field definitional equality.",
+   "line": 187
+  }
+ ],
+ "head_sha": "b8badf29029afa4cf19f41682faca53756509102",
+ "merge_base_sha": "88b06f05ae23aaec60ae34e014dd2f0e385b1713",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2273,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7b75f93744a6a1683327861a04f1df5b68933d1f90ac4b052bc588550d7df590",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T091138Z-2273-proof-quality-260109",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T09:11:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs are mostly robust, but a general exponential fact is hidden as a private one-off in the Yosida file even though this PR creates a dedicated home for such facts, the contraction estimate carries a redundant nested calc that exists only to dispose of a stray \u20161\u2016 factor, and the packaged form of norm_smul_resolvent_le_one is unpacked by ad-hoc norm_smul rewriting at both use sites.",
+ "transcript_blob": "76cf274031b6a9c82df92c58d9859e1dc0f2218041e3dec86582fda97febc0a9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 65259,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 65259,
+  "cache_read_input_tokens": 856056,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2864,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2864,
+    "cache_read_input_tokens": 78602,
+    "input_tokens": 1,
+    "output_tokens": 2069,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16578,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
