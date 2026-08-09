@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5141555,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 237.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72114,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72114,
+    "cache_read_input_tokens": 631337,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1170,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1170,
+      "cache_read_input_tokens": 87151,
+      "input_tokens": 2,
+      "output_tokens": 6171,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18277,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c9e9c6b15edd9b0eb24cd60a666dbdde23210016",
+ "cost_usd": 1.514155,
+ "dedupe_key": "TauCetiProject/TauCeti|2441|e9521dcbf22ebf0b7383f5afa13b5bd534820eb6|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "582209ebebf37985f1543463998db58e5de4628cfa6a5686f3c9afd0bd5a9520",
+ "diff_sha256": "582209ebebf37985f1543463998db58e5de4628cfa6a5686f3c9afd0bd5a9520",
+ "duration_s": 237.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 10-78 contain no occurrence of `IsWeightFamily`/\"standing hypothesis\"; contrast line 523 `def weightedRestrictedSubring ... (hT : IsWeightFamily T)` and roadmap `TauCetiRoadmap/AdicSpaces/README.md:205-208` (\"subject to Wedhorn's standing hypothesis ... without it neither `A[X]_T` nor `A\u27e8X\u27e9_T` is defined\").",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "Add `TauCeti.Huber.IsWeightFamily` to \"Main definitions\" with a one-line statement of the standing hypothesis and that the subring/topology are only defined under it; state in the header that `A` is commutative and nonarchimedean; move the def-valued entries out of \"Main results\" and add the missing public definitions.",
+   "issue": "The module docstring never mentions `IsWeightFamily`. It is absent from \"Main definitions\" (which lists only weightPow, weightMul, IsWeightedRestricted) and from \"Implementation notes\", while the header asserts unconditionally that Wedhorn's data defines a *ring* (line 14) and that the `U\u27e8X\u27e9` are a fundamental system of neighbourhoods of zero (lines 20-21) \u2014 both of which every declaration here takes `hT : IsWeightFamily T` for (weightedRestrictedSubring:523, weightedNhd:576, weightedTopology:684). The PR description itself calls this hypothesis \"not optional and easy to miss\"; the module docstring is where a reader would look and it is silent. \"For a topological ring `A`\" (line 13) is likewise wider than the file, which needs `CommRing` plus `NonarchimedeanRing` from line 363 onwards. Main definitions also omits weightedRestrictedSubring, weightedNhd, weightedTopology, weightedC and weightedX (the first three appear under \"Main results\", though they are defs).",
+   "line": 24
+  },
+  {
+   "evidence": "`grep -rn \"ScaledTate\" --include=\"*.lean\" .` returns only this line 65; `ls TauCeti/RingTheory/Huber/` gives Basic.lean, Bounded.lean, PowerBounded.lean, RestrictedPowerSeries.lean, WeightedRestrictedSeries.lean.",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "Drop the file path (describe the other construction in prose, or name it only once #2367 has landed under its actual path).",
+   "issue": "The \"This is *not* `TauCeti/RingTheory/Huber/ScaledTateTopology.lean`\" paragraph points at a file that does not exist at the PR head, so the contrast a reader is told to check is unfollowable.",
+   "line": 65
+  },
+  {
+   "evidence": "Line 429-431 \"one open subgroup `Z \u2264 W` absorbs every bad coefficient ... put `E = (F + G_Z) \u222a (F_Z + G)`\" mirrors the local `set Z : OpenAddSubgroup A := W \u2293 Zf \u2293 Zg` (451) and `refine Set.Finite.subset ((hF.add hGZ).union (hFZ.add hG))` (459); line 277-278 names the two lemmas used at 285.",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "Keep the mathematical content of each docstring (what the object/statement is, and Wedhorn's remark that multiplicative closure is the non-obvious point) and move the argument sketch and the cross-references to proof-internal lemmas into comments inside the corresponding proof bodies.",
+   "issue": "Docstrings describe the proof rather than the result, and name proof-internal data that will go stale. `IsWeightedRestricted.mul` (424-432) is a five-line recipe naming the tactic-block witnesses `W`, `Z`, `F`, `G`, `F_Z`, `G_Z`, `E`; `IsWeightFamily.weightMul_mem_nhds` (274-278) states \"the proof is induction on `\u03bd`, splitting off one variable at a time with `weightMul_add_eq` and `weightPow_single`\"; and the helper lemmas 190-202, 244-247, 256-259, 288-294, 303-308, 325-332, 498-503, 708-711 each explain where they are consumed inside that proof instead of what they state.",
+   "line": 424
+  }
+ ],
+ "head_sha": "e9521dcbf22ebf0b7383f5afa13b5bd534820eb6",
+ "merge_base_sha": "c9e9c6b15edd9b0eb24cd60a666dbdde23210016",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2441,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f74c5e656a55b0fe139a13f8222ed425c7226356104506feabace1a664cab5eb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T141003Z-2441-documentation-2fcd43",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T14:10:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The per-declaration docstrings are mostly accurate and the IsWeightFamily counterexample verifies, but the module docstring omits the file's load-bearing standing hypothesis entirely while asserting the ring and topology unconditionally, cites a file that does not exist, and a large block of helper docstrings narrates the proof of IsWeightedRestricted.mul rather than describing the lemmas.",
+ "transcript_blob": "a66fa8d9a1b9f34f4b3f606e78b059e50dbc09a7d20b4ce838bd1cc45eab1aaf",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72114,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72114,
+  "cache_read_input_tokens": 631337,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1170,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1170,
+    "cache_read_input_tokens": 87151,
+    "input_tokens": 2,
+    "output_tokens": 6171,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18277,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

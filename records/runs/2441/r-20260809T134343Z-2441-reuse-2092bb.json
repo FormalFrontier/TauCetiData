@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7778455,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 248.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72850,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72850,
+    "cache_read_input_tokens": 1136133,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 614,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 614,
+      "cache_read_input_tokens": 88443,
+      "input_tokens": 2,
+      "output_tokens": 2923,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18414,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c9e9c6b15edd9b0eb24cd60a666dbdde23210016",
+ "cost_usd": 1.777845,
+ "dedupe_key": "TauCetiProject/TauCeti|2441|e9521dcbf22ebf0b7383f5afa13b5bd534820eb6|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "582209ebebf37985f1543463998db58e5de4628cfa6a5686f3c9afd0bd5a9520",
+ "diff_sha256": "582209ebebf37985f1543463998db58e5de4628cfa6a5686f3c9afd0bd5a9520",
+ "duration_s": 248.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Topology/Algebra/Nonarchimedean/Basic.lean:122 `theorem left_mul_subset (U : OpenAddSubgroup R) (r : R) : \u2203 V : OpenAddSubgroup R, r \u2022 (V : Set R) \u2286 U`; Mathlib/Topology/Algebra/OpenSubgroup.lean:245 `theorem isOpen_of_mem_nhds [SeparatelyContinuousMul G] (H : Subgroup G) {g : G} (hg : (H : Set G) \u2208 \ud835\udcdd g) : IsOpen (H : Set G)` (`@[to_additive]`, so `AddSubgroup.isOpen_of_mem_nhds` exists). `NonarchimedeanRing` extends `IsTopologicalRing` (Basic.lean:49), so the continuity side conditions are available.",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "Replace the proof body with `obtain \u27e8Z, hZ\u27e9 := NonarchimedeanRing.left_mul_subset \u27e8V, V.isOpen_of_mem_nhds hV\u27e9 a; exact \u27e8Z, fun z hz \u21a6 hZ \u27e8z, hz, rfl\u27e9\u27e9` (`a \u2022 (Z : Set A) \u2286 V` unfolds to `a * z \u2208 V` via `smul_eq_mul`).",
+   "issue": "`exists_openAddSubgroup_mul_subset` re-proves Mathlib's `NonarchimedeanRing.left_mul_subset` from scratch (continuity of `fun x \u21a6 a * x` plus `NonarchimedeanAddGroup.is_nonarchimedean`). The only difference is that the target is an `AddSubgroup` that is a neighbourhood of zero rather than a bundled `OpenAddSubgroup`, and such a subgroup is open by `AddSubgroup.isOpen_of_mem_nhds`.",
+   "line": 295
+  },
+  {
+   "evidence": "Mathlib/Algebra/Ring/Subsemiring/Basic.lean:725 `def codRestrict (f : R \u2192+* S) (s : \u03c3S) (h : \u2200 x, f x \u2208 s) : R \u2192+* s`, with `@[simp] codRestrict_apply` at line 729. `MvPowerSeries.C : R \u2192+* MvPowerSeries \u03c3 R` at Mathlib/RingTheory/MvPowerSeries/Basic.lean:334, and `isWeightedRestricted_C T a : IsWeightedRestricted T (MvPowerSeries.C a)` is the membership proof (carrier is `{f | IsWeightedRestricted T f}`).",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "`noncomputable def weightedC ... : A \u2192+* weightedRestrictedSubring T hT := (MvPowerSeries.C : A \u2192+* MvPowerSeries (Fin k) A).codRestrict _ (isWeightedRestricted_C T)`. `coe_weightedC` then holds by `RingHom.codRestrict_apply` (still `rfl`), and `weightedRestrictedSubring.instAlgebra`/`coe_algebraMap_weightedRestrictedSubring` are unchanged.",
+   "issue": "`weightedC` assembles a `RingHom` into the subring by hand, discharging `map_one'`, `map_mul'`, `map_zero'`, `map_add'` with four `by ext; simp` proofs. `RingHom.codRestrict` is the library combinator that does exactly this assembly for a ring hom whose image lands in a subsemiring/subring.",
+   "line": 539
+  },
+  {
+   "evidence": "`ls TauCeti/RingTheory/Huber/` gives Basic.lean, Bounded.lean, PowerBounded.lean, RestrictedPowerSeries.lean, WeightedRestrictedSeries.lean; grepping `ScaledTate` across the checkout matches only this docstring line.",
+   "file": "TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean",
+   "fix": "Delete the paragraph, or restate it against a declaration that exists on `main` (e.g. `restrictedMvPowerSeriesSubring` in `TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean`, which `weightedRestrictedSubring_one` already relates).",
+   "issue": "The implementation note distinguishes this construction from `TauCeti/RingTheory/Huber/ScaledTateTopology.lean`, which does not exist in the repository \u2014 so the stated non-duplication claim points at nothing a reader can check.",
+   "line": 65
+  }
+ ],
+ "head_sha": "e9521dcbf22ebf0b7383f5afa13b5bd534820eb6",
+ "merge_base_sha": "c9e9c6b15edd9b0eb24cd60a666dbdde23210016",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2441,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d5a773624071149b12aee9c0bbc7e5b1a880a1afae4e854e0bb3ec385db08c05",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T134343Z-2441-reuse-2092bb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T13:43:43Z",
+ "submitted_by": "kim-em",
+ "summary": "Two located Mathlib declarations are re-derived here: NonarchimedeanRing.left_mul_subset and RingHom.codRestrict. The prior round's finding against the `_def`/`_iff` unfolding lemmas is withdrawn \u2014 the bodies are genuinely unexposed under `public section` without `@[expose]`, matching the precedent in RestrictedPowerSeries.lean.",
+ "transcript_blob": "b97427f4f40a20136eeea5c8b0b6d37f28bf32419ba2a975fe76912e275cc4c8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72850,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72850,
+  "cache_read_input_tokens": 1136133,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 614,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 614,
+    "cache_read_input_tokens": 88443,
+    "input_tokens": 2,
+    "output_tokens": 2923,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18414,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
