@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.165521,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 50432,
+    "input_tokens": 71113,
+    "output_tokens": 1230,
+    "reasoning_output_tokens": 310
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5dbaf19674026d91902f38ec48f40a59bd5f36f8",
+ "cost_estimated": true,
+ "cost_usd": 0.165521,
+ "dedupe_key": "TauCetiProject/TauCeti|2506|b62a7877051b7c5c138d52c1ed1653c465589a27|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "eee1c30d4bc35e1c5b54d6a46ced32d25e26bdd3d47de9d283dd92a10e12d937",
+ "diff_sha256": "eee1c30d4bc35e1c5b54d6a46ced32d25e26bdd3d47de9d283dd92a10e12d937",
+ "duration_s": 40.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 242\u2013245 are exactly that two-step proof; `filtration_mul` is at line 206 and `Submodule.mul_mem_mul` supplies the elementwise membership.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Delete it and retain `rw [\u2190 filtration_mul Q i j]; exact Submodule.mul_mem_mul hx hy` at the four call sites.",
+   "issue": "`mul_mem_filtration` merely restates `filtration_mul` followed by `Submodule.mul_mem_mul`.",
+   "line": 242
+  },
+  {
+   "evidence": "Line 59 is precisely this existing declaration applied to `x.property`; the same direct term was already used in `Graded.lean` before this PR.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/ExteriorFiltration.lean",
+   "fix": "Delete it and use `\u03b9_range_pow_le_filtration (0 : QuadraticForm R M) (k + 1) x.property` directly in the quotient representatives.",
+   "issue": "`exteriorPower_mem_zero_form_filtration` is only the specialization of `\u03b9_range_pow_le_filtration` to the zero form.",
+   "line": 57
+  },
+  {
+   "evidence": "Lines 102\u2013103 and 111\u2013114 prove the new declarations solely by projecting `.property` from `equivExteriorFiltration`, with the existing coercion lemmas `coe_equivExteriorFiltration_apply` and `coe_equivExteriorFiltration_symm_apply`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Graded.lean",
+   "fix": "Delete both wrappers and use the corresponding `.property` terms from `equivExteriorFiltration Q (k + 1) x` and its inverse directly in the two representative statements.",
+   "issue": "Both `equivExterior_mem_zero_form_filtration` and `equivExterior_symm_mem_filtration` expose `.property` projections of the existing `equivExteriorFiltration` equivalence as parallel public API.",
+   "line": 99
+  }
+ ],
+ "head_sha": "b62a7877051b7c5c138d52c1ed1653c465589a27",
+ "merge_base_sha": "5dbaf19674026d91902f38ec48f40a59bd5f36f8",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2506,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e9ef8c22cd03cd52ca230c29fd7c3fbe900bef79db33ec19e5476439b02c028a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T102407Z-2506-reuse-b9921d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T10:24:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds four public thin wrappers around existing filtration APIs; their call sites can use the existing declarations directly.",
+ "transcript_blob": "8d9f3e57a5d3807b09e33456bafefc24173e0ffc2dd87734b71db3b3b1051ee0",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 50432,
+  "input_tokens": 71113,
+  "output_tokens": 1230,
+  "reasoning_output_tokens": 310
+ },
+ "verdict": "request_changes"
+}
