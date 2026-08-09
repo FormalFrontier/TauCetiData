@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.5782824999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 91.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 30233,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 30233,
+    "cache_read_input_tokens": 191785,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1429,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1429,
+      "cache_read_input_tokens": 45011,
+      "input_tokens": 2,
+      "output_tokens": 1878,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 7018,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6c5c9cc20e3c5676bf444c54f78a37a56bc7ed8c",
+ "cost_usd": 0.578282,
+ "dedupe_key": "TauCetiProject/TauCeti|2542|1781386defaa7528d8da9dd5de47f873ab5171f9|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e32bfc0dd749c117efcbb9adb577490496eb1c3502ec69ca25248f8e920df4fa",
+ "diff_sha256": "e32bfc0dd749c117efcbb9adb577490496eb1c3502ec69ca25248f8e920df4fa",
+ "duration_s": 91.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -r 'eventually_integral_bernsteinKernel_sub_exp_neg_mul_eq' ./code` returns nothing; `grep -r integrable_bernsteinKernel ./code` returns only Measures.lean:266 and Theorem.lean:106.",
+   "file": "",
+   "fix": "Either add the lemma as described, or rewrite the title and description to cover only `integrable_bernsteinKernel` and state the actual size change. The commit message is the permanent record of this change; as written it sends future readers grepping for a name that was never introduced.",
+   "issue": "The PR title and description announce a second new lemma, `eventually_integral_bernsteinKernel_sub_exp_neg_mul_eq` (\"becomes its own statement\", with a described signature over arbitrary `\u03bc : \u2115 \u2192 Measure \u211d\u22650` and filter `l`). No such declaration exists; the splitting remains inline as `hsplit` in Theorem.lean:101-107. The claim \"The parent drops from 40 lines to 28\" is likewise false: the diff is +6/-9 and the parent still spans Theorem.lean:80-122.",
+   "line": 0
+  },
+  {
+   "evidence": "Laplace/Kernel.lean:62-63: \"**The Laplace kernel is integrable against a finite measure.** For `0 \u2264 x` the kernel `p \u21a6 e^{-xp}` is bounded and continuous on `\u211d\u22650`, hence integrable against any finite measure.\" \u2014 the companion the new docstring cites states its condition.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Measures.lean",
+   "fix": "Mirror the sibling's wording, e.g. \"For `0 \u2264 x` the kernel `p \u21a6 \u03c6_n(x,p)` is bounded and continuous on `\u211d\u22650`, hence integrable against any finite measure.\"",
+   "issue": "The bold headline \"The Bernstein kernel is integrable against a finite measure\" is unconditional, but the lemma requires `hx : 0 \u2264 x`; for `x < 0` the kernel `(1 - xp/(n-1))\u208a\u207f\u207b\u00b9` is unbounded in `p` and the claim fails. The docstring also never says why integrability holds.",
+   "line": 264
+  },
+  {
+   "evidence": "Measures.lean:35-42 lists the kernel lemmas; Laplace/Kernel.lean:21 lists the counterpart `TauCeti.integrable_exp_neg_mul` in its own Main declarations, which is the convention this lemma is styled after.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Bernstein/Measures.lean",
+   "fix": "Add a bullet for `TauCeti.integrable_bernsteinKernel` to that cluster in the Main declarations list.",
+   "issue": "`integrable_bernsteinKernel` is not added to the module docstring's `Main declarations`, which itemizes the rest of the kernel cluster (`continuous_bernsteinKernel`, `bernsteinKernel_nonneg`, `bernsteinKernel_le_one`, `bernsteinKernelBoundedContinuous`, `bernsteinKernelBoundedContinuous_apply`, `bernsteinKernel_tendsto`) down to the `_apply` accessor.",
+   "line": 35
+  }
+ ],
+ "head_sha": "1781386defaa7528d8da9dd5de47f873ab5171f9",
+ "merge_base_sha": "6c5c9cc20e3c5676bf444c54f78a37a56bc7ed8c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2542,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5661a4ab181e12b157a30e744e7b53f608f4b8d5772f0ead3c725b4a06783ebb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T200227Z-2542-documentation-b8c4c5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T20:02:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR description documents a second lemma, `eventually_integral_bernsteinKernel_sub_exp_neg_mul_eq`, that is absent from the diff and the checkout, along with a line-count claim the diff contradicts. The one lemma that did land is missing from the module's Main declarations list and its docstring headline drops the `0 \u2264 x` hypothesis.",
+ "transcript_blob": "5c4bc563626258034c8c8f19e9660a87ff1d950b1ae089d9950bdb720500ab4a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 30233,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 30233,
+  "cache_read_input_tokens": 191785,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1429,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1429,
+    "cache_read_input_tokens": 45011,
+    "input_tokens": 2,
+    "output_tokens": 1878,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 7018,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
