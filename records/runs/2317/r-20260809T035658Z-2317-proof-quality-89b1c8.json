@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8831814999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 164.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38951,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38951,
+    "cache_read_input_tokens": 320935,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5704,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5704,
+      "cache_read_input_tokens": 49454,
+      "input_tokens": 2,
+      "output_tokens": 3465,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13150,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "03aaffeac8111893b0fdf8c31522af74eb63b09b",
+ "cost_usd": 0.883181,
+ "dedupe_key": "TauCetiProject/TauCeti|2317|841f7dc78b639d7b95d4be8c8881c76f1c3cb6bb|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "2ab5656421ba2b14fb806ece2201e712a006c7f663858ad463b0172f84980e87",
+ "diff_sha256": "2ab5656421ba2b14fb806ece2201e712a006c7f663858ad463b0172f84980e87",
+ "duration_s": 164.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`OperatorExponential.lean:123` `def continuousCommutator : R \u2192L[\u211d] R \u2192L[\u211d] R`; `OperatorExponential.lean:127-129` marks `continuousCommutator_apply` `@[simp]`; `BanachDexp/Basic.lean:89-90` uses `(map_neg continuousCommutator x).symm` for the same kind of step.",
+   "file": "TauCeti/Geometry/Lie/Adjoint/BanachDexp/Integral.lean",
+   "fix": "Replace the proof with `rw [map_smul, smul_neg, neg_smul]` (or `simp [map_smul]`), matching `BanachDexp/Basic.lean:89-90`, which derives `-continuousCommutator x = continuousCommutator (-x)` from `map_neg`.",
+   "issue": "`hscale` is proved by `ext z; simp [continuousCommutator_apply, smul_sub]`, unfolding the commutator pointwise to re-prove linearity that `continuousCommutator : R \u2192L[\u211d] R \u2192L[\u211d] R` already provides. This depends on the simp-normal form of the unfolded commutator rather than on the bundled structure, and `continuousCommutator_apply` is already `@[simp]` so listing it is redundant.",
+   "line": 63
+  },
+  {
+   "evidence": "Mathlib `Analysis/Normed/Algebra/Exponential.lean:504-507`: `variable ... [NormedAlgebra \u211a \ud835\udd38] ... @[continuity, fun_prop] theorem exp_continuous`. Repo idiom: `Analysis/Semigroups/Generation/Yosida.lean:117,124` and `Analysis/Semigroups/BoundedGenerator/Basic.lean:60,102` use `let +nondep : NormedAlgebra \u211a (X \u2192L[\u211d] X) := .restrictScalars \u211a \u211d _` in-proof; `OperatorExponential.lean:55` uses `attribute [local instance] TauCeti.normedAlgebraRatOfReal`.",
+   "file": "TauCeti/Geometry/Lie/Adjoint/BanachDexp/Integral.lean",
+   "fix": "Drop the module-scope instance and put `let +nondep : NormedAlgebra \u211a (R \u2192L[\u211d] R) := .restrictScalars \u211a \u211d _` inside `banachDexpFactor_apply_eq_integral_conj` right before `hint`, matching the repo idiom; if it must stay at module scope, state in the docstring that it exists solely to discharge `exp_continuous`.",
+   "issue": "`normedAlgebraRatContinuousLinearMapRealId` is declared as a module-scope `local instance` whose docstring states what it is, not why it is required; it appears to be needed only for the `fun_prop` continuity side goal at line 58 (`NormedSpace.exp_continuous` requires `[NormedAlgebra \u211a \ud835\udd38]`). At module scope it silently sits over both theorem statements, and it does not use `+nondep`, so a reader cannot tell that the statements are instance-independent.",
+   "line": 39
+  }
+ ],
+ "head_sha": "841f7dc78b639d7b95d4be8c8881c76f1c3cb6bb",
+ "merge_base_sha": "03aaffeac8111893b0fdf8c31522af74eb63b09b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2317,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e07d6982f28ce5751300d1012edee78876af84f182a9122693bf0968fc6052e0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T035658Z-2317-proof-quality-89b1c8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T03:56:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The `hscale` step re-derives linearity of `continuousCommutator` by pointwise unfolding instead of using the bundled `map_smul`/`map_neg` already used in the sibling file, and the `NormedAlgebra \u211a` scaffolding is a module-scope local instance with a docstring that never says why it is needed.",
+ "transcript_blob": "4baa74f62e00d15f39ec6e1a82093ae81549b8bc4bd7ba705a07df5045ff11fb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38951,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38951,
+  "cache_read_input_tokens": 320935,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5704,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5704,
+    "cache_read_input_tokens": 49454,
+    "input_tokens": 2,
+    "output_tokens": 3465,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13150,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
