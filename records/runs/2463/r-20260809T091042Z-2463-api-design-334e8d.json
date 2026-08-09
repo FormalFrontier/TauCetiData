@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.209454,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 64.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 64768,
+    "input_tokens": 91200,
+    "output_tokens": 1497,
+    "reasoning_output_tokens": 760
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1828f281bda30b8ed5c87912cbed3b9a6df1d310",
+ "cost_estimated": true,
+ "cost_usd": 0.209454,
+ "dedupe_key": "TauCetiProject/TauCeti|2463|7e774b588f74f7add74f580ab41c6fd859da5be1|api-design|gpt-5.6-sol|ce88b39773d791a9|production|3",
+ "diff_blob": "ff58b2f0320d5c6d2b74571b353950f05a749f0e82facc0a61b1a09edc06161d",
+ "diff_sha256": "ff58b2f0320d5c6d2b74571b353950f05a749f0e82facc0a61b1a09edc06161d",
+ "duration_s": 64.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 76\u201391 expose the body while providing `restrict_toBilinForm` and `[simp] restrict_apply`; `transport_toBilinForm` and `rescale_toBilinForm` are both `[simp]`.",
+   "file": "TauCeti/Geometry/Symplectic/Lagrangian/Basic.lean",
+   "fix": "Mark `restrict` `@[no_expose]` and add `@[simp]` to `restrict_toBilinForm`, keeping downstream use through the two characteristic lemmas.",
+   "issue": "`restrict` is `@[expose]` despite having characteristic projection and application lemmas; moreover `restrict_toBilinForm` lacks the normal-form `@[simp]` annotation used by analogous APIs.",
+   "line": 76
+  },
+  {
+   "evidence": "`ExistsCompatible.lean:184\u2013190` explicitly derives `hL`, `hL'`, and then `hcompl` from the same `hdisj`; conversely `isCompl_orthogonal_iff_disjoint` at `Lagrangian/Basic.lean:216` recovers that disjointness from `hcompl`.",
+   "file": "TauCeti/Geometry/Symplectic/Restrict.lean",
+   "fix": "Accept only `hcompl`, derive disjointness via `isCompl_orthogonal_iff_disjoint`, and construct both restriction proofs internally; update the compatible-splitting theorem likewise.",
+   "issue": "Both `isSymplectomorphism_prodEquivOfIsCompl` here and `compatible_prod_transport_of_splitting` at `ExistsCompatible.lean:66` publicly demand `hL` and `hL'`, although `hcompl` already determines both nondegeneracy proofs.",
+   "line": 35
+  }
+ ],
+ "head_sha": "7e774b588f74f7add74f580ab41c6fd859da5be1",
+ "merge_base_sha": "1828f281bda30b8ed5c87912cbed3b9a6df1d310",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2463,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "dfe9c258df568308f3aa895f81cea41aa068cb9d3359e6da21b2e07484d81625",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T091042Z-2463-api-design-334e8d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T09:10:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The restriction API exposes its implementation unnecessarily and the splitting interfaces require redundant proof arguments.",
+ "transcript_blob": "1b6298226d8e4f51e193bb8e7b64554e0267181e9064e826960832e9cce2e0a5",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 64768,
+  "input_tokens": 91200,
+  "output_tokens": 1497,
+  "reasoning_output_tokens": 760
+ },
+ "verdict": "request_changes"
+}
