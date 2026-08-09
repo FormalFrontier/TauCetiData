@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.965372,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 300.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 70724,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 70724,
+    "cache_read_input_tokens": 1307994,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 459,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 459,
+      "cache_read_input_tokens": 86472,
+      "input_tokens": 2,
+      "output_tokens": 3127,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23741,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ca3698e56d68a545c4eaef557cbc050f04a5b525",
+ "cost_usd": 1.965372,
+ "dedupe_key": "TauCetiProject/TauCeti|2584|53d6419930510a15de14c51c0194c4269515544d|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1f110bd46ce5c2bfaf48241b8c8cf01cd20a19022afa128b049bd7d8c21eff0b",
+ "diff_sha256": "1f110bd46ce5c2bfaf48241b8c8cf01cd20a19022afa128b049bd7d8c21eff0b",
+ "duration_s": 300.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/RootSystem/IsValuedIn.lean:169 `abbrev corootSpan [Module S N] := span S (range P.coroot)`; Defs.lean:120 `span_coroot_eq_top : span R (range P.coroot) = \u22a4`, Defs.lean:123 `attribute [simp] IsRootSystem.span_coroot_eq_top`; the PR's proof at line 200 is literally `RootPairing.IsRootSystem.span_coroot_eq_top`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "Delete the theorem; consumers use `RootPairing.IsRootSystem.span_coroot_eq_top` (or `by simp`) at `g2SimplyConnectedRootDatum`.",
+   "issue": "`span_coroot_g2SimplyConnectedRootDatum` is a restatement of Mathlib's `RootPairing.IsRootSystem.span_coroot_eq_top`: `corootSpan` is a reducible abbrev for `span S (range P.coroot)`, so the statement is the class field verbatim and the proof term is that declaration with no arguments. The `IsRootSystem` instance is declared four lines above, so every consumer already gets it by inference (and by `simp`).",
+   "line": 198
+  },
+  {
+   "evidence": "Root table at lines 58-60: entry 3 is `![1, 0]`, entry 5 is `![0, 1]`; coroot table at 66 has `![1, 0]`, `![0, 1]` at indices 0, 1 and `span_g2Coroot_eq_top` discharges the same goal in six lines via `(Pi.basisFun \u2124 (Fin 2)).span_eq`. `g2SimpleRootBasis` is referenced only at lines 177 and 180.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "Delete all three declarations and prove `span_g2Root_eq_top` by copying `span_g2Coroot_eq_top` (182-189) with the index map `![3, 5] : Fin 2 \u2192 Fin 12` in place of `g2SimpleRootIndex`.",
+   "issue": "`g2SimpleRootEquiv` (146-164), `g2SimpleRootBasis` (167-168) and `g2SimpleRootBasis_apply` (170-173) exist solely to prove `span_g2Root_eq_top` (175-180), but they are unnecessary: `g2Root 3 = ![1, 0]` and `g2Root 5 = ![0, 1]` are already the standard basis vectors, so the `Pi.basisFun` proof used eight lines later for the coroots works verbatim for the roots.",
+   "line": 144
+  },
+  {
+   "evidence": "Lines 206-210 and 260-264 are identical up to `g2Root`/`g2Coroot`; the twelve case blocks differ only in the numeric pair passed to `comb`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "Factor into one private lemma over a family `f : Fin 12 \u2192 (Fin 2 \u2192 \u2124)`, a coefficient table `c : Fin 12 \u2192 \u2115 \u00d7 \u2115` and a sign table `s : Fin 12 \u2192 Bool`, with hypothesis `\u2200 i, (if s i then f i else -f i) = (c i).1 \u2022 f 0 + (c i).2 \u2022 f 1` (dischargeable by `decide`), then apply it twice with the two tables.",
+   "issue": "`g2Root_mem_or_neg_mem` (202-253) and `g2Coroot_mem_or_neg_mem` (255-307) are line-for-line clones: same `let C`/`h0`/`h1`/`comb`/`fin_cases` skeleton and the same twelve `convert comb _ _ using 1; ext j; fin_cases j <;> norm_num [_]` blocks, differing only in the family name and the \u2115-coefficient pairs.",
+   "line": 202
+  },
+  {
+   "evidence": "`Function.Involutive.toPerm` is used in Mathlib at Mathlib/Data/Fin/Rev.lean:36 and Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Semisimple.lean:161; lines 89-91 and 92-94 of the PR are the same three-line proof twice.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "`private def g2ReflectionPerm (i : Fin 12) : Equiv.Perm (Fin 12) := Function.Involutive.toPerm (g2ReflectionIndex i) (fun j => by fin_cases i <;> fin_cases j <;> rfl)`; `g2ReflectionPerm_apply` stays `rfl`.",
+   "issue": "`g2ReflectionPerm` assembles an `Equiv` from a self-inverse function by hand, duplicating the `left_inv` and `right_inv` tactic block verbatim; Mathlib's `Function.Involutive.toPerm` is the combinator for exactly this.",
+   "line": 86
+  },
+  {
+   "evidence": "`Fin.castLE` and the simp lemma `Fin.val_castLE` are used throughout Mathlib, e.g. Mathlib/Data/Fin/Tuple/Take.lean:67,111 `simp only [..., val_castLE, ...]`; Mathlib/Data/Fin/SuccPred.lean:90 `castLE_injective`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "Use `Fin.castLE (by omega : (2 : \u2115) \u2264 12)` at the four use sites and delete both declarations; `Fin.val_castLE` replaces `g2SimpleRootIndex_val` in `g2SimplyConnectedBaseEquiv`.",
+   "issue": "`g2SimpleRootIndex := ![0, 1] : Fin 2 \u2192 Fin 12` and its value lemma `g2SimpleRootIndex_val` restate `Fin.castLE` and its `@[simp]` coercion lemma `Fin.val_castLE`.",
+   "line": 139
+  }
+ ],
+ "head_sha": "53d6419930510a15de14c51c0194c4269515544d",
+ "merge_base_sha": "15ae60ff3a0826e6f01c6e77e8f7600dea9c9146",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2584,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "682f49b0ca1392a3b2c486b0869f143f43e5e29516c432c38d38abd27a5546cd",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T225501Z-2584-reuse-7c2587",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T22:55:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematical content is new (no pinned root datum exists anywhere in TauCeti), but several declarations re-derive located Mathlib API: a public theorem whose proof term is a Mathlib simp lemma, ~30 lines of basis scaffolding that an earlier line in the same file already provides, and two 53-line proofs that are line-for-line clones of each other.",
+ "transcript_blob": "87e692ec6abea76d5458370dc0ce50966613a7d51a26b08048f6236ed3566989",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 70724,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 70724,
+  "cache_read_input_tokens": 1307994,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 459,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 459,
+    "cache_read_input_tokens": 86472,
+    "input_tokens": 2,
+    "output_tokens": 3127,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23741,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.689362,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 299.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64060,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64060,
+    "cache_read_input_tokens": 915598,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1120,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1120,
+      "cache_read_input_tokens": 79147,
+      "input_tokens": 2,
+      "output_tokens": 4423,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23221,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ca3698e56d68a545c4eaef557cbc050f04a5b525",
+ "cost_usd": 1.689362,
+ "dedupe_key": "TauCetiProject/TauCeti|2584|53d6419930510a15de14c51c0194c4269515544d|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1f110bd46ce5c2bfaf48241b8c8cf01cd20a19022afa128b049bd7d8c21eff0b",
+ "diff_sha256": "1f110bd46ce5c2bfaf48241b8c8cf01cd20a19022afa128b049bd7d8c21eff0b",
+ "duration_s": 299.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "DynkinType.lean:400 `def HasCartanType (b : P.Base) (t : DynkinType) : Prop := \u2203 e : b.support \u2243 Fin t.rank, \u2200 i j, b.cartanMatrix i j = t.cartanMatrix (e i) (e j)`; DynkinType.lean module doc lines 36-45: \"At rank at most `2` the orientation carries no information about *these* matrices: relabelling by the swap of two indices transposes the off-diagonal entries but exchanges the diagonal ones as well... Hence `B 2` and `C 2` match exactly the same bases.\" `grep -n \"private def g2Root\\|private def g2Coroot\" G2.lean` \u2192 lines 57, 64 (both private, no simp lemmas exporting `root`/`coroot` of the datum).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/G2.lean",
+   "fix": "Add a public entrywise lemma fixing the order, e.g. `g2SimplyConnectedBase.cartanMatrix = !![2, -1; -3, 2]` in the pinned index order (reusing the existing `DynkinType.cartanMatrix_G2_eq` in RankTwo.lean), or public `pairing 0 1 = -1` / `pairing 1 0 = -3` lemmas; and soften the docstrings of `hasCartanType_g2SimplyConnectedRootDatum`, `g2SimplyConnectedBase` (\"short root first and long root second\") and `g2SimplyConnectedRootDatum` (\"indices 0 and 1 are the short and long simple roots\") to match what is actually proved.",
+   "issue": "The docstring claims the theorem shows the Cartan matrix \"is the Bourbaki matrix `!![2, -1; -3, 2]`\", but `HasCartanType P b G2` is an existential over relabellings `e : b.support \u2243 Fin 2`, and DynkinType.lean's own module doc states that at rank \u2264 2 the index swap transposes off-diagonals while fixing the diagonal, so the same statement holds verbatim for a base numbered long-root-first. Combined with `g2Root`/`g2Coroot`/`g2SimpleRootIndex` being `private` and no `@[simps]` on `g2SimplyConnectedRootDatum`, nothing in the public API pins that index 0 is the short root \u2014 exactly the Bourbaki numbering that Layer 6 and the downstream `DynkinType.simplyConnectedBase` consumer are said to need.",
+   "line": 358
+  }
+ ],
+ "head_sha": "53d6419930510a15de14c51c0194c4269515544d",
+ "merge_base_sha": "15ae60ff3a0826e6f01c6e77e8f7600dea9c9146",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2584,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f99ab6a747db542de55c83d30293292ca980ec8b88d5d07cc196e8c506a13d17",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T225002Z-2584-correctness-9f716a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T22:50:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The G2 tables, reflection permutations, spans, base and Cartan-type identification are all mathematically correct as verified entry by entry. However, the sole orientation theorem is provably blind to the node numbering at rank 2, so the \"Bourbaki-numbered\" / \"short root first\" guarantee the PR exists to supply is asserted only in prose.",
+ "transcript_blob": "feefd5577503d26ae4a6989144971d4844513136c3480f14462492d3453226b5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64060,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64060,
+  "cache_read_input_tokens": 915598,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1120,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1120,
+    "cache_read_input_tokens": 79147,
+    "input_tokens": 2,
+    "output_tokens": 4423,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23221,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
