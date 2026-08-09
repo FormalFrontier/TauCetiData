@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3059795,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 196.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 60108,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 60108,
+    "cache_read_input_tokens": 654245,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2948,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2948,
+      "cache_read_input_tokens": 73367,
+      "input_tokens": 2,
+      "output_tokens": 2353,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14644,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4de4ab5dd7f94c426a85f10aae092ae565379410",
+ "cost_usd": 1.30598,
+ "dedupe_key": "TauCetiProject/TauCeti|2495|b47cb142bc9594c7bd748086e6ac30474415c250|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e1631360c66af5782fb7586753b62842b5c6494defb7bd0a148ebf8c8008e25",
+ "diff_sha256": "4e1631360c66af5782fb7586753b62842b5c6494defb7bd0a148ebf8c8008e25",
+ "duration_s": 196.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/RingTheory/DedekindDomain/SelmerGroup.lean:164 `carrier := {x | \u2200 (v) (_ : v \u2209 S), (v : HeightOneSpectrum R).valuationOfNeZeroMod n x = 1}`, with `valuationOfNeZero_eq:117` reducing to `v.valuation K x`; with `S = \u2205` over `S.integer K` the bound `v` is an arbitrary `P`. No `valuation_integerPrimeUnder` in the file.",
+   "file": "TauCeti/RingTheory/DedekindDomain/SInteger/Spectrum.lean",
+   "fix": "Add `@[simp] lemma valuation_integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) (x : K) : (integerPrimeUnder K S P).valuation K x = P.valuation K x`, proved from `valuation_integerPrimeOverOfNotMem` and `HeightOneSpectrum.ext (integer_map_comap_eq K S P.asIdeal)`.",
+   "issue": "No down-direction valuation lemma. The stated consumer (Selmer group of `\ud835\udcaa_S` relative to `\u2205`) quantifies over an arbitrary `P : HeightOneSpectrum (S.integer K)` and needs `P.valuation K x = (integerPrimeUnder K S P).valuation K x`; only the `integerPrimeOverOfNotMem` form is provided, and bridging requires re-deriving `integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P) = P` at each use site.",
+   "line": 209
+  },
+  {
+   "evidence": "Mathlib/RingTheory/DedekindDomain/AdicValuation.lean:173 `theorem intValuation_apply \u2026 := rfl` carries no `@[simp]`; the file's public API is `intValuation_le_pow_iff_mem` (:253), `intValuation_if_neg`, `intValuation_ne_zero`, while `intValuationDef` appears only in the `_if_pos`/`_if_neg` unfolding lemmas.",
+   "file": "TauCeti/RingTheory/DedekindDomain/SInteger/Spectrum.lean",
+   "fix": "Restate as `@[simp] lemma intValuation_integerPrimeOverOfNotMem \u2026 : (integerPrimeOverOfNotMem K S hv).intValuation (algebraMap R (S.integer K) a) = v.intValuation a` (or make the `intValuationDef` form `private`, since it is used only to prove `valuation_integerPrimeOverOfNotMem`).",
+   "issue": "`intValuationDef_integerPrimeOverOfNotMem` is a public `@[simp]` lemma in Mathlib's internal `intValuationDef` spelling. `intValuation_apply` is not `@[simp]` at the pin, so no consumer goal \u2014 which will be in `intValuation` form, the spelling every downstream Mathlib lemma produces \u2014 can ever be rewritten by it.",
+   "line": 183
+  },
+  {
+   "evidence": "Lines 135\u2013138: `left_inv v := Subtype.ext <| HeightOneSpectrum.ext <| \u2026 Ideal.comap_map_eq_self_of_isMaximal \u2026` and `right_inv P := HeightOneSpectrum.ext <| integer_map_comap_eq K S P.asIdeal`; grep finds no named lemma stating either equation.",
+   "file": "TauCeti/RingTheory/DedekindDomain/SInteger/Spectrum.lean",
+   "fix": "Extract the two equations as named `@[simp]` lemmas \u2014 `integerPrimeUnder_integerPrimeOverOfNotMem : integerPrimeUnder K S (integerPrimeOverOfNotMem K S hv) = v` and `integerPrimeOverOfNotMem_integerPrimeUnder : integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P) = P` \u2014 and build the equiv's `left_inv`/`right_inv` from them.",
+   "issue": "`integerPrimeOverOfNotMem` and `integerPrimeUnder` are public but their defining round-trip equations are available only as the anonymous `left_inv`/`right_inv` fields of `integerHeightOneSpectrumEquiv`, reachable only through the subtype packaging (`Equiv.apply_symm_apply` leaves a `(equiv.symm P).property` proof argument in the term).",
+   "line": 131
+  }
+ ],
+ "head_sha": "b47cb142bc9594c7bd748086e6ac30474415c250",
+ "merge_base_sha": "4de4ab5dd7f94c426a85f10aae092ae565379410",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2495,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e22eeee623ad1c1c716fbcd8e4cbe5a6d0a03de1b97a908917ab4fd26e86e3bc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T160656Z-2495-api-design-a8ef8e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T16:06:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The correspondence is only given in the up direction: the roadmap's stated consumer holds an arbitrary prime of \ud835\udcaa_S and gets no valuation lemma for it, and the two defs' round-trip equations exist only as anonymous Equiv fields. The public valuation lemma is also stated in Mathlib's internal `intValuationDef` spelling, so its `@[simp]` can never fire on a consumer's goal.",
+ "transcript_blob": "a32dc551b722559fecad767907fd4997813863971b75815ec85de5ef3f21d362",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 60108,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 60108,
+  "cache_read_input_tokens": 654245,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2948,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2948,
+    "cache_read_input_tokens": 73367,
+    "input_tokens": 2,
+    "output_tokens": 2353,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14644,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
