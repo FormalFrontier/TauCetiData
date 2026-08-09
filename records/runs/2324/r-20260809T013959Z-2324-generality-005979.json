@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.198322,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 57.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 68864,
+    "input_tokens": 92780,
+    "output_tokens": 1477,
+    "reasoning_output_tokens": 629
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "41bfdd579411d1a607854203037226ae12deffe8",
+ "cost_estimated": true,
+ "cost_usd": 0.198322,
+ "dedupe_key": "TauCetiProject/TauCeti|2324|135f4d9a4da6d0b2f574f2212c5c739933f0667a|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "8894e3eb46a48bd9e08ffe35516f0c93bbe130d1d2d4211cb5d90d14d8e60296",
+ "diff_sha256": "8894e3eb46a48bd9e08ffe35516f0c93bbe130d1d2d4211cb5d90d14d8e60296",
+ "duration_s": 57.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The conclusions contain no decidable-equality data, while the instance is used only by proof-level direct-sum/finite-index computations; the finrank specialization at Module.lean:284 already successfully obtains it locally with `classical`.",
+   "file": "TauCeti/RingTheory/Idempotents/Module.lean",
+   "fix": "Remove the section-level instance and use `classical` inside the proofs; likewise remove `[DecidableEq Q]` from the quiver Internal section.",
+   "issue": "`[DecidableEq \u03b9]` unnecessarily strengthens `smul_coeLinearMap_smul_top`, `isInternal_smul_top`, and `coe_ofBijective_coeLinearMap_symm_apply_smul_top`; the same leak propagates as `[DecidableEq Q]` to both internal vertex-component theorems at lines 236 and 243.",
+   "line": 212
+  },
+  {
+   "evidence": "Mathlib's `Module.finrank_directSum` at `Mathlib/LinearAlgebra/Dimension/Constructions.lean:255` requires only `[Fintype \u03b9]`; decidable equality is needed only to elaborate the direct-sum machinery used by this proof.",
+   "file": "TauCeti/LinearAlgebra/Dimension/DirectSum.lean",
+   "fix": "Drop `[DecidableEq \u03b9]` and add `classical` in the proof before the existing rewrite.",
+   "issue": "`finrank_eq_sum_finrank_of_isInternal` exposes an unnecessary `[DecidableEq \u03b9]` assumption in a general dimension theorem.",
+   "line": 31
+  }
+ ],
+ "head_sha": "135f4d9a4da6d0b2f574f2212c5c739933f0667a",
+ "merge_base_sha": "41bfdd579411d1a607854203037226ae12deffe8",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2324,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a6a44a86b0d2cd8bc5425446ff25fe20fa3acfe4569f0e5a8abdc79270df941a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T013959Z-2324-generality-005979",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T01:39:59Z",
+ "submitted_by": "kim-em",
+ "summary": "Several public decomposition APIs unnecessarily require decidable equality on the index type, despite their statements being noncomputable and naturally needing only finiteness.",
+ "transcript_blob": "82c300b6ba93800aa96e9e7f2a72bc4e3addd7ff173c7c65b0fa3f9a05a1e283",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 68864,
+  "input_tokens": 92780,
+  "output_tokens": 1477,
+  "reasoning_output_tokens": 629
+ },
+ "verdict": "request_changes"
+}
