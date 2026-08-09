@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.305013,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 47.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 189696,
+    "input_tokens": 222513,
+    "output_tokens": 1536,
+    "reasoning_output_tokens": 357
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e574654cbc5550e28d19c3712736ff2be6a755d2",
+ "cost_estimated": true,
+ "cost_usd": 0.305013,
+ "dedupe_key": "TauCetiProject/TauCeti|2458|89f56b24cf8334934dec45ae21a5ea18849e7d6a|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "a72991ab6873fa04f3a4c37e36922c7352aaa5d7e643faa8b00adc8973412a56",
+ "diff_sha256": "a72991ab6873fa04f3a4c37e36922c7352aaa5d7e643faa8b00adc8973412a56",
+ "duration_s": 47.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 191\u2013194 define `hcoe ... := rfl`; Mathlib/Topology/Path.lean defines the public `symm_apply`/`coe_symm_eq` API used elsewhere in that file.",
+   "file": "TauCeti/Topology/JordanCurve/SmallArc.lean",
+   "fix": "Rewrite through the public `Path` coercion lemma generated for `symm` (such as `coe_symm_eq`/`symm_apply`) before applying injectivity of the composition.",
+   "issue": "The injectivity proof exposes `Path.symm` as function composition via an `:= rfl` coercion equality, making it depend on the wrapper\u2019s implementation.",
+   "line": "191"
+  },
+  {
+   "evidence": "Lines 434\u2013436 contain the `show`/`rfl`; Mathlib/Topology/Path.lean:346 and :400 provide `map_coe` and `cast_coe` explicitly.",
+   "file": "TauCeti/Topology/JordanCurve/SmallArc.lean",
+   "fix": "Replace the `show ... from rfl` rewrite with the public `Path.cast_coe` and `Path.map_coe` lemmas (or factor a documented helper proved from them).",
+   "issue": "A single undocumented `show ... from rfl` unfolds both `Path.cast` and `Path.map` coercions, so all three range/injectivity goals rest on accidental definitional equality.",
+   "line": "434"
+  }
+ ],
+ "head_sha": "89f56b24cf8334934dec45ae21a5ea18849e7d6a",
+ "merge_base_sha": "e028a129f5821c1083b7041c2ddb847a4a08b77f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2458,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3d970524cb8e9903df3cc03d5c6a996c9f8b49061e2ab38b5cfd56cd947e52d3",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T000534Z-2458-proof-quality-9db23a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T00:05:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The new path proofs rely on undocumented definitional equality across `Path.symm`, `Path.map`, and `Path.cast` wrappers despite explicit API lemmas being available.",
+ "transcript_blob": "bc5a20998cc300941951dd411b8d55cab9692a3829815c44beb4b93efa9e9ddf",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 189696,
+  "input_tokens": 222513,
+  "output_tokens": 1536,
+  "reasoning_output_tokens": 357
+ },
+ "verdict": "request_changes"
+}
