@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6260020000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 231.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79337,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79337,
+    "cache_read_input_tokens": 808536,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2905,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2905,
+      "cache_read_input_tokens": 92639,
+      "input_tokens": 2,
+      "output_tokens": 5743,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16668,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e574654cbc5550e28d19c3712736ff2be6a755d2",
+ "cost_usd": 1.626002,
+ "dedupe_key": "TauCetiProject/TauCeti|2463|951c9f905fe28c936be9ae50a6731d7492dbb64c|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "06939f296e4e048ad9760198e1346b0894e57558365ca25fb6acb61aced5ac1f",
+ "diff_sha256": "06939f296e4e048ad9760198e1346b0894e57558365ca25fb6acb61aced5ac1f",
+ "duration_s": 231.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib states the same splitting with a nonvanishing hypothesis: `theorem isCompl_span_singleton_orthogonal {B : BilinForm K V} {x : V} (hx : B x x \u2260 0)` at Mathlib/LinearAlgebra/BilinearForm/Orthogonal.lean:185. `apply_smul_add_smul` (line 105) already gives `(a * d - b * c) * \u03c9 x y`, so the general forms are immediate.",
+   "file": "TauCeti/Geometry/Symplectic/ExistsCompatible.lean",
+   "fix": "State `\u03c9 (a \u2022 x + b \u2022 y) y = a * \u03c9 x y` and `\u03c9 x (a \u2022 x + b \u2022 y) = b * \u03c9 x y` with no hypothesis (both are instances of `apply_smul_add_smul` at `(c,d) = (0,1)` and `(a,b) = (1,0)`), and weaken `disjoint_orthogonal_span_pair` to `(h : \u03c9 x y \u2260 0)`. The `= 1` instances the induction uses follow by `simp`.",
+   "issue": "`apply_smul_add_smul_right` (114), `apply_smul_add_smul_left` (120) and `disjoint_orthogonal_span_pair` (236) are public but assume the normalization `\u03c9 x y = 1`. The coordinate lemmas need no hypothesis at all, and the plane is symplectic already when `\u03c9 x y \u2260 0`; a caller holding `\u03c9 x y = 3` cannot use any of them without rescaling `y` and rewriting the span.",
+   "line": 114
+  },
+  {
+   "evidence": "`instance (priority := 100) Finite.of_subsingleton` (Mathlib/Data/Fintype/EquivFin.lean:187) and `instance (priority := 100) of_finite [Finite M] : Module.Finite R M` (Mathlib/RingTheory/Finiteness/Basic.lean:241) chain to `FiniteDimensional \u211d V`.",
+   "file": "TauCeti/Geometry/Symplectic/ExistsCompatible.lean",
+   "fix": "Mark it `private`, as the other induction helpers (`pairMap`, `planeEquiv`, `exists_compatible_restrict_span_pair`) already are.",
+   "issue": "`exists_compatible_of_subsingleton` is public, yet it is a strict special case of `exists_compatible` (line 320) proved in the same file: `[Subsingleton V]` yields `FiniteDimensional \u211d V` by instance search, so the general theorem applies verbatim. The public API therefore carries two lemmas with the same content at different strengths.",
+   "line": 278
+  },
+  {
+   "evidence": "The repo's other combination lemmas name the structure: `prod_compatible (h\u2081 : \u03c9\u2081.Compatible J\u2081) (h\u2082 : \u03c9\u2082.Compatible J\u2082) : (\u03c9\u2081.prod \u03c9\u2082).Compatible (J\u2081.prod J\u2082)` (Prod/Basic.lean:272) and `Compatible.transport (h : \u03c9.Compatible J) (e) : (\u03c9.transport e).Compatible (J.transport e)` (SymplecticTransport.lean:221); the proof at lines 170-176 already constructs exactly this term.",
+   "file": "TauCeti/Geometry/Symplectic/ExistsCompatible.lean",
+   "fix": "State the explicit form `(hJL : (\u03c9.restrict L hL).Compatible JL) (hJL' : (\u03c9.restrict (\u03c9.orthogonal L) hL').Compatible JL') : \u03c9.Compatible ((JL.prod JL').transport (Submodule.prodEquivOfIsCompl L (\u03c9.orthogonal L) hcompl))`, and derive the `\u2203`-version at the one induction call site if wanted.",
+   "issue": "`exists_compatible_of_splitting` takes `\u2203 J`-shaped hypotheses and returns `\u2203 J`, discarding the structure it builds: a caller with explicit `JL`, `JL'` cannot learn that the result is `(JL.prod JL').transport (Submodule.prodEquivOfIsCompl \u2026)`, so nothing about its restriction to `L` or `L^\u03c9` is provable downstream.",
+   "line": 162
+  }
+ ],
+ "head_sha": "951c9f905fe28c936be9ae50a6731d7492dbb64c",
+ "merge_base_sha": "e574654cbc5550e28d19c3712736ff2be6a755d2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2463,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0f75e72f115d93f8ba06e0a442b9bb2bfda4a1e5eead8cad591b71ba5eb9da7c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T235122Z-2463-generality-6ad04d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T23:51:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem sits at the right level, but three public lemmas are pinned below it: the hyperbolic-pair API hardcodes the normalization \u03c9 x y = 1 where \u03c9 x y \u2260 0 (or no hypothesis at all) is the natural form, the splitting lemma is stated existentially instead of naming the assembled structure, and the subsingleton base case is exported despite being subsumed by exists_compatible.",
+ "transcript_blob": "2ec9bd8144c7eef5fbab6120812b3ced2fb97ec8657e304db9585d6d7c74ec9c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79337,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79337,
+  "cache_read_input_tokens": 808536,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2905,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2905,
+    "cache_read_input_tokens": 92639,
+    "input_tokens": 2,
+    "output_tokens": 5743,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16668,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

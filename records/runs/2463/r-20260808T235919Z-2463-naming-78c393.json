@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.377307,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 159.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64268,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64268,
+    "cache_read_input_tokens": 834446,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2932,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2932,
+      "cache_read_input_tokens": 77543,
+      "input_tokens": 2,
+      "output_tokens": 2550,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11917,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e574654cbc5550e28d19c3712736ff2be6a755d2",
+ "cost_usd": 1.377307,
+ "dedupe_key": "TauCetiProject/TauCeti|2463|951c9f905fe28c936be9ae50a6731d7492dbb64c|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "06939f296e4e048ad9760198e1346b0894e57558365ca25fb6acb61aced5ac1f",
+ "diff_sha256": "06939f296e4e048ad9760198e1346b0894e57558365ca25fb6acb61aced5ac1f",
+ "duration_s": 159.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/LinearAlgebra/BilinearForm/Basic.lean:67 `theorem smul_left (a : R) (x y : M) : B (a \u2022 x) y = a * B x y`; :71 `theorem smul_right (a : R) (x y : M) : B x (a \u2022 y) = a * B x y`. Same convention in Mathlib/Analysis/InnerProductSpace/Basic.lean:105/115 (`inner_smul_left`/`inner_smul_right`) and in this repo at TauCeti/Geometry/Symplectic/Hermitian.lean:136 (`complexAssociatedForm_smul_right : \u2026 v (z \u2022 w) = \u2026`).",
+   "file": "TauCeti/Geometry/Symplectic/ExistsCompatible.lean",
+   "fix": "Swap the two names: `\u03c9 (a \u2022 x + b \u2022 y) y = a` becomes `apply_smul_add_smul_left` and `\u03c9 x (a \u2022 x + b \u2022 y) = b` becomes `apply_smul_add_smul_right`; update the three use sites at lines 203, 205, 245, 247 and the module docstring accordingly.",
+   "issue": "`apply_smul_add_smul_right` states `\u03c9 (a \u2022 x + b \u2022 y) y = a`, with the varying `smul_add_smul` argument in the *left* slot, and `apply_smul_add_smul_left` (line 120) states `\u03c9 x (a \u2022 x + b \u2022 y) = b`, with it in the *right* slot. The suffixes are inverted relative to the bilinear-form convention, so a reader who knows `BilinForm.smul_left` will pick the wrong lemma.",
+   "line": 114
+  },
+  {
+   "evidence": "Line 237-238 statement vs. line 137-138 statement; Mathlib names `Disjoint` arguments in order, e.g. Mathlib/LinearAlgebra/RootSystem/Finite/Nondegenerate.lean:249 `lemma disjoint_rootSpan_ker_rootForm`.",
+   "file": "TauCeti/Geometry/Symplectic/ExistsCompatible.lean",
+   "fix": "Rename to `disjoint_span_pair_orthogonal` so the name lists the `Disjoint` arguments in statement order, and update the docstring list at line 52 and the use at line 298.",
+   "issue": "`disjoint_orthogonal_span_pair` proves `Disjoint (span \u211d {x, y}) (\u03c9.orthogonal (span \u211d {x, y}))`, but names the second argument first \u2014 the opposite reading order from its sibling `disjoint_orthogonal_orthogonal` (line 136), whose first argument really is an `orthogonal`. The two names cannot both be parsed by the same rule.",
+   "line": 236
+  }
+ ],
+ "head_sha": "951c9f905fe28c936be9ae50a6731d7492dbb64c",
+ "merge_base_sha": "e574654cbc5550e28d19c3712736ff2be6a755d2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2463,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "303408b36fdcacd545c59f7379f961778f6c318e03e9cec2684cb59560593422",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260808T235919Z-2463-naming-78c393",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-08T23:59:19Z",
+ "submitted_by": "kim-em",
+ "summary": "Two naming problems: the `_left`/`_right` suffixes on the hyperbolic-pair evaluation lemmas are swapped relative to the Mathlib bilinear-form convention the file builds on, and `disjoint_orthogonal_span_pair` lists its arguments in the reverse of its statement order. No notation is introduced; all other names describe their conclusions correctly.",
+ "transcript_blob": "b8d90647e2dbba8d298d572f49726543378e856e6435bf28fa0cdb91e231d488",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64268,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64268,
+  "cache_read_input_tokens": 834446,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2932,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2932,
+    "cache_read_input_tokens": 77543,
+    "input_tokens": 2,
+    "output_tokens": 2550,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11917,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
