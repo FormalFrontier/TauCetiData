@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2637990000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 230.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59564,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59564,
+    "cache_read_input_tokens": 362014,
+    "inference_geo": "not_available",
+    "input_tokens": 2549,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1176,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1176,
+      "cache_read_input_tokens": 74595,
+      "input_tokens": 2,
+      "output_tokens": 8250,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18345,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "cost_usd": 1.263799,
+ "dedupe_key": "TauCetiProject/TauCeti|2466|0a6312ad5366d89730be862348792a1e6fdd59de|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "diff_sha256": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "duration_s": 230.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 313 `atlas := range (boundaryChartAt M hk)`; line 304 `boundaryChart hk p (chartAt (EuclideanHalfSpace (n + 1)) p.1)`; line 216 `private noncomputable def boundaryChart`; line 333 `private theorem boundaryChartedSpace_atlas`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "State that the atlas consists of the boundary charts induced by the ambient *preferred* charts, and that the public characteristic lemmas describe `chartAt` only (source/target/apply/symm_apply).",
+   "issue": "`boundaryChartedSpace`'s docstring says \"the ambient charts, restricted to the boundary ... are charts\", and the module docstring (lines 21-23) says \"An ambient chart `e` of `M` ... turns `e` into a chart of the boundary\". The atlas is `range (boundaryChartAt M hk)`, i.e. only the boundary charts induced by the *preferred* ambient charts `chartAt _ p.1` (line 313), and `boundaryChart` is `private` (line 216), so no public API produces a boundary chart from an arbitrary atlas chart. The pointer \"use the characteristic lemmas below\" is also unfulfillable for the atlas: `boundaryChartedSpace_atlas` (line 333) is private.",
+   "line": 307
+  },
+  {
+   "evidence": "Lines 456-461: `private noncomputable def boundaryValComplementEquiv` with no `/-- -/` block, unlike every other declaration in the file.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Add a docstring saying it identifies `EuclideanSpace \u211d (Fin n) \u00d7 \u211d` with `EuclideanSpace \u211d (Fin (n+1))` by putting the \u211d factor in the zeroth coordinate, and that it is the complement used in `isImmersion_boundary_val`.",
+   "issue": "`boundaryValComplementEquiv` has no docstring \u2014 the only declaration in the file lacking one. Its purpose (the splitting `EuclideanSpace \u211d (Fin n) \u00d7 \u211d \u2243L \u211d^(n+1)` that supplies the one-dimensional complement witnessing the immersion) is not readable off the name or the four chained equivalences.",
+   "line": 456
+  },
+  {
+   "evidence": "Lines 500-507: docstring vs. `exact (isImmersion_boundary_val ...).contMDiff`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Trim to the result: the inclusion is `C^k`. Leave the local-coordinate description to `isImmersion_boundary_val` or to a lemma that actually states it.",
+   "issue": "`contMDiff_boundary_val`'s docstring promises a chart formula (\"in the boundary chart induced by an ambient chart it reads as the linear parametrization of the coordinate hyperplane\") that the statement does not deliver and no lemma provides; the proof just delegates to `isImmersion_boundary_val`.",
+   "line": 500
+  },
+  {
+   "evidence": "Lines 174-182: only the set equality is stated; grep for `Nonempty` in the file returns nothing.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Either add the one-line `Nonempty \u21a5((\ud835\udce1\u2202 (n + 1)).boundary (EuclideanHalfSpace (n + 1)))` corollary, or drop the nonemptiness clause from both docstrings.",
+   "issue": "`boundary_euclideanHalfSpace`'s docstring (\"In particular it is nonempty, so the boundary theory below is not vacuous\") and the module docstring line 65-66 (\"pins the construction down on a nonempty example\") claim nonemptiness, which the statement `= {y | y.1 0 = 0}` does not deliver and nothing in the file proves.",
+   "line": 174
+  },
+  {
+   "evidence": "`grep -n \"isManifold_boundary\"` matches line 429; `wc -l` on the file is 539.",
+   "file": "",
+   "fix": "Correct the name and the line count in the description so the merge-commit text points at declarations that exist.",
+   "issue": "The PR description refers to `boundary_isManifold`; the declaration is `isManifold_boundary` (line 429). It also states the new file is 435 lines; it is 539.",
+   "line": 0
+  }
+ ],
+ "head_sha": "0a6312ad5366d89730be862348792a1e6fdd59de",
+ "merge_base_sha": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2466,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4184fe1f2f666d209867f476edb2fa00bf730ba139d29d0a6f316b5276d0c3ac",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T222209Z-2466-documentation-74781b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T22:22:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The module and definition docstrings describe a more general construction than the file delivers (boundary charts from arbitrary ambient atlas charts, when only preferred charts enter the atlas and `boundaryChart` is private), and one definition is undocumented.",
+ "transcript_blob": "7e32f4b1df74e7396f52d91f968b28027d9da9bbf8705e24217f4b9dd742b557",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59564,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59564,
+  "cache_read_input_tokens": 362014,
+  "inference_geo": "not_available",
+  "input_tokens": 2549,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1176,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1176,
+    "cache_read_input_tokens": 74595,
+    "input_tokens": 2,
+    "output_tokens": 8250,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18345,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

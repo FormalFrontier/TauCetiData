@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6082849999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 268.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 77111,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 77111,
+    "cache_read_input_tokens": 571952,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4726,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4726,
+      "cache_read_input_tokens": 88592,
+      "input_tokens": 2,
+      "output_tokens": 11266,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21406,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "cost_usd": 1.608285,
+ "dedupe_key": "TauCetiProject/TauCeti|2466|0a6312ad5366d89730be862348792a1e6fdd59de|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "diff_sha256": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "duration_s": 268.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 231 `rw [euclideanHalfSpaceParam_proj ((mem_boundary_iff_of_mem_atlas hk he hq).1 q.2)]` and lines 238-239 `have hq' : ... := euclideanHalfSpaceParam_proj ((mem_boundary_iff_of_mem_atlas hk he hq).1 q.2)` are the same term.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Add a lemma next to `symm_param_mem_boundary`, e.g. `theorem param_proj_apply (hk : k \u2260 0) (he : e \u2208 atlas _ M) {q : \u21a5((\ud835\udce1\u2202 (n+1)).boundary M)} (hq : (q : M) \u2208 e.source) : euclideanHalfSpaceParam n (euclideanHalfSpaceProj n (e q.1)) = e q.1`, and use it in both fields.",
+   "issue": "The fact `euclideanHalfSpaceParam n (euclideanHalfSpaceProj n (e q.1)) = e q.1` for `q` in the boundary with `\u2191q \u2208 e.source` is re-derived inline as `euclideanHalfSpaceParam_proj ((mem_boundary_iff_of_mem_atlas hk he hq).1 q.2)` at line 231 (`map_source'`) and again at lines 238-239 (`left_inv'`, as `hq'`). It is the exact dual of the already-factored `symm_param_mem_boundary` and does not mention `boundaryChart`, so it can be stated before the definition.",
+   "line": 231
+  },
+  {
+   "evidence": "Line 408 `... := fun z hz \u21a6 hz.1`; line 290 `... := e.map_target hz`; contrast lines 413-415 which spell the same unfolding out with `simp only`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Prove both via the stated lemmas (`OpenPartialHomeomorph.trans_source`, `OpenPartialHomeomorph.symm_source`, `boundaryChart_target`/`boundaryChart_source`, `mem_preimage`), matching the style already used for `hsub`.",
+   "issue": "`have hz\u2081 : \u2200 z \u2208 (...).source, euclideanHalfSpaceParam n z \u2208 e\u2081.target := fun z hz \u21a6 hz.1` closes the goal purely by defeq through `OpenPartialHomeomorph.trans_source`, `symm_source`, `boundaryChart_target` and `mem_preimage`, with no comment. Same at line 290: `have hw : \u27e8e.symm _, _\u27e9 \u2208 (boundaryChart hk p e he).source := e.map_target hz` relies on `source = Subtype.val \u207b\u00b9' e.source` plus subtype-coe reduction. Two lines below (410-415) the author uses explicit `simp only [OpenPartialHomeomorph.symm_symm, boundaryChart_source, mem_preimage, ...]` for the analogous step, so the shortcut is not forced.",
+   "line": 408
+  },
+  {
+   "evidence": "Line 456 `private noncomputable def boundaryValComplementEquiv (n : \u2115) : ...` has no docstring and no downstream lemma; line 497 `simp [boundaryValComplementEquiv]`; line 423 `simp only [..., euclideanHalfSpaceProj]` versus line 125 `@[simp] theorem euclideanHalfSpaceParam_coe`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "State `@[simp] boundaryValComplementEquiv_apply` (or `_apply_zero`/`_apply_succ`) and a docstring for the def, and `@[simp] euclideanHalfSpaceProj_coe (y : EuclideanHalfSpace (n+1)) : euclideanHalfSpaceProj n y = euclideanHalfSpaceBoundaryProj n y.1 := (rfl)`; rewrite with these instead of unfolding the definitions in the simp set.",
+   "issue": "`simp [boundaryValComplementEquiv]` closes the immersion's chart computation by unfolding a four-step `ContinuousLinearEquiv.trans` chain (prodComm / prodCongr / `Fin.consEquivL` / `EuclideanSpace.equiv`); the def (line 456) has neither a docstring nor any characteristic lemma. The same pattern appears at line 423, where `simp only [..., euclideanHalfSpaceProj]` unfolds `euclideanHalfSpaceProj` even though its dual `euclideanHalfSpaceParam_coe` is a stated `@[simp]` lemma.",
+   "line": 497
+  }
+ ],
+ "head_sha": "0a6312ad5366d89730be862348792a1e6fdd59de",
+ "merge_base_sha": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2466,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "35105ff40b3d51c0519a217bd156ed4888bc74000d049cae71a011bdd2852659",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T222600Z-2466-proof-quality-649d22",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T22:26:00Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly short and reuse Mathlib properly, but one reusable fact is duplicated inline inside the `boundaryChart` constructor, two steps rest on undocumented definitional equality across `OpenPartialHomeomorph`/`Subtype`/`preimage` wrappers, and two private definitions are unfolded inside `simp` instead of getting characteristic lemmas.",
+ "transcript_blob": "6e92252a25f623f51cc5ca368dd912fa65477c1a33bc83c6f746b79f0bef6d27",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 77111,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 77111,
+  "cache_read_input_tokens": 571952,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4726,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4726,
+    "cache_read_input_tokens": 88592,
+    "input_tokens": 2,
+    "output_tokens": 11266,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21406,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

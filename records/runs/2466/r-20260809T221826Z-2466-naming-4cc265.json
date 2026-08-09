@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.45465,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 223.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73469,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73469,
+    "cache_read_input_tokens": 462428,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1088,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1088,
+      "cache_read_input_tokens": 88588,
+      "input_tokens": 2,
+      "output_tokens": 10496,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18605,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "cost_usd": 1.45465,
+ "dedupe_key": "TauCetiProject/TauCeti|2466|0a6312ad5366d89730be862348792a1e6fdd59de|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "diff_sha256": "34da7055fa22219d55f3182b1327743d72dc1cce04a9d2f592575da1324aeeb2",
+ "duration_s": 223.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Charts.lean:114-116 `fun x \u21a6 \u27e8euclideanHalfSpaceBoundaryParam n x, by simp\u27e9`; Model.lean:116 names the analogous map `euclideanHalfSpaceBoundaryParam`; Model.lean:200 `range (euclideanHalfSpaceBoundaryParam n) = euclideanHalfSpaceBoundary n` confirms the image is the hyperplane, not the half-space.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Rename to a boundary-explicit name, e.g. `EuclideanHalfSpace.boundaryParam` (and correspondingly `EuclideanHalfSpace.boundaryProj` for line 119), so the name states what is parametrized and dot notation `y.boundaryProj` is available.",
+   "issue": "`euclideanHalfSpaceParam n : EuclideanSpace \u211d (Fin n) \u2192 EuclideanHalfSpace (n + 1)` is named as a parametrization of the half-space, but its image is only the frontier `{y | y.1 0 = 0}` (its own docstring says \"parametrization of the frontier\"). The name drops the `Boundary` token that the merged Model.lean family uses for exactly this role.",
+   "line": 114
+  },
+  {
+   "evidence": "Charts.lean:130-131, 136-138, 153-154, 161-162; Model.lean:168-170, 175-177 \u2014 all `@[simp]`, all `namespace TauCeti`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "After renaming the defs per the previous finding, rename the lemmas to match (`boundaryParam`/`boundaryProj` tokens), so each `_`-separated token resolves to exactly one declaration.",
+   "issue": "The derived lemma names collide with the Model.lean family in the same `TauCeti` namespace and are ambiguous: `euclideanHalfSpaceProj_param` (Charts:130) vs `euclideanHalfSpaceBoundaryProj_param` (Model:168) and `euclideanHalfSpaceParam_proj` (Charts:136) vs `euclideanHalfSpaceBoundaryParam_proj` (Model:175) are distinct `@[simp]` lemmas differing only by `Boundary`. Worse, `_param` denotes two different declarations in adjacent lemmas: `modelWithCornersEuclideanHalfSpace_param` (Charts:153) abbreviates `euclideanHalfSpaceParam`, while `modelWithCornersEuclideanHalfSpace_symm_param` (Charts:161) abbreviates `euclideanHalfSpaceBoundaryParam`.",
+   "line": 130
+  },
+  {
+   "evidence": "Charts.lean:195-197 specialises to `[ChartedSpace (EuclideanHalfSpace (n + 1)) M] [IsManifold (\ud835\udce1\u2202 (n + 1)) k M]`; Mathlib InteriorBoundary.lean:315 holds the general `isBoundaryPoint_iff_of_mem_atlas`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Name the model or the conclusion, e.g. `mem_boundary_euclideanHalfSpace_iff_of_mem_atlas` or `mem_boundary_iff_apply_zero_eq_zero_of_mem_atlas`.",
+   "issue": "`mem_boundary_iff_of_mem_atlas` is a fully model-agnostic name for a statement that holds only for the Euclidean half-space model (conclusion `(e x).1 0 = 0`); it also reads as the general counterpart of Mathlib's `ModelWithCorners.isBoundaryPoint_iff_of_mem_atlas`, which is the general statement.",
+   "line": 195
+  },
+  {
+   "evidence": "Charts.lean:204-206 `e.symm (euclideanHalfSpaceParam n z) \u2208 (\ud835\udce1\u2202 (n + 1)).boundary M`, declared without `private` in bare `namespace TauCeti`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Rename so both tokens resolve, e.g. `OpenPartialHomeomorph.symm_boundaryParam_mem_boundary`, or make it private if it is only a construction helper for `boundaryChart`.",
+   "issue": "`symm_param_mem_boundary` is public but its leading `symm` token corresponds to no declaration in scope (it is a chart inverse `e.symm`), and `param` is the ambiguous abbreviation above; the name does not identify the half-space setting.",
+   "line": 204
+  },
+  {
+   "evidence": "Charts.lean:92, 100 vs Mathlib InteriorBoundary.lean:305, 315 (`ModelWithCorners.isInteriorPoint_iff_of_mem_atlas`), invoked as `I.isInteriorPoint_iff_of_mem_atlas` at Charts.lean:94; the repo nests Mathlib namespaces inside `TauCeti` elsewhere (TauCeti/Geometry/Sphere/LinearIsometry.lean:30,34; TauCeti/Geometry/Symplectic/TotallyReal.lean:30,44).",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Charts.lean",
+   "fix": "Put both (and `mem_boundary_iff_of_mem_atlas`) in `namespace ModelWithCorners` inside `TauCeti`, matching Mathlib's namespace for the lemmas they restate.",
+   "issue": "`isInteriorPoint_iff_mem_interior_range` and `isBoundaryPoint_iff_mem_frontier_range` are statements about `ModelWithCorners.IsInteriorPoint`/`IsBoundaryPoint` but live in bare `TauCeti`, so they cannot be used as `I.isBoundaryPoint_iff_mem_frontier_range` the way their Mathlib counterparts are used two lines below.",
+   "line": 92
+  }
+ ],
+ "head_sha": "0a6312ad5366d89730be862348792a1e6fdd59de",
+ "merge_base_sha": "cf82c7f2d1ceac3a5bfda11f0c3340b3c0a48356",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2466,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "eaddedbfef1243b90da9d96a76ee1f5d06e9c3de3a3f6de07740d0ff41c60326",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T221826Z-2466-naming-4cc265",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T22:18:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The new half-space parametrization pair is named as if it parametrized the half-space (it parametrizes only its frontier) and collides token-for-token with the merged `euclideanHalfSpaceBoundary{Param,Proj}` family in the same namespace, making `_param` ambiguous across adjacent simp lemmas. Two further names (`mem_boundary_iff_of_mem_atlas`, `symm_param_mem_boundary`) are broader/vaguer than their statements, and the chart-independence lemmas sit in bare `TauCeti` instead of `ModelWithCorners`.",
+ "transcript_blob": "209bf8c782fef5b8db87e1a3e07a8ac13632e802ebd57c7b49c34e4808131cc9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73469,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73469,
+  "cache_read_input_tokens": 462428,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1088,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1088,
+    "cache_read_input_tokens": 88588,
+    "input_tokens": 2,
+    "output_tokens": 10496,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18605,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
