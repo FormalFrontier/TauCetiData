@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6251704999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 299.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 57909,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 57909,
+    "cache_read_input_tokens": 1039559,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3528,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3528,
+      "cache_read_input_tokens": 70588,
+      "input_tokens": 2,
+      "output_tokens": 2349,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20713,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "18687591cbd4d12d256f9d79dd7b61e4f959d997",
+ "cost_usd": 1.62517,
+ "dedupe_key": "TauCetiProject/TauCeti|2541|79ea34ed50cd90d639ddea3f1bb50bc17e1e36c5|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "ea6f772c85fa2f741e0f0eb82d4d2e259cba99bfb62c257a71e51a36a36d166f",
+ "diff_sha256": "ea6f772c85fa2f741e0f0eb82d4d2e259cba99bfb62c257a71e51a36a36d166f",
+ "duration_s": 299.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 79 `(coe_powerSeries_as_subring K) \u25b8 Valued.isOpen_integer K\u2e28X\u2e29`; line 134 `Valued.mem_nhds_zero.mpr`; line 209 `Valued.tendsto_zero_pow_of_le_exp_neg_one`. The bridge is used only at lines 153, 163, 197, 203.",
+   "file": "TauCeti/RingTheory/Huber/LaurentSeries.lean",
+   "fix": "Narrow the claim, e.g. \"`isAdic_idealOfDefinition` and `mem_pairOfDefinition_idealImage` are read off this\".",
+   "issue": "\"Every topological statement here is read off this\" is false: `isOpen_powerSeries_as_subring` (line 77) comes from `Valued.isOpen_integer`, `ball_mem_nhds`/`exists_ball_subset` (lines 132, 139) from `Valued.mem_nhds_zero`, and the topological nilpotence in `isPseudoUniformizer_X` (line 207) from `Valued.tendsto_zero_pow_of_le_exp_neg_one` \u2014 none via the bridge. The Implementation notes at lines 34-41 say so explicitly.",
+   "line": 28
+  },
+  {
+   "evidence": "grep in-file: `coe_X_ne_zero` occurs only at lines 109 and 208; line 121 uses `(integers_powerSeries_as_subring K).dvd_iff_le`, no inverse of `X\u207f` appears in the file.",
+   "file": "TauCeti/RingTheory/Huber/LaurentSeries.lean",
+   "fix": "State the result and its actual use: \"`X` is nonzero in `K\u2e28X\u2e29`, hence a unit \u2014 this is the unit half of `isPseudoUniformizer_X`.\"",
+   "issue": "`coe_X_ne_zero`'s docstring justifies the lemma by \"all its powers are invertible\", but no power of `X` is inverted anywhere: `mem_idealOfDefinition_pow_iff` goes through `Valuation.Integers.dvd_iff_le`, and the single use of this lemma (line 208) only needs `IsUnit X`. The docstring documents an abandoned proof route (the one described in the PR description) rather than the result.",
+   "line": 108
+  },
+  {
+   "evidence": "Lines 22-30 list only `idealOfDefinition`, `pairOfDefinition`, `mem_idealOfDefinition_pow_iff`, `isPseudoUniformizer_X`, `isHuberRing`, `isTateRing`.",
+   "file": "TauCeti/RingTheory/Huber/LaurentSeries.lean",
+   "fix": "Add `subringX` to Main definitions and `mem_pairOfDefinition_idealImage` (and `isAdic_idealOfDefinition`) to Main results.",
+   "issue": "The header's Main definitions/results omit two public items the file itself highlights: the public def `subringX` (line 97), and `mem_pairOfDefinition_idealImage` (line 192), which the docstring at lines 175-180 calls what consumers should use in place of an ideal companion lemma.",
+   "line": 20
+  }
+ ],
+ "head_sha": "79ea34ed50cd90d639ddea3f1bb50bc17e1e36c5",
+ "merge_base_sha": "24c02911b2ba33eb19c4099389059a7a590acc92",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2541,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ebb00d6f6496fb00d684911709fa18fef960bd98b8835e40d96a9947fd9c3a32",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T214203Z-2541-documentation-f7850f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T21:42:03Z",
+ "submitted_by": "kim-em",
+ "summary": "Module docstring contains a claim that contradicts the file's own Implementation notes, and one declaration docstring documents a proof route the file does not take. Everything else (cited Mathlib names, References key, statement paraphrases) checks out.",
+ "transcript_blob": "8a990b84ce4c67604bc27417bad65fe490778110ff5d982227bdbf9458485a33",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 57909,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 57909,
+  "cache_read_input_tokens": 1039559,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3528,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3528,
+    "cache_read_input_tokens": 70588,
+    "input_tokens": 2,
+    "output_tokens": 2349,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20713,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
