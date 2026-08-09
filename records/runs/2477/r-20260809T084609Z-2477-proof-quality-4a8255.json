@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.254553,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 33.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 52736,
+    "input_tokens": 92247,
+    "output_tokens": 1021,
+    "reasoning_output_tokens": 303
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c9e9c6b15edd9b0eb24cd60a666dbdde23210016",
+ "cost_estimated": true,
+ "cost_usd": 0.254553,
+ "dedupe_key": "TauCetiProject/TauCeti|2477|4b27fa48e6770e4c8e5725a8984c644243a1ab68|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "28e321be9123e8e56ac9d268b5e4a471170bcd579f24cfd22aa9a008e7bfbbf6",
+ "diff_sha256": "28e321be9123e8e56ac9d268b5e4a471170bcd579f24cfd22aa9a008e7bfbbf6",
+ "duration_s": 33.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds `rw [show \ud835\udcd5\u207b F = ...]` at lines 131 and 148 and `simp [show F v = 0 by ...]` at line 264, with no comment explaining why goal reshaping is necessary.",
+   "file": "TauCeti/Analysis/Bochner/BochnerTheorem.lean",
+   "fix": "Factor the Fourier-inverse identity and the zero-value consequence into explicitly typed `have` lemmas, then rewrite or simplify with those lemmas.",
+   "issue": "Undocumented `show` occurs at lines 131, 148, and 264; the first two reshape `\ud835\udcd5\u207b F` by function extensionality, while the last embeds a derived equality inside `simp`.",
+   "line": 131
+  },
+  {
+   "evidence": "`rg` finds `show Tendsto ...` at line 336, `rw [show (fun v => ...) = 0 from by` at line 478, and `rw [show (\u222b x, \u03c8 x) = ... by simp]` at line 554.",
+   "file": "TauCeti/Analysis/Bochner/Fourier/Nonneg.lean",
+   "fix": "Introduce named, explicitly typed intermediate `have` facts (or use direct `simpa`/`convert`) and rewrite with them so the proof dependency is visible.",
+   "issue": "Undocumented `show` is used at lines 336, 478, and 554 to force a limit type, a function equality, and an integral equality.",
+   "line": 336
+  },
+  {
+   "evidence": "Line 73 passes `(show 0 < ((c : \u2102)).re by simpa using hc)` directly, with no explanation for the goal reshaping.",
+   "file": "TauCeti/Analysis/Bochner/Gaussian/Basic.lean",
+   "fix": "State the converted positivity as a named typed `have` and pass it to `integrable_cexp_neg_mul_sq_norm_add`.",
+   "issue": "The new integrability proof uses an undocumented `show` solely to coerce the positivity hypothesis to the complex-real-part goal.",
+   "line": 73
+  }
+ ],
+ "head_sha": "4b27fa48e6770e4c8e5725a8984c644243a1ab68",
+ "merge_base_sha": "882a78e09b38e7af0cf6c987773059cc3575a873",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2477,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "25f14f240683ed4b91f29051c6242f3f90f1d9b3f1d601a1c74a795a84ddaf08",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T084609Z-2477-proof-quality-4a8255",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T08:46:09Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs use undocumented `show` goal reshaping, obscuring elaboration or definitional-equality dependencies.",
+ "transcript_blob": "d155c43160c255cb4141461237e9d452636590e336b95fa97b3528659099b87a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 52736,
+  "input_tokens": 92247,
+  "output_tokens": 1021,
+  "reasoning_output_tokens": 303
+ },
+ "verdict": "request_changes"
+}
