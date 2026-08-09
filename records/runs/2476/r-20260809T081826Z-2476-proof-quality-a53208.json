@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.115619,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 30208,
+    "input_tokens": 43951,
+    "output_tokens": 1060,
+    "reasoning_output_tokens": 516
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e6da5d5d22352e3c15517e72eec413fc0329107",
+ "cost_estimated": true,
+ "cost_usd": 0.115619,
+ "dedupe_key": "TauCetiProject/TauCeti|2476|4ad53222324af3e4db9f52e266efbdcd339ce7c5|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "00e90f66c48fdb81b217e9d2d4a1a3120be861d9ebcb2aa89bad993125d04f87",
+ "diff_sha256": "00e90f66c48fdb81b217e9d2d4a1a3120be861d9ebcb2aa89bad993125d04f87",
+ "duration_s": 45.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds `rw [show ...]` at all six lines, including `show ((\u2211 ... : B) : A) = \u2211 ... from map_sum B.subtype _ _` at line 158.",
+   "file": "TauCeti/RingTheory/Huber/RingOfDefinition.lean",
+   "fix": "Replace the elementary cases with direct `simp`/`ring` automation and factor the coerced-sum equality into a named lemma proved explicitly from `map_sum`, or document why goal reshaping is necessary.",
+   "issue": "Undocumented `show` terms occur at lines 67, 98, 107, 110, 112, and 158; the last also bridges a subtype coercion inside a sum, obscuring why elaboration succeeds.",
+   "line": "67"
+  },
+  {
+   "evidence": "`adjoin` stores `Subring.inclusion (P.le_adjoinRing T)`, while the theorem states `Subring.inclusion (P.le_adjoin T hT)`; these are independently constructed containment proofs.",
+   "file": "TauCeti/RingTheory/Huber/RingOfDefinition.lean",
+   "fix": "Prove the equality through an explicit lemma identifying the inclusion maps (using function extensionality and subtype extensionality), then rewrite the mapped ideal with that lemma.",
+   "issue": "`adjoin_idealOfDefinition := rfl` unfolds both `adjoin` and the separately proved `le_adjoin`, relying on definitional reduction/proof irrelevance to identify two `Subring.inclusion` maps.",
+   "line": "182"
+  }
+ ],
+ "head_sha": "4ad53222324af3e4db9f52e266efbdcd339ce7c5",
+ "merge_base_sha": "41454e6713a1a96f60fa47c193c6d6221f542f72",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2476,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "63a7314b99c8eb72262728cefc7fc85e1e7e293e89b82cd1e158030726286809",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T081826Z-2476-proof-quality-a53208",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T08:18:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs contain undocumented `show` manipulations and a public API theorem whose `rfl` proof depends on unfolding implementation details and proof irrelevance.",
+ "transcript_blob": "fff16ef76b261d5dde0678c8bb1301d2a872f6e095287fe93404d3dd81f77d13",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 30208,
+  "input_tokens": 43951,
+  "output_tokens": 1060,
+  "reasoning_output_tokens": 516
+ },
+ "verdict": "request_changes"
+}
