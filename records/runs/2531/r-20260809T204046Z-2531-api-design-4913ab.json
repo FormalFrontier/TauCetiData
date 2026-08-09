@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8778130000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 413.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 70655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 70655,
+    "cache_read_input_tokens": 707518,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2639,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2639,
+      "cache_read_input_tokens": 84223,
+      "input_tokens": 2,
+      "output_tokens": 2260,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 32385,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c95970d9fd3c147cae7dfd2724c4d9e72249ff2a",
+ "cost_usd": 1.877813,
+ "dedupe_key": "TauCetiProject/TauCeti|2531|9cc872782fb5b99f007239baa228616fad0a3df8|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9942b0c3104beef1791f5114f6fd4d1aaf519450677d52f8c3f6178e16e229a3",
+ "diff_sha256": "9942b0c3104beef1791f5114f6fd4d1aaf519450677d52f8c3f6178e16e229a3",
+ "duration_s": 413.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/CategoryTheory/Subobject/MonoOver.lean:71-75 uses `def mk`, while `forget`/`arrow`/`homMk` are `abbrev`; the PR turns `mk` into an `abbrev` alone among these.",
+   "file": "TauCeti/Topology/Covering/Category.lean",
+   "fix": "Make both `mk`s plain `def`s (as `MonoOver.mk` is: `@[simps] def mk {X A : C} (f : A \u27f6 X) [hf : Mono f] : MonoOver X`), keeping `mk_coe`/`mk_proj` as the stated interface.",
+   "issue": "`CoveringSpace.mk` (line 73) and `ConnectedCoveringSpace.mk` (line 173) are `abbrev`, i.e. `@[reducible]`, so `mk p hp` unfolds to the raw `\u27e8Over.mk p, hp\u27e9` literal for unification and simp. That exposes the constructor body, and it makes the accompanying simp lemmas `mk_coe` (78, 179) and `mk_proj` (87, 188) degenerate: their LHSs reduce to the bare variables `E` / `p` at reducible transparency, so they are not usable rewrite patterns.",
+   "line": 73
+  },
+  {
+   "evidence": "Mathlib/CategoryTheory/Subobject/MonoOver.lean:136-138: `@[simps!] def mkArrowIso {X : C} (f : MonoOver X) : mk f.arrow \u2245 f := isoMk (Iso.refl _)`.",
+   "file": "TauCeti/Topology/Covering/Category.lean",
+   "fix": "Add `@[simp]` lemmas `(mkProjIso p).hom.hom.left = \ud835\udfd9 (p : TopCat)` and `(mkProjIso p).inv.hom.left = \ud835\udfd9 (p : TopCat)` in both namespaces (Mathlib marks the analogue `@[simps!]`).",
+   "issue": "`mkProjIso` (136) and `ConnectedCoveringSpace.mkProjIso` (246) are opaque `def`s with no component lemmas: nothing computes `(mkProjIso p).hom.hom.left`. Unlike `isoMk`, whose `simp` lemmas are stated by hand (126-133, 233-243), `mkProjIso` cannot be unfolded by `simp` since it is not reducible.",
+   "line": 136
+  },
+  {
+   "evidence": "Mathlib/CategoryTheory/Subobject/MonoOver.lean:83-99 states `forget_obj_left`, `mk_coe`, `mk_arrow`, `forget_obj_hom`; the PR states none of the `forget_obj_*` analogues, and nothing at all for the connected inclusion at line 162.",
+   "file": "TauCeti/Topology/Covering/Category.lean",
+   "fix": "Add `@[simp]` lemmas for the inclusion: `((forget X).obj p : TopCat) = (p : TopCat)`, `((forget X).obj p).proj = p.proj`, `((forget X).map f).hom.left = f.hom.left`, and `(forget X).obj (mk p hp) = CoveringSpace.mk p hp`; then derive `ConnectedCoveringSpace.w` and `isIso_iff_isHomeomorph` from the `CoveringSpace` versions rather than re-proving them. Also add the `CoveringSpace.forget` analogues Mathlib states for `MonoOver` (`((forget X).obj p).left = (p : TopCat)`, `((forget X).obj p).hom = p.proj`).",
+   "issue": "`ConnectedCoveringSpace.forget : ConnectedCoveringSpace X \u2964 CoveringSpace X` has no characterizing lemmas, so the whole `ConnectedCoveringSpace` namespace (mk/proj/coe/w/isoMk/isIso_iff_isHomeomorph, 169-259) is a shadow copy with no stated connection to its `CoveringSpace` counterparts; a consumer transporting any cover result to a connected cover has to fall back on defeq.",
+   "line": 162
+  },
+  {
+   "evidence": "Mathlib/CategoryTheory/Subobject/MonoOver.lean:55-65: `abbrev Over.isMono (X : C) : ObjectProperty (Over X) := fun f => Mono f.hom` and `abbrev MonoOver (X : C) := (Over.isMono X).FullSubcategory`.",
+   "file": "TauCeti/Topology/Covering/Category.lean",
+   "fix": "Introduce `TauCeti.Over.isCoveringMap (X : TopCat) : ObjectProperty (Over X) := fun p \u21a6 IsCoveringMap p.hom` and define `CoveringSpace X := (Over.isCoveringMap X).FullSubcategory` and `ConnectedCoveringSpace X` from `Over.isCoveringMap X \u2293 fun p \u21a6 ConnectedSpace p.left`, with `forget := ObjectProperty.\u03b9OfLE inf_le_left`.",
+   "issue": "The selecting property is inlined as an anonymous lambda in both `CoveringSpace` (54-55) and `ConnectedCoveringSpace` (153-155), which re-inlines `IsCoveringMap p.hom` rather than refining a named property. No `ObjectProperty (Over X)` is exposed, so no `ObjectProperty`-level statement (a `\u2264`, an `inf`, `IsClosedUnderIsomorphisms`) can be made about covers without repeating the lambda, and the `\u2264` witness at 163 is an ad-hoc `fun _ hp \u21a6 hp.1`.",
+   "line": 54
+  }
+ ],
+ "head_sha": "9cc872782fb5b99f007239baa228616fad0a3df8",
+ "merge_base_sha": "c95970d9fd3c147cae7dfd2724c4d9e72249ff2a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2531,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "10955c3f5e3117299d41e5df1a53c66492e22982de4cd8b180552ceb846cee7d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T204046Z-2531-api-design-4913ab",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T20:40:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface mirrors `MonoOver` but deviates in ways that hurt it: `mk` is a reducible `abbrev`, which exposes the constructor body and makes its `mk_coe`/`mk_proj` simp lemmas degenerate; `mkProjIso` carries no component lemmas; and nothing relates the `ConnectedCoveringSpace` API to the `CoveringSpace` API across `forget`.",
+ "transcript_blob": "2f9f42af51ae493ad2b60d4223080aa7bed2e1a9868fce4cfae0ddaf812d13ca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 70655,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 70655,
+  "cache_read_input_tokens": 707518,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2639,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2639,
+    "cache_read_input_tokens": 84223,
+    "input_tokens": 2,
+    "output_tokens": 2260,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 32385,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
