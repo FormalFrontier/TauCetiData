@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.549798,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 283.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69101,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69101,
+    "cache_read_input_tokens": 674550,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 834,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 834,
+      "cache_read_input_tokens": 84474,
+      "input_tokens": 2,
+      "output_tokens": 2311,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20240,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7cc3f2604afa085e40a34f36cca9b86ffee0dfb7",
+ "cost_usd": 1.549798,
+ "dedupe_key": "TauCetiProject/TauCeti|2644|a95e863195487b08b98e5a389f5bbd3523f3368b|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "diff_sha256": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "duration_s": 283.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`relatorSet` is defined at Relator.lean:113 and listed at Relator.lean:33; Coxeter.lean:36 repeats it. `yParent` (Coxeter.lean:244) and `YAdjacent` (Coxeter.lean:249) appear in no bullet, yet Coxeter.lean:51-53 names their lemmas as main results.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Drop the `Relator.relatorSet` bullet and add bullets for `TauCeti.yParent` and `TauCeti.YAdjacent`.",
+   "issue": "The `## Main definitions` list advertises `TauCeti.Relator.relatorSet`, which is not declared in this file (it is added in `Relator.lean` and already listed in that file's own index). Meanwhile `yParent` and `YAdjacent`, the two public definitions the whole Y-section and the `Main results` entries `YAdjacent_pred` / `YAdjacent_secondArmHead_zero` depend on, are never introduced in the index.",
+   "line": 36
+  },
+  {
+   "evidence": "grep for `toWord` across `TauCeti/` matches only Relator.lean, GroupPresentation.lean (`relators`, which does not reduce it), and Coxeter.lean's `toWord_ofGenerators` usage is absent; Coxeter.lean touches only `toFreeGroup` (lines 90-97, 193).",
+   "file": "TauCeti/GroupTheory/Presentation/Relator.lean",
+   "fix": "Either name the actual consumer that needs `toWord` to reduce, or state the real reason (e.g. `decide`-checking compiled words) \u2014 and reconcile the wording with GroupPresentation.lean:96-98.",
+   "issue": "The added `@[expose]` justification on `toWord` \u2014 \"a transcription is audited by reading the compiled letters ... so a consumer has to be able to reduce this\" \u2014 has no consumer: nothing outside `Relator.lean` reduces `toWord` (the new file uses only `toFreeGroup`, and `toWord_ofGenerators` is proved in this same file). It also contradicts the existing docstring at GroupPresentation.lean:98, which states that a consumer \"never has to unfold the compiler\".",
+   "line": 88
+  },
+  {
+   "evidence": "Statement at Coxeter.lean:171-172 is `(h : (b * a) ^ m \u2208 N) : (a * b) ^ m \u2208 N`; the rubric asks docstrings to describe the result, not the proof.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "State the result: \"If `(b * a) ^ m` lies in a normal subgroup `N`, then so does `(a * b) ^ m`, the two being conjugate by `a`.\"",
+   "issue": "The docstring of `pow_mul_mem_of_pow_mul_mem` (\"Conjugating a group element past a normal subgroup swaps the two factors of a power of a product\") describes the proof step, not the statement, and is inaccurate as prose: nothing is conjugated \"past\" a subgroup.",
+   "line": 169
+  },
+  {
+   "evidence": "`length_coxeterRelators` (Coxeter.lean:160) gives `(n + 1).choose 2`; `coxeterRelatorsOfList` (Coxeter.lean:102-104) maps `j` over `i :: l`, i.e. includes `j = i`. Only Coxeter.lean:116-117 records the \"with repetition allowed\" convention.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Say \"one relator per unordered pair of nodes, the diagonal included, so the `n` involution relators `s\u1d62 ^ 2` are among them\" at lines 20-21 and 38-39.",
+   "issue": "The module doc and the `Main definitions` bullet both say the list carries \"one relator per unordered pair of nodes\", which reads as `n.choose 2`; the list actually includes the diagonal pairs (the involution relators), giving `(n + 1).choose 2` \u2014 78 rather than 66 for the twelve-node `Y\u2084\u2084\u2083`. Since the file's whole claim is that the count is auditable against Bray's 79, the convention should be stated where the count is claimed.",
+   "line": 20
+  },
+  {
+   "evidence": "Definition at Relator.lean:133; index at Relator.lean:29-33 lists `PresentationWord`, `Relator`, `toWord`, `toFreeGroup`, `relatorSet` only.",
+   "file": "TauCeti/GroupTheory/Presentation/Relator.lean",
+   "fix": "Add a bullet: `* TauCeti.Relator.ofGenerators`: the expression spelling out a word of generators with no inverses.",
+   "issue": "`Relator.ofGenerators`, a new public definition (used to spell out the Monster spider word), is absent from the file's `Main definitions` index, which this PR otherwise updates to add `relatorSet`.",
+   "line": 33
+  },
+  {
+   "evidence": "`yParent p q i = if i = p + 1 \u2228 i = p + q + 1 then 0 else i - 1` (Coxeter.lean:245); with `p = q = 0`, node `1` matches the `p + q + 1` branch, i.e. the third-arm head.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Say node `1` then heads the first nonempty arm, or drop the parenthetical.",
+   "issue": "The `YAdjacent_one_zero` docstring's degenerate-case remark (\"When `p = 0` the first arm is empty and node `1` heads the second arm instead\") is wrong when `q = 0` as well: then `1 = p + q + 1` heads the third arm.",
+   "line": 286
+  }
+ ],
+ "head_sha": "a95e863195487b08b98e5a389f5bbd3523f3368b",
+ "merge_base_sha": "92e27a1f0b772dec30fcdb18a584a079a594408a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2644,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9bd889b43c3488cb003fbdf8f2a37489b4c6c91851f0e5f0e53cd30cfe58c283",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T164424Z-2644-documentation-e15222",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T16:44:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The new file is broadly well documented, but its module index advertises a definition that lives in another file while omitting the two definitions the Y-section rests on, one docstring describes a proof rather than a result, and the `@[expose]` rationale added to `Relator.toWord` states a consumer need that no consumer has and that an existing docstring contradicts.",
+ "transcript_blob": "4edde072b471ab368a4e7c14fc53b557d67903a11db4123b14bc94e4f9c3950f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69101,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69101,
+  "cache_read_input_tokens": 674550,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 834,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 834,
+    "cache_read_input_tokens": 84474,
+    "input_tokens": 2,
+    "output_tokens": 2311,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20240,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

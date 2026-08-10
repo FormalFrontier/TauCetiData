@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0217720000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 444.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85599,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85599,
+    "cache_read_input_tokens": 535660,
+    "inference_geo": "not_available",
+    "input_tokens": 2945,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10517,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10517,
+      "cache_read_input_tokens": 91289,
+      "input_tokens": 2,
+      "output_tokens": 5623,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 34697,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7cc3f2604afa085e40a34f36cca9b86ffee0dfb7",
+ "cost_usd": 2.021772,
+ "dedupe_key": "TauCetiProject/TauCeti|2644|a95e863195487b08b98e5a389f5bbd3523f3368b|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "diff_sha256": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "duration_s": 444.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Coxeter.lean:230-234 requires `h : P.transcribed = coxeterRelators M`; Coxeter.lean:392 `y443Relators := coxeterRelators y443CoxeterMatrix ++ [y443SpiderRelator]`; roadmap README.md:507 requires the spider relation and `Z = 1` in the M row. `Relator.relatorSet_append` (Relator.lean:122), evidently added for this, has no consumer: `grep -rn relatorSet_append TauCeti` matches only its own definition.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Either state the usable form \u2014 `P.transcribed = coxeterRelators M ++ extra` gives `P.Group \u2243* M.Group \u29f8 normalClosure (image of the extras)` \u2014 or drop the claim that this is the shape an S1 row uses and say it applies only to a transcription that is exactly a Coxeter presentation.",
+   "issue": "`GroupPresentation.mulEquivCoxeterGroup` is documented as \"the form an audited presentation row uses\", but its hypothesis `P.transcribed = coxeterRelators M` excludes every row the PR says it serves: each Y-diagram row carries at least the spider relator (M also `Z = 1`), so `transcribed` is `coxeterRelators M ++ extras`, never `coxeterRelators M`. The file's own `y443Relators` (line 392) already has that shape and no lemma connects it to a group.",
+   "line": 227
+  },
+  {
+   "evidence": "Coxeter.lean:404-407 vs. Coxeter.lean:392-400, where `y443Relators` is defined as a list and `length_y443Relators : y443Relators.length = 79` states the length of an actual term.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "State `(coxeterRelators (yCoxeterMatrix 4 4 4)).length = 91` and put the `92 = 91 + 1` comparison with Bray in the docstring, or define a `y444Relators` list including its spider relator and state its length as 92, mirroring `length_y443Relators`.",
+   "issue": "`length_coxeterRelators_y444` states `(coxeterRelators (yCoxeterMatrix 4 4 4)).length + 1 = 92`; the actual Coxeter relator count is 91, and the `+ 1` silently stands for a spider relator that is never defined for Y\u2084\u2084\u2084 (unlike `y443Relators`). A lemma named `length_coxeterRelators_y444` that rewrites to `92` misreports the length it names.",
+   "line": 404
+  }
+ ],
+ "head_sha": "a95e863195487b08b98e5a389f5bbd3523f3368b",
+ "merge_base_sha": "92e27a1f0b772dec30fcdb18a584a079a594408a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2644,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a94bb6c2bc8c7106aa0bc9cad50e7100bdf5db5e9ad87ee5cad429f11c0e7ee8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T160528Z-2644-correctness-814fcc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T16:05:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is faithful: the relator list, the count formula, the Y-diagram adjacency (including degenerate arms), the spider word, and the normal-closure equality all check out against Mathlib's CoxeterMatrix API and the roadmap's own data. Two statements misdescribe what they deliver.",
+ "transcript_blob": "5df5e0ddba166b20133c17a0d5728936d000cb13e0bed5d282e1551b841a2311",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85599,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85599,
+  "cache_read_input_tokens": 535660,
+  "inference_geo": "not_available",
+  "input_tokens": 2945,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10517,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10517,
+    "cache_read_input_tokens": 91289,
+    "input_tokens": 2,
+    "output_tokens": 5623,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 34697,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

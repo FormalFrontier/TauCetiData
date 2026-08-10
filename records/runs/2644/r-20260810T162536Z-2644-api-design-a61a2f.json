@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3407265,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 252.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62488,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62488,
+    "cache_read_input_tokens": 378981,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4855,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4855,
+      "cache_read_input_tokens": 73840,
+      "input_tokens": 2,
+      "output_tokens": 5694,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20417,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7cc3f2604afa085e40a34f36cca9b86ffee0dfb7",
+ "cost_usd": 1.340726,
+ "dedupe_key": "TauCetiProject/TauCeti|2644|a95e863195487b08b98e5a389f5bbd3523f3368b|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "diff_sha256": "f33eb4102d0f1c642ddcf32d973b578708cb1e38d2336f16af2c34b66d2bccca",
+ "duration_s": 252.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Rubric: keep bodies unexposed unless a consumer must unfold or compute, and ask for the missing lemma instead. `grep -rn 'theorem toFreeGroup_gen|toFreeGroup_mul|toFreeGroup_pow|theorem toWord_gen' TauCeti` \u2192 no matches; the file has no equation lemmas for either function.",
+   "file": "TauCeti/GroupTheory/Presentation/Relator.lean",
+   "fix": "Drop both `@[expose]`s and add public `@[simp]` equation lemmas in `Relator.lean`: `toWord_gen/inv/mul/pow/comm` and `toFreeGroup_gen/inv/mul/pow/comm`, each `:= (rfl)` so the statement is not left to defeq. `toFreeGroup_coxeterRelator` and `toWord_ofGenerators` then go through by `simp` without any body being public.",
+   "issue": "`@[expose]` on `toWord` (line 90) and `toFreeGroup` (line 104) exposes two recursive bodies to supply what equation lemmas should supply; no consumer in this PR unfolds or computes with them (the six `decide` examples are all about `yCoxeterMatrix`, and `toFreeGroup_coxeterRelator` is proved once inside `Relator`'s own... no, inside Coxeter.lean, where a simp set would do).",
+   "line": 90
+  },
+  {
+   "evidence": "`grep -rn 'YAdjacent_iff' TauCeti` \u2192 no match; `YAdjacent` at line 249 carries no `@[expose]` and the file is under `module`/`public section`, so the body is opaque outside this file (the PR's own description states bodies are not reducible outside their file without `@[expose]`).",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Add `theorem YAdjacent_iff (p q i j : \u2115) : YAdjacent p q i j \u2194 (i \u2260 0 \u2227 yParent p q i = j) \u2228 (j \u2260 0 \u2227 yParent p q j = i) := Iff.rfl`, plus a `not_YAdjacent` criterion in terms of the arm arithmetic that downstream diagrams actually need.",
+   "issue": "`YAdjacent` is a `Prop`-valued `def` whose body is not exposed, and the file gives only introduction lemmas (`YAdjacent_one_zero`, `_secondArmHead_zero`, `_thirdArmHead_zero`, `YAdjacent_pred`) plus `.ne`. There is no elimination/iff form, so a consumer cannot prove `\u00ac YAdjacent p q i j` \u2014 the hypothesis of `yCoxeterMatrix_of_not_adjacent` (line 344), which covers the majority of matrix entries. The in-file `decide` examples work only because they are in the same module.",
+   "line": 249
+  },
+  {
+   "evidence": "`grep -rn 'coxeterRelators_eq\\|y443Relators_eq\\|ySpiderRelator_eq' TauCeti` \u2192 only `length_coxeterRelators_eq_div` and the `Y\u2084\u2084\u2083`-specific `y443SpiderRelator_eq`; in-file proofs use `rw [coxeterRelators]` / `rw [y443Relators]`, which downstream cannot do.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Add `ySpiderRelator_eq`, `y443Relators_eq`, and `coxeterRelators_eq` (each `:= (rfl)`), and mark `coxeterRelatorsOfList_cons` `@[simp]` so that it and the already-`@[simp]` `coxeterRelatorsOfList_nil` actually compute the list downstream.",
+   "issue": "Unexposed definitions without a `*_def` restatement, so consumers cannot unfold them: `ySpiderRelator` (line 356 \u2014 `y443SpiderRelator_eq` covers only the `Y\u2084\u2084\u2083` instance, leaving the roadmap's `Y\u2084\u2083\u2083` and Fischer spiders with no way to spell out their word), `y443Relators` (line 392 \u2014 cannot be decomposed, so `Relator.relatorSet_append` cannot be applied to it when the Monster row adds `Z = 1`), and `coxeterRelators` (line 156 \u2014 no lemma relating it to `coxeterRelatorsOfList`).",
+   "line": 356
+  },
+  {
+   "evidence": "`grep -rn 'toFreeGroup_ofGenerators' TauCeti` \u2192 no match; `relatorSet` at Relator.lean:113 is `{r | \u2203 t \u2208 l, t.toFreeGroup = r}`.",
+   "file": "TauCeti/GroupTheory/Presentation/Relator.lean",
+   "fix": "Add `@[simp] theorem toFreeGroup_ofGenerators (x : \u03b1) (l : List \u03b1) : (ofGenerators x l).toFreeGroup = FreeGroup.of x * (l.map FreeGroup.of).prod` (or the fold form), by induction.",
+   "issue": "`Relator.ofGenerators` is characterized only by `toWord_ofGenerators`; there is no `toFreeGroup_ofGenerators`. Since `Relator.relatorSet` (line 113) is defined through `toFreeGroup`, the spider relator built from `ofGenerators` has no stated meaning as a free-group element, so no consumer can say what relation the spider imposes.",
+   "line": 139
+  },
+  {
+   "evidence": "`grep -rn 'GroupPresentation.mulEquivCoxeterGroup' TauCeti` \u2192 only the module docstring (line 49) and the definition (line 230); no `_apply`. `mathlib/Mathlib/GroupTheory/QuotientGroup/Basic.lean:171` supplies `quotientMulEquivOfEq_mk`.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "Add `@[simp] theorem GroupPresentation.mulEquivCoxeterGroup_apply (P) (M) (h) (i : Fin P.generatorCount) : P.mulEquivCoxeterGroup M h (PresentedGroup.of i) = M.simple i := QuotientGroup.quotientMulEquivOfEq_mk _ _`.",
+   "issue": "`GroupPresentation.mulEquivCoxeterGroup` has no `_apply` lemma, unlike `mulEquivCoxeterGroup` which gets `mulEquivCoxeterGroup_apply` (line 222). Its body is a `QuotientGroup.quotientMulEquivOfEq` behind an unexposed `def`, so a consumer cannot track a generator through the equivalence \u2014 exactly what the pending Monster row needs in order to name the central involution `Z`.",
+   "line": 230
+  },
+  {
+   "evidence": "Lines 404-413: the two sibling lemmas use two different statement shapes for the same kind of fact.",
+   "file": "TauCeti/GroupTheory/Presentation/Coxeter.lean",
+   "fix": "State `(coxeterRelators (yCoxeterMatrix 4 4 4)).length = 91` and leave the `+ 1` to the docstring or to a `y444Relators` list, as `length_y443Relators` does.",
+   "issue": "`length_coxeterRelators_y444` is named as a length lemma but states `(coxeterRelators (yCoxeterMatrix 4 4 4)).length + 1 = 92`, baking the spider relator into an arithmetic identity. It does not give a consumer the count `91`, and breaks the parallel with `length_coxeterRelators_y433` (line 410), which states `= 66`.",
+   "line": 404
+  },
+  {
+   "evidence": "GroupPresentation.lean:92-109 vs Relator.lean:113-119: `{r | r \u2208 P.relators.map FreeGroup.mk}` and `{r | \u2203 t \u2208 l, t.toFreeGroup = r}` are proved equal by `ext r; simp`.",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Define `GroupPresentation.relatorSet (P) : Set _ := Relator.relatorSet P.transcribed`; `mem_relatorSet_iff` then becomes `Relator.mem_relatorSet` and `relatorSet_eq_relatorSet` disappears. Also drop `TauCeti.Relator.relatorSet` from Coxeter.lean's `## Main definitions` (line 36) \u2014 it is defined in `Relator.lean` and already listed there (Relator.lean:33).",
+   "issue": "`Relator.relatorSet` duplicates `GroupPresentation.relatorSet`: both denote the same set and their membership lemmas (`Relator.mem_relatorSet`, `GroupPresentation.mem_relatorSet_iff`) have identical right-hand sides, bridged by the new `relatorSet_eq_relatorSet`. Two same-named notions on the public surface with a bridge lemma between them invites divergence.",
+   "line": 106
+  }
+ ],
+ "head_sha": "a95e863195487b08b98e5a389f5bbd3523f3368b",
+ "merge_base_sha": "92e27a1f0b772dec30fcdb18a584a079a594408a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2644,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e54748114d8da57c5e6728a7349ed022090426ce910237c53020a6b662962de2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T162536Z-2644-api-design-a61a2f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T16:25:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The Coxeter relator list and Y-diagram data are the right surface, but several definitions ship with unexposed bodies and no characteristic lemma, so downstream consumers cannot use them: `YAdjacent` has no elimination form (making `yCoxeterMatrix_of_not_adjacent` unusable), `ySpiderRelator`/`y443Relators`/`coxeterRelators` have no `*_def`, `ofGenerators` has no `toFreeGroup` lemma, and the presentation-record equivalence has no `_apply`. `@[expose]` on `Relator.toWord`/`toFreeGroup` is used in place of the missing equation lemmas.",
+ "transcript_blob": "531d66d45708131f7e6bf4972ec148fd00013c335ffc2169932be44f41ce5770",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62488,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62488,
+  "cache_read_input_tokens": 378981,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4855,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4855,
+    "cache_read_input_tokens": 73840,
+    "input_tokens": 2,
+    "output_tokens": 5694,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20417,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
