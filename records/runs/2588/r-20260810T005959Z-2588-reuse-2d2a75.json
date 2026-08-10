@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.51231,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 61.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 140800,
+    "input_tokens": 216672,
+    "output_tokens": 2085,
+    "reasoning_output_tokens": 557
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "65192afec3fe6f61f1c1fd0ece0b13a500a094ce",
+ "cost_estimated": true,
+ "cost_usd": 0.51231,
+ "dedupe_key": "TauCetiProject/TauCeti|2588|f8aaae370efdd26b9b0962b7a132f93a71213e51|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "2f2849b03d4def2a22a33a374cd44b496c78a40e362dd858844d1a4469cb706b",
+ "diff_sha256": "2f2849b03d4def2a22a33a374cd44b496c78a40e362dd858844d1a4469cb706b",
+ "duration_s": 61.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Data/Fin/SuccPredOrder.lean:37-40` states `Order.succ = Fin.lastCases (Fin.last n) Fin.succ`, exactly incrementing non-last indices and fixing the last index, which is the definition at Classical.lean:167.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Classical.lean",
+   "fix": "Use `Order.succ` in `simpleCorootsB`, `simpleCorootsC`, and `simpleCorootsD`, with the existing `Fin` successor-order lemmas, and delete `nextIndex`, `nextIndex_val`, and `le_nextIndex_val`.",
+   "issue": "`nextIndex` directly duplicates the existing successor-with-top-clamping operation `Order.succ` on `Fin`; its value and monotonicity lemmas duplicate that API as well.",
+   "line": "167"
+  },
+  {
+   "evidence": "Mathlib exposes `Matrix.vecMulLinear` and `Matrix.vecMulLinear_apply` at `Mathlib/LinearAlgebra/Matrix/ToLin.lean:163-167`; Mathlib itself applies `injective_iff_map_eq_zero` to an underlying additive homomorphism at `Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/FinTwo.lean:202`. The new wrapper is used only at Classical.lean:338.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Classical.lean",
+   "fix": "Delete the lemma and start the type-D proof with `refine (injective_iff_map_eq_zero M.vecMulLinear.toAddMonoidHom).2 fun x hx \u21a6 ?_` (using `Matrix.vecMulLinear_apply` if needed).",
+   "issue": "`vecMul_injective_of_forall_eq_zero` is a one-use specialization of Mathlib's existing `injective_iff_map_eq_zero` to the additive homomorphism underlying `M.vecMulLinear`.",
+   "line": "136"
+  }
+ ],
+ "head_sha": "f8aaae370efdd26b9b0962b7a132f93a71213e51",
+ "merge_base_sha": "08891bdbc8fe0a675c9c65c860cef181f8b3f4cf",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2588,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5899e99b7c50bf26763b6ddfce5dca4cdc0c15fd9db8ef5b3597d0df24716d79",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T005959Z-2588-reuse-2d2a75",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T00:59:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The new module introduces public wrappers for existing Mathlib APIs instead of reusing them.",
+ "transcript_blob": "49c644f85a4ff1195c3dec93033fb467de6ba1f62997b702c12054044c399570",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 140800,
+  "input_tokens": 216672,
+  "output_tokens": 2085,
+  "reasoning_output_tokens": 557
+ },
+ "verdict": "block"
+}
