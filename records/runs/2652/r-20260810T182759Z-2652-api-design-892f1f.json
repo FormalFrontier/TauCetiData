@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.878849,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 188.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38924,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38924,
+    "cache_read_input_tokens": 264378,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4465,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4465,
+      "cache_read_input_tokens": 50666,
+      "input_tokens": 2,
+      "output_tokens": 2225,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14029,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3a6a5a25cec73efcf4c3a3beca4956866dc9f8b",
+ "cost_usd": 0.878849,
+ "dedupe_key": "TauCetiProject/TauCeti|2652|52add2aab6665fa9509d828fed9a73ab5c3fce04|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c1bc49db781356313fe2019076f641597b1daefb7a580b9d42b7e8712a70f459",
+ "diff_sha256": "c1bc49db781356313fe2019076f641597b1daefb7a580b9d42b7e8712a70f459",
+ "duration_s": 188.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "roadmap SpinRepresentations/Suggested.lean `SpinPolarizationData` fields `isotropic_W`, `pairing_nondegenerate_left/right`, `line_orthogonal` all use `QuadraticMap.polar Q`; Hyperbolic.lean:85 `private theorem hyperbolicModelForm_associated_apply`.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Add a public `hyperbolicModelForm_polar_apply : polar (hyperbolicModelForm R n) x y = x.1.1 y.1.2 + y.1.1 x.1.2 + 2 * \u2211 i, x.2 i * y.2 i` (needs only `CommRing`, no `Invertible (2 : K)`), mark it `@[simp]`, and derive the existing `associated` version from it \u2014 or simply make `hyperbolicModelForm_associated_apply` public.",
+   "issue": "`hyperbolicModelForm_associated_apply` is `private`, so the public surface has no bilinear/polar characterization of `hyperbolicModelForm`. The stated consumer `SpinPolarizationData` states isotropy and pairing nondegeneracy entirely via `QuadraticMap.polar Q x y`, and the sibling file exposes exactly this shape publicly (`Standard.lean:48 polarBilin_weightedSumSquares`, `:62 polarBilin_weightedSumSquares_one` with `@[simp]`).",
+   "line": 85
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/QuadraticForm/AlgClosed.lean:52 `theorem equivalent_weightedSumSquares_of_isAlgClosed ... Equivalent Q (weightedSumSquares K (1 : Fin (Module.finrank K M) \u2192 K))` is public; Hyperbolic.lean:76 states the same conclusion under `[IsSepClosed K]`.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Make it public (e.g. `equivalent_weightedSumSquares_of_isSepClosed`, mirroring the Mathlib name); `isometryEquivSumSquaresUnits` may stay private once it is exposed.",
+   "issue": "`equivalentSumSquares` (nondegenerate finite-dimensional form over a separably closed field with `2` invertible is equivalent to the sum of squares) is `private`. It is a strict generalization of Mathlib's public `QuadraticForm.equivalent_weightedSumSquares_of_isAlgClosed` and is the reusable general result this PR actually contributes; hiding it forces the next consumer to re-prove it.",
+   "line": 76
+  }
+ ],
+ "head_sha": "52add2aab6665fa9509d828fed9a73ab5c3fce04",
+ "merge_base_sha": "d2441d4043da40aa82c84d471fa159e0cdd082ba",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2652,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8e35118bd85bf449ef2b8a874dc0404808c886614f4871b9174c50b0fec7d7e0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T182759Z-2652-api-design-892f1f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T18:27:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The model form's bilinear/polar characterization is private, so the roadmap consumer (whose isotropy and pairing conditions are all stated in QuadraticMap.polar) has no public lemma for it; the sep-closed sum-of-squares normalization, a strict generalization of a public Mathlib theorem, is also hidden.",
+ "transcript_blob": "42fc0992b3f542d4017e26a8e9a2828105cfbe844384d53b0327021b1d794180",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38924,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38924,
+  "cache_read_input_tokens": 264378,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4465,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4465,
+    "cache_read_input_tokens": 50666,
+    "input_tokens": 2,
+    "output_tokens": 2225,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14029,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

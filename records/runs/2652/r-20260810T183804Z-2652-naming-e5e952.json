@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.561166,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 244.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 70014,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 70014,
+    "cache_read_input_tokens": 764432,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5559,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5559,
+      "cache_read_input_tokens": 80662,
+      "input_tokens": 1,
+      "output_tokens": 6250,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18589,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3a6a5a25cec73efcf4c3a3beca4956866dc9f8b",
+ "cost_usd": 1.561166,
+ "dedupe_key": "TauCetiProject/TauCeti|2652|52add2aab6665fa9509d828fed9a73ab5c3fce04|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c1bc49db781356313fe2019076f641597b1daefb7a580b9d42b7e8712a70f459",
+ "diff_sha256": "c1bc49db781356313fe2019076f641597b1daefb7a580b9d42b7e8712a70f459",
+ "duration_s": 244.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib names such defs after the returned equivalence: `noncomputable def isometryEquivSumSquares` and `isometryEquivSumSquaresUnits` (Mathlib/LinearAlgebra/QuadraticForm/AlgClosed.lean:32,45), `isometryEquivWeightedSumSquaresWeightedSumSquares` (IsometryEquiv.lean:198). Same namespace in this repo: `standardSkewAdjointLieEquiv` (Standard.lean:86), `orthogonalGroupEquivIsometryEquiv` (OrthogonalGroup.lean:146). The file's own private def already follows it (`isometryEquivSumSquaresUnits`, line 64).",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Rename to `isometryEquivHyperbolicModelForm` (or `\u2026SplitModelForm` if finding 2 is taken).",
+   "issue": "`hyperbolicDecomposition` is a def whose value is `Q.IsometryEquiv (hyperbolicModelForm K (finrank K V))`, but the name states neither the return value nor a conclusion; \"decomposition\" further suggests an internal splitting of `V` (as in `DirectSum.Decomposition`) rather than an isometry to a fixed model.",
+   "line": 155
+  },
+  {
+   "evidence": "Line 55 adds `weightedSumSquares K (1 : Fin (n % 2) \u2192 K)` to the `dualProd` factor. Mathlib has no hyperbolic-quadratic-form name to defer to (grep for `yperbolic` under Mathlib/LinearAlgebra yields only `Matrix.IsHyperbolic`, an unrelated 2\u00d72 discriminant predicate), so the literature term (Lam, *Introduction to Quadratic Forms over Fields*, I \u00a73: hyperbolic = sum of hyperbolic planes) governs.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Use the standard term for maximal Witt index in all dimensions: `splitModel` / `splitModelForm` / `splitHalf` (file `Split.lean`), or keep `hyperbolic` only for the `dualProd` factor.",
+   "issue": "`hyperbolicModelForm` (and `hyperbolicModel`, `hyperbolicHalf`, `hyperbolicDecomposition`) advertise a hyperbolic form, but for odd `n` the definition is `H^(n/2) \u27c2 \u27e81\u27e9`, which is not hyperbolic \u2014 a hyperbolic form is by definition an orthogonal sum of hyperbolic planes and hence even-dimensional. The docstring on line 51 concedes the extra square.",
+   "line": 52
+  },
+  {
+   "evidence": "Mathlib type synonyms are UpperCamelCase (`Module.Dual`, `Matrix`, `WithLp`). Not linter-covered: `Style.nameCheck`/`defsWithUnderscore` only rejects underscores in definition names (Mathlib/Tactic/Linter/Style.lean:535-565).",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Rename to `HyperbolicHalf`, `HyperbolicRemainder`, `HyperbolicModel` (updating the dependent names accordingly; `hyperbolicModelForm` may then drop the `Model`).",
+   "issue": "`hyperbolicHalf` (42), `hyperbolicRemainder` (45) and `hyperbolicModel` (48) are `Type`-valued abbreviations named in lowerCamelCase, so they read as terms; naming convention rule 2 puts Types in UpperCamelCase. These appear in the public signature of `hyperbolicModelForm` and the main def.",
+   "line": 42
+  },
+  {
+   "evidence": "Mathlib's counterpart for the same statement is `theorem equivalent_weightedSumSquares_of_isAlgClosed` (Mathlib/LinearAlgebra/QuadraticForm/AlgClosed.lean:51), which this file adapts.",
+   "file": "TauCeti/LinearAlgebra/QuadraticForm/Hyperbolic.lean",
+   "fix": "Rename to `equivalent_weightedSumSquares_of_isSepClosed`.",
+   "issue": "`equivalentSumSquares` is a theorem (term of a `Prop`) named in lowerCamelCase, contrary to rule 1, and it drops the `IsSepClosed` hypothesis that distinguishes it from its Mathlib source.",
+   "line": 76
+  }
+ ],
+ "head_sha": "52add2aab6665fa9509d828fed9a73ab5c3fce04",
+ "merge_base_sha": "d2441d4043da40aa82c84d471fa159e0cdd082ba",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2652,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6c0d6e8207155d85295727a587d9918c39be79a6cdd4ea537745b8db9e023605",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T183804Z-2652-naming-e5e952",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T18:38:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The main definition is named for a proof narrative (\"decomposition\") rather than the isometry it returns, breaking both Mathlib and this repo's own precedent, and \"hyperbolic\" overstates the model in odd dimension. Three public type abbreviations and one private theorem also carry the case of the wrong declaration kind.",
+ "transcript_blob": "a53245896e59f670fd3b81844164e8845930d982e32341e1a0da703a5ea714f1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 70014,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 70014,
+  "cache_read_input_tokens": 764432,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5559,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5559,
+    "cache_read_input_tokens": 80662,
+    "input_tokens": 1,
+    "output_tokens": 6250,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18589,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
