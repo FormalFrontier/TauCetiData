@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.078685,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 367.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 88712,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 88712,
+    "cache_read_input_tokens": 3032226,
+    "inference_geo": "not_available",
+    "input_tokens": 75,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2592,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2592,
+      "cache_read_input_tokens": 102619,
+      "input_tokens": 2,
+      "output_tokens": 3770,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26482,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5b979390e24f2399021d320417fa4126c191dea3",
+ "cost_usd": 3.078685,
+ "dedupe_key": "TauCetiProject/TauCeti|2615|943ce5c29f554adfe08d164fcd8255604d44b0db|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "0df31fe01bdbaaddabb4c02c188bedd6a94f4b13c33f60dfabfc545b6b34140c",
+ "diff_sha256": "0df31fe01bdbaaddabb4c02c188bedd6a94f4b13c33f60dfabfc545b6b34140c",
+ "duration_s": 367.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/AlgebraicGeometry/Morphisms/Smooth.lean:72` gives `HasRingHomProperty @Smooth RingHom.Smooth`; `Mathlib/AlgebraicGeometry/Morphisms/RingHomProperties.lean:290` gives `instance (priority := 900) : IsZariskiLocalAtTarget P` for any such P; `Mathlib/CategoryTheory/MorphismProperty/Local.lean:51`: `class IsLocalAtTarget (P) (K) extends RespectsIso P`. Mathlib uses this chain directly: `MorphismProperty.arrow_mk_iso_iff (P := @Smooth)` at `Mathlib/AlgebraicGeometry/Morphisms/SmoothFiber.lean:62` and `cancel_right_of_respectsIso (P := @LocallyOfFinitePresentation)` at `Mathlib/AlgebraicGeometry/AffineSpace.lean:388`, neither with a local RespectsIso instance.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Smooth.lean",
+   "fix": "Delete lines 56-59 and let inference find it. Same redundancy at `TauCeti/AlgebraicGeometry/AffineGroupScheme/FiniteType.lean:59-63` (`locallyOfFiniteType_respectsIso`) \u2014 delete it there too, since this PR is already rewriting that file.",
+   "issue": "`private instance smooth_respectsIso : MorphismProperty.RespectsIso (@Smooth)` re-proves an instance Mathlib already supplies.",
+   "line": "56"
+  },
+  {
+   "evidence": "Compare Smooth.lean:104-108 with FiniteType.lean:110-114 (identical `rw [hopfSpec_obj_X_hom]; rw [MorphismProperty.cancel_left_of_respectsIso ... eqToHom (hopfSpec_obj_X_left R H)]; rw [HasRingHomProperty.Spec_iff]; exact ..._algebraMap.symm`) and Smooth.lean:117-133 with FiniteType.lean:123-138 (identical `let Q`/`let _`/`change`/`apply ... inverseImage_eq_op` script).",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Smooth.lean",
+   "fix": "Add one generic lemma next to `commHopfAlgCatOpEquivAffineGroupSchemeCat.inverseImage_eq_op` in `Equivalence.lean`, e.g. `theorem hopfSpec_hasRingHomProperty_iff (P : MorphismProperty Scheme.{u}) {Q} [HasRingHomProperty P Q] (R) [CommRing R] (H : CommHopfAlgCat.{u} R) : Q (algebraMap R H) \u2194 P (((hopfSpec (CommRingCat.of R)).obj (op H)).X.hom)` with the existing 4-line proof, plus the generic `inverseImage` corollary; then instantiate at `@LocallyOfFiniteType` (via `RingHom.finiteType_algebraMap`) and `@Smooth` (via `RingHom.smooth_algebraMap`). This is the same move the PR already made correctly for `restrict`/`restrictFunctorComp\u03b9Iso`.",
+   "issue": "`algebraSmooth_iff_smooth_hopfSpec` (lines 100-108) and `smoothAffineGroupSchemeProperty_inverseImage` (lines 112-133) are token-for-token copies of `algebraFiniteType_iff_locallyOfFiniteType_hopfSpec` (FiniteType.lean:105-114) and `finiteTypeAffineGroupSchemeProperty_inverseImage` (FiniteType.lean:118-138), with only `@Smooth`/`RingHom.smooth_algebraMap` swapped for `@LocallyOfFiniteType`/`RingHom.finiteType_algebraMap`.",
+   "line": "100"
+  },
+  {
+   "evidence": "FiniteType.lean:68-70 `fun G => LocallyOfFiniteType G.obj.X.hom`, :74-77 `_iff` by `Iff.rfl`, :81-85 closure instance, :96-98 subcategory instance \u2014 matched one-for-one by Smooth.lean:63-66, :70-73, :75-81, :92-93. `MorphismProperty.overObj` and `instance [W.RespectsIso] : (W.overObj (X := X)).IsClosedUnderIsomorphisms` are at `Mathlib/CategoryTheory/MorphismProperty/Comma.lean:122,126`.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Smooth.lean",
+   "fix": "Define once, parametrized by the morphism property: `def affineGroupSchemeStructuralProperty (P : MorphismProperty Scheme.{u}) (S : CommRingCat.{u}) : ObjectProperty (AffineGroupSchemeCat S) := (MorphismProperty.overObj P).inverseImage ((affineGroupSchemeProperty S).\u03b9 \u22d9 Grp.forget _)` with its `_iff` lemma and a single `instance [P.RespectsIso] : (affineGroupSchemeStructuralProperty P S).IsClosedUnderIsomorphisms`; then set `smoothAffineGroupSchemeProperty := affineGroupSchemeStructuralProperty @Smooth` and rewrite `finiteTypeAffineGroupSchemeProperty` as the `@LocallyOfFiniteType` instantiation.",
+   "issue": "The object-property scaffolding (def at 63-66, `_iff` at 70-73, `IsClosedUnderIsomorphisms` at 75-81, subcategory instance at 92-93) duplicates the finite-type scaffolding at FiniteType.lean:68-98, and does so in a second, gratuitously different formulation (`(overObj P).inverseImage` vs. a bare lambda) for the same content.",
+   "line": "63"
+  },
+  {
+   "evidence": "`grep -n 'abbrev toBialgHom\\|lemma toBialgHom' TauCeti/` returns the identical five declarations in both files (Smooth:85,106,111,117,122 vs FiniteType:96,117,122,128,133); their statements and `rfl` proofs are character-identical modulo the category name.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Smooth/CommHopfAlgCat.lean",
+   "fix": "Factor the property-independent part into a shared file (e.g. `TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/FullSubcategory.lean`) stated for an arbitrary `P : ObjectProperty (CommHopfAlgCat.{v} R)`: `toBialgHom (\u03c6 : H \u27f6 K) := \u03c6.hom.hom` for `H K : P.FullSubcategory`, `ofHom`, `hom_ext`, and the four `rfl` simp lemmas, plus `of` taking the membership proof. Then `Smooth/CommHopfAlgCat.lean` and `FiniteType/CommHopfAlgCat.lean` reduce to the property definition, its `_iff`, the `abbrev` for the subcategory, and the typeclass-extraction instances.",
+   "issue": "The whole file (lines 42-126: property, `_iff`, `CoeSort`, `commRing`, `hopfAlgebra`, the predicate instance, `of`, `toBialgHom`, `ofHom`, `hom_ext`, `toBialgHom_id`, `toBialgHom_comp`, `ofHom_toBialgHom`, `toBialgHom_ofHom`) is a verbatim copy of `TauCeti/Algebra/AlgebraicGroup/FiniteType/CommHopfAlgCat.lean:49-137` with `FiniteType`/`Algebra.FiniteType` replaced by `Smooth`/`Algebra.Smooth`. None of the 10 morphism-level declarations depend on the property at all.",
+   "line": "42"
+  }
+ ],
+ "head_sha": "943ce5c29f554adfe08d164fcd8255604d44b0db",
+ "merge_base_sha": "71ba5704b15b63800283419c212186921fe3ae68",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2615,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6616a820be873fc7b226f4235bb4f466c13ae6303172f0c6e9a87b95bccf0e78",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T200205Z-2615-reuse-d0e869",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T20:02:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The categorical layer is properly factored, but the predicate layer is cloned wholesale from the finite-type files: both proofs, the property scaffolding, and the entire Hopf-algebra subcategory file are token-for-token copies. The private `smooth_respectsIso` instance re-derives one Mathlib already provides.",
+ "transcript_blob": "10c287ca68c318bdbfda357e48df7e121a719cc598912b985202ca8a044503f1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 88712,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 88712,
+  "cache_read_input_tokens": 3032226,
+  "inference_geo": "not_available",
+  "input_tokens": 75,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2592,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2592,
+    "cache_read_input_tokens": 102619,
+    "input_tokens": 2,
+    "output_tokens": 3770,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26482,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
