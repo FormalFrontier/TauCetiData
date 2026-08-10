@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.200859,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 26.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 64768,
+    "input_tokens": 92673,
+    "output_tokens": 965,
+    "reasoning_output_tokens": 274
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f0ccf7cc0b2c3db19177af2b6c37717d80512a93",
+ "cost_estimated": true,
+ "cost_usd": 0.200859,
+ "dedupe_key": "TauCetiProject/TauCeti|2718|a3c388d4a023ee59ae0f3e2f40aa0656da9047aa|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9e26517c9acfba211ac47f30ac2e8b641cee342e17bebfcee7ec9735e6fb0657",
+ "diff_sha256": "9e26517c9acfba211ac47f30ac2e8b641cee342e17bebfcee7ec9735e6fb0657",
+ "duration_s": 26.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 127\u2013134 expose the definition and immediately provide `@[simp] theorem Matrix.rightMul_apply`.",
+   "file": "TauCeti/RingTheory/Semisimple/MatrixDivisionRing.lean",
+   "fix": "Remove `@[expose]` and retain the `[simp]` application lemma as the public interface.",
+   "issue": "`Matrix.rightMul` is marked `@[expose]`, making its structure body public even though `Matrix.rightMul_apply` already provides the intended computational interface.",
+   "line": 127
+  },
+  {
+   "evidence": "The only relevant grep hits are the definitions at lines 141 and 174 and `rightMul_apply`; no `mulOppositeRingEquivEnd_apply`, `linearEquivPi_apply`, or inverse application lemma exists in TauCeti or Mathlib.",
+   "file": "TauCeti/RingTheory/Semisimple/MatrixDivisionRing.lean",
+   "fix": "Add `[simp]` lemmas characterizing `mulOppositeRingEquivEnd \u03b9 D d`, `linearEquivPi \u03b9 D A j i`, and `(linearEquivPi \u03b9 D).symm f i j`.",
+   "issue": "The exported equivalences `Matrix.mulOppositeRingEquivEnd` and `Matrix.linearEquivPi` have no application/symmetric-application lemmas, so consumers cannot compute with these opaque definitions without unfolding them.",
+   "line": 141
+  }
+ ],
+ "head_sha": "a3c388d4a023ee59ae0f3e2f40aa0656da9047aa",
+ "merge_base_sha": "fe83fffcd838107fa933012e84665b5b85d9cc4b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2718,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3c7acb68fc65b2dc26e38b9b03f0c9043d8224f0f4a0278155946a63318e9a2b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T221910Z-2718-api-design-8e6eb9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T22:19:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The new equivalences lack usable characteristic lemmas, while `Matrix.rightMul` unnecessarily exposes its implementation despite already having an application theorem.",
+ "transcript_blob": "84f0346d164ff999c5c594568753fbe8b0ccc536447687eaed2e0104b5977936",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 64768,
+  "input_tokens": 92673,
+  "output_tokens": 965,
+  "reasoning_output_tokens": 274
+ },
+ "verdict": "request_changes"
+}
