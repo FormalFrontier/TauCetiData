@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.177964,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 32.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 59648,
+    "input_tokens": 83612,
+    "output_tokens": 944,
+    "reasoning_output_tokens": 256
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "cost_estimated": true,
+ "cost_usd": 0.177964,
+ "dedupe_key": "TauCetiProject/TauCeti|2595|83c285863c3b73a1a111f8f8b375b881a47a61f6|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|3",
+ "diff_blob": "5e07983b4315b9326f98770cd68e8909ef74192715050ceb74de58e2336e7e4a",
+ "diff_sha256": "5e07983b4315b9326f98770cd68e8909ef74192715050ceb74de58e2336e7e4a",
+ "duration_s": 32.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 84 applies `Lp.coeFn_compMeasurePreserving` directly, while lines 73\u201379 explicitly provide `rightRegularLp_apply` for transferring to the raw `Lp.compMeasurePreserving` form.",
+   "file": "TauCeti/RepresentationTheory/Compact/RegularRepresentation.lean",
+   "fix": "Use `by rw [rightRegularLp_apply]; exact Lp.coeFn_compMeasurePreserving f _`.",
+   "issue": "`coeFn_rightRegularLp` closes by unfolding `rightRegularLp` implicitly across the representation wrapper, despite `rightRegularLp_apply` being introduced as the stable bridge.",
+   "line": "84"
+  },
+  {
+   "evidence": "After lines 103\u2013104, the goal contains `rightRegularLp \ud835\udd5c G g f`, but line 105 supplies the raw `Lp.compMeasurePreserving` norm theorem without an explicit bridge.",
+   "file": "TauCeti/RepresentationTheory/Compact/RegularRepresentation.lean",
+   "fix": "Rewrite with `rightRegularLp_apply` before applying `Lp.norm_compMeasurePreserving`.",
+   "issue": "`isUnitary_rightRegularLp` likewise relies on implicit unfolding of `rightRegularLp` to make `Lp.norm_compMeasurePreserving` match.",
+   "line": "105"
+  }
+ ],
+ "head_sha": "83c285863c3b73a1a111f8f8b375b881a47a61f6",
+ "merge_base_sha": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2595,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "b711b7055e014ac113e8c9be7eb77fa243cc3ba3b4070ec748a8479d9f498e0f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T060414Z-2595-proof-quality-20d7d9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T06:04:14Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proofs bypass the new public unfolding lemma and depend directly on the representation\u2019s definitional implementation.",
+ "transcript_blob": "027872708e15dd492e3fb853c95ad87a62f28055ba5e29c8c35c67ae69fd5460",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 59648,
+  "input_tokens": 83612,
+  "output_tokens": 944,
+  "reasoning_output_tokens": 256
+ },
+ "verdict": "request_changes"
+}
