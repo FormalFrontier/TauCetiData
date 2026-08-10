@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2655049999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 305.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 89730,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 89730,
+    "cache_read_input_tokens": 1573844,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5828,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5828,
+      "cache_read_input_tokens": 100109,
+      "input_tokens": 2,
+      "output_tokens": 1426,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22759,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8459cfd3e601a4e010e37ecfaa7a357dcb7d484",
+ "cost_usd": 2.265505,
+ "dedupe_key": "TauCetiProject/TauCeti|2595|72cd8b2cf9f70f92db718e784bb011ec41e46a72|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "diff_sha256": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "duration_s": 305.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "EigenspaceRepresentation.lean:156 `private theorem rightRegularLp_apply ... := (rfl)`, used at :208 `rw [rightRegularLp_apply, Lp.ext_iff]` and :267 `rw [hy, coe_convolutionEigenspaceRep_apply, rightRegularLp_apply, convolutionCLM_compMeasurePreserving_mul_right, one_mul]`; :183 discharges the invariance goal `rightRegularLp \ud835\udd5c G g v \u2208 eigenspace` with the `Lp.compMeasurePreserving`-phrased Convolution.lean:550 by defeq, available only inside this module since `rightRegularLp` (:139) carries no `@[expose]`.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Add public interaction lemmas and use them in place of the private unfolding: `convolutionCLM_rightRegularLp (k) (f) (g x) : convolutionCLM k (rightRegularLp \ud835\udd5c G g f) x = convolutionCLM k f (x * g)` and `rightRegularLp_toLp (F : C(G, \ud835\udd5c)) (g) : rightRegularLp \ud835\udd5c G g (ContinuousMap.toLp 2 (haarProb G) \ud835\udd5c F) = ContinuousMap.toLp 2 (haarProb G) \ud835\udd5c (rightTranslate F g)` (the latter also shortens `rightRegularLp_eq_toLp_smul_rightTranslate`), plus a `rightRegularLp`-phrased restatement of eigenspace invariance for line 183.",
+   "issue": "`rightRegularLp`'s only public API is `coeFn_rightRegularLp` (an a.e. statement) and `isUnitary_rightRegularLp`. Every translation lemma in `Convolution.lean` is phrased in raw `Lp.compMeasurePreserving` form (`convolutionCLM_compMeasurePreserving_mul_right`, Convolution.lean:401; `convolutionOperator_compMeasurePreserving_mul_right`, :419; `compMeasurePreserving_mul_right_mem_eigenspace_convolutionOperator`, :550), and the only lemma bridging the new name to that form is `private rightRegularLp_apply` \u2014 the file itself must use it at lines 208 and 267, and line 183 relies on the unexposed body by defeq. A downstream consumer (the roadmap's isotypic `G\u00d7G` decomposition uses right translation explicitly) has neither the body nor a public lemma and must re-derive the identification from `Lp.ext_iff` plus `coeFn_rightRegularLp`. This is the \"use the new API without unfolding\" test failing.",
+   "line": 156
+  }
+ ],
+ "head_sha": "72cd8b2cf9f70f92db718e784bb011ec41e46a72",
+ "merge_base_sha": "c81a012e21ac99a2c4a97199eb4979a2c4a762ca",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2595,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "41b724f3e9a5596d26fc2d8ec5d8dc148f9a78ef1cd8146498293e5b215c2193",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260809T235538Z-2595-api-design-65e4de",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-09T23:55:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is otherwise minimal and well annotated (bodies hidden, `(rfl)` idiom, correct `@[simp]`s), but the new public definition `rightRegularLp` has no public lemma connecting it to the operations it exists to interact with \u2014 the only bridge is the `private` unfolding lemma the file itself has to use twice.",
+ "transcript_blob": "67b3e87948feb1a77ff3d02958de6629e4e90807d3010a9c8438ebe04fbefbf1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 89730,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 89730,
+  "cache_read_input_tokens": 1573844,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5828,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5828,
+    "cache_read_input_tokens": 100109,
+    "input_tokens": 2,
+    "output_tokens": 1426,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22759,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

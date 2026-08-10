@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9043064999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 282.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 68753,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 68753,
+    "cache_read_input_tokens": 1382659,
+    "inference_geo": "not_available",
+    "input_tokens": 40,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2431,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2431,
+      "cache_read_input_tokens": 82529,
+      "input_tokens": 1,
+      "output_tokens": 4744,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20545,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8459cfd3e601a4e010e37ecfaa7a357dcb7d484",
+ "cost_usd": 1.904306,
+ "dedupe_key": "TauCetiProject/TauCeti|2595|72cd8b2cf9f70f92db718e784bb011ec41e46a72|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "diff_sha256": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "duration_s": 282.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 264 `= star (ContRepresentation.matrixCoeff ...)`; line 272 `exact (isRepresentative_matrixCoeff _ h\u03c0 _ _).star`; declaration docstring line 240-241 already says \"is the conjugate of a matrix coefficient\".",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "In both places say \"is the conjugate of a matrix coefficient of that representation, hence a representative function\", matching the declaration docstring at lines 239-242 and the Implementation note at lines 64-69.",
+   "issue": "Module docstring (lines 22-24 and the Main-statements bullet at 48-49) says the continuous representative `\u03bc\u207b\u00b9 \u2022 (k * f)` \"is a matrix coefficient of that representation\". The theorem proves `IsRepresentative`, via `key : \u03bc\u207b\u00b9 \u2022 convolutionCLM k f = star (ContRepresentation.matrixCoeff (convolutionEigenspaceRep k \u03bc) h\u03c0 \u27e8f, hf\u27e9 y)` (line 263-264) \u2014 the conjugate of a matrix coefficient of that representation, which by `star_matrixCoeff` is a matrix coefficient of `\u03c0` precomposed with inversion, not of `\u03c0` itself.",
+   "line": 23
+  },
+  {
+   "evidence": "`mathlib/Mathlib/RepresentationTheory/Continuous/Basic.lean:53: structure ContRepresentation where`; no `structure/def ContRepresentation` anywhere under `TauCeti/`.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Write \"Mathlib's `ContRepresentation`\", as `Continuous/MatrixCoefficient.lean:21` already does.",
+   "issue": "`TauCeti.ContRepresentation` does not exist as a declaration; the structure is Mathlib's `_root_.ContRepresentation`. `TauCeti.ContRepresentation` is only a namespace holding TauCeti lemmas, so this doc reference is wrong and points readers at the wrong repo.",
+   "line": 16
+  },
+  {
+   "evidence": "`Mathlib/RepresentationTheory/Continuous/Basic.lean:22-26`: \"(where the action of `G` on `V` is *not* assumed to be continuous). The reason for this more general definition is that it allows us to define the coinduced representation ... without any restriction on the topology on `G`.\"",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "State the fact without the causal claim, e.g. \"Mathlib's `ContRepresentation` does not require `g \u21a6 \u03c0 g` to be continuous, so continuity is an extra hypothesis; it holds after restricting to a convolution eigenspace\".",
+   "issue": "`rightRegularLp`'s docstring asserts that operator-norm discontinuity \"is why `ContRepresentation` carries no continuity field\". That is a false rationale for an upstream design decision: Mathlib's docstring gives a different reason (so that the coinduced representation can be formed with no restriction on the topology of `G`).",
+   "line": 137
+  },
+  {
+   "evidence": "`Continuous/Representative.lean:98-108` defines `IsRepresentative` (a single matrix coefficient) and `representativeSubmodule` as its span; grep shows only `IsRepresentative.mul` and `IsRepresentative.star`, no `.add`.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Say \"lies in the representative ring `\ud835\udce1(G)`\", matching the module bullet at line 50-51.",
+   "issue": "Header of `convolutionCLM_mem_representativeSubmodule_of_mem_iSup` reads \"gives a representative function\", but the conclusion is `\u2208 representativeSubmodule \ud835\udd5c G`, the *span*. In this repo \"representative function\" is the predicate `IsRepresentative`, and no closure of `IsRepresentative` under addition is recorded, so the header claims more than the statement.",
+   "line": 289
+  }
+ ],
+ "head_sha": "72cd8b2cf9f70f92db718e784bb011ec41e46a72",
+ "merge_base_sha": "c81a012e21ac99a2c4a97199eb4979a2c4a762ca",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2595,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d0df0427f1391e4d1b8c37f572dde8b59b49231821e6643452230e2e505d2143",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T001321Z-2595-documentation-e3a833",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T00:13:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The file is thoroughly documented and mostly accurate, but the module docstring overclaims what `isRepresentative_smul_convolutionCLM` delivers (matrix coefficient vs. its conjugate), misattributes Mathlib's `ContRepresentation` to the `TauCeti` namespace with a rationale Mathlib's own docs contradict, and one theorem header uses the repo's defined term \"representative function\" for a span membership.",
+ "transcript_blob": "2adb85857576952845187016fdebc003112c4ee4b8988a0f0fb0473ec23a2047",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 68753,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 68753,
+  "cache_read_input_tokens": 1382659,
+  "inference_geo": "not_available",
+  "input_tokens": 40,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2431,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2431,
+    "cache_read_input_tokens": 82529,
+    "input_tokens": 1,
+    "output_tokens": 4744,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20545,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

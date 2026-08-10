@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5085209999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 207.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73717,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73717,
+    "cache_read_input_tokens": 705958,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3017,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3017,
+      "cache_read_input_tokens": 86907,
+      "input_tokens": 2,
+      "output_tokens": 2698,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15954,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e8459cfd3e601a4e010e37ecfaa7a357dcb7d484",
+ "cost_usd": 1.508521,
+ "dedupe_key": "TauCetiProject/TauCeti|2595|72cd8b2cf9f70f92db718e784bb011ec41e46a72|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "diff_sha256": "cd23a31a7c098e7de0949319c8e51e6c8e1ae466cdeb5316650de103fa1424ee",
+ "duration_s": 207.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The immediately upstream lemma with exactly this hypothesis names it: `TauCeti/RepresentationTheory/Compact/Convolution.lean:535: theorem ae_eq_smul_convolutionCLM_of_mem_eigenspace (k : C(G, \ud835\udd5c)) {\u03bc : \ud835\udd5c} (h\u03bc : \u03bc \u2260 0)`; likewise line 550 `compMeasurePreserving_mul_right_mem_eigenspace_convolutionOperator`. This file's own `convolutionCLM_eq_zero_of_mem_eigenspace_zero` (line 277) follows that precedent, so the two lemmas above are inconsistent with their own neighbours. The naming guide's `_of_` rule is for exactly this: describing the hypotheses that disambiguate the conclusion.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Rename to `rightRegularLp_eq_toLp_smul_rightTranslate_of_mem_eigenspace`, `isRepresentative_smul_convolutionCLM_of_mem_eigenspace`, and `convolutionCLM_mem_representativeSubmodule_of_mem_iSup_eigenspace`.",
+   "issue": "`rightRegularLp_eq_toLp_smul_rightTranslate` (line 202) and `isRepresentative_smul_convolutionCLM` (line 246) both hold only under `hf : f \u2208 Module.End.eigenspace (convolutionOperator k).toLinearMap \u03bc`, but neither name records that hypothesis; read as stated they advertise unconditional facts about `rightRegularLp` and about `\u03bc\u207b\u00b9 \u2022 convolutionCLM k f`. Relatedly, `convolutionCLM_mem_representativeSubmodule_of_mem_iSup` (line 291) says `of_mem_iSup` without saying an iSup of what.",
+   "line": 202
+  },
+  {
+   "evidence": "Mathlib names functions in the namespace of their principal argument type for dot notation, and this repo already does so for generic `C(X, Y)` constructions: `TauCeti/Analysis/Calculus/ContinuousMap.lean:45: namespace ContinuousMap` containing `applyContinuousLinearMap : C(K, E \u2192L[\ud835\udd5c] F) \u2192L[\ud835\udd5c] C(K, E) \u2192L[\ud835\udd5c] C(K, F)`. By contrast the root-namespace neighbours `convolutionCLM`/`convolutionOperator` are subject-specific names, not generic ones.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Put the `RightTranslate` section in `namespace ContinuousMap`, giving `ContinuousMap.rightTranslate` and `ContinuousMap.rightTranslate_apply_apply`, and update the three use sites (lines 206, 230, 235) and the module docstring.",
+   "issue": "`rightTranslate` is a fully general construction on `C(G, X)` (only `[Mul G] [ContinuousMul G] [TopologicalSpace X]`, nothing representation-theoretic) but is declared in the root `TauCeti` namespace, so dot notation `F.rightTranslate` is unavailable and a very generic name is claimed project-wide. Same for `rightTranslate_apply_apply` (line 108).",
+   "line": 103
+  },
+  {
+   "evidence": "Mathlib/RepresentationTheory/Tannaka.lean:110: `def rightFDRep [Finite G] : FDRep k G` \u2014 the `FDRep` suffix marks the return type. In-repo precedent spells it out: TauCeti/RepresentationTheory/Symmetric/Standard.lean:120 `noncomputable def standardRepresentation`, TauCeti/RepresentationTheory/Symmetric/TensorAction/Basic.lean:47 `noncomputable def reindexRepresentation`, and `ContRepresentation.subrepresentation` used at line 182 of this file.",
+   "file": "TauCeti/RepresentationTheory/Compact/EigenspaceRepresentation.lean",
+   "fix": "Rename to `convolutionEigenspaceRepresentation` (and the three dependent lemma names accordingly).",
+   "issue": "`convolutionEigenspaceRep` abbreviates \"representation\" to `Rep`, but in Mathlib a `Rep`/`FDRep` suffix names a value of those types, whereas this returns a `ContRepresentation`; the repo spells the word out everywhere else. The abbreviation propagates to `coe_convolutionEigenspaceRep_apply`, `isUnitary_convolutionEigenspaceRep`, `continuous_convolutionEigenspaceRep`.",
+   "line": 179
+  }
+ ],
+ "head_sha": "72cd8b2cf9f70f92db718e784bb011ec41e46a72",
+ "merge_base_sha": "c81a012e21ac99a2c4a97199eb4979a2c4a762ca",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2595,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5defffac7e70c959797d3cba65132531c3c731e5c7cdae6152d5c58ca027fd83",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T000954Z-2595-naming-9078dd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T00:09:54Z",
+ "submitted_by": "kim-em",
+ "summary": "Two lemmas whose conclusions hold only for eigenvectors omit the `_of_mem_eigenspace` hypothesis marker that the adjacent Convolution.lean lemma with the identical hypothesis carries, `rightTranslate` is a general `ContinuousMap` construction placed in the project root namespace instead of `ContinuousMap`, and `convolutionEigenspaceRep` abbreviates `Representation` to `Rep`, which in Mathlib names the `Rep`/`FDRep` types.",
+ "transcript_blob": "36b9a8af9d7a491610a00c1dcc939e796caf181c35797d9419e323b32949e3de",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73717,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73717,
+  "cache_read_input_tokens": 705958,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3017,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3017,
+    "cache_read_input_tokens": 86907,
+    "input_tokens": 2,
+    "output_tokens": 2698,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15954,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
