@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.279171,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 48.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 96512,
+    "input_tokens": 134715,
+    "output_tokens": 1330,
+    "reasoning_output_tokens": 492
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "cost_estimated": true,
+ "cost_usd": 0.279171,
+ "dedupe_key": "TauCetiProject/TauCeti|2602|9cbe3a4ac34448b499c144de0e45fef5f29b7888|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "5fb71b38bec7896c672abf3a78ef0e683b5d3dac5d50c0173dce58b844f57c06",
+ "diff_sha256": "5fb71b38bec7896c672abf3a78ef0e683b5d3dac5d50c0173dce58b844f57c06",
+ "duration_s": 48.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 10 applies `@[expose]` to the entire file, while `Datum.lean` unfolds imported definitions at lines 445, 511, and 569.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/C/Model.lean",
+   "fix": "Remove `@[expose]`; add targeted equation/application lemmas for definitions such as `weight` and `coweight` wherever `Datum.lean` currently needs unfolding.",
+   "issue": "`@[expose] public section` exposes every model definition body, including implementation machinery, so downstream proofs can depend on representation details instead of the API.",
+   "line": 10
+  },
+  {
+   "evidence": "`rg` finds its declaration at Model.lean:337 and uses only at Datum.lean:257 and Datum.lean:272.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/C/Model.lean",
+   "fix": "Make it `private` or move it to an appropriate general-purpose module if independent reuse is intended.",
+   "issue": "`pair_eq_of_mem_iff` is a completely generic implementation helper exposed inside the type-C namespace, despite serving only the datum's injectivity proof.",
+   "line": 337
+  },
+  {
+   "evidence": "These are advertised as the defining coordinate equations at lines 51\u201353; only `typeCSimpleIndex_val` currently carries `@[simp]`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/C/Datum.lean",
+   "fix": "Annotate both characteristic theorems `@[simp]`.",
+   "issue": "The main root and coroot characterization theorems (`root_typeCSimpleIndex` and `coroot_typeCSimpleIndex` at line 454) lack `@[simp]`, so simplification does not reduce the pinned datum on its designated simple indices to canonical coordinates.",
+   "line": 438
+  }
+ ],
+ "head_sha": "9cbe3a4ac34448b499c144de0e45fef5f29b7888",
+ "merge_base_sha": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2602,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "29ddd284f52eabac2e8eb7230187543a659bee1a7285266820154d423fa00695",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T010457Z-2602-api-design-02e5b0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T01:04:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface exposes implementation bodies and omits automation on its principal characterization lemmas.",
+ "transcript_blob": "3b417f5e03622433aafe23f966290df70ee78e3f11b4ad32ec0a2357d3db0db1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 96512,
+  "input_tokens": 134715,
+  "output_tokens": 1330,
+  "reasoning_output_tokens": 492
+ },
+ "verdict": "request_changes"
+}
