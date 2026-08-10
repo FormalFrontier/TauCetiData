@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8832500000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 127.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 45447,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 45447,
+    "cache_read_input_tokens": 376316,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1031,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1031,
+      "cache_read_input_tokens": 60623,
+      "input_tokens": 2,
+      "output_tokens": 3346,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9137,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2ef420c12ffecdf8ddf03e2e48e2dca4ad385f01",
+ "cost_usd": 0.88325,
+ "dedupe_key": "TauCetiProject/TauCeti|2065|2116638ca947570476d9a42da8ebc5c1f9d6ffb4|documentation|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "680a184efbf0aabc12a5cf9aa1e7493ea49b0ff7c07636ac7118ecfa8f5209e0",
+ "diff_sha256": "680a184efbf0aabc12a5cf9aa1e7493ea49b0ff7c07636ac7118ecfa8f5209e0",
+ "duration_s": 127.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "BlockTransport.lean imports only `Invariant.Transport` and `PermutationExtension` (lines 7-8); `grep -n prefixAverage` on the file matches only docstring lines 26-33, never the body.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/BlockTransport.lean",
+   "fix": "Delete the paragraph (the rationale now belongs in `Shift/Average.lean`, which does use `prefixAverage`).",
+   "issue": "\"`prefixAverage` comes from the neutral `Probability/Process/BlockAverage.lean`, so this module does not depend on the `L\u00b2` averaging library for a measure-free definition.\" The module never mentions `prefixAverage` and does not import BlockAverage; the sole theorem uses `prefixProj`. Stale from when the Birkhoff bridge lived here.",
+   "line": 32
+  },
+  {
+   "evidence": "Body (lines 82-89) calls only `exists_strictMono_nat_extending_fin_eventually_add`, `measurable_prefixProj`, `prefixProj_apply`, and `h\u03c1.setLIntegral_comp_reindex_eq_of_measurableSet_invariants`; `grep -n Birkhoff BlockTransport.lean` hits docstring lines only.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/BlockTransport.lean",
+   "fix": "Make it singular and name what the proof actually calls: `exists_strictMono_nat_extending_fin_eventually_add` and `ContractableLaw.setLIntegral_comp_reindex_eq_of_measurableSet_invariants`. Drop the Birkhoff clause.",
+   "issue": "The `## Source` section says \"The transport lemmas here ... are assembled from Tau Ceti's eventual-translation extension, invariant-event preimage, contractable reindexing, and Birkhoff-average APIs\". The file contains one theorem, it uses no Birkhoff-average API, and it touches `preimage_reindex_eq_of_measurableSet_invariants_of_eventually_add` / `measurePreserving_reindex` only indirectly through Transport.lean.",
+   "line": 49
+  },
+  {
+   "evidence": "Lines 22-30: bullet ends \"\u2026prefix `0, 1, \u2026, m - 1`.\" and line 26 begins \"The Birkhoff/prefix-average bridge\u2026\" at column 0 with no separating blank line.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/BlockTransport.lean",
+   "fix": "Insert a blank line and move that paragraph out of the `## Main results` section; reword the lead so the file's one deliverable is stated up front and the Birkhoff bridge is mentioned only as living elsewhere.",
+   "issue": "The `## Main results` list has a single bullet (lines 24-25) and line 26 follows with no blank line, so the Birkhoff/prefix-average paragraph is a lazy list continuation and renders as part of the description of `setLIntegral_block_eq_prefix_of_measurableSet_invariants`. It compounds the lead at 17-20 (\"needs two things\"), which promises a second result the file no longer has.",
+   "line": 26
+  },
+  {
+   "evidence": "`birkhoffAverage_eq_prefixAverage` is declared at BlockAverage.lean:130; the docstring (lines 14-39) mentions `blockAverage`, `prefixAverage`, `followingAverage`, `average_sub_sq_eq_sum_sum`, `fixedStart` \u2014 no Birkhoff result.",
+   "file": "TauCeti/Probability/Process/BlockAverage.lean",
+   "fix": "Add a sentence naming `birkhoffAverage_eq_prefixAverage` as material of this file, and reword the closing paragraph so it no longer places the generic bridge downstream.",
+   "issue": "The module docstring enumerates the file's contents but was not updated for the new `birkhoffAverage_eq_prefixAverage` (line 130). Worse, lines 36-38 still say \"the Koopman route needs `prefixAverage` to state its Birkhoff bridge\", implying the bridge is stated by a downstream module, when the generic bridge now lives in this file.",
+   "line": 36
+  },
+  {
+   "evidence": "Main results at lines 28-33 lists `preimage_reindex_eq_of_measurableSet_invariants_of_eventually_add`, `setLIntegral_comp_reindex_eq_of_measurableSet_invariants`, and its `ContractableLaw` instance; all three are declared in this file (lines 68, 82, 100).",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/Transport.lean",
+   "fix": "Say \"All three statements are Tau Ceti-native.\"",
+   "issue": "\"Both statements are Tau Ceti-native\" directly follows a `## Main results` list of three declarations, so it is unclear which two are meant and reads as if one of the three is not native.",
+   "line": 37
+  }
+ ],
+ "head_sha": "2116638ca947570476d9a42da8ebc5c1f9d6ffb4",
+ "merge_base_sha": "2ef420c12ffecdf8ddf03e2e48e2dca4ad385f01",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2065,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8a235fcad964fd62accb0b408896fbeb8c979c3e7922a0a8dd458b7d46ed3c3c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T133838Z-2065-documentation-bfc2a9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T13:38:38Z",
+ "submitted_by": "kim-em",
+ "summary": "BlockTransport.lean's module docstring is stale from a version that also contained the Birkhoff bridge: it credits Birkhoff-average inputs the file does not use, explains a `prefixAverage` dependency the file never mentions, and glues a paragraph onto the single Main-results bullet. BlockAverage.lean's docstring was not updated for the theorem this PR adds to it.",
+ "transcript_blob": "0e44d56a0fd83d5a08f6358a1de24c29c35232f08993e82664a7dacf305112c5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45447,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 45447,
+  "cache_read_input_tokens": 376316,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1031,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1031,
+    "cache_read_input_tokens": 60623,
+    "input_tokens": 2,
+    "output_tokens": 3346,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9137,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
