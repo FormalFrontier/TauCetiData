@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.950712,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 400.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 107947,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 107947,
+    "cache_read_input_tokens": 2191064,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5204,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5204,
+      "cache_read_input_tokens": 118950,
+      "input_tokens": 1,
+      "output_tokens": 4820,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 30420,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3249c780a4ce4cfca40762754b3e76aa08ff00a6",
+ "cost_usd": 2.950712,
+ "dedupe_key": "TauCetiProject/TauCeti|2577|05c7401f048db0aebf7387442eb5b37aa4abc8e6|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "70c591c42d231ebfb61d1c9c854e22c66946ecf6c76b746eaecc7e05801d9df4",
+ "diff_sha256": "70c591c42d231ebfb61d1c9c854e22c66946ecf6c76b746eaecc7e05801d9df4",
+ "duration_s": 400.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`LieAlgebra B (Derivation R A (Bialgebra.CounitAlgebra R A B))` already exists: `instLieAlgebraCoefficients`, Tangent/Lie/Basic.lean:232. Both ingredients are already proved \u2014 B-linearity by `derivationCompLinear.map_smul'` (DerivationMap.lean:188) and the bracket law by `derivationComp_bracket` (Tangent/Lie/Map.lean). The PR itself builds a `\u2192\u2097\u2045B\u2046` this way at SpecialLinear/Tangent.lean:164-167.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent/DerivationMap.lean",
+   "fix": "Bundle once over the coefficient algebra: make `derivationCompLieHom : \u2026 \u2192\u2097\u2045B\u2046 \u2026` and `quotientLieHom : \u2026 \u2192\u2097\u2045B\u2046 \u2026` (with `lieSubalgebra : LieSubalgebra B`, `quotientLieEquiv : \u2243\u2097\u2045B\u2046`), obtain the B-linear map as `.toLinearMap`, and delete `derivationCompLinear`, `quotientLinearMap`, `quotientLinearMap_apply`, and `quotientLieHom_apply`. Update the R-uses in HopfIdeal/Quotient/Kernel/Tangent.lean (`LieIdeal R` \u2192 `LieIdeal B`, `lieIdealSubtypeEquiv`) accordingly.",
+   "issue": "`derivationCompLinear` (\u2192\u2097[B]) and `HopfIdeal.quotientLinearMap` (\u2192\u2097[B], Tangent.lean:59) are new public bundlings of the same underlying map already public as `derivationCompLieHom`/`quotientLieHom` (\u2192\u2097\u2045R\u2046), forced only because the Lie bundling is over `R`. The surface now carries two `@[simp]` apply lemmas with divergent normal forms (`quotientLinearMap_apply` \u2192 `derivationComp \u2026`; `quotientLieHom_apply_apply` \u2192 `algEquivSelf \u2026 (d (mk\u2090 \u2026))`) plus a bridging lemma `quotientLieHom_apply` (Tangent.lean:88) whose only content is that the two agree.",
+   "line": 183
+  },
+  {
+   "evidence": "Contrast `tangentMatrix_apply` (same file, :122-126), `HopfIdeal.quotientLieHom_apply_apply` (HopfIdeal/Tangent.lean:96-102) and `descendDerivation_mk` (:244-250), which all wrap the derivation value in `algEquivSelf`. The synonym is a plain `def \u2026 := B` (Tangent/Basic.lean:82) whose intended use is documented at Tangent/Basic.lean:37-39. The defeq leak is visible in the PR: `mem_lieSubalgebra_definingHopfIdeal_iff` closes with a bare `rfl` after `rw [GeneralLinear.trace_tangentMatrix]` (SpecialLinear/Tangent.lean:69-70).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Tangent.lean",
+   "fix": "State it as `Matrix.trace (tangentMatrix n d) = Bialgebra.CounitAlgebra.algEquivSelf R (H (R := R) n) B (d (determinantGroupLike R n))`.",
+   "issue": "`trace_tangentMatrix` equates `Matrix.trace (tangentMatrix n d) : B` with `d (determinantGroupLike R n) : Bialgebra.CounitAlgebra R (H R n) B` with no `algEquivSelf` transport, so the statement is well-typed only by unfolding the synonym; every other public lemma in this API inserts the transport.",
+   "line": 219
+  },
+  {
+   "evidence": "File variables at HopfIdeal/Tangent.lean:53-55 declare `[HopfAlgebra R H]`; the proof body (:134-164) uses only `Coalgebra.counit`, `Bialgebra.CounitAlgebra.algebraMap_apply`/`algebraMap_base`, `Derivation.leibniz` and `Ideal.span_le`. `Bialgebra.CounitAlgebra` is defined for `[Bialgebra R A]` (Tangent/Basic.lean:82). The Main declarations list at :26-33 omits it.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdeal/Tangent.lean",
+   "fix": "Move it (with its private `derivationVanishingIdeal`) out of `namespace HopfIdeal` to the derivation API under `[Bialgebra R H]`, e.g. Tangent/Basic.lean or Tangent/DerivationMap.lean, and list it in that file's Main declarations.",
+   "issue": "`HopfIdeal.derivation_apply_eq_zero_of_mem_span` is a general statement about counit-valued derivations \u2014 it takes no `HopfIdeal` argument and uses no antipode \u2014 yet it is namespaced `HopfIdeal` (so it offers meaningless dot-notation on a `HopfIdeal`) and inherits the file's `[HopfAlgebra R H]`, needlessly excluding bialgebra consumers. It is also missing from the module's Main declarations list.",
+   "line": 157
+  }
+ ],
+ "head_sha": "05c7401f048db0aebf7387442eb5b37aa4abc8e6",
+ "merge_base_sha": "c71fd336c3f6e8050614f29ea87087a4abfecf3c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2577,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "18613babd23bfe23adecb0b5805b0576753e3a1d219050910c4dc5a9d3e08009",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T054401Z-2577-api-design-130ab7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T05:44:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds a second, coefficient-linear bundling of a differential that is already public as an R-Lie hom, when a single B-Lie bundling would serve both consumers; and the new `trace_tangentMatrix` states an equation across the `CounitAlgebra` synonym without the transport every neighbouring lemma inserts. I withdraw the earlier request for `@[simp]` on `mem_lieSubalgebra_definingHopfIdeal_iff`: the author's simpNF evidence against it is correct.",
+ "transcript_blob": "4fb04a1858101bd55c2553d8289777a6348288a341fb9a2dfef7df136efe5bd8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 107947,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 107947,
+  "cache_read_input_tokens": 2191064,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5204,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5204,
+    "cache_read_input_tokens": 118950,
+    "input_tokens": 1,
+    "output_tokens": 4820,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 30420,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

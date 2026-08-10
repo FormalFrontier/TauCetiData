@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.801341,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 267.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 70602,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 70602,
+    "cache_read_input_tokens": 1112928,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4379,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4379,
+      "cache_read_input_tokens": 82430,
+      "input_tokens": 2,
+      "output_tokens": 6303,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20959,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3249c780a4ce4cfca40762754b3e76aa08ff00a6",
+ "cost_usd": 1.801341,
+ "dedupe_key": "TauCetiProject/TauCeti|2577|05c7401f048db0aebf7387442eb5b37aa4abc8e6|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "70c591c42d231ebfb61d1c9c854e22c66946ecf6c76b746eaecc7e05801d9df4",
+ "diff_sha256": "70c591c42d231ebfb61d1c9c854e22c66946ecf6c76b746eaecc7e05801d9df4",
+ "duration_s": 267.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "code/TauCeti/Algebra/AlgebraicGroup/Tangent/Basic.lean:635 `lemma algEquivSelf_derivation_smul_apply (b) (d) (a) : algEquivSelf R A B ((b \u2022 d) a) = b * algEquivSelf R A B (d a)`, whose own proof comments say the `rfl` there 'isolates the necessary coefficient-synonym reduction'; it is applied in this style at GeneralLinear/Tangent.lean:119.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Tangent/DerivationMap.lean",
+   "fix": "Rewrite both steps with `Tangent.Basic`'s `algEquivSelf_derivation_smul_apply b d _` (and its symm at the last step); the calc then collapses to two transport steps.",
+   "issue": "`derivationCompLinear.map_smul'` is a 27-line calc whose steps at lines 200-204 and 211-214 are exactly the existing public lemma `algEquivSelf_derivation_smul_apply`, but are discharged by bare undocumented `rfl` after two `algEquivSelf_apply` rewrites. That lemma was written to isolate this coefficient-synonym reduction and is already used that way elsewhere.",
+   "line": 200
+  },
+  {
+   "evidence": "The same proof unfolds `X'` with `simp [X']` at lines 190 and 195; `Matrix.add_apply`/`Matrix.smul_apply` are public (e.g. mathlib/Mathlib/Combinatorics/SimpleGraph/StronglyRegular.lean:214); `Matrix.trace` is a plain def unfolded by `simp [trace]` at mathlib/Mathlib/LinearAlgebra/Matrix/Trace.lean:61; `TrivSqZeroExt.fst_inl` is mathlib/Mathlib/Algebra/TrivSqZeroExt/Basic.lean:117; `smul_eq_mul` is mathlib/Mathlib/Algebra/Group/Action/Defs.lean:74.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Tangent.lean",
+   "fix": "Lines 186/192: `simp only [Matrix.add_apply, Matrix.smul_apply, smul_eq_mul, X', X]` instead of `change`. Line 206: `simp only [Matrix.trace, Matrix.diag_apply]` (Mathlib itself uses `simp [trace]`). Line 211: `simp only [X', TrivSqZeroExt.fst_inl]` replaces the `change ... ; rfl` pair, and line 213's `rfl` should be a `X` unfolding step.",
+   "issue": "`snd_det_eq_trace_of_fst_eq_one` uses four `change` steps (lines 186, 192, 206, 211) whose comments claim 'there is no equation lemma for the private local lift `X'`' and '`Matrix.trace` ... [has] no applicable equation lemmas'. Both claims are false, so the documented justification for the defeq manipulation does not hold.",
+   "line": 186
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Matrix/Diagonal.lean:293 `theorem diag_apply (A) (i) : diag A i = A i i`; `Matrix.trace` is defined as `\u2211 i, diag A i` at mathlib/Mathlib/LinearAlgebra/Matrix/Trace.lean:45.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Tangent.lean",
+   "fix": "Prefix with `simp only [Matrix.trace, Matrix.diag_apply]` (or use `Matrix.trace_sum`-style API) before `Finset.sum_congr`, then `rw [tangentMatrix_apply]` applies without `change`; add a comment naming the reduction closed by the `rfl` at line 234, or replace it with the relevant `_apply` lemma.",
+   "issue": "In `trace_tangentMatrix`, `apply Finset.sum_congr rfl` is applied directly to a `Matrix.trace _ = Matrix.trace _` goal, silently unfolding `Matrix.trace` by defeq, and line 245's `change` stands in for `Matrix.diag_apply`. Line 233's trailing bare `rfl` after `rw [derivationMulEquivTangentKer_apply_snd]` is likewise an undocumented defeq step.",
+   "line": 242
+  },
+  {
+   "evidence": "Line 68 leaves `d \u2191(determinantGroupLike R n) = 0` from the span generator `\u2191(determinantGroupLike R n) - 1` (SpecialLinear/Basic.lean:160 `definingHopfIdeal_toIdeal`); the explicit trailing `rfl` shows `rw`'s own reflexivity check did not close it.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Tangent.lean",
+   "fix": "Either normalize the coercion with the relevant `_apply`/coe lemma so the `rw` closes the goal, or add a one-line comment naming the coercion the `rfl` crosses.",
+   "issue": "`mem_lieSubalgebra_definingHopfIdeal_iff` closes with a bare `rfl` on an `Iff` after `rw [GeneralLinear.trace_tangentMatrix]`, i.e. the two sides differ only by a coercion of `determinantGroupLike` into the coordinate Hopf algebra, with no comment saying so.",
+   "line": 70
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/Action/Defs.lean:74 `lemma smul_eq_mul {\u03b1} [Mul \u03b1] (a b : \u03b1) : a \u2022 b = a * b`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/HopfIdeal/Tangent.lean",
+   "fix": "Replace both `change`s with `rw [smul_eq_mul]` (or `simp only [smul_eq_mul]`) so the step is an explicit rewrite rather than a defeq assertion.",
+   "issue": "In the relocated `derivationVanishingIdeal`, the two `change` steps (lines 145, 148) are justified by 'An ideal's scalar action is multiplication', which is precisely the content of the public `smul_eq_mul`.",
+   "line": 145
+  }
+ ],
+ "head_sha": "05c7401f048db0aebf7387442eb5b37aa4abc8e6",
+ "merge_base_sha": "c71fd336c3f6e8050614f29ea87087a4abfecf3c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2577,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "54161e4a00ceadf4f2a58a3e7f0b5e6a838eb245b32d1dd8e314fab6d6e6d8f1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T060522Z-2577-proof-quality-ebefa5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T06:05:22Z",
+ "submitted_by": "kim-em",
+ "summary": "Several new proofs re-derive by bare `rfl`/`change` facts for which a public lemma already exists (notably `algEquivSelf_derivation_smul_apply`, `Matrix.add_apply`/`smul_apply`, `Matrix.diag_apply`, `TrivSqZeroExt.fst_inl`, `smul_eq_mul`), and the comments justifying those `change` steps state that no equation lemma exists when the same proof uses one two lines later. Replace the undocumented defeq steps with the available rewrites.",
+ "transcript_blob": "fcd573dd92f4c66bd24733c19c5cce632500620582366ea1470b6dc1fa21c4a8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 70602,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 70602,
+  "cache_read_input_tokens": 1112928,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4379,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4379,
+    "cache_read_input_tokens": 82430,
+    "input_tokens": 2,
+    "output_tokens": 6303,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20959,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
