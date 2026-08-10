@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7778635,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 291.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 129656,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 129656,
+    "cache_read_input_tokens": 1937269,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 953,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 953,
+      "cache_read_input_tokens": 144910,
+      "input_tokens": 2,
+      "output_tokens": 4556,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19638,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a69b2632df7f9e41ff1e13719521dd7a5ed84dbb",
+ "cost_usd": 2.777864,
+ "dedupe_key": "TauCetiProject/TauCeti|2637|06696a95b61134e2f5e6985b8d1c0f1fb21a42ea|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "diff_sha256": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "duration_s": 291.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diffed A.lean:248-252,503-512,515-542,596-610,620-631,637-643 against D.lean:324-328,390-423,443-457,484-494,524-540,550-561,567-573; the proof scripts are character-identical modulo the four renamings. The PR description acknowledges the instance clone.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Factor this into a shared `TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Basic.lean` parameterized by an injective `e : Fin n \u2192 \u03b9` (the first-n-indices embedding): `simpleSupport e`, `mem_simpleSupport`, `coe_simpleSupport`, `baseEquiv`, a `hasCartanType_of_pairing_eq` taking `\u2200 i j, P.pairing (e i) (e j) = t.cartanMatrix i j`, a `corootSpan_eq_top` from `coroot (e i) = Pi.single i 1`, and the two closure lemmas \u2014 and delete the A.lean copies in the same change (either here or as the prerequisite refactor PR). Deferring the hoist to \"once the remaining branches land\" multiplies the clone across B, C, E\u2086, E\u2087, E\u2088, F\u2084, G\u2082.",
+   "issue": "The whole pinned-base skeleton is a near-verbatim clone of A.lean, differing only in the index type, `typeASimpleIndex`\u2194`typeDSimpleIndex` and `CartanMatrix.A`\u2194`.D`: the `IsPerfPair` instance D:324-328 \u2261 A:248-252 (identical, comment included); `typeDSimpleSupport`/`mem_`/`coe_` D:409-423 \u2261 A:515-530; coroot linear independence via `Pi.basisFun` D:484-494 \u2261 A:503-512; `image_root/coroot_...SimpleSupport` D:443-457 \u2248 A:532-542; `mem_..._Base_support` and `typeDBaseEquiv` D:524-540 \u2261 A:596-610; the `hasCartanType_...` proof D:550-561 \u2261 A:620-631; the `corootSpan_..._eq_top` proof D:567-573 \u2261 A:637-643. The generic `sum_smul_mem_closure`/`sum_smul_mem_or_neg_mem_closure` (D:390-406) are already type-independent yet private here.",
+   "line": 324
+  },
+  {
+   "evidence": "`Matrix.mulVecLin` is at mathlib/Mathlib/LinearAlgebra/Matrix/ToLin.lean:286 (`abbrev Matrix.mulVecLin (M) : (n \u2192 R) \u2192\u2097[R] m \u2192 R`), with `mulVecLin_apply` at :292; ToLin.lean is a public import of `Mathlib.LinearAlgebra.Matrix.Dual` (Dual.lean:10), which D.lean already imports.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Define `typeDWeight n hn := (Matrix.of (typeDSimpleRoot n hn)).mulVecLin` (or add one `typeDWeight_eq_mulVecLin` bridge lemma) and delete the three lemmas, using `map_sub`, `map_sub`+`map_smul`, `map_sum`+`map_smul` at the four call sites (263, 282, 432, 471).",
+   "issue": "`typeDWeight_sub` (229), `typeDWeight_sub_smul` (234) and `typeDWeight_sum_smul` (239) hand-prove linearity of `typeDWeight`, which is Mathlib's `Matrix.mulVecLin` for the matrix of simple roots: `(Matrix.of (typeDSimpleRoot n hn)).mulVec x j = typeDSimpleRoot n hn j \u2b1d\u1d65 x = typeDWeight n hn x j` by `dotProduct_comm`.",
+   "line": 229
+  },
+  {
+   "evidence": "`typeDSimpleRoot_apply` occurs only at D.lean:113 and D.lean:119, inside the two specializations; each specialization's content is the corresponding `dif_pos`/`dif_neg` equation plus `Pi.single_apply`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Delete `typeDSimpleRoot_apply` and prove the two pointwise lemmas directly, e.g. `rw [typeDSimpleRoot_of_add_one_lt hn hi]; simp [Pi.single_apply, Fin.ext_iff]` \u2014 exactly the body already in the first bullet of the deleted lemma.",
+   "issue": "`typeDSimpleRoot_apply` (98-107) is a merged restatement of the two branch equations this same PR adds to `ClassicalTypeD.lean` (`typeDSimpleRoot_of_add_one_lt`:431, `typeDSimpleRoot_of_not_add_one_lt`:437), and is used only to re-split into `typeDSimpleRoot_apply_of_add_one_lt` (109) and `..._of_not_add_one_lt` (115).",
+   "line": 98
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/RootSystem/NumberOfRoots.lean:59 \u2014 `@[simp] lemma numRoots_D (n : \u2115) : (D n).numRoots = 2 * n * (n - 1) := rfl`; grep for `numRoots` in D.lean returns only line 353.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Delete the `example` (state the fact in the module docstring, as it already is at line 55) and drop `public import TauCeti.LinearAlgebra.RootSystem.NumberOfRoots`; or, if the agreement is meant to be load-bearing, index the datum by `Fin (DynkinType.D n).numRoots` so the import earns its place.",
+   "issue": "`example (n : \u2115) : (DynkinType.D n).numRoots = 2 * n * (n - 1) := numRoots_D n` restates the existing `@[simp] lemma numRoots_D`, adds no declaration, and is the only use of the `NumberOfRoots` import.",
+   "line": 353
+  }
+ ],
+ "head_sha": "06696a95b61134e2f5e6985b8d1c0f1fb21a42ea",
+ "merge_base_sha": "5c3a971fc3bfb194123caab9cd90ef1a60322cea",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2637,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2dcfc4a7135f3d7f7d1159058d790064098f627f2457d32a4428d08175e2c161",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T104642Z-2637-reuse-3e2141",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T10:46:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The new material (classical-model consumption, doubled coweights, positivity) is genuinely new, but the pinned-base scaffolding is a line-for-line clone of `SimplyConnectedRootDatum/A.lean`, and the `typeDWeight` linearity lemmas re-prove `Matrix.mulVecLin`'s linearity. Both should be replaced by shared/located API.",
+ "transcript_blob": "5771af2dddf4d9a251d68668f2e04a69b7700b166c4a75143e6086c9312f8828",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 129656,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 129656,
+  "cache_read_input_tokens": 1937269,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 953,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 953,
+    "cache_read_input_tokens": 144910,
+    "input_tokens": 2,
+    "output_tokens": 4556,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19638,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

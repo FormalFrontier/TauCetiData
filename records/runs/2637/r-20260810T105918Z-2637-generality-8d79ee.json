@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8012009999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 231.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87791,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87791,
+    "cache_read_input_tokens": 957176,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2734,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2734,
+      "cache_read_input_tokens": 101264,
+      "input_tokens": 2,
+      "output_tokens": 5629,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16942,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a69b2632df7f9e41ff1e13719521dd7a5ed84dbb",
+ "cost_usd": 1.801201,
+ "dedupe_key": "TauCetiProject/TauCeti|2637|06696a95b61134e2f5e6985b8d1c0f1fb21a42ea|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "diff_sha256": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "duration_s": 231.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "D.lean:390-406 uses only `AddSubmonoid.sum_mem`, `Int.eq_ofNat_of_zero_le`, `AddSubmonoid.nsmul_mem`, `mem_range_self` \u2014 nothing about `Fin`, `n`, or type D. `grep -rn \"AddSubmonoid.closure (range\" ./mathlib` returns only `Mathlib/Algebra/Order/Star/Basic.lean`, so Mathlib has no equivalent.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "State them for a general index: `{\u03b9 M : Type*} [Fintype \u03b9] [AddCommGroup M] (v : \u03b9 \u2192 M) (c : \u03b9 \u2192 \u2124)`; the proof goes through unchanged. Put them in a shared module so the remaining Layer 6 branches use them rather than re-proving.",
+   "issue": "`sum_smul_mem_closure` and `sum_smul_mem_or_neg_mem_closure` (lines 390-406) contain no type-D content \u2014 they are general facts about `AddSubmonoid.closure (range v)` for a finite family \u2014 yet are pinned to the index `Fin n` and hidden as `private` in the D file.",
+   "line": 390
+  },
+  {
+   "evidence": "D.lean:324-328 vs A.lean:248-252 are identical; `Mathlib/LinearAlgebra/Matrix/Dual.lean:50` declares `dotProductEquiv (R n : Type*) [CommSemiring R] [Fintype n] [DecidableEq n]`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Prove it once at its natural level \u2014 `{R \u03b9 : Type*} [CommRing R] [Fintype \u03b9] [DecidableEq \u03b9] : (dotProductBilin R R : (\u03b9 \u2192 R) \u2192\u2097[R] (\u03b9 \u2192 R) \u2192\u2097[R] R).IsPerfPair` \u2014 in a shared `SimplyConnectedRootDatum/Basic.lean` (here or as the prerequisite PR this one consumes) and delete both copies.",
+   "issue": "The `IsPerfPair` instance for `dotProductBilin \u2124 \u2124` is stated only for `\u2124` and `Fin n`, although its whole proof is Mathlib's `dotProductEquiv`, which is general; it is also copied character-for-character from `A.lean:248-252`.",
+   "line": 324
+  },
+  {
+   "evidence": "Compare D.lean:550-561 with A.lean:620-631: same `hasCartanType_iff`, `Fin.ext (by simp [type?BaseEquiv])`, `FaithfulSMul.algebraMap_injective`, `RootPairing.Base.algebraMap_cartanMatrixIn_apply`, `pairing_type?SimpleIndex`, `cartanMatrix_?`, `rfl` sequence; likewise D.lean:567-573 vs A.lean:637-643 differ only in the letter.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Extract the type-agnostic statements once \u2014 a `Base` constructor from an injective simple-index map `f : Fin n \u2192 Fin N` with one-signed root/coroot coordinates, and a `HasCartanType` criterion from `pairing (f i) (f j) = A i j` plus `coroot (f i) = Pi.single i 1` \u2014 and derive both the A and D data from them; with six further branches in flight the copy count grows to eight.",
+   "issue": "The base-support scaffolding, the support equivalence, the `HasCartanType` proof and the `corootSpan = \u22a4` proof are the A.lean proofs re-run for D, not instances of a general result: D.lean:409-423 \u2261 A.lean:515-530, D.lean:530-540 \u2261 A.lean:601-610, D.lean:550-561 \u2261 A.lean:620-631, D.lean:567-573 \u2261 A.lean:637-643, modulo `hn` and the letter.",
+   "line": 550
+  }
+ ],
+ "head_sha": "06696a95b61134e2f5e6985b8d1c0f1fb21a42ea",
+ "merge_base_sha": "5c3a971fc3bfb194123caab9cd90ef1a60322cea",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2637,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6efbbdbe441bfc0da11af215b4f356f04e742c37435773721a314b394ed48527",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T105918Z-2637-generality-8d79ee",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T10:59:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The type-D mathematics sits at the right level: uniform in n \u2265 4, no unused or over-strong hypotheses, no per-rank special casing. But three blocks of type-agnostic material are stated at the special case instead of at their natural generality, two of them copied verbatim from A.lean.",
+ "transcript_blob": "bc3400d3b0202f3de8e9d07d8623f6c4158e827ae3dc4f75423b3b68d34caa04",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87791,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87791,
+  "cache_read_input_tokens": 957176,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2734,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2734,
+    "cache_read_input_tokens": 101264,
+    "input_tokens": 2,
+    "output_tokens": 5629,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16942,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

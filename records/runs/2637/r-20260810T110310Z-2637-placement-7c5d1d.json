@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4467175000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 203.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 58791,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 58791,
+    "cache_read_input_tokens": 940451,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2165,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2165,
+      "cache_read_input_tokens": 72833,
+      "input_tokens": 2,
+      "output_tokens": 2100,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14680,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a69b2632df7f9e41ff1e13719521dd7a5ed84dbb",
+ "cost_usd": 1.446718,
+ "dedupe_key": "TauCetiProject/TauCeti|2637|06696a95b61134e2f5e6985b8d1c0f1fb21a42ea|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "diff_sha256": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "duration_s": 203.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -rn IsPerfPair: A.lean:248-252 `private instance : (dotProductBilin \u2124 \u2124 : ...).IsPerfPair := by / change (dotProductEquiv \u2124 (Fin n)).toLinearMap.IsPerfPair / infer_instance` and D.lean:324-328, identical including the comment `-- \\`dotProductEquiv\\` has \\`dotProductBilin\\` as its underlying linear map by definition.`",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Add a shared module under `SimplyConnectedRootDatum/` (e.g. `SimplyConnectedRootDatum/Basic.lean`) holding this instance once, import it from both `A.lean` and `D.lean`, and delete both local copies in this PR rather than in a follow-up.",
+   "issue": "The `private instance : (dotProductBilin \u2124 \u2124 : (Fin n \u2192 \u2124) \u2192\u2097[\u2124] (Fin n \u2192 \u2124) \u2192\u2097[\u2124] \u2124).IsPerfPair` is duplicated verbatim (proof and comment) from A.lean:248. It depends on no root-system theory at all \u2014 only Mathlib's `dotProductEquiv` \u2014 so it does not belong in a per-type datum file, and the copy means two global instances for the same class and pairing once both modules are imported.",
+   "line": 324
+  },
+  {
+   "evidence": "`typeDSimpleRoot` is defined at ClassicalTypeD.lean:423; the proof at D.lean:200-211 uses only `Fintype.linearIndependent_iff`, `dotProduct_sum` and `typeDDoubleCoweight`, nothing private to ClassicalTypeD and nothing from `RootDatum`. ClassicalTypeD.lean's own docstring states it gives \"the concrete infrastructure needed to build its pinned integral root datum\", which is where this PR already placed `typeDSimpleRootCoordinates_nonneg_or_nonpos` (ClassicalTypeD.lean:891).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Move `typeDDoubleCoweight` (D.lean:179), `typeDDoubleCoweight_dotProduct_typeDSimpleRoot` (D.lean:185) and `linearIndependent_typeDSimpleRoot` into `ClassicalTypeD.lean` next to `typeDSimpleRoot`, updating its module docstring's declaration list; keep the datum-specific `two_mul_typeDSimpleRootCoordinates` wherever it is most convenient after the move.",
+   "issue": "`linearIndependent_typeDSimpleRoot` is public and stated entirely in the classical model's vocabulary (`LinearIndependent \u2124 (typeDSimpleRoot n hn)`), with no reference to the root datum. Its subject `typeDSimpleRoot` is defined in the earlier `ClassicalTypeD.lean:423`, so any other consumer of the classical type D model must import the simply connected datum to obtain it.",
+   "line": 200
+  }
+ ],
+ "head_sha": "06696a95b61134e2f5e6985b8d1c0f1fb21a42ea",
+ "merge_base_sha": "5c3a971fc3bfb194123caab9cd90ef1a60322cea",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2637,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3863f9a02b1fb6a46f85147244a6daba35fab833dd4a5b1a383b34db65073614",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T110310Z-2637-placement-7c5d1d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T11:03:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The new file is in the right subdirectory and every import is used, but a general-purpose IsPerfPair instance is copy-pasted verbatim from A.lean instead of shared, and a public theorem stated purely in the classical model's vocabulary sits in the datum file rather than in ClassicalTypeD.lean.",
+ "transcript_blob": "312cb02f6808e557fadb10c604409499a22e917b14551bfcc5d15bdac30a22ff",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58791,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 58791,
+  "cache_read_input_tokens": 940451,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2165,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2165,
+    "cache_read_input_tokens": 72833,
+    "input_tokens": 2,
+    "output_tokens": 2100,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14680,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

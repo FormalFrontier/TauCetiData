@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3981974999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 312.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 110415,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 110415,
+    "cache_read_input_tokens": 1268715,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10862,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10862,
+      "cache_read_input_tokens": 115760,
+      "input_tokens": 2,
+      "output_tokens": 11805,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25533,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a69b2632df7f9e41ff1e13719521dd7a5ed84dbb",
+ "cost_usd": 2.398197,
+ "dedupe_key": "TauCetiProject/TauCeti|2637|06696a95b61134e2f5e6985b8d1c0f1fb21a42ea|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "diff_sha256": "4e07f5558da1c62ab1d6134c39852a534412acc2e811ec298971cff011ed0762",
+ "duration_s": 312.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/LinearAlgebra/Matrix/Dual.lean:48 carries `set_option backward.isDefEq.respectTransparency false in` immediately above `dotProductEquiv`, so its defeq behaviour is already elaborator-setting sensitive; `dotProductBilin` is a separate structure literal at Mathlib/LinearAlgebra/Matrix/ToLin.lean:144.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Replace the `change` with an explicit equality: `have : (dotProductBilin \u2124 \u2124 : (Fin n \u2192 \u2124) \u2192\u2097[\u2124] (Fin n \u2192 \u2124) \u2192\u2097[\u2124] \u2124) = (dotProductEquiv \u2124 (Fin n)).toLinearMap := by ext x y; simp` then `rw [this]; infer_instance`. Both `dotProductBilin` and `dotProductEquiv` are `@[simps]`, so the `ext`/`simp` closes on `x \u2b1d\u1d65 y`. (The same `change` sits at A.lean:251; this PR adds a second copy, so fix it in the shared hoist the description already plans.)",
+   "issue": "The `IsPerfPair` instance is closed by `change (dotProductEquiv \u2124 (Fin n)).toLinearMap.IsPerfPair`, i.e. by defeq across the `LinearEquiv.toLinearMap` wrapper. The comment records that the defeq holds, not that no lemma route exists \u2014 and one does.",
+   "line": 327
+  },
+  {
+   "evidence": "`dotProduct` is a plain def (`Mathlib/Data/Matrix/Mul.lean:70`: `def dotProduct v w := \u2211 i, v i * w i`) with no reducibility guarantee; Mathlib unfolds it via `simp [dotProduct]` rather than relying on unification.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Unfold explicitly before the congruence (`simp only [dotProduct, typeDWeight]`, or add a `typeDWeight_apply` rfl-lemma) and give `mul_comm` its arguments; or mirror the `two_mul_typeDSimpleRootCoordinates` shape: `conv_rhs => rw [\u2190 sum_smul_typeDSimpleRootCoordinates hn y]` then `rw [dotProduct_sum]` and a `simp only` finish.",
+   "issue": "In `typeDWeight_dotProduct_coordinates` the first calc step applies `Finset.sum_congr rfl` to a goal whose LHS is `typeDWeight n hn x \u2b1d\u1d65 typeDSimpleRootCoordinates n hn y`, silently unfolding `Matrix.dotProduct` to a `Finset.sum`; the step then ends with a bare `rfl` that unfolds the private `typeDWeight`, and `rw [mul_comm]` is unanchored so it rewrites whichever product is found first.",
+   "line": 251
+  },
+  {
+   "evidence": "D.lean:206-208 and D.lean:217-219 are character-for-character the same `rw`/`simp only` pair.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Add `private lemma typeDDoubleCoweight_dotProduct_sum_smul (hn : 4 \u2264 n) (c : Fin n \u2192 \u2124) (k : Fin n) : typeDDoubleCoweight n k \u2b1d\u1d65 \u2211 i : Fin n, c i \u2022 typeDSimpleRoot n hn i = 2 * c k` with that proof, then make both callers one-liners (`rw [\u2190 \u2026, hg, dotProduct_zero]; omega` and `conv_rhs => rw [\u2190 sum_smul_typeDSimpleRootCoordinates hn x]` + the lemma).",
+   "issue": "`linearIndependent_typeDSimpleRoot` (lines 204-209) and `two_mul_typeDSimpleRootCoordinates` (lines 216-220) contain the same computation verbatim: `rw [dotProduct_sum]` followed by the identical nine-lemma `simp only [dotProduct_smul, smul_eq_mul, typeDDoubleCoweight_dotProduct_typeDSimpleRoot, Fin.val_inj, mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, if_true]`. The reusable fact is hidden inside both.",
+   "line": 204
+  },
+  {
+   "evidence": "D.lean:265-269 (`hd`, `hself`, `dotProduct_self_eq_zero.mp`) and D.lean:473-482 (`horth`, `hself`, `dotProduct_self_eq_zero.mp`) are the same three steps with different plumbing.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/D.lean",
+   "fix": "Extract one private lemma, e.g. `(\u2200 j, w \u2b1d\u1d65 typeDSimpleRoot n hn j = 0) \u2192 w \u2208 span of the simple roots \u2192 w = 0` (or the `typeDWeight`-phrased version), and derive both: the injectivity via `sum_smul_typeDSimpleRootCoordinates`, the independence via `linearIndependent_typeDSimpleRoot`.",
+   "issue": "The nondegeneracy argument \u2014 a vector orthogonal to every simple root is orthogonal to itself, hence zero by `dotProduct_self_eq_zero` \u2014 is written out twice, in `typeDWeight_injective` (258-269) and again in `linearIndependent_root_typeDSimpleIndex` (470-482). Both are the single fact that `typeDWeight` has trivial kernel on the span of the simple roots.",
+   "line": 258
+  }
+ ],
+ "head_sha": "06696a95b61134e2f5e6985b8d1c0f1fb21a42ea",
+ "merge_base_sha": "5c3a971fc3bfb194123caab9cd90ef1a60322cea",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2637,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9060f95fb5347b5fb7f78e625250ee15fbb5d04bc1517152dd059efa6b42e7d6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T111631Z-2637-proof-quality-01218c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T11:16:31Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly robust (split_ifs/omega case analysis, explicit branch lemmas), but two spots rest on undocumented definitional unfolding of Mathlib wrappers and two identical computations are inlined twice instead of factored.",
+ "transcript_blob": "5d530856954d8042120c0c3706f33417539e28b9fae89a54b2719f5682c5a800",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 110415,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 110415,
+  "cache_read_input_tokens": 1268715,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10862,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10862,
+    "cache_read_input_tokens": 115760,
+    "input_tokens": 2,
+    "output_tokens": 11805,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25533,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
