@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9449524999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 249.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 94253,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 94253,
+    "cache_read_input_tokens": 1057987,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2172,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2172,
+      "cache_read_input_tokens": 108288,
+      "input_tokens": 2,
+      "output_tokens": 5367,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18019,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5161093beb1d33ff2d92e3e871f9acfb0d874013",
+ "cost_usd": 1.944952,
+ "dedupe_key": "TauCetiProject/TauCeti|2362|ab82c9c86c588e2663ffdffa352efb36a08d777a|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "449362e82fcd702897533506fecaf906546b750e085ef20e522c4fb9d3094642",
+ "diff_sha256": "449362e82fcd702897533506fecaf906546b750e085ef20e522c4fb9d3094642",
+ "duration_s": 249.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/RingTheory/Huber/Basic.lean:88-95 lists the five fields; LocalizationTopology.lean:49-51 says the construction \"also asks that `J` be finitely generated and that the subspace topology on `D` be `J`-adic\".",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology.lean",
+   "fix": "Reword to match lines 49-51: `D` is open and bounded, but `(D, J)` is not yet a `PairOfDefinition` \u2014 both `J.FG` and `IsAdic J` are still unproved.",
+   "issue": "`isOpen_locSubring`'s docstring says openness and boundedness are \"two of the conditions a ring of definition must satisfy; the remaining one, that the subspace topology on `D` is the `J`-adic topology\". `PairOfDefinition` has fields `isOpen_ringOfDefinition`, `fg_idealOfDefinition`, `isAdic_idealOfDefinition` \u2014 boundedness is not a field (it is the theorem `isBounded_ringOfDefinition`), and two requirements remain, not one, as the module docstring itself states at lines 49-51.",
+   "line": 484
+  },
+  {
+   "evidence": "Line 431 `private theorem locBasis`; line 443 `noncomputable def locTopology`; lines 20-24 list only `locSubring`, `HasDenominatorPower`, `locIdeal`, `locNhd`.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology.lean",
+   "fix": "List `locTopology` (and `algebraMapD`) under Main definitions; drop `locBasis` from Main results or fold it into the `hasBasis_nhds_zero_locTopology` bullet without naming the private declaration.",
+   "issue": "`## Main definitions` omits `locTopology` \u2014 the topology the PR exists to build \u2014 and the public `algebraMapD`, while `## Main results` (line 42) advertises `locBasis`, which is `private` and unreachable by any consumer.",
+   "line": 18
+  },
+  {
+   "evidence": "grep for `locSubring_mono` across `TauCeti/` returns only its declaration (line 159) and this docstring line; `locSubring_empty` is used at line 585.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology.lean",
+   "fix": "Drop the \"this file needs\" claim (or the `locSubring_mono` mention) and describe it as a monotonicity lemma offered for downstream use.",
+   "issue": "\"`locSubring_le_iff`, with `locSubring_empty` and `locSubring_mono`: \u2026 the two consequences of it this file needs\" is false for `locSubring_mono`, which has no use anywhere in the repository.",
+   "line": 30
+  },
+  {
+   "evidence": "The hypothesis appears only as an input at lines 395-399 and 431-439; nothing in the file derives it from the basis property.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology.lean",
+   "fix": "State it as the hypothesis the construction uses (\"what `locNhd_leftMul` needs, hence what every `locTopology` declaration carries\"), not as a characterisation.",
+   "issue": "`HasDenominatorPower`'s docstring claims it \"is exactly what makes the `locNhd` into a basis of neighbourhoods of zero for a ring topology\" \u2014 an equivalence. Only sufficiency is proved (`locNhd_leftMul`/`locBasis`); no necessity result exists here or elsewhere in the repo.",
+   "line": 167
+  },
+  {
+   "evidence": "Main results at lines 51-77 and Provenance at lines 35-44 enumerate declarations; neither mentions the lemma added at line 113.",
+   "file": "TauCeti/RingTheory/Huber/PowerBounded.lean",
+   "fix": "Add a bullet for `TauCeti.Huber.IsBounded.isPowerBounded_of_mem` to Main results and include it in the \"New here\" list.",
+   "issue": "The new public `IsBounded.isPowerBounded_of_mem` is absent from this file's `## Main results` list and from its `## Provenance` \"New here are \u2026\" enumeration, both of which are otherwise exhaustive (they list even `isPowerBounded_iff`).",
+   "line": 113
+  },
+  {
+   "evidence": "TauCeti/RingTheory/Huber/Basic.lean:91 `idealOfDefinition : Ideal ringOfDefinition`; no `ideal` field exists.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology.lean",
+   "fix": "Write ``I`\u2192`idealOfDefinition``.",
+   "issue": "The Provenance section says the field rename was ``I`\u2192`ideal``; the field is `idealOfDefinition`. Naming a field that does not exist misdirects anyone reading the port notes.",
+   "line": 65
+  },
+  {
+   "evidence": "Lines 27-36 list ten results; `divByS_def` and `algebraMap_mul_invSelf` are public and unlisted.",
+   "file": "TauCeti/RingTheory/Localization/Away.lean",
+   "fix": "Add both to the Main results list.",
+   "issue": "`## Main results` omits two public declarations: `divByS_def` (line 67), which the file's own docstrings call the only route to the `mk'` API since the body is not exported, and `algebraMap_mul_invSelf` (line 116).",
+   "line": 25
+  }
+ ],
+ "head_sha": "ab82c9c86c588e2663ffdffa352efb36a08d777a",
+ "merge_base_sha": "a97f9c4989cd65493d704307f5a5883cfe6b8055",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2362,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "aa60752cf4014ec8c7b02a5891315b56b35e16223c97f93f22591022a829b3d4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T131316Z-2362-documentation-4e8800",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T13:13:16Z",
+ "submitted_by": "kim-em",
+ "summary": "Docstrings are dense and mostly accurate, but the module docstring of LocalizationTopology.lean advertises a private theorem while omitting the file's headline definition, one theorem docstring contradicts the module docstring about what is left to prove, and several claims (a lemma the file \"needs\", a renamed field, a necessity claim) are not true of the code.",
+ "transcript_blob": "ff40833c68407ca0c614a9c937f29d18aa2aad6032a82e5aaf0576afabebe857",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 94253,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 94253,
+  "cache_read_input_tokens": 1057987,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2172,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2172,
+    "cache_read_input_tokens": 108288,
+    "input_tokens": 2,
+    "output_tokens": 5367,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18019,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
