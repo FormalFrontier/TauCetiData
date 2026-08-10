@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6861279999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 217.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 77537,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 77537,
+    "cache_read_input_tokens": 922616,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5375,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5375,
+      "cache_read_input_tokens": 88369,
+      "input_tokens": 2,
+      "output_tokens": 2926,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16818,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5161093beb1d33ff2d92e3e871f9acfb0d874013",
+ "cost_usd": 1.686128,
+ "dedupe_key": "TauCetiProject/TauCeti|2616|ca72fa3a21ccfb0305bbdf1f3e64e06afdf54a5b|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "acf5183dba96068b5ff50f4505664c9244b1ec7b4b711f52a0a30251e8ee38ad",
+ "diff_sha256": "acf5183dba96068b5ff50f4505664c9244b1ec7b4b711f52a0a30251e8ee38ad",
+ "duration_s": 217.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 368: `f4Root (Fin.addNat i 24) = -f4Root (Fin.castAdd 24 i)`; mathlib `Mathlib/Order/Fin/Basic.lean:210 natAdd_inj (m) {i j : Fin n} : natAdd m i = ...` vs `:226 addNat_inj (m) {i j : Fin n} : i.addNat m = ...` \u2014 distinct functions with distinct name segments.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Rename all three to `f4Root_addNat`, `f4Coroot_addNat`, `f4ReflectionIndex_addNat` (and update the four `simpa [...]` uses at 387-388 and 402-403 plus 537, 544). Consider `f4Root_addNat_eq_neg` since the conclusion is a negation.",
+   "issue": "`f4Root_natAdd` (367), `f4Coroot_natAdd` (370) and `f4ReflectionIndex_natAdd` (373) are all stated about `Fin.addNat i 24`, not `Fin.natAdd`; these are two different Mathlib declarations, so the names point at the wrong function.",
+   "line": 367
+  },
+  {
+   "evidence": "Lines 596-599 vs the separate lemma at 440-441 `f4SimplyConnectedRootDatum_pairing`, which is where `pairing` actually appears; `DynkinType.cartanMatrix_F4` at TauCeti/LinearAlgebra/RootSystem/DynkinType.lean:238.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Either state it as `f4SimplyConnectedRootDatum.pairing (Fin.castAdd 44 i) (Fin.castAdd 44 j) = CartanMatrix.F\u2084 i j` so the name matches, or rename to `f4Root_dotProduct_f4Coroot_eq_cartanMatrix_F\u2084`.",
+   "issue": "`f4SimplyConnectedRootDatum_pairing_eq_cartanMatrix_F4` \u2014 a `Main results` entry \u2014 mentions neither `f4SimplyConnectedRootDatum` nor `pairing`: the statement is `f4Root (Fin.castAdd 44 i) \u2b1d\u1d65 f4Coroot (Fin.castAdd 44 j) = CartanMatrix.F\u2084 i j`. The `_cartanMatrix_F4` segment also collides with the existing `DynkinType.cartanMatrix_F4`, which denotes `F4.cartanMatrix`, not `CartanMatrix.F\u2084`.",
+   "line": 596
+  },
+  {
+   "evidence": "Mathlib names the same double application `_apply_apply`: `Mathlib/LinearAlgebra/RootSystem/BaseChange.lean:105 restrictScalars_toLinearMap_apply_apply`, `Mathlib/LinearAlgebra/RootSystem/IsValuedIn.lean:333 toLinearMap_apply_apply_mem_range_algebraMap`; the file itself already rewrites with `dotProductEquiv_apply_apply` (line 420).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Rename to `f4SimplyConnectedRootDatum_toLinearMap_apply_apply`.",
+   "issue": "`f4SimplyConnectedRootDatum_toLinearMap_apply` applies `toLinearMap` to two arguments, but carries a single `_apply`.",
+   "line": 436
+  },
+  {
+   "evidence": "`grep -n \"f4Support\" F4.lean` returns only lines 548, 559, 573 \u2014 no definition; lines 500-501 and 505-506 put the sum on the left-hand side.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Introduce `f4Support : Finset (Fin 48) := {0,1,2,3}` and use it, or rename to `f4SimpleIndex_range_eq` / state as `range f4SimpleIndex = \u2191({0,1,2,3} : Finset _)`; rename the two sum lemmas `sum_f4RootCoefficients_smul_eq` / `sum_f4CorootCoefficients_smul_eq`, or flip the equations.",
+   "issue": "Private helper names that do not match their statements: `coe_f4Support` names a coercion of `f4Support`, which does not exist in the file; `f4Root_eq_sum` (499) and `f4Coroot_eq_sum` (504) read `f4Root = \u2211 \u2026` while the statements are `\u2211 \u2026 = f4Root \u2026`.",
+   "line": 548
+  }
+ ],
+ "head_sha": "ca72fa3a21ccfb0305bbdf1f3e64e06afdf54a5b",
+ "merge_base_sha": "3249c780a4ce4cfca40762754b3e76aa08ff00a6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2616,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "05470f5547afb1e75642b0ccec07015cd131ecda6a5ac4465fed09a157f43193",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T141033Z-2616-naming-25eeb1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T14:10:33Z",
+ "submitted_by": "kim-em",
+ "summary": "No notation is introduced and the top-level def names are reasonable, but three lemma names name a function that does not appear in their statement (`natAdd` for `Fin.addNat`), the advertised `..._pairing_eq_cartanMatrix_F4` theorem states nothing about the datum's pairing, and a double application is named `_apply`.",
+ "transcript_blob": "0c746d8aafa1c2a4249454e9d562bc204a6ebb81d8b339b5290ca19831efaf2d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 77537,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 77537,
+  "cache_read_input_tokens": 922616,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5375,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5375,
+    "cache_read_input_tokens": 88369,
+    "input_tokens": 2,
+    "output_tokens": 2926,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16818,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

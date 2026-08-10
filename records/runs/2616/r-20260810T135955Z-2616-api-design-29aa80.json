@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.581652,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 234.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69390,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69390,
+    "cache_read_input_tokens": 844520,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2053,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2053,
+      "cache_read_input_tokens": 83544,
+      "input_tokens": 1,
+      "output_tokens": 2511,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17753,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5161093beb1d33ff2d92e3e871f9acfb0d874013",
+ "cost_usd": 1.581652,
+ "dedupe_key": "TauCetiProject/TauCeti|2616|ca72fa3a21ccfb0305bbdf1f3e64e06afdf54a5b|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "acf5183dba96068b5ff50f4505664c9244b1ec7b4b711f52a0a30251e8ee38ad",
+ "diff_sha256": "acf5183dba96068b5ff50f4505664c9244b1ec7b4b711f52a0a30251e8ee38ad",
+ "duration_s": 234.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n '^private lemma f4Root_23\\|^private lemma f4Coroot_0\\|^private lemma f4Root_natAdd' F4.lean` \u2192 443, 447, 367; `grep -n '@\\[expose\\]' F4.lean` \u2192 no hits; module doc lines 17-23 assert the fundamental-weight/simple-coroot bases and the negation convention that no public lemma states.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Make the characteristic value lemmas public: `f4Coroot (Fin.castAdd 44 i) = Pi.single i 1`, `f4Root (Fin.castAdd 44 i) = CartanMatrix.F\u2084 i`, and `f4Root (Fin.addNat i 24) = -f4Root (Fin.castAdd 44 i)` (same for coroots), as `@[simp]`. Since the point of this datum is that consumers compute with it, also `@[expose]` the two tables (or add per-index value lemmas) so the remaining 44 roots are usable.",
+   "issue": "`f4Root` (48) and `f4Coroot` (65) are public but their bodies are not `@[expose]`d (the file only opens `public section`, cf. the comment at `DynkinType.lean:228` explaining that `cartanMatrix` needs `@[simp]` value lemmas for exactly this reason), and every value fact about them is `private`: `f4Root_23`/`f4Root_22_add_23`/`f4Root_19_add_20`/`f4Root_20` (443-446), `f4Coroot_0`-`f4Coroot_3` (447-450), `f4Root_natAdd`/`f4Coroot_natAdd` (367, 370), `f4Root_coroot_two` (406). A consumer therefore cannot prove a single coordinate of any of the 48 roots, cannot check that the simple coroots are the standard basis (the `\u27e8\u03c9_i, \u03b1_j^\u2228\u27e9 = \u03b4_ij` pinning the roadmap makes an acceptance criterion), and cannot use the documented `root (i+24) = -root i` convention; `decide`/`rfl` fail outside the module.",
+   "line": 48
+  },
+  {
+   "evidence": "Mathlib `Basic.lean:183`: `reflectionPerm i := RootPairing.equiv_of_mapsTo p root coroot i hr hp`; `grep -n 'reflectionPerm' F4.lean` \u2192 no hits in the PR file.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Make `f4ReflectionIndex` public and add `@[simp] lemma f4SimplyConnectedRootDatum_reflectionPerm (i j : Fin 48) : f4SimplyConnectedRootDatum.reflectionPerm i j = f4ReflectionIndex i j`, proved from `f4Root.injective` and `reflectionPerm_root` together with `f4ReflectionIndex_root`.",
+   "issue": "`RootPairing.mk'` sets `reflectionPerm i := equiv_of_mapsTo ...`, i.e. `Classical.choose` (Mathlib `LinearAlgebra/RootSystem/Basic.lean:183-189`), so the public datum's Weyl action on root indices is opaque \u2014 the exact `Classical.choose` situation Layer 6 exists to avoid. The PR computes the full explicit action (`f4ReflectionTable` 87, `f4ReflectionIndex` 161, `f4ReflectionIndex_root`/`_coroot` 377/391) but keeps it all `private` and never states the identification.",
+   "line": 413
+  },
+  {
+   "evidence": "Line 596-599 LHS is `f4Root (Fin.castAdd 44 i) \u2b1d\u1d65 f4Coroot (Fin.castAdd 44 j)`; lines 617-621 use `simp only [..., f4SimplyConnectedRootDatum_pairing, cartanMatrix_F4]` then `decide`, not the `@[simp]` pinning theorem.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/F4.lean",
+   "fix": "Restate the pinning lemma as `f4SimplyConnectedRootDatum.pairing (f4SimpleIndex i) (f4SimpleIndex j) = CartanMatrix.F\u2084 i j` with `f4SimpleIndex` (546) made public, or give the four-by-four values at literal indices; make `f4SimplyConnectedBaseEquiv` public so the base's Bourbaki numbering is part of the interface.",
+   "issue": "`f4SimplyConnectedRootDatum_pairing_eq_cartanMatrix_F4` is stated on the raw tables with `Fin.castAdd 44 i` indices rather than on `f4SimplyConnectedRootDatum.pairing` / `f4SimplyConnectedBase.cartanMatrixIn`, so its `@[simp]` LHS never matches the literal indices `0,1,2,3` a user or the other simp lemma (`f4SimplyConnectedRootDatum_pairing`, 439) produces \u2014 the file's own `hasCartanType` proof (615-621) bypasses it and falls back to `decide`. Relatedly, the concrete Bourbaki labelling `f4SimplyConnectedBaseEquiv` (601) is `private`, while `HasCartanType` only asserts an existential relabelling, so no consumer can name which support element is Bourbaki node `i`.",
+   "line": 596
+  }
+ ],
+ "head_sha": "ca72fa3a21ccfb0305bbdf1f3e64e06afdf54a5b",
+ "merge_base_sha": "3249c780a4ce4cfca40762754b3e76aa08ff00a6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2616,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e35e70e5824bc4245431e69008db6b1daeaec0e79764b849fd20b589cec33ce8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T135955Z-2616-api-design-29aa80",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T13:59:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The datum is advertised as explicit but nothing about it is provable downstream: `f4Root`/`f4Coroot` are public with unexposed bodies and no value lemma, every value fact is `private`, and the choice-derived `reflectionPerm` is never linked to the explicit reflection table the PR computes. The Cartan-matrix pinning lemma is also stated in a form that cannot fire.",
+ "transcript_blob": "9ca9f6833d5640333735d5929595367392ead92f859db9e08281dada73cd204a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69390,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69390,
+  "cache_read_input_tokens": 844520,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2053,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2053,
+    "cache_read_input_tokens": 83544,
+    "input_tokens": 1,
+    "output_tokens": 2511,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17753,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
