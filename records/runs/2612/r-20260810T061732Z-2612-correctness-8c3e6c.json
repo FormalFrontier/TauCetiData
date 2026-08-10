@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9529915,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 118.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59811,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59811,
+    "cache_read_input_tokens": 250787,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6648,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6648,
+      "cache_read_input_tokens": 69370,
+      "input_tokens": 1,
+      "output_tokens": 2104,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8975,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3f1e6a009ddd0e59c2027d60b1bf305ca72bce57",
+ "cost_usd": 0.952991,
+ "dedupe_key": "TauCetiProject/TauCeti|2612|6f8600714dc92431f59d5d5eb98ba22ef9ee391c|correctness|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "5c51f9463371356e749b5c32978499ffe435904638504269051d436f563f56ab",
+ "diff_sha256": "5c51f9463371356e749b5c32978499ffe435904638504269051d436f563f56ab",
+ "duration_s": 118.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"matchesMetadata\\|GroupPresentation\" TauCeti/` matches only GroupPresentation.lean itself; no `example`, no instance, no other file constructs the structure.",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Add a concrete small presentation in this PR (e.g. generator names `[\"a\", \"b\"]` with a relator list) and an `example : P.matchesMetadata` discharging it non-degenerately; or restate `length_relators_eq_expected` to take `P.matchesMetadata` directly.",
+   "issue": "`matchesMetadata` is a new Prop-valued definition with neither a consuming theorem nor a witness. `length_relators_eq_expected` (line 113) takes the raw conjunct `h : P.transcribed.length = P.expectedRelatorCount`, not `P.matchesMetadata`, and no `GroupPresentation` value exists in the repo, so it is untested whether the dependent record even admits a concrete row (every `Fin` relator index needs `generatorNames.length` to reduce).",
+   "line": 106
+  },
+  {
+   "evidence": "Line 106 `def matchesMetadata (P : GroupPresentation) : Prop := ...`; `grep -rn decide TauCeti/GroupTheory/Presentation/` returns nothing. Roadmap S0 requires the counts be \"decidably checkable\" (Suggested.lean:495, README.md:478).",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Make it `abbrev`/`@[reducible]`, or add `instance (P : GroupPresentation) : Decidable P.matchesMetadata := by unfold matchesMetadata; infer_instance`, and back it with an `example ... := by decide`; otherwise drop \"executable\" from line 30 and the PR description.",
+   "issue": "The module docstring calls `matchesMetadata` \"the executable generator and relator count check\", but it is a semireducible `def ... : Prop` with no `Decidable` instance. Typeclass synthesis runs at `.instances` transparency and will not unfold a plain `def` to expose the `And`, so `by decide` cannot discharge it \u2014 the advertised executability does not exist.",
+   "line": 30
+  }
+ ],
+ "head_sha": "6f8600714dc92431f59d5d5eb98ba22ef9ee391c",
+ "merge_base_sha": "3f1e6a009ddd0e59c2027d60b1bf305ca72bce57",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2612,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "b68d442f25843a9a76a1b2f98825ea2397ac0517c34c31a017731b0584e3c40d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T061732Z-2612-correctness-8c3e6c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T06:17:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is faithful: the relation set, presented group, and count lemmas all state what they claim, and the dependent arity genuinely prevents a generator/relator mismatch. But `matchesMetadata` is an unexercised Prop \u2014 no consumer, no witness, and no `GroupPresentation` value exists anywhere \u2014 and it is advertised as \"executable\" while not being decidable as written.",
+ "transcript_blob": "5fc779b788cc3667f78774a2b3c387101773c8b3b8f4fbf9b86d6f351f07e5fa",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59811,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59811,
+  "cache_read_input_tokens": 250787,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6648,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6648,
+    "cache_read_input_tokens": 69370,
+    "input_tokens": 1,
+    "output_tokens": 2104,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8975,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

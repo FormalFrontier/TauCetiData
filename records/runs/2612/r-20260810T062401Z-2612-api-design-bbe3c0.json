@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4413215000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 173.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73390,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73390,
+    "cache_read_input_tokens": 756133,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 498,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 498,
+      "cache_read_input_tokens": 89099,
+      "input_tokens": 2,
+      "output_tokens": 2587,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12965,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3f1e6a009ddd0e59c2027d60b1bf305ca72bce57",
+ "cost_usd": 1.441322,
+ "dedupe_key": "TauCetiProject/TauCeti|2612|6f8600714dc92431f59d5d5eb98ba22ef9ee391c|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "5c51f9463371356e749b5c32978499ffe435904638504269051d436f563f56ab",
+ "diff_sha256": "5c51f9463371356e749b5c32978499ffe435904638504269051d436f563f56ab",
+ "duration_s": 173.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`def relators` (line 76) and `def relatorSet` (line 85) carry no `@[expose]`; repo convention confirms bodies are hidden without it (`grep -rn '@\\[expose\\]' TauCeti/` \u2192 392 hits; `TauCeti/Algebra/AlgebraicGeometry/...`, `TauCeti/Analysis/CompletelyMonotone/Basic.lean:77 @[expose] def IsCompletelyMonotone`). Only `length_relators` (line 81) mentions `relators`.",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Restate as the semantic characterization `r \u2208 P.relatorSet \u2194 \u2203 t \u2208 P.transcribed, t.toFreeGroup = r` (proved via `List.mem_map` and `Relator.toWord_toFreeGroup`, not `Iff.rfl`), and add `@[simp] mem_relators_iff : w \u2208 P.relators \u2194 \u2203 t \u2208 P.transcribed, t.toWord = w`.",
+   "issue": "`mem_relatorSet_iff` restates membership in terms of `P.relators`, which is an unexposed `def` (line 76) with only a length lemma. Downstream there is no way to get from `r \u2208 P.relatorSet` to the transcribed expressions, so `PresentedGroup.toGroup`'s obligation `\u2200 r \u2208 P.relatorSet, FreeGroup.lift f r = 1` is undischargeable outside this file, and `Relator.toWord_toFreeGroup` never reaches the relation set.",
+   "line": 90
+  },
+  {
+   "evidence": "Line 106 `def matchesMetadata (P : GroupPresentation) : Prop :=`, no `@[expose]`, no accompanying lemma or instance anywhere in the file. Compare `TauCeti/Algebra/Group/Conj.lean:130-134`, where the unexposed `def IsRealClass : Prop` is paired with `@[simp] theorem isRealClass_iff_inv_eq`.",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Add `@[simp] theorem matchesMetadata_iff (P) : P.matchesMetadata \u2194 P.generatorCount = P.expectedGeneratorCount \u2227 P.transcribed.length = P.expectedRelatorCount` and `instance (P) : Decidable P.matchesMetadata := decidable_of_iff _ (matchesMetadata_iff P).symm`.",
+   "issue": "`matchesMetadata` is an unexposed `def ... : Prop` with no `_iff` lemma and no `Decidable` instance, so no consumer can prove, destructure, or `decide` it \u2014 yet the module docstring (line 30) and the file header advertise it as \"the executable generator and relator count check\". The roadmap requires both counts to be \"decidably checkable\" and `presentation_matchesMetadata` to be discharged per row.",
+   "line": 106
+  },
+  {
+   "evidence": "Line 116 proof is `P.length_relators.trans h`; `matchesMetadata` at line 106 has no exposure or `_iff` lemma, so `h` cannot be obtained from it in another module.",
+   "file": "TauCeti/GroupTheory/Presentation/GroupPresentation.lean",
+   "fix": "Either delete it (it follows from `length_relators` by `simp [h]`) or restate it to take `h : P.matchesMetadata` directly, once `matchesMetadata_iff` exists.",
+   "issue": "`length_relators_eq_expected` is a one-step wrapper over the `@[simp]` `length_relators`, and its docstring claim that \"a presentation satisfying `matchesMetadata` supplies this hypothesis as its second conjunct\" is false downstream, since `matchesMetadata` is opaque and cannot be projected.",
+   "line": 113
+  }
+ ],
+ "head_sha": "6f8600714dc92431f59d5d5eb98ba22ef9ee391c",
+ "merge_base_sha": "3f1e6a009ddd0e59c2027d60b1bf305ca72bce57",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2612,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "aa6ee0bb89c3731963fe445b11be9059d65b23350afc81fd4e2fdbfce2b7b48b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T062401Z-2612-api-design-bbe3c0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T06:24:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The three core definitions (`relators`, `relatorSet`, `matchesMetadata`) are unexposed `def`s with no characteristic lemmas tying them back to `transcribed`, so outside this file the relation set cannot be computed and `matchesMetadata` cannot be proved or decided at all \u2014 which blocks exactly the S1/A0 consumers this format exists for.",
+ "transcript_blob": "ae3c4d4942cb8d338a90007989239108611f9f03dd2073f6c7cb5f981d06ed89",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73390,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73390,
+  "cache_read_input_tokens": 756133,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 498,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 498,
+    "cache_read_input_tokens": 89099,
+    "input_tokens": 2,
+    "output_tokens": 2587,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12965,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
