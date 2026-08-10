@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2885129999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 198.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72102,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72102,
+    "cache_read_input_tokens": 322174,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4724,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4724,
+      "cache_read_input_tokens": 83585,
+      "input_tokens": 1,
+      "output_tokens": 7899,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15664,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "cost_usd": 1.288513,
+ "dedupe_key": "TauCetiProject/TauCeti|2468|a35dbf9897023eef40e596922d1c62ad63c7bf2a|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "diff_sha256": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "duration_s": 198.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 135, 174-175, 182, 184. Contrast the merged wrapper `TauCeti/NumberTheory/ClassGroup/ElementaryTwoQuotient.lean:132-137`, which does the same bridging with `change` and the comment \"Reduce the class-group wrapper names to the generic elementary-2 quotient statement.\"",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Add stated unfolding lemmas with docstrings \u2014 `elementaryTwoQuotientMk_def (C) : elementaryTwoQuotientMk C = TauCeti.elementaryTwoQuotientMk C := rfl` and `toClassGroup_def : toClassGroup (K := K) = TauCeti.elementaryTwoQuotientMap NarrowClassGroup.toClassGroup := rfl` \u2014 and `rw` with those (or use the `change` + explanatory-comment idiom the merged wrapper file uses).",
+   "issue": "Wrapper definitions are unfolded by undocumented definitional equality in four places: `have hmap : ... := rfl` (174-175), `simpa only [toClassGroup, elementaryTwoQuotientMk]` (135), and the two `rfl`s at 182 and 184 that silently identify the local `elementaryTwoQuotientMk` with `TauCeti.elementaryTwoQuotientMk`. Both are plain `def`s, so these proofs rest on unfolding them, not on any stated lemma.",
+   "line": 174
+  },
+  {
+   "evidence": "`TauCeti/NumberTheory/NumberField/NarrowClassGroup/Finite.lean:52-54` proves the identical step as `Subtype.ext <| by rw [pow_one, SubmonoidClass.coe_pow, OneMemClass.coe_one]; exact sq_eq_one_of_mem_ker_toClassGroup g.2`.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Rewrite explicitly, matching the existing idiom: `Subtype.ext (by rw [SubmonoidClass.coe_pow, OneMemClass.coe_one]; exact sq_eq_one_of_mem_ker_toClassGroup C.2)`.",
+   "issue": "`Subtype.ext (sq_eq_one_of_mem_ker_toClassGroup C.2)` closes `C ^ 2 = 1` in `\u21a5(ker toClassGroup)` only because `\u2191(C ^ 2)` and `\u2191(1 : \u21a5ker)` happen to be defeq to `(\u2191C) ^ 2` and `1`; the coercion lemmas are never invoked.",
+   "line": 211
+  },
+  {
+   "evidence": "Lines 373-386: the injectivity argument (`Additive.toMul.injective`, `div_eq_one.mp`, `elementaryTwoQuotientMk_eq_iff`) is a standalone statement about `G`, not about the equivalence.",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotient/Basic.lean",
+   "fix": "State `elementaryTwoQuotientMk_injective_of_forall_sq_eq_one` (and the surjectivity, which is already `elementaryTwoQuotientMk_surjective`) as separate lemmas, then define the equivalence as a term: `AddEquiv.ofBijective elementaryTwoQuotientMkAdd \u27e8_, _\u27e9`. The `_apply` lemma at line 390 then holds by `rfl` on a term whose shape is stated rather than elaborated from tactics.",
+   "issue": "`elementaryTwoQuotientAddEquivOfForallSqEqOne` is data built in tactic mode (`apply AddEquiv.ofBijective; constructor; ...`), which buries a reusable fact \u2014 that the class map is injective when every element squares to `1` \u2014 inside the `def`, reachable only as `(... ).injective` through the `Additive` wrapper.",
+   "line": 373
+  },
+  {
+   "evidence": "`Exact.lean:92` and `Basic.lean:215-216` (`exact (elementaryTwoQuotientMk_eq_zero_iff _).2 \u27e8f (Additive.toMul g), by rw [pow_two]\u27e9`) are the same fact derived from scratch twice.",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotient/Exact.lean",
+   "fix": "Add `elementaryTwoQuotientMk_pow_two (g : G) : elementaryTwoQuotientMk (g ^ 2) = 0` (or `_of_isSquare`) to `Basic.lean`, use it at both sites, and split the dense `rw` chain so the cancellation step is readable.",
+   "issue": "The final step of `ker_elementaryTwoQuotientMap` embeds a proof term inside a `rw` list \u2014 `(elementaryTwoQuotientMk_eq_zero_iff ((a ^ 2)\u207b\u00b9)).2 \u27e8a\u207b\u00b9, by rw [pow_two, mul_inv]\u27e9` \u2014 re-deriving \"the class of a square is zero\", which is already re-derived inline in `Basic.lean:215-216`.",
+   "line": 92
+  }
+ ],
+ "head_sha": "a35dbf9897023eef40e596922d1c62ad63c7bf2a",
+ "merge_base_sha": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2468,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "01f0bbf2891e59ac90f552e8bee24f7c3e184378c108b8376f5ad158f42508bf",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T093603Z-2468-proof-quality-b8ceeb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T09:36:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is fine, but the new narrow-class file bridges its wrapper definitions to the generic API by undocumented `rfl`/def-unfolding in four places, and one subgroup step relies on coercion defeq where the neighbouring merged file rewrites explicitly. A reusable injectivity fact is also buried inside a tactic-mode `def`.",
+ "transcript_blob": "53bed6e5ab57bdce0db3baee3b278ca839a4a79ccc4e3b2de6ddc0f60cd2cad6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72102,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72102,
+  "cache_read_input_tokens": 322174,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4724,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4724,
+    "cache_read_input_tokens": 83585,
+    "input_tokens": 1,
+    "output_tokens": 7899,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15664,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

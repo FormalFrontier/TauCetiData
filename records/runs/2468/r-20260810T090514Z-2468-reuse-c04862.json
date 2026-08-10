@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3585999999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 316.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 102788,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 102788,
+    "cache_read_input_tokens": 1631822,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2072,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2072,
+      "cache_read_input_tokens": 116923,
+      "input_tokens": 2,
+      "output_tokens": 3344,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19984,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "cost_usd": 2.3586,
+ "dedupe_key": "TauCetiProject/TauCeti|2468|a35dbf9897023eef40e596922d1c62ad63c7bf2a|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "diff_sha256": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "duration_s": 316.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Subgroup.mem_square` at mathlib/Mathlib/Algebra/Group/Subgroup/Even.lean (`theorem mem_square {a : G} : a \u2208 square G \u2194 IsSquare a`); `Subgroup.index_bot : (\u22a5 : Subgroup G).index = Nat.card G` at mathlib/Mathlib/GroupTheory/Index.lean:260; `card_elementaryTwoQuotient_eq_index_square` at Basic.lean:324. Grep for `elementaryTwoQuotientAddEquivOfForallSqEqOne`, `elementaryTwoQuotientAddEquivOfForallSqEqOne_apply` and `elementaryTwoQuotientMkAdd_apply` across `TauCeti/` returns only their definitions plus the single use at Basic.lean:380 and 398.",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotient/Basic.lean",
+   "fix": "Delete the three declarations and prove line 396 as: `have hb : Subgroup.square G = \u22a5 := (Subgroup.eq_bot_iff_forall _).2 fun g hg => by obtain \u27e8a, rfl\u27e9 := Subgroup.mem_square.1 hg; rw [\u2190 pow_two, h]` then `rw [card_elementaryTwoQuotient_eq_index_square, hb, Subgroup.index_bot]`. Drop the corresponding module-docstring bullet at line 60.",
+   "issue": "`elementaryTwoQuotientAddEquivOfForallSqEqOne`, its `_apply` lemma (line 390) and the new `elementaryTwoQuotientMkAdd_apply` (line 98) exist only to prove `card_elementaryTwoQuotient_of_forall_sq_eq_one` (line 396), which the already-present `card_elementaryTwoQuotient_eq_index_square` (line 324) gives directly: `\u2200 g, g ^ 2 = 1` forces `Subgroup.square G = \u22a5`, and `Subgroup.index_bot` finishes. The equiv and both simp lemmas have no other consumer.",
+   "line": 373
+  },
+  {
+   "evidence": "Grep for `elementaryTwoQuotientMk_mul|_one|_inv|_div|_pow|_prod|_surjective|_eq_iff|_eq_zero_iff|card_elementaryTwoQuotient_eq_two_pow_twoRank|twoRank_eq_of_card` under `TauCeti/NumberTheory` returns only the definitions in this file and in `ClassGroup/ElementaryTwoQuotient.lean` \u2014 no call sites. That the wrapper layer is not actually load-bearing is visible at line 134, where `toClassGroup_mk` states its RHS with the generic `TauCeti.elementaryTwoQuotientMk C.toClassGroup` rather than `TauCeti.ClassGroup.elementaryTwoQuotientMk`, and at line 201, which uses `TauCeti.twoRank` directly for the kernel.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Delete the eleven restatements, and make `elementaryTwoQuotientMk` (line 72) and `twoRank` (line 146) `abbrev`s like `ElementaryTwoQuotient` (line 68) \u2014 then the generic `TauCeti.*` lemmas apply to `Cl\u207a(K)/Cl\u207a(K)\u00b2` unchanged and the `rw [twoRank_def, ...]` preambles at lines 192, 202, 220, 233 disappear. Update the docstring bullets at lines 45\u201346 accordingly.",
+   "issue": "Lines 77\u2013122 and 157\u2013165 add eleven declarations whose bodies are the generic lemma applied to `NarrowClassGroup K` (`elementaryTwoQuotientMk_eq_zero_iff`, `_mul`, `_one`, `_inv`, `_div`, `_pow`, `_prod`, `_surjective`, `_eq_iff`, `card_elementaryTwoQuotient_eq_two_pow_twoRank`, `twoRank_eq_of_card_elementaryTwoQuotient_eq_two_pow`). None is used in this PR or elsewhere in the repo, so this is a parallel API over `TauCeti.elementaryTwoQuotientMk_*` / `TauCeti.card_elementaryTwoQuotient_eq_two_pow_twoRank` / `TauCeti.twoRank_eq_of_card_elementaryTwoQuotient_eq_two_pow` with no specialization earning its place.",
+   "line": 77
+  }
+ ],
+ "head_sha": "a35dbf9897023eef40e596922d1c62ad63c7bf2a",
+ "merge_base_sha": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2468,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0988745c93f5aa182e853a7cc7a7ab865e604a00d602f94462c85ebc8e037fa3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T090514Z-2468-reuse-c04862",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T09:05:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The exactness content of `Exact.lean` is genuinely new and reuses Mathlib's finrank API correctly, but the elementary-abelian cardinality block in `Basic.lean` re-derives an existing lemma through an unnecessary hand-built equivalence, and the narrow-class file adds eleven consumerless restatements of generic `TauCeti.*` lemmas.",
+ "transcript_blob": "68eade1392bed5ef4946058b067aae23257dee94a6887c3f4894261d64a4b157",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 102788,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 102788,
+  "cache_read_input_tokens": 1631822,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2072,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2072,
+    "cache_read_input_tokens": 116923,
+    "input_tokens": 2,
+    "output_tokens": 3344,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19984,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

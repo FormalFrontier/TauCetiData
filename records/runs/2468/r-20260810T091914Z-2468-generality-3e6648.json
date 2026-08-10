@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.1971749999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 339.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 104157,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 104157,
+    "cache_read_input_tokens": 956530,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2796,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2796,
+      "cache_read_input_tokens": 117568,
+      "input_tokens": 1,
+      "output_tokens": 3846,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26507,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "cost_usd": 2.197175,
+ "dedupe_key": "TauCetiProject/TauCeti|2468|a35dbf9897023eef40e596922d1c62ad63c7bf2a|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "diff_sha256": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "duration_s": 339.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 337 `card_elementaryTwoQuotient_eq_card_twoTorsion [(powMonoidHom 2 : G \u2192* G).ker.FiniteIndex] : Nat.card (ElementaryTwoQuotient G) = Nat.card {g : G // g ^ 2 = 1}`; grep shows the equiv's only use is line 398, and `elementaryTwoQuotientAddEquivOfForallSqEqOne_apply` has no use at all. `Equiv.subtypeUnivEquiv` is Mathlib/Logic/Equiv/Basic.lean:347, `Subgroup.index_top` is Mathlib/GroupTheory/Index.lean:256.",
+   "file": "TauCeti/Algebra/Group/ElementaryTwoQuotient/Basic.lean",
+   "fix": "Delete the equiv and its `_apply` lemma and prove the cardinality lemma from the general one: `haveI : (powMonoidHom 2 : G \u2192* G).ker.FiniteIndex := \u27e8by ...\u27e9` (the kernel is `\u22a4` under `h`, so `index = 1` by `Subgroup.index_top`), then `rw [card_elementaryTwoQuotient_eq_card_twoTorsion]; exact Nat.card_congr (Equiv.subtypeUnivEquiv h)`. `card_eq_two_pow_twoRank_of_forall_sq_eq_one` and the narrow-class consumer are unaffected.",
+   "issue": "`elementaryTwoQuotientAddEquivOfForallSqEqOne` (+ its `_apply` simp lemma) exists only to prove `card_elementaryTwoQuotient_of_forall_sq_eq_one`, which is the special case `G[2] = G` of the file's own general `card_elementaryTwoQuotient_eq_card_twoTorsion` (line 337). The bespoke bijection duplicates a general result already proved in the same file.",
+   "line": 373
+  },
+  {
+   "evidence": "Line 68 `abbrev ElementaryTwoQuotient (K) ... := TauCeti.ElementaryTwoQuotient (NarrowClassGroup K)`; lines 77\u2013122 each have body `TauCeti.elementaryTwoQuotientMk_* ...`; `grep -rn \"NarrowClassGroup.ElementaryTwoQuotient\" TauCeti/` returns only a docstring mention in Exact.lean:32, so no consumer exists for any of them.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Drop the wrapper `def` (or make it an `abbrev`) and delete the restatements the file does not consume, keeping the genuinely new content: the induced map, `toClassGroup_eq_zero_iff`, and the four rank comparisons. Downstream then has one name per map and the general simp lemmas fire.",
+   "issue": "`elementaryTwoQuotientMk` is a fresh opaque `def` over `ElementaryTwoQuotient K`, which is an `abbrev` for `TauCeti.ElementaryTwoQuotient (NarrowClassGroup K)`; the general lemmas already apply to that type. The wrapper forces nine verbatim restatements (`_eq_zero_iff`, `_mul`, `_one`, `_inv`, `_div`, `_pow`, `_prod`, `_surjective`, `_eq_iff`, lines 77\u2013122), none of which is used anywhere in the repo, and it blocks the general simp set \u2014 hence the `simpa only [toClassGroup, elementaryTwoQuotientMk]` at line 135 and the `hmap ... := rfl` bridge at lines 174\u2013175. Same pattern for `ElementaryTwoQuotient.toClassGroup` (line 127) with its unused `toClassGroup_surjective` (line 139); the rank lemmas at lines 193/203/221 all use the group-level `NarrowClassGroup.toClassGroup_surjective` instead.",
+   "line": 72
+  }
+ ],
+ "head_sha": "a35dbf9897023eef40e596922d1c62ad63c7bf2a",
+ "merge_base_sha": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2468,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9ac1d8abfbf829f4eeb90664ce7352837456f4df2f86578b3f2791fa3b1f3be4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T091914Z-2468-generality-3e6648",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T09:19:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The exactness results in Exact.lean sit at the right level with no unused or over-strong hypotheses, but the new elementary-abelian material in Basic.lean re-proves a special case of a general theorem already two screens above it, and the narrow-class-group file adds a ten-lemma specialization layer that restates the general API verbatim with no consumer.",
+ "transcript_blob": "f9d55ebdb0620243ce22c8f0c32e9a75e818f2712d1028a9b28ef5e06347896c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 104157,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 104157,
+  "cache_read_input_tokens": 956530,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2796,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2796,
+    "cache_read_input_tokens": 117568,
+    "input_tokens": 1,
+    "output_tokens": 3846,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26507,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

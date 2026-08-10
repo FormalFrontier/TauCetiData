@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8698139999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 287.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 92352,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 92352,
+    "cache_read_input_tokens": 718674,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1838,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1838,
+      "cache_read_input_tokens": 106721,
+      "input_tokens": 2,
+      "output_tokens": 4130,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22874,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "cost_usd": 1.869814,
+ "dedupe_key": "TauCetiProject/TauCeti|2468|a35dbf9897023eef40e596922d1c62ad63c7bf2a|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "diff_sha256": "3b7f9838b0acdf4f710ee4df96c8889288d97e1d58424d5cfc1301b96cabc157",
+ "duration_s": 287.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `ClassGroup.elementaryTwoQuotientMk` across `TauCeti/` hits only the docstring at `NumberTheory/ClassGroup/ElementaryTwoQuotient.lean:33`; downstream (`NumberField/ClassGroupElementaryTwoQuotient.lean:46-70`) uses only `ClassGroup.twoRank`/`card_*`. Bodies are unexposed (the repo marks `@[expose]` explicitly, e.g. `ElementaryTwoQuotient/Basic.lean:346`), so the wrapper is opaque to importers.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Drop the narrow `elementaryTwoQuotientMk` and its nine restatements; keep the `ElementaryTwoQuotient K` abbrev and state the file's own results with `TauCeti.elementaryTwoQuotientMk`, whose whole API then applies unchanged. If the wrapper is kept, it needs its defining equation `elementaryTwoQuotientMk C = TauCeti.elementaryTwoQuotientMk C := (rfl)` as a public lemma.",
+   "issue": "`elementaryTwoQuotientMk` is an opaque `def` duplicating `TauCeti.elementaryTwoQuotientMk`, forcing nine verbatim restatements (lines 77-122: `_eq_zero_iff`, `_mul`, `_one`, `_inv`, `_div`, `_pow`, `_prod`, `_surjective`, `_eq_iff`) that add no content; none is used in this PR, and the identical wrapper layer already on main (`TauCeti/NumberTheory/ClassGroup/ElementaryTwoQuotient.lean:63`) has no consumer anywhere.",
+   "line": 72
+  },
+  {
+   "evidence": "Lines 174-175 need `rfl` in-file to unfold the def; no `toClassGroup_def`/`toClassGroup_eq` exists (grep across `TauCeti/`: no hits), and the def is not `@[expose]`, so importers cannot reproduce that `rfl`.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Add the public defining equation `theorem toClassGroup_def : toClassGroup (K := K) = TauCeti.elementaryTwoQuotientMap NarrowClassGroup.toClassGroup := (rfl)` (or restate the injectivity criterion for `toClassGroup` directly).",
+   "issue": "`ElementaryTwoQuotient.toClassGroup` is an unexposed `def` with no `toClassGroup_def` lemma, so no result of `Exact.lean` can be applied to it downstream \u2014 in particular `elementaryTwoQuotientMap_injective_iff_forall_isSquare_of_mem_ker` and `ker_elementaryTwoQuotientMap` have no narrow counterpart, and the file's own proofs need `have hmap : ... := rfl` (line 174) to get past the opacity.",
+   "line": 127
+  },
+  {
+   "evidence": "Line 133-134: `toClassGroup (elementaryTwoQuotientMk C) = TauCeti.elementaryTwoQuotientMk C.toClassGroup`, while the codomain is `TauCeti.ClassGroup.ElementaryTwoQuotient (\ud835\udcde K)` whose lemmas (`ClassGroup/ElementaryTwoQuotient.lean:67-111`) are all phrased in `ClassGroup.elementaryTwoQuotientMk`.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/ElementaryTwoQuotient.lean",
+   "fix": "Pick one convention: either state both sides with `TauCeti.elementaryTwoQuotientMk` (falls out of dropping the narrow wrapper), or use `TauCeti.ClassGroup.elementaryTwoQuotientMk (\ud835\udcde K) C.toClassGroup` on the RHS.",
+   "issue": "`toClassGroup_mk` mixes two conventions: the LHS uses the narrow wrapper `elementaryTwoQuotientMk`, the RHS the general `TauCeti.elementaryTwoQuotientMk`, not the canonical constructor `TauCeti.ClassGroup.elementaryTwoQuotientMk (\ud835\udcde K)` of its own codomain. Since neither wrapper's body is exposed and no lemma links the two forms, a consumer who simp-rewrites with this lemma lands in a form on which the `TauCeti.ClassGroup.elementaryTwoQuotientMk_*` simp set cannot fire.",
+   "line": 132
+  }
+ ],
+ "head_sha": "a35dbf9897023eef40e596922d1c62ad63c7bf2a",
+ "merge_base_sha": "2c01cbf4420940e507add4a8b41f7ac854529b48",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2468,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4933b3be733bd22ef918b03fe67e28004b6097cf0c5f25797eddfcbb828666ac",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T091427Z-2468-api-design-7d8193",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T09:14:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The general `Exact.lean` surface is fine, but the narrow-class-group file adds an opaque `elementaryTwoQuotientMk` wrapper plus nine verbatim restatements with no consumer, and neither that wrapper nor `ElementaryTwoQuotient.toClassGroup` gets a defining equation, so downstream the general elementary-2-quotient API cannot be applied to either.",
+ "transcript_blob": "82eeb61133dd1e9b8309503ae729719ec70879734ec0f82ddbf2032b84c5a510",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 92352,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 92352,
+  "cache_read_input_tokens": 718674,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1838,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1838,
+    "cache_read_input_tokens": 106721,
+    "input_tokens": 2,
+    "output_tokens": 4130,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22874,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
