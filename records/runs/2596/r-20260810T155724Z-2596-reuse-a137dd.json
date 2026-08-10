@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.364981,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 43.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 140032,
+    "input_tokens": 190127,
+    "output_tokens": 1483,
+    "reasoning_output_tokens": 390
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2ef420c12ffecdf8ddf03e2e48e2dca4ad385f01",
+ "cost_estimated": true,
+ "cost_usd": 0.364981,
+ "dedupe_key": "TauCetiProject/TauCeti|2596|ec15c32bb0e76570683a370f73315142ac10a7ba|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9416cead1273dd910ea18fe01453101f046daa535af0453d0a3ce2da1d28f9a7",
+ "diff_sha256": "9416cead1273dd910ea18fe01453101f046daa535af0453d0a3ce2da1d28f9a7",
+ "duration_s": 43.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 135\u2013136 define `upperTriGL B := natDiagGL n a * mapGL \u211a (unitriSL B)`, while lines 140\u2013141 restate that expression with proof `rfl`.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CosetDecomposition.lean",
+   "fix": "Delete `upperTriGL_def`; consumers can use `rw [upperTriGL]` or `unfold upperTriGL`.",
+   "issue": "`upperTriGL_def` is a public thin wrapper whose statement is exactly the definitional unfolding of `upperTriGL`.",
+   "line": 140
+  },
+  {
+   "evidence": "The proof at lines 276\u2013278 is exactly that existing-lemma rewrite, and grep finds its sole code consumer at line 306.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GLn/CosetDecomposition.lean",
+   "fix": "Delete it and rewrite line 306 directly with `SpecialLinearGroup.coe_inv`, `Matrix.inv_def`, `coe_unitriSL`, `det_unitriMat`, `Ring.inverse_one`, and `one_smul` (or a local calculation).",
+   "issue": "`coe_inv_unitriSL` is an unnecessary public specialization of existing inverse/coercion lemmas, introduced only as proof scaffolding for one use.",
+   "line": 274
+  }
+ ],
+ "head_sha": "ec15c32bb0e76570683a370f73315142ac10a7ba",
+ "merge_base_sha": "2ef420c12ffecdf8ddf03e2e48e2dca4ad385f01",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2596,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2bed779274b003b7cb78f8526384fbb9a6bb5b45815b5a8a3bc5043a43aa9ef0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T155724Z-2596-reuse-a137dd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T15:57:24Z",
+ "submitted_by": "kim-em",
+ "summary": "Two public bridge lemmas duplicate definitional or existing API and can be removed without losing functionality.",
+ "transcript_blob": "75a052e993181051fb93d32e52f09fc44d5a5d79df0b037315cafb2c16bfdb69",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 140032,
+  "input_tokens": 190127,
+  "output_tokens": 1483,
+  "reasoning_output_tokens": 390
+ },
+ "verdict": "request_changes"
+}
