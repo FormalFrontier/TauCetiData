@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.202721,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 30.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 55552,
+    "input_tokens": 83233,
+    "output_tokens": 1218,
+    "reasoning_output_tokens": 415
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "507cbc454d549910e8c818f37e2a8e3a35e0500f",
+ "cost_estimated": true,
+ "cost_usd": 0.202721,
+ "dedupe_key": "TauCetiProject/TauCeti|2719|3c511736c48cf39ae2176c30afe32b7bb6f91983|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "abfab124d4ad39060eeb0fd634ecb1bd16b1aca1e1de9c38cbabda36c0a15e53",
+ "diff_sha256": "abfab124d4ad39060eeb0fd634ecb1bd16b1aca1e1de9c38cbabda36c0a15e53",
+ "duration_s": 30.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only explicit exposure in the new files is `@[expose] def coverSquare`; `coverSquare_X\u2081`\u2013`X\u2084`, `coverSquare_toBiprod`, and `coverSquare_fromBiprod` expose the relevant behavior.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/MayerVietoris.lean",
+   "fix": "Remove `@[expose]`; prove the characteristic lemmas opaquely using `:= (rfl)` where necessary, adding field lemmas only if a consumer needs them.",
+   "issue": "`coverSquare` is `@[expose]` even though lines 122\u2013144 already provide its public corner and induced-map API, coupling downstream proofs to the concrete `Square` construction.",
+   "line": 111
+  },
+  {
+   "evidence": "Each equality is oriented from a composite or abstract Mayer\u2013Vietoris map to the canonical restriction-map expression; only `cohomologyOnRes_refl` and the four corner lemmas currently carry `@[simp]`.",
+   "file": "TauCeti/AlgebraicGeometry/Cohomology/MayerVietoris.lean",
+   "fix": "Add `@[simp, reassoc]` to `cohomologyOnRes_comp` and `@[simp]` to both cover-square map lemmas.",
+   "issue": "The normal-form composition rule `cohomologyOnRes_comp` and the characteristic rules `coverSquare_toBiprod`/`coverSquare_fromBiprod` (lines 132 and 140) lack `@[simp]`, so routine restriction and sequence-map expressions do not normalize automatically.",
+   "line": 86
+  }
+ ],
+ "head_sha": "3c511736c48cf39ae2176c30afe32b7bb6f91983",
+ "merge_base_sha": "fe83fffcd838107fa933012e84665b5b85d9cc4b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2719,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "22a4ff0bb485a6775da012f9521167900aa39f02b65141b666ba568f39756c0d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T222600Z-2719-api-design-a6aa55",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T22:26:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface unnecessarily exposes the Mayer\u2013Vietoris square implementation and omits simplifier annotations from its characteristic restriction-map API.",
+ "transcript_blob": "642311e5c2920bf1de5f08f414e30c3e64a39afb1869f8054a88131ebf4bde9b",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 55552,
+  "input_tokens": 83233,
+  "output_tokens": 1218,
+  "reasoning_output_tokens": 415
+ },
+ "verdict": "request_changes"
+}
