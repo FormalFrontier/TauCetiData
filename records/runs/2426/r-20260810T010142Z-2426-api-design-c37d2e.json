@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 4.124952,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 639.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 116392,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 116392,
+    "cache_read_input_tokens": 3426776,
+    "inference_geo": "not_available",
+    "input_tokens": 69,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1123,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1123,
+      "cache_read_input_tokens": 131476,
+      "input_tokens": 2,
+      "output_tokens": 6348,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 49470,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "cost_usd": 4.124952,
+ "dedupe_key": "TauCetiProject/TauCeti|2426|c8a62bea95940c1d168732e4b088d23fa84dc0ec|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "diff_sha256": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "duration_s": 639.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Algebra/Module/RingHom.lean:57 `abbrev Module.compHom \u2026 See note [reducible non-instances]`; Mathlib/Algebra/Algebra/RestrictScalars.lean:111 `Module.restrictScalars \u2026 Not an instance \u2026 The preferred way of setting this up is [Module R M] [Module S M] [IsScalarTower R S M]`; Mathlib/Algebra/Module/LinearMap/Defs.lean:744 `instance : SMul S (M \u2192\u209b\u2097[\u03c3\u2081\u2082] M\u2082)` needs only `[DistribSMul S M\u2082] [SMulCommClass R\u2082 S M\u2082]`, both available for `S := K` via Mathlib/Algebra/Algebra/Basic.lean:427 `IsScalarTower.to_smulCommClass'`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Do not register `Module.compHom` globally. Either make `tangentSpace` a semireducible `def` (or `RestrictScalars K \u03ba(0) (ZariskiTangentSpace A.toScheme A.zeroPoint)`) and re-declare the \u03ba(0)- and K-instances on that synonym, or supply `Module K (ZariskiCotangentSpace A.toScheme A.zeroPoint)` with `IsScalarTower K \u03ba(0) _` and let Mathlib's `LinearMap.module` define the K-structure pointwise; drop the then-redundant `isScalarTower_tangentSpace`.",
+   "issue": "`tangentSpaceModule` registers `Module.compHom` as a global instance on `A.tangentSpace`, which is a chain of `abbrev`s (`tangentSpace` \u2192 `ZariskiTangentSpace` \u2192 `Module.Dual`) reducing to `ZariskiCotangentSpace \u2192\u2097[\u03ba(0)] \u03ba(0)`. Once the `Algebra K \u03ba(0)` instance at line 183 is in scope, Mathlib's `LinearMap.instSMul` already supplies a (pointwise) `SMul K` on that same type, so the public tangent space has two competing K-action paths that agree only up to non-reducible defeq. `isScalarTower_tangentSpace` (line 216) likewise duplicates `LinearMap.instIsScalarTower`, and `smul_tangentSpace_def` (line 211) states an equation whose LHS may elaborate with the pointwise instance rather than the declared one.",
+   "line": 206
+  },
+  {
+   "evidence": "Mathlib/AlgebraicGeometry/ResidueField.lean:189-191 `@[simp] residueFieldCongr_refl : X.residueFieldCongr (refl x) = Iso.refl _`; lines 197-199 `@[simp] residueFieldCongr_inv (e : x = y) : (X.residueFieldCongr e).inv = (X.residueFieldCongr e.symm).hom` (matches any `e`).",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "State all four lemmas without the `residueFieldCongr` factor \u2014 the two residue-field types are definitionally equal, which is exactly what the embedded `by rfl` proves, so the equations still typecheck.",
+   "issue": "The four public normal-form lemmas `zeroResidueFieldIso_hom` (93), `zeroResidueFieldIso_inv` (109), `zeroResidueFieldRingEquiv_apply` (153) and `zeroResidueFieldRingEquiv_symm_apply` (167) state a right-hand side containing a no-op `(A.toScheme.residueFieldCongr (by rfl : A.zeroPoint = A.zeroSection _))` factor. `Scheme.residueFieldCongr_refl` cannot eliminate it (its pattern needs a syntactic `refl`, and `zeroPoint` is a semireducible `def`), so the cast is stuck in every simp output; and `Scheme.residueFieldCongr_inv` does match the `.inv` occurrences, so the advertised RHS of lemmas 109/167 is not the actual simp normal form.",
+   "line": 93
+  },
+  {
+   "evidence": "Line 183-185 `instance (A : AbelianVariety K) : Algebra K \u2026` (no name); line 192-196 `zeroResidueFieldRingEquiv_algebraMap` proves the round trip via `rw [RingHom.algebraMap_toAlgebra]`, the step every consumer would otherwise have to repeat.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Name the instance (e.g. `algebraZeroResidueField`) and add the characterizing lemma `algebraMap K (IsLocalRing.ResidueField \u2026) k = A.zeroResidueFieldRingEquiv.symm k`.",
+   "issue": "The `Algebra K (IsLocalRing.ResidueField (A.toScheme.presheaf.stalk A.zeroPoint))` instance \u2014 the load-bearing piece of the whole K-structure \u2014 is anonymous (auto-generated, unstable name), unlike every other instance in the file, and has no defining lemma: only the derived round-trip `zeroResidueFieldRingEquiv_algebraMap` is provided, so consumers meeting `algebraMap K \u03ba(0) k` must unfold `RingHom.toAlgebra` by hand.",
+   "line": 183
+  }
+ ],
+ "head_sha": "c8a62bea95940c1d168732e4b088d23fa84dc0ec",
+ "merge_base_sha": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2426,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5c8d1d756d80bc72ba90de17046dd396b7c73543813355431536e6cb5c36caa2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T010142Z-2426-api-design-c37d2e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T01:01:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The K-structure on `T\u2080A` is installed by registering `Module.compHom` as a global instance on a reducible synonym for `Module.Dual \u03ba(0) _`, which Mathlib documents as a non-instance and which already carries a competing `SMul K` from `LinearMap.instSMul`; separately, four public normal-form lemmas advertise an RHS containing a no-op `residueFieldCongr` cast that simp cannot remove, and the new `Algebra K \u03ba(0)` instance is anonymous and has no `algebraMap` characterization.",
+ "transcript_blob": "5fbe8d9eddca6be4a3f6e36dd71e022a0deec1f4ff7d67226de47f67f062ae2f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 116392,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 116392,
+  "cache_read_input_tokens": 3426776,
+  "inference_geo": "not_available",
+  "input_tokens": 69,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1123,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1123,
+    "cache_read_input_tokens": 131476,
+    "input_tokens": 2,
+    "output_tokens": 6348,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 49470,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

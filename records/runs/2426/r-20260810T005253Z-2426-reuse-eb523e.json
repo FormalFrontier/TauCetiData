@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.203484,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 306.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 84308,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 84308,
+    "cache_read_input_tokens": 1520604,
+    "inference_geo": "not_available",
+    "input_tokens": 38,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 295,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 295,
+      "cache_read_input_tokens": 100220,
+      "input_tokens": 2,
+      "output_tokens": 2348,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23526,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "cost_usd": 2.203484,
+ "dedupe_key": "TauCetiProject/TauCeti|2426|c8a62bea95940c1d168732e4b088d23fa84dc0ec|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "diff_sha256": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "duration_s": 306.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/AlgebraicGeometry/ResidueField.lean:346-350 `def SpecToEquivOfField ... toFun f := \u27e8_, X.descResidueField (Scheme.stalkClosedPointTo f)\u27e9`; Mathlib/AlgebraicGeometry/ResidueField.lean:78 `def descResidueField ... : X.residueField x \u27f6 .of K`. The factorization the file builds by hand is Mathlib/AlgebraicGeometry/ResidueField.lean:363 `descResidueField_stalkClosedPointTo_comp : descResidueField (stalkClosedPointTo (g \u226b f)) = Hom.residueFieldMap f (g (closedPoint K)) \u226b descResidueField (stalkClosedPointTo g)`, which with `g := \ud835\udfd9 (Spec (.of K))`, `f := A.zeroSection` gives precisely `zeroSection.residueFieldMap \u226b (base identification)`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Drop `baseResidueFieldIso` and build the hom direction as `A.toScheme.descResidueField (Scheme.stalkClosedPointTo A.zeroSection) : A.toScheme.residueField A.zeroPoint \u27f6 .of K` (its type already matches, since `A.zeroPoint` is `A.zeroSection (IsLocalRing.closedPoint K)` by `rfl`), keeping `residueFieldIsoOfSection` only for the `IsIso` witness.",
+   "issue": "`baseResidueFieldIso` and the composite it feeds into (`zeroResidueFieldIso`, and its unfolding at lines 93-100) assemble by hand the canonical map `\u03ba(x) \u27f6 K` attached to a `K`-point, which Mathlib already provides as `X.descResidueField (Scheme.stalkClosedPointTo f)` \u2014 the forward map of `Scheme.SpecToEquivOfField`. The pieces `Scheme.Spec.residueFieldIso` and `Ideal.algEquivResidueFieldOfField` are exactly the plumbing that combinator hides.",
+   "line": 76
+  },
+  {
+   "evidence": "Bodies at 162 (`rw [zeroResidueFieldRingEquiv_apply_eq_iso_hom, zeroResidueFieldIso_hom]`) and 179 show the lemmas are the iso lemmas transported by a `rfl` step; the bridges' bodies at 139-140 and 147-148 are `change \u2026; rfl`. Mathlib/Algebra/Category/Ring/Basic.lean:752 `@[simp] lemma commRingCatIsoToRingEquiv_toRingHom (e : R \u2245 S) : (e.commRingCatIsoToRingEquiv : R \u2192+* S) = e.hom.hom := rfl`. Grep for each of the four names in `TauCeti/` finds only their own declaration and proof sites.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Delete `zeroResidueFieldRingEquiv_apply`, `zeroResidueFieldRingEquiv_symm_apply`, `zeroResidueFieldRingEquiv_apply_eq_iso_hom` and `zeroResidueFieldRingEquiv_symm_apply_eq_iso_inv`; keep only `zeroResidueFieldIso_hom`/`_inv`, and reach the ring-equiv form through Mathlib's `Iso.commRingCatIsoToRingEquiv_toRingHom` with `RingEquiv.coe_toRingHom`.",
+   "issue": "`zeroResidueFieldRingEquiv_apply` (153) and `zeroResidueFieldRingEquiv_symm_apply` (167) are `zeroResidueFieldIso_hom` (93) and `zeroResidueFieldIso_inv` (109) restated in the `RingEquiv` bundling \u2014 identical right-hand composites, all four marked `@[simp]` \u2014 and the bridges at 135 and 144 are the per-iso case of Mathlib's generic `Iso.commRingCatIsoToRingEquiv_toRingHom`. Six declarations describe two maps; nothing in the repo consumes any of them.",
+   "line": 153
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/Dimension/StrongRankCondition.lean:489-491 (namespace `Module`, lines 424-549) `theorem finrank_of_bijective_algebraMap {R S} [CommSemiring R] [Semiring S] [Algebra R S] [StrongRankCondition R] (h : Bijective (algebraMap R S)) : finrank R S = 1 := by rw [\u2190 (AlgEquiv.ofBijective (Algebra.ofId R S) h).toLinearEquiv.finrank_eq, finrank_self]`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Replace the proof with `Module.finrank_of_bijective_algebraMap (by rw [RingHom.algebraMap_toAlgebra]; exact A.zeroResidueFieldRingEquiv.symm.bijective)`; the `Algebra` instance at line 183 is `zeroResidueFieldRingEquiv.symm.toRingHom.toAlgebra`, so its `algebraMap` is that equivalence.",
+   "issue": "`finrank_zeroResidueField`'s proof (230-232) constructs `Module.compHom.toLinearEquiv` and applies `LinearEquiv.finrank_eq` + `Module.finrank_self` \u2014 literally the body of Mathlib's `Module.finrank_of_bijective_algebraMap`.",
+   "line": 228
+  }
+ ],
+ "head_sha": "c8a62bea95940c1d168732e4b088d23fa84dc0ec",
+ "merge_base_sha": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2426,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "93ea72e7549bfcc6c3886e07c97bad27fcf6395d8ed4433171d1af07ed6bcef4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T005253Z-2426-reuse-eb523e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T00:52:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior round's four `inferInstance`/`Subspace.dual_finrank_eq` restatements are gone, so nothing here is directly replaced by an existing declaration. Three duplication issues remain: a hand-assembled residue-field comparison that Mathlib's `Scheme.descResidueField (Scheme.stalkClosedPointTo \u00b7)` already supplies, a doubled simp API for one isomorphism, and one proof re-deriving `Module.finrank_of_bijective_algebraMap`.",
+ "transcript_blob": "a90e1096d0495541647c7330a9d721ee973ece27262ee63f655d40852a1216cd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 84308,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 84308,
+  "cache_read_input_tokens": 1520604,
+  "inference_geo": "not_available",
+  "input_tokens": 38,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 295,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 295,
+    "cache_read_input_tokens": 100220,
+    "input_tokens": 2,
+    "output_tokens": 2348,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23526,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

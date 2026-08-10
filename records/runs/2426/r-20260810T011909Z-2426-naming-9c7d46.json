@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.806995,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 305.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72926,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72926,
+    "cache_read_input_tokens": 980052,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2797,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2797,
+      "cache_read_input_tokens": 86336,
+      "input_tokens": 2,
+      "output_tokens": 5774,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22788,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "cost_usd": 1.806995,
+ "dedupe_key": "TauCetiProject/TauCeti|2426|c8a62bea95940c1d168732e4b088d23fa84dc0ec|naming|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "diff_sha256": "94645397dea358c607c6559c400eba7feb157a1160b1ef098a1d6e1b9956e457",
+ "duration_s": 305.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Same PR: `abbrev ZariskiTangentSpace (X : Scheme.{u}) (x : X) : Type u` (TangentSpace/Basic.lean:57); Mathlib `abbrev CotangentSpace : Type _` (mathlib/Mathlib/RingTheory/Ideal/Cotangent.lean:304); repo `abbrev CodimensionOnePoint (X : Scheme.{u}) : Type u` (WeilDivisor/Scheme/Basic.lean:42), `abbrev Cohomology \u2026 : Type u` (Cohomology/Basic.lean:56).",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Rename to `AbelianVariety.TangentSpace`; lemma stems (`finrank_tangentSpace_\u2026`, `tangentSpaceModule`) stay lowerCamel by rule 5, so only the definition and its type-position uses change.",
+   "issue": "`abbrev tangentSpace (A : AbelianVariety K) : Type u` is a Type-valued declaration named in lowerCamelCase, contradicting naming rules 2-3 and the same PR's `ZariskiTangentSpace`/`ZariskiCotangentSpace`.",
+   "line": 201
+  },
+  {
+   "evidence": "`Algebra.compHom_smul_def (s : S) (x : A) : s \u2022 x = \u2026` (mathlib/Mathlib/Algebra/Algebra/Defs.lean:350) and `MulAction.compHom_smul_def` (mathlib/Mathlib/Algebra/Group/Action/Hom.lean:60) \u2014 object stem first, then `smul_def`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Rename to `tangentSpace_smul_def`.",
+   "issue": "`smul_tangentSpace_def` reverses Mathlib's word order for the `Module.compHom` unfolding lemma, and reads as if `tangentSpace` were the scaled term; the LHS is `k \u2022 v` with no `tangentSpace` subterm.",
+   "line": 211
+  },
+  {
+   "evidence": "Naming conventions list no `over` connective; the only Mathlib `_over_` names are about the `Over` category (`Mathlib/AlgebraicTopology/ModelCategory/Over.lean:47 cofibrations_over_def`) or literal division (`cos_pi_over_two_pow`). `A.toOver.hom` occurs at line 57 of the same file.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Rename to `finrank_tangentSpace_eq_finrank_residueField_tangentSpace` (or `finrank_tangentSpace_eq_finrank_residueField_dual`), naming the second base ring directly instead of `over`.",
+   "issue": "`finrank_tangentSpace_eq_finrank_over_residueField` uses `over` as a base-field connective; `over` is not in the naming dictionary, and in this file `Over` is the comma category (`A.toOver`, `Over.tensorUnit_hom`), so the stem is ambiguous.",
+   "line": 236
+  },
+  {
+   "evidence": "Naming conventions: \"`_`-separated strings in a lemma name correspond to a definition name or connective\"; grep for `zeroResidueField ` in code/TauCeti finds only `zeroResidueFieldIso`, `zeroResidueFieldRingEquiv` and their lemmas, no `zeroResidueField`.",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Introduce `abbrev zeroResidueField (A : AbelianVariety K) := IsLocalRing.ResidueField (A.toScheme.presheaf.stalk A.zeroPoint)` and use it in the statements, or rename the lemma to `finrank_residueField_stalk_zeroPoint`.",
+   "issue": "`finrank_zeroResidueField` has a `_`-separated stem `zeroResidueField` that corresponds to no declaration; the subject is `IsLocalRing.ResidueField (A.toScheme.presheaf.stalk A.zeroPoint)`, spelled out in ~10 statements in this file.",
+   "line": 228
+  },
+  {
+   "evidence": "`AbelianVariety.End.toHom_zero : toHom (0 : End A) = 1` (End/Basic.lean:115) and `mulBy_zero (A) : mulBy A 0 = 1` (End/Basic.lean:257) use `1` for the identity morphism; `Hom.mk'` carries `one_f : \u03b7[A.toOver] \u226b f = \u03b7[B.toOver]` (Hom/Basic.lean:53); the new definition is literally `\u03b7[A.toOver].left` (TangentSpace.lean:53).",
+   "file": "TauCeti/AlgebraicGeometry/AbelianVariety/TangentSpace.lean",
+   "fix": "Rename the `zero`-stem declarations to the `one` stem (`oneSection`, `onePoint`, `oneResidueFieldIso`, `oneResidueFieldRingEquiv`, `toOver_hom_onePoint`, `oneSection_comp_toOver_hom`), matching `\u03b7[A.toOver]` = `MonObj.one`.",
+   "issue": "`zeroSection`/`zeroPoint`/`zeroResidueFieldIso`/`zeroResidueFieldRingEquiv` name the group identity additively, while the rest of the abelian-variety API in the same namespace denotes it multiplicatively; the docstrings themselves say \"identity section\"/\"identity point\", so no name in the repo leads a reader to these.",
+   "line": 52
+  }
+ ],
+ "head_sha": "c8a62bea95940c1d168732e4b088d23fa84dc0ec",
+ "merge_base_sha": "f3aea2e6bd3100feac0feeb228a775c14798771f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2426,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "891b71c88b43cd04c990fd3cb102975725d51399a331394c9ec58faac1681a13",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260810T011909Z-2426-naming-9c7d46",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-10T01:19:09Z",
+ "submitted_by": "kim-em",
+ "summary": "Names are mostly descriptive, but the abelian-variety tangent space is a Type-valued abbrev in lowerCamelCase (inconsistent with its own sibling `ZariskiTangentSpace`), the smul unfolding lemma reverses Mathlib's `compHom_smul_def` word order, one lemma uses a non-connective `_over_` in a file where `Over` is a category, and one stem names no declaration.",
+ "transcript_blob": "c3672163a4f2c76e44c9652f2ea907fff80cf019f17d231d3ec95544dc93ae53",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72926,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72926,
+  "cache_read_input_tokens": 980052,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2797,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2797,
+    "cache_read_input_tokens": 86336,
+    "input_tokens": 2,
+    "output_tokens": 5774,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22788,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
