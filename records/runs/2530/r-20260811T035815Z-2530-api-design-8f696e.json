@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.014088,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 327.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87334,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87334,
+    "cache_read_input_tokens": 916742,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6475,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6475,
+      "cache_read_input_tokens": 97358,
+      "input_tokens": 2,
+      "output_tokens": 2319,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26657,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8ef54682f8f3d44f0d97a64b03adf4091f072b16",
+ "cost_usd": 2.014088,
+ "dedupe_key": "TauCetiProject/TauCeti|2530|88d6ba0a076581dc8bbdcccd83c3163988126d67|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "diff_sha256": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "duration_s": 327.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`signatureSwitchSplitIndexEquiv` (line 733) builds the split only from `splitLastEquiv (p + 1)`, and `splitLastEquiv n : Fin (n + 1) \u2243 Fin n \u2295 Fin 1` (line 428) is generic in `n`; `signatureSwitchSplitWeight_inl` (line 768) and `_inr` (line 789) discharge via `realCliffordWeight_of_lt`/`_of_le` with `i.castSucc.isLt` and `simp`, none of which assume `1 \u2264 p`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "State it as `(realCliffordForm (p + 1) q).IsometryEquiv ((realCliffordForm p q).prod (QuadraticMap.sq ..))`, with `realCliffordPositiveSplitIsometry_fst_pos` at `i : Fin p`, `_fst_neg` at `i : Fin q`, `_snd` at `Fin.castAdd q (Fin.last p)`; instantiate at `p + 1` inside `realCliffordSignatureSwitchRecurrenceEquiv` (line 1038), whose own `p + 1 + 1` indexing is correct and unchanged.",
+   "issue": "`realCliffordPositiveSplitIsometry` is published only as `(realCliffordForm (p + 1 + 1) q).IsometryEquiv ((realCliffordForm (p + 1) q).prod sq)`, but nothing in the construction needs two positive coordinates. Its docstring (\"splits the last positive coordinate from a real signature\") promises the general fact; a consumer wanting `Cl-form(1, q) \u2245 Cl-form(0, q) \u229e \u27e81\u27e9` (p = 0) cannot get it and must restate and re-prove the whole block.",
+   "line": 812
+  },
+  {
+   "evidence": "`signatureSwitchStandardIndexEquiv` (line 877) uses `splitLastEquiv q`, `Equiv.sumAssoc`, `Equiv.sumComm (Fin 1) (Fin (p + 1))`, `Equiv.sumComm (Fin q) (Fin (p + 1))` and `finSumFinEquiv` \u2014 every step is generic in the second block size; `signatureSwitchStandardWeight_inl` (line 913) closes with `realCliffordWeight_of_le`/`_of_lt` plus `simp`/`norm_num`, with no lower bound on `p`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "State it as `((-(realCliffordForm p q)).prod (QuadraticMap.sq ..)).IsometryEquiv (realCliffordForm (q + 1) p)`, with `_neg` at `i : Fin p` and `x : Fin (p + q) \u2192 \u211d` (`_pos` and `_last_positive` unchanged apart from the index type); instantiate at `p + 1` in `realCliffordSignatureSwitchRecurrenceEquiv`.",
+   "issue": "Same defect, second instance: `realCliffordSignSwitchStandardIsometry` is published as `((-(realCliffordForm (p + 1) q)).prod sq).IsometryEquiv (realCliffordForm (q + 1) (p + 1))` although its construction is generic in `p`. The `p = 0` case is exactly the boundary identity `Cl(1, q) \u2245 Cl(q + 1, 0)` (compose `realCliffordPositiveSplitIsometry` at p = 0, `signSwitchEquiv`, and this isometry), which the mod-8 classification needs and which this PR's surface cannot state.",
+   "line": 962
+  }
+ ],
+ "head_sha": "88d6ba0a076581dc8bbdcccd83c3163988126d67",
+ "merge_base_sha": "671091ae4d4ff844de3ac9f31bb7d8a4610d75ba",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2530,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6e417f59e0933446ab2d9923213c3d78341a1ed31050c64d9910d666533026fe",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T035815Z-2530-api-design-8f696e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T03:58:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The `SignSwitch.lean` surface is minimal and correctly characterized, but the two new public coordinate isometries in `BottPeriodicity.lean` are published at an artificially narrowed index (`p + 1` where their construction is generic in `p`), so the general one-line-peel and sign-switch-to-standard facts \u2014 including the `p = 0` boundary `Cl(1,q) \u2245 Cl(q+1,0)` the mod-8 table needs \u2014 are not expressible from this PR's API.",
+ "transcript_blob": "f290d5eb806e463a9ea29ae83417381c010599ea36004673d479f4a3c34bca9a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87334,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87334,
+  "cache_read_input_tokens": 916742,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6475,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6475,
+    "cache_read_input_tokens": 97358,
+    "input_tokens": 2,
+    "output_tokens": 2319,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26657,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

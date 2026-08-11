@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7181279999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 261.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72124,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72124,
+    "cache_read_input_tokens": 949204,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1384,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1384,
+      "cache_read_input_tokens": 87239,
+      "input_tokens": 2,
+      "output_tokens": 5188,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20264,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8ef54682f8f3d44f0d97a64b03adf4091f072b16",
+ "cost_usd": 1.718128,
+ "dedupe_key": "TauCetiProject/TauCeti|2530|88d6ba0a076581dc8bbdcccd83c3163988126d67|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "diff_sha256": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "duration_s": 261.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Logic/Equiv/Fin/Basic.lean:235 `@[simp] theorem finSumFinEquiv_apply_left (i : Fin m) : (finSumFinEquiv (Sum.inl i) : Fin (m + n)) = Fin.castAdd n i`; :240 the `Sum.inr`/`Fin.natAdd` analogue.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "Rewrite with `finSumFinEquiv_apply_left` / `finSumFinEquiv_apply_right` (both `@[simp]`) instead of the `show ... by ext; rfl` steps, and drop the trailing `congr 1`; use `simp` for the `isLt` side goals as at line 779.",
+   "issue": "Index conversions between `Fin.castAdd`/`Fin.natAdd` and `finSumFinEquiv` are done with anonymous `show ... by ext; rfl` and closed with a bare `congr 1`, i.e. undocumented definitional equality, although named simp lemmas exist. Same pattern at lines 862-864, 874-875, 996-1002, 1013-1017, 1028-1034; also `exact i.castSucc.isLt` / `exact i.isLt` at 777, 923, 927 rely on `\u2191(finSumFinEquiv (Sum.inl x)) \u2261 \u2191x` (line 779 uses `simpa` for the identical goal).",
+   "line": 849
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Algebra/Equiv.lean:493 `theorem ofAlgHom_symm (f) (g) (h\u2081 h\u2082) : (ofAlgHom f g h\u2081 h\u2082).symm = ofAlgHom g f h\u2082 h\u2081`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/SignSwitch.lean",
+   "fix": "`rw [signSwitchEquiv, AlgEquiv.ofAlgHom_symm, AlgEquiv.ofAlgHom_apply, signSwitchTo_\u03b9, signSwitchGenerator_apply]` and delete the `change`.",
+   "issue": "`change signSwitchTo (-P) P (neg_neg P).symm (\u03b9 _ x) = _` reaches the inverse map only through the defeq of `(AlgEquiv.ofAlgHom f g h\u2081 h\u2082).symm` with `g`; the comment states what is exposed, not why no lemma route exists \u2014 one does.",
+   "line": 171
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/QuadraticForm/IsometryEquiv.lean:93-97 `@[simps] def toIsometry ...`; the PR passes the def name to `simp only` rather than the generated equation.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "Use the `@[simps]`-generated `QuadraticMap.IsometryEquiv.toIsometry_apply` and `CliffordAlgebra.equivOfIsometry_apply` to finish, or, if a residual defeq step is unavoidable, add a comment stating exactly which identification the `rfl` performs.",
+   "issue": "`realCliffordSignatureSwitchRecurrenceEquiv_\u03b9` ends with `simp only [..., QuadraticMap.IsometryEquiv.toIsometry]` \u2014 unfolding a Mathlib definition \u2014 followed by a bare undocumented `rfl` closing a non-trivial goal. Brittle against any change to `toIsometry`'s definition.",
+   "line": 1069
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Pi.lean:497 `@[simps +simpRhs] def piCongrLeft'`, :507 `def piCongrLeft` (no equation lemmas); mathlib/Mathlib/Logic/Equiv/Basic.lean:871 `@[simp, grind =] lemma piCongrLeft_apply_apply`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "Define `signatureSwitchStandardLinearEquiv` via `(LinearEquiv.piCongrLeft' \u211d _ (signatureSwitchStandardIndexEquiv p q)).symm` (which carries `@[simps +simpRhs]` equations) or route through `Equiv.piCongrLeft_apply_apply`, and remove the def names from the `simp` sets.",
+   "issue": "`signatureSwitchStandardLinearEquiv_inl` and `_inr` (line 958) are proved by unfolding three Mathlib definitions (`LinearEquiv.piCongrLeft`, `LinearEquiv.piCongrLeft'`, `Equiv.piCongrLeft'`) inside `simp`, so any refactor of those defs breaks them; the sibling `signatureSwitchSplitLinearEquiv_fst/_snd` need only `simp [def]` because they are built from `piCongrLeft'`.",
+   "line": 947
+  },
+  {
+   "evidence": "SignSwitch.lean:78-118; `hterm1`\u2013`hterm4` are pure associativity/centrality bookkeeping independent of the Clifford setting.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/SignSwitch.lean",
+   "fix": "Factor the algebra out: from `r*e = e*r` and `v*e = -(e*v)` one gets `e*v + r*e = e*(v + r)` and `(v + r)*e = e*(r - v)`, hence the square is `(r - v)*(v + r) = r*r - v*v` in a few lines; state that as a private ring-level lemma (hypotheses `e*e = 1`, `v*e = -(e*v)`, `r` central) and apply it, which also removes both `change`s.",
+   "issue": "`signSwitchGenerator_sq` spends 59 lines expanding `(e*v + r*e)^2` into four `hterm` calc blocks, and needs two `change`s (lines 80, 84) just to rename subterms to the `let` variables.",
+   "line": 60
+  },
+  {
+   "evidence": "Compare BottPeriodicity.lean:473-490 with 768-787 and 913-931, and 516-534 with 816-838.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "Factor a private helper taking an index equiv `e : Fin n \u2243 Fin m \u2295 Fin 1` plus its two weight-transport hypotheses and producing the isometry `(realCliffordForm ..).IsometryEquiv ((c \u2022 realCliffordForm ..).prod (QuadraticMap.sq))`, then instantiate it three times instead of repeating the calc.",
+   "issue": "The `signatureSwitchSplit*` (733-838) and `signatureSwitchStandard*` (877-985) blocks are two more copies of the existing `realBott*` block (433-534): same `finSumFinEquiv.symm \u2218 splitLastEquiv \u2218 sumAssoc` shape, same three `symm_inl_pos/_inl_neg/_inr` proofs, same `rw [\u2190 finSumFinEquiv.apply_symm_apply]; rcases; realCliffordWeight_of_lt/_of_le` weight proofs, and the same `Fintype.sum_sum_type` + `Fintype.sum_equiv` calc for `map_app'`.",
+   "line": 733
+  }
+ ],
+ "head_sha": "88d6ba0a076581dc8bbdcccd83c3163988126d67",
+ "merge_base_sha": "671091ae4d4ff844de3ac9f31bb7d8a4610d75ba",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2530,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "01d9de02602230c51dfa57e9043c9b1b8f9be7cc6694116e1d5e7c3223ad7098",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T041444Z-2530-proof-quality-fd938b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T04:14:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new coordinate lemmas repeatedly close goals with `congr 1` and ad-hoc `show ... by ext; rfl` on `Fin` indices where Mathlib's named simp lemmas (`finSumFinEquiv_apply_left/right`, `Prod.mk_zero_zero`, `AlgEquiv.ofAlgHom_symm`) apply, and two proofs end on bare `rfl`/def-unfolding simp. The 59-line `signSwitchGenerator_sq` expansion and the triplicated index/isometry boilerplate should be factored.",
+ "transcript_blob": "39200a5a726ceea1e5d222d187a81095e8f1dbf2d067a475776629a50ee54b38",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72124,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72124,
+  "cache_read_input_tokens": 949204,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1384,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1384,
+    "cache_read_input_tokens": 87239,
+    "input_tokens": 2,
+    "output_tokens": 5188,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20264,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

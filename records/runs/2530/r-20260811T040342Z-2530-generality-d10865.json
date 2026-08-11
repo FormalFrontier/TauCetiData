@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4955195000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 183.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87756,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87756,
+    "cache_read_input_tokens": 478327,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1847,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1847,
+      "cache_read_input_tokens": 102408,
+      "input_tokens": 2,
+      "output_tokens": 2293,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14534,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8ef54682f8f3d44f0d97a64b03adf4091f072b16",
+ "cost_usd": 1.49552,
+ "dedupe_key": "TauCetiProject/TauCeti|2530|88d6ba0a076581dc8bbdcccd83c3163988126d67|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "diff_sha256": "afbdf8fded5d2445b773d85ca1bf2aa6d07e2bd80cb9cf2da3098609ccc09523",
+ "duration_s": 183.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The proof uses only `splitLastEquiv (p + 1)` on the positive block (line 736) and `realCliffordWeight_of_lt`/`_of_le`; `splitLastEquiv n` is defined for all `n` (line 428). The sibling `realBottSplitIsometry` (line 512) is stated at the minimal indices `(p + 1, q + 1)`, so this is also inconsistent with the file's own convention.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "State it as `(realCliffordForm (p + 1) q).IsometryEquiv ((realCliffordForm p q).prod (QuadraticMap.sq))`, re-index `signatureSwitchSplitIndexEquiv`/`signatureSwitchSplitWeight_*`/the three `@[simp]` coordinate lemmas the same way, and instantiate at `p + 1` in `realCliffordSignatureSwitchRecurrenceEquiv` (whose statement is unchanged).",
+   "issue": "`realCliffordPositiveSplitIsometry` is exported only at `realCliffordForm (p + 1 + 1) q \u2243 (realCliffordForm (p + 1) q).prod sq`, i.e. it refuses to split the last positive coordinate off `Cliff(1, q)`. Nothing in the construction needs a positive coordinate to remain; the `+1` is an artifact of the one caller wanting `p + 2`.",
+   "line": 812
+  },
+  {
+   "evidence": "`signatureSwitchStandardIndexEquiv` (line 877) splits only the `q` block via `splitLastEquiv q`; `Fin (p + 1)` appears solely as a `sumComm`/`sumAssoc` block. The weight proofs use `i.isLt` and `finSumFinEquiv` bounds (lines 920-931), all uniform in `p`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "State it as `((-(realCliffordForm p q)).prod (QuadraticMap.sq)).IsometryEquiv (realCliffordForm (q + 1) p)` (with `signatureSwitchStandardIndexEquiv : Fin ((q + 1) + p) \u2243 Fin (p + q) \u2295 Fin 1` and the three `@[simp]` lemmas re-indexed), and apply it at `p + 1` in the recurrence.",
+   "issue": "Same defect in `realCliffordSignSwitchStandardIsometry`: it is stated only for `(-(realCliffordForm (p + 1) q)).prod sq \u2243 realCliffordForm (q + 1) (p + 1)`. The `p + 1` block is never split or inspected, so the restriction excludes the `p = 0` case (`-(realCliffordForm 0 q) \u2295 \u27e81\u27e9 \u2243 realCliffordForm (q+1) 0`) for no reason.",
+   "line": 962
+  },
+  {
+   "evidence": "Both routes give the same map: the fused equiv sends the `q`-block to `castAdd (p+1) (castSucc i)`, `r` to `castAdd (p+1) (last q)` and the `p+1`-block to `natAdd (q+1) i` (lines 990-1034), which is exactly block-swap followed by `(realCliffordPositiveSplitIsometry q p).symm`. No negation isometry for `realCliffordForm` exists in the repo: `grep -rn \"IsometryEquiv\" TauCeti/LinearAlgebra/CliffordAlgebra/*.lean` returns only lines 513, 813, 963 and the two `RealForm.lean` transports.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/BottPeriodicity.lean",
+   "fix": "Add `realCliffordFormNegIsometry (p q) : (-(realCliffordForm p q)).IsometryEquiv (realCliffordForm q p)` (pure block swap, no `splitLast`), and define the fused isometry as `(prodCongr that (refl sq)).trans (realCliffordPositiveSplitIsometry q p).symm` with the generalized split of finding 1.",
+   "issue": "`realCliffordSignSwitchStandardIsometry` fuses two independent facts \u2014 that negating a signature form swaps its signature, and that adjoining `sq` adds a positive coordinate \u2014 so the general statement `(-(realCliffordForm p q)).IsometryEquiv (realCliffordForm q p)` is never available, and ~70 lines of index/weight bookkeeping re-prove the same last-coordinate split as `signatureSwitchSplitIndexEquiv`.",
+   "line": 877
+  }
+ ],
+ "head_sha": "88d6ba0a076581dc8bbdcccd83c3163988126d67",
+ "merge_base_sha": "671091ae4d4ff844de3ac9f31bb7d8a4610d75ba",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2530,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cdefda863d1588c37f594c10a1f7f884252066ecf34dd656e312c6003e7937d1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T040342Z-2530-generality-d10865",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T04:03:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic sign switch sits at the right level, but both new public isometries are gratuitously indexed at `p + 1` positive coordinates when their proofs are uniform in `p`, and the sign-switch-to-standard isometry bakes in an unstated general fact (negating a signature form swaps `p` and `q`) instead of deriving from it.",
+ "transcript_blob": "8a5b3493707130ff834282606a9f3b8a43cd19440c07f5b030230af42af8a987",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87756,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87756,
+  "cache_read_input_tokens": 478327,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1847,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1847,
+    "cache_read_input_tokens": 102408,
+    "input_tokens": 2,
+    "output_tokens": 2293,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14534,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
