@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.25541,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 92160,
+    "input_tokens": 124510,
+    "output_tokens": 1586,
+    "reasoning_output_tokens": 685
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "59df6b2d0aeb12eefeb9c2a47d1f21e8131d721e",
+ "cost_estimated": true,
+ "cost_usd": 0.25541,
+ "dedupe_key": "TauCetiProject/TauCeti|2750|9290772368e6ff94fe5b2e01ab7af0ae5973d3e5|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9f28b3734079dfad1722e88378b0750615a9fa47508d71b413b2b9fa083152c9",
+ "diff_sha256": "9f28b3734079dfad1722e88378b0750615a9fa47508d71b413b2b9fa083152c9",
+ "duration_s": 41.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg \"TauCeti.Sym.toFn|TauCeti.Sym.ofFn_toFn\" code/TauCeti` finds uses only in `LinearAlgebra/SymmetricPower/Basis.lean`, besides their declarations.",
+   "file": "TauCeti/Data/Sym/Basic.lean",
+   "fix": "Keep the chosen section private to `SymmetricPower.Basis` (or replace it with a local choice argument) and remove `toFn`/`ofFn_toFn` from the public `Sym` API.",
+   "issue": "`TauCeti.Sym.toFn` publicly exposes an arbitrary, choice-dependent ordering although its docstring says only `ofFn_toFn` should be used; its only repository consumers are basis-construction internals.",
+   "line": 87
+  },
+  {
+   "evidence": "Lines 115\u2013160 expose the coordinate map and equivalence before defining `Basis.symmetricPower := Basis.ofRepr (linearEquivFinsupp n b)`; `rg` shows no consumers outside this file.",
+   "file": "TauCeti/LinearAlgebra/SymmetricPower/Basis.lean",
+   "fix": "Make these construction helpers private, retaining `Basis.symmetricPower`, `Basis.symmetricPower_apply`, and externally meaningful coordinate lemmas stated through `(b.symmetricPower n).repr`.",
+   "issue": "`toFinsupp`, `toFinsupp_tprod_basis`, `linearEquivFinsupp`, and `linearEquivFinsupp_symm_single` expose the internal construction of `Basis.symmetricPower`; the resulting basis already provides the canonical `repr` equivalence and basis-vector accessor.",
+   "line": 115
+  }
+ ],
+ "head_sha": "9290772368e6ff94fe5b2e01ab7af0ae5973d3e5",
+ "merge_base_sha": "7faade59fcce263770794c16e8b9bd6008330b41",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2750,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3963c9bb989637cc30406109dfd27ba1f31402cc4a9da16fbdd54caac28aaae6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T050134Z-2750-api-design-ec4321",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T05:01:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The canonical basis and lift APIs are useful, but the PR publicly exposes several proof-construction artifacts and a noncanonical ordering choice that have no independent external role.",
+ "transcript_blob": "7f5080e25fecd3d51168d8388180da0287b4444590eaa351e6d60afb1559e6b5",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 92160,
+  "input_tokens": 124510,
+  "output_tokens": 1586,
+  "reasoning_output_tokens": 685
+ },
+ "verdict": "request_changes"
+}
