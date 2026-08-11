@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.327355,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 63.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 140800,
+    "input_tokens": 179609,
+    "output_tokens": 2097,
+    "reasoning_output_tokens": 609
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5a85bab36d05bcb875dd81b945f370e8ab8a7290",
+ "cost_estimated": true,
+ "cost_usd": 0.327355,
+ "dedupe_key": "TauCetiProject/TauCeti|2766|d9eef6ec12ea743fdb7ea38827f2b5c6aa604fab|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "270680ae8f9e54a60fa7dd1bdb9b1177b0fc6c664d121fed5bfcf75bae003b2d",
+ "diff_sha256": "270680ae8f9e54a60fa7dd1bdb9b1177b0fc6c664d121fed5bfcf75bae003b2d",
+ "duration_s": 63.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Nearby public properties provide `finiteTypeCommHopfAlgProperty_iff`, `smoothCommHopfAlgProperty_iff`, and `groupLikeSpannedProperty_iff`; grep finds no corresponding intrinsic `multiplicativeTypeCommHopfAlgProperty_iff`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/MultiplicativeType/Basic.lean",
+   "fix": "Add a `@[simp]` membership theorem characterizing the property by `groupLikeSpannedProperty` on the base change (or directly by the group-like span equation).",
+   "issue": "The defining intrinsic membership condition is only accessible by unfolding; the sole iff theorem at line 75 changes it to an existential presentation instead.",
+   "line": 60
+  },
+  {
+   "evidence": "Lines 81\u201387 only define the iso; repository grep finds no `baseChangeCoordinateRingIso` lemmas, while the underlying equivalence\u2019s formulas are at `Algebra/Bialgebra/MonoidAlgebra/BaseChange.lean:76` and `:85`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/BaseChange.lean",
+   "fix": "Add simp-facing projection/application lemmas for the hom and inverse, delegating to `MonoidAlgebra.scalarTensorBialgEquiv_tmul` and `scalarTensorBialgEquiv_symm_single`.",
+   "issue": "The opaque bundled isomorphism has no API identifying its underlying bialgebra equivalence or describing its hom/inv on tensors and monomials, so consumers must unfold its body.",
+   "line": 81
+  },
+  {
+   "evidence": "`DiagonalizableGroup.coordinateRing` accepts `G : FGCommGrpCat.{v}` independently of `R : Type u`, and `FiniteTypeCommHopfAlgCat.baseChange` supports carrier universe `v` independently of both base rings.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/BaseChange.lean",
+   "fix": "Quantify `G` in an independent universe (the file already declares `w'`) and let the resulting category universe be inferred.",
+   "issue": "`G : FGCommGrpCat.{u}` ties the character-group universe to the source-ring universe, unlike the existing `coordinateRing` API, and excludes otherwise supported diagonalizable groups.",
+   "line": 83
+  }
+ ],
+ "head_sha": "d9eef6ec12ea743fdb7ea38827f2b5c6aa604fab",
+ "merge_base_sha": "5a85bab36d05bcb875dd81b945f370e8ab8a7290",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2766,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "90e5452aa9af85f3ce2ca19f33fb0cea4147ad7f736b87ac23e81d58cd16369d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T112630Z-2766-api-design-62de67",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T11:26:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The new property and bundled base-change isomorphism lack characteristic public lemmas, and the isomorphism unnecessarily restricts the character group\u2019s universe.",
+ "transcript_blob": "35eb00382492cce58fec577d16832f60fb13e2413d5639d4f9409b49ed22ce93",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 140800,
+  "input_tokens": 179609,
+  "output_tokens": 2097,
+  "reasoning_output_tokens": 609
+ },
+ "verdict": "request_changes"
+}
