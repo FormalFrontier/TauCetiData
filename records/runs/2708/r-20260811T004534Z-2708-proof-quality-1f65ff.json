@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2825630000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 181.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73052,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73052,
+    "cache_read_input_tokens": 336182,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7773,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7773,
+      "cache_read_input_tokens": 81778,
+      "input_tokens": 1,
+      "output_tokens": 2005,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14647,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f0ae0098ad60794eb65b14c9c2380242370ea1f3",
+ "cost_usd": 1.282563,
+ "dedupe_key": "TauCetiProject/TauCeti|2708|beb013ce3073150034a1d4d34025f4d8c942b8c3|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "376f28a6d613ad98c7c55f0b3b78467f9b38d55c4527623ef82110b7b87fef95",
+ "diff_sha256": "376f28a6d613ad98c7c55f0b3b78467f9b38d55c4527623ef82110b7b87fef95",
+ "duration_s": 181.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 278-286 and 330-336 are verbatim identical after renaming `v.1` to `i`; both are consumed only through `hgarm`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "State it once, e.g. `lemma starMark_some_eq (i : \u03b1) (s : Fin (\u2113 i)) : starMark \u2113 (some \u27e8i, s\u27e9) = ((\u2113 i : \u211a) + 1 - ((s : \u2115) + 1)) * \u220f j \u2208 ({i}\u1d9c : Finset \u03b1), ((\u2113 j : \u211a) + 1)`, the arm-vertex companion of the existing `starMark_none_eq`, and use it at both sites.",
+   "issue": "The closed form of the marks along an arm is re-derived inline instead of being a lemma. `sum_starCartanMatrix_mul_starMark_some` (278-286) and `sum_starCartanMatrix_mul_starMark_none` (330-336) each set up the same `Q`/`g` abbreviations and prove the same `hgarm : g (s + 1) = starMark \u2113 (some \u27e8i, s\u27e9)` by `rw [hg, starMark_some]; push_cast; ring`, differing only in `v.1` vs `i`.",
+   "line": 332
+  },
+  {
+   "evidence": "Lines 167-170 prove `starMark \u2113 none = ((\u2113 i : \u211a) + 1) * \u220f j \u2208 ({i}\u1d9c : Finset \u03b1), ((\u2113 j : \u211a) + 1)`; lines 382-383 re-prove the same splitting with `Finset.mul_prod_erase`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Derive `hterm` from `starMark_none_eq i` (rewrite `\u220f j, ((\u2113 j : \u211a) + 1) = ((\u2113 i : \u211a) + 1) * \u220f j \u2208 ({i}\u1d9c), \u2026` then `inv_mul_cancel_left\u2080`), or promote that product-splitting identity to its own lemma used by both.",
+   "issue": "Same problem, third instance: `hterm : ((\u2113 i : \u211a) + 1)\u207b\u00b9 * \u220f j, ((\u2113 j : \u211a) + 1) = \u220f j \u2208 ({i}\u1d9c), ((\u2113 j : \u211a) + 1)` is proved from scratch via `Finset.compl_singleton`/`Finset.mul_prod_erase`, which is exactly the content of the already-proved `starMark_none_eq i` (167-170) divided by `\u2113 i + 1`. `hsplit` at 353-359 does reuse `starMark_none_eq`; `hterm` does not.",
+   "line": 379
+  },
+  {
+   "evidence": "Lines 458, 483, 491, 499 carry the same rewrite; `Fintype.card_fin` also makes the `show \u2026 from by norm_num` unnecessary.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Factor a three-armed specialization, e.g. `theorem not_isFiniteType_starCartanMatrix_three {a b c : \u2115} (h : (b+1)*(c+1) + (a+1)*(c+1) + (a+1)*(b+1) \u2264 (a+1)*((b+1)*(c+1))) : \u00ac IsFiniteType (starCartanMatrix ![a, b, c])`, reducing each corollary to `by norm_num` and serving the downstream classification directly.",
+   "issue": "`arms_of_isFiniteType_star_three` (458) and the three affine corollaries (483, 491, 499) each repeat `rw [show (Fintype.card (Fin 3) : \u211a) = 3 from by norm_num, Fin.sum_univ_three]` plus the same `Matrix.cons_val_*` cleanup; the three corollary proofs are otherwise identical scripts.",
+   "line": 483
+  },
+  {
+   "evidence": "Line 126 vs lines 128-136; `chainEntry_self` already exists at line 89.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Either state it as `starCartanMatrix \u2113 none none = chainEntry 0 0` like the siblings, or prove the `= 2` form through `chainEntry_self 0` rather than raw `rfl`, so a later reformulation of `chainEntry` does not silently break it.",
+   "issue": "`starCartanMatrix_none_none : starCartanMatrix \u2113 none none = 2 := (rfl)` is the only one of the four unfolding lemmas whose `rfl` also evaluates `chainEntry 0 0` through its `if`-cascade, chaining defeq across two definitions whose bodies are deliberately unexposed; its siblings (128-136) stop at `chainEntry \u2026`.",
+   "line": 126
+  }
+ ],
+ "head_sha": "beb013ce3073150034a1d4d34025f4d8c942b8c3",
+ "merge_base_sha": "f0ae0098ad60794eb65b14c9c2380242370ea1f3",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2708,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8ef4c9cdee10d7296001dcd500ae8d92865cea3274480212cf0ddcfc5581d4ca",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T004534Z-2708-proof-quality-1f65ff",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T00:45:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are readable, commented, and use robust automation (omega, ring, linear_combination, nlinarith) with no change/show and no long brittle rewrite chains. The one real defect is a reusable fact about starMark along an arm that is never stated and is instead re-derived inline three times.",
+ "transcript_blob": "5ad3a249b4277dbc9624d5b2265459100601793a9a586f7a724a625b7bc505ca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73052,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73052,
+  "cache_read_input_tokens": 336182,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7773,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7773,
+    "cache_read_input_tokens": 81778,
+    "input_tokens": 1,
+    "output_tokens": 2005,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14647,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

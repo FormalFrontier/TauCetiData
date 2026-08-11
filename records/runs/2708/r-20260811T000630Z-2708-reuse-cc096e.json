@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.1883299999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 295.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 94046,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 94046,
+    "cache_read_input_tokens": 1364654,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1673,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1673,
+      "cache_read_input_tokens": 108872,
+      "input_tokens": 2,
+      "output_tokens": 2875,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21893,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f0ae0098ad60794eb65b14c9c2380242370ea1f3",
+ "cost_usd": 2.18833,
+ "dedupe_key": "TauCetiProject/TauCeti|2708|beb013ce3073150034a1d4d34025f4d8c942b8c3|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "376f28a6d613ad98c7c55f0b3b78467f9b38d55c4527623ef82110b7b87fef95",
+ "diff_sha256": "376f28a6d613ad98c7c55f0b3b78467f9b38d55c4527623ef82110b7b87fef95",
+ "duration_s": 295.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/NumberTheory/ADEInequality.lean:154 `theorem lt_three {p q r : \u2115+} (hpq : p \u2264 q) (hqr : q \u2264 r) (H : 1 < sumInv {p, q, r}) : p < 3`; :166 `lt_four`; :176 `lt_six`; :109 `sumInv_pqr`. No file under TauCeti/ mentions `ADEInequality` (grep for `ADEInequality|sumInv` returns no hits in TauCeti/).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Delete `three_arm_arith` together with the denominator-clearing scaffolding `hpa`/`hpb`/`hpc`/`hclear`/`hnat` at lines 461-471, `public import Mathlib.NumberTheory.ADEInequality`, and in `arms_of_isFiniteType_star_three` set `p : \u2115+ := \u27e8a+1, a.succ_pos\u27e9` (likewise `q`, `r`), turn `hbound` into `1 < ADEInequality.sumInv {p,q,r}` by `ADEInequality.sumInv_pqr` (`hbound` is already in the `(\u00b7)\u207b\u00b9` form the Mathlib lemmas want, so no `field_simp` is needed), then `lt_three` gives `a \u2264 1`, `lt_four` gives `b \u2264 2` in the `a = 1` branch, and `lt_six` gives `c \u2264 4` in the `b = 2` branch.",
+   "issue": "`three_arm_arith` re-proves Mathlib's ADE inequality classification. Mathlib's `ADEInequality.lt_three (hpq : p \u2264 q) (hqr : q \u2264 r) (H : 1 < sumInv {p,q,r}) : p < 3`, `ADEInequality.lt_four (hqr : q \u2264 r) (H : 1 < sumInv {2,q,r}) : q < 4` and `ADEInequality.lt_six (H : 1 < sumInv {2,3,r}) : r < 6` are exactly the three case-splitting steps of this private lemma, in the same `p \u2264 q \u2264 r` ordered form (`ADEInequality.admissible_of_one_lt_sumInv_aux'` chains them into the full classification).",
+   "line": 424
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/Cartan.lean:100-104 (`def A (n : \u2115)`); TauCeti/LinearAlgebra/RootSystem/FiniteType/Classical.lean:185 `isFiniteType_cartanMatrix_A`; TauCeti/LinearAlgebra/RootSystem/DynkinType.lean:220 `| .A n => CartanMatrix.A n`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Reuse Mathlib's matrix: either read the arm entries off `CartanMatrix.A` (with the `Fin` coercions the star already has via `Fin (\u2113 i)`), or, if the \u2115-indexed helper is kept for the unbounded positions, record and use the identity `chainEntry (i : Fin n) (j : Fin n) = CartanMatrix.A n i j` (provable by `simp [chainEntry, CartanMatrix.A]; grind`, the shape used at Classical.lean:171) so the two chain descriptions cannot drift.",
+   "issue": "`chainEntry s t = if s = t then 2 else if s = t + 1 then -1 else if t = s + 1 then -1 else 0` is Mathlib's `CartanMatrix.A` entry rule transcribed to \u2115 indices: `CartanMatrix.A n i j = if i = j then 2 else if i.val + 1 = j.val \u2228 j.val + 1 = i.val then -1 else 0`. This repo already treats `CartanMatrix.A` as the canonical chain (`isFiniteType_cartanMatrix_A`, `DynkinType.cartanMatrix_A`), so the star now carries a second, unconnected description of the same simply-laced chain, and nothing ties the one-armed star to type `A`.",
+   "line": 81
+  },
+  {
+   "evidence": "Star.lean:410-411 (one-line proof); TauCeti/LinearAlgebra/RootSystem/FiniteType/Basic.lean:45-46 documents `IsFiniteType.submatrix` as \"what lets a forbidden subdiagram rule out a diagram containing it\"; grep for `card_sub_two_lt_sum_inv_of_star_submatrix` finds only its own declaration.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star.lean",
+   "fix": "Delete it; a call site excluding a diagram writes `card_sub_two_lt_sum_inv_of_isFiniteType_star (heq \u25b8 h.submatrix he)` directly, which is the idiom `IsFiniteType.submatrix` was documented for in Basic.lean.",
+   "issue": "`card_sub_two_lt_sum_inv_of_star_submatrix` is a thin wrapper: its whole proof is `card_sub_two_lt_sum_inv_of_isFiniteType_star (heq \u25b8 h.submatrix he)`, composing two public declarations, and it has no consumer anywhere in the repository.",
+   "line": 407
+  }
+ ],
+ "head_sha": "beb013ce3073150034a1d4d34025f4d8c942b8c3",
+ "merge_base_sha": "f0ae0098ad60794eb65b14c9c2380242370ea1f3",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2708,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c46af9488a70bb899158a5a17b4efd5965eccb9e775f7374cd648b1f9593b27f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T000630Z-2708-reuse-cc096e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T00:06:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The star construction and the subdominant-vector elimination tool are genuinely new, but the three-armed arithmetic re-derives Mathlib's `ADEInequality` (`lt_three`/`lt_four`/`lt_six`) verbatim, and `chainEntry` restates the entry rule of `CartanMatrix.A`, which this repo already uses as its canonical chain matrix.",
+ "transcript_blob": "dedfaf8f23e0b4d4bb6998018080468888fcb5864baa8587a3ecd9934a1f51c4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 94046,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 94046,
+  "cache_read_input_tokens": 1364654,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1673,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1673,
+    "cache_read_input_tokens": 108872,
+    "input_tokens": 2,
+    "output_tokens": 2875,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21893,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
