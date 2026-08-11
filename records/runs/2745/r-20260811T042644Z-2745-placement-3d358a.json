@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.297605,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 112640,
+    "input_tokens": 151375,
+    "output_tokens": 1587,
+    "reasoning_output_tokens": 524
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0fe32b90b8a27d4a337424dce5fcd4d45f4a2af5",
+ "cost_estimated": true,
+ "cost_usd": 0.297605,
+ "dedupe_key": "TauCetiProject/TauCeti|2745|f816c23c03d25e876de4b2774c468a9b4c06e55f|placement|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "4841ee6fdfb92198c2ce0568951687b4aebc4dca14908780ffc9d87692babe60",
+ "diff_sha256": "4841ee6fdfb92198c2ce0568951687b4aebc4dca14908780ffc9d87692babe60",
+ "duration_s": 42.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declaration takes `t : YoungTableau \u03bc` and uses only `rowIndex_colIndex_mem` and Young-diagram facts; it has no `StandardYoungTableau` dependency.",
+   "file": "TauCeti/Combinatorics/Young/StandardTableau/Order.lean",
+   "fix": "Move it to `TauCeti/Combinatorics/Young/Tableau.lean` near the existing `rowIndex` declarations and update imports.",
+   "issue": "`YoungTableau.rowIndex_lt_card` concerns arbitrary tableaux and belongs with the `rowIndex` API, not standard-tableau order theory.",
+   "line": 54
+  },
+  {
+   "evidence": "Its statement mentions only `[LinearOrder \u03b1]`, `Finset \u03b1`, and `Equiv.Perm \u03b1`; Young tableaux do not occur.",
+   "file": "TauCeti/Combinatorics/Young/StandardTableau/Order.lean",
+   "fix": "Move it to an appropriate generic permutation/order module, such as a new `TauCeti/GroupTheory/Perm/Order.lean`, and import that here.",
+   "issue": "`perm_apply_eq_self_of_lt_iff_lt` is a generic theorem about permutations of finite subsets of any linear order, so exposing it under standard-tableau theory misplaces a broadly reusable API.",
+   "line": 123
+  },
+  {
+   "evidence": "The first is stated for arbitrary `YoungTableau`s using `tabloid_relabel` and the row subgroup; the second is stated for an arbitrary tableau using only `polytabloid_eq_sum` and coefficient operations.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Specht/StandardBasis.lean",
+   "fix": "Move both declarations into `TauCeti/RepresentationTheory/Symmetric/Specht/Module.lean` near the tabloid and polytabloid definitions respectively.",
+   "issue": "`tabloid_eq_iff_rowIndex_eq` is foundational tabloid API, while `polytabloid_coeff_eq_zero_of_forall_ne` at line 275 is foundational support API; neither depends on standard tableaux or the standard-basis result.",
+   "line": 176
+  }
+ ],
+ "head_sha": "f816c23c03d25e876de4b2774c468a9b4c06e55f",
+ "merge_base_sha": "dae83710798a9c9c1156698dd9afd1a09e441d13",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2745,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a093bee02ef3d5adbae3718f188fd8a23599a774b7a4dbafb0f36f04db0f177e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T042644Z-2745-placement-3d358a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T04:26:44Z",
+ "submitted_by": "kim-em",
+ "summary": "Several foundational or generic declarations are placed in downstream theorem files instead of their canonical API homes.",
+ "transcript_blob": "79af8292840225896beb9cf4c9447db70f8f9fa4d44f4d9af88f605f48073772",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 112640,
+  "input_tokens": 151375,
+  "output_tokens": 1587,
+  "reasoning_output_tokens": 524
+ },
+ "verdict": "request_changes"
+}
