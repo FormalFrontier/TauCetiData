@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.318545,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 86.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 156160,
+    "input_tokens": 192367,
+    "output_tokens": 1981,
+    "reasoning_output_tokens": 597
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "55621f9cd15e6202c7415cc79a87e8088bbbdfcd",
+ "cost_estimated": true,
+ "cost_usd": 0.318545,
+ "dedupe_key": "TauCetiProject/TauCeti|2737|92a885b010489e80181d449e3b12aec3254de95b|api-design|gpt-5.6-sol|ce88b39773d791a9|production|4",
+ "diff_blob": "b8894180b061ce5cd180f881a10dc889801ad616a01269ed750bf85359cb7daa",
+ "diff_sha256": "b8894180b061ce5cd180f881a10dc889801ad616a01269ed750bf85359cb7daa",
+ "duration_s": 86.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"indTerm_comp_subtype_mul\" code --glob '*.lean'` finds only its declaration and its use at line 313 in the same proof.",
+   "file": "TauCeti/RepresentationTheory/Induction/ClassFunction.lean",
+   "fix": "Make `indTerm_comp_subtype_mul` private; expose the induced-function and bundled class-function formulas instead.",
+   "issue": "`indTerm_comp_subtype_mul` is public despite serving only as the summand-level proof helper for `indClassFun_comp_subtype_mul`.",
+   "line": "292"
+  },
+  {
+   "evidence": "Lines 323\u2013327 define the public bundled induction map, while lines 334\u2013342 mention `comap` but state only an equality of `G \u2192 k`; repository search finds no bundled `ClassFunction.ind` projection formula.",
+   "file": "TauCeti/RepresentationTheory/Induction/ClassFunction.lean",
+   "fix": "Add a simp theorem directly expressing `ind S ((comap S.subtype f) * \u03c8) = f * ind S \u03c8` for class functions, proved by extensionality from the existing raw formula.",
+   "issue": "The `ClassFunction.comap` projection lemma still concludes about raw `indClassFun`; there is no characteristic projection formula stated for the public linear map `ClassFunction.ind`, so class-function consumers must descend to coercions and unfold its application API.",
+   "line": "337"
+  }
+ ],
+ "head_sha": "92a885b010489e80181d449e3b12aec3254de95b",
+ "merge_base_sha": "55621f9cd15e6202c7415cc79a87e8088bbbdfcd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2737,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "a9a5f70fdbe3ed33965061c4b404f4951550594ab13a3797edce09469005ac56",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T124412Z-2737-api-design-06582c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T12:44:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The generator implementation is now private and the bundled raw projection formula is a simp lemma, but the public API still exposes a proof-only summand lemma and lacks the projection formula for the bundled induction map.",
+ "transcript_blob": "6a525a012a051c0b18492996e4701a55ea466dcde76b3eaa4a5776db3b7bcdfa",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 156160,
+  "input_tokens": 192367,
+  "output_tokens": 1981,
+  "reasoning_output_tokens": 597
+ },
+ "verdict": "request_changes"
+}
