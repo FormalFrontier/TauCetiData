@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3928715,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 246.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 54908,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 54908,
+    "cache_read_input_tokens": 727691,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2398,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2398,
+      "cache_read_input_tokens": 69009,
+      "input_tokens": 2,
+      "output_tokens": 4201,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18878,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "874d47ed5274684956bed0e7ece62efe20318936",
+ "cost_usd": 1.392872,
+ "dedupe_key": "TauCetiProject/TauCeti|2649|6168e41938caff33960bee11a6f04a825c10479c|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1479fe94d10ddba7a98a61a9e027f9f91fa4fc01c0ae43f5ed67d5c667ef31bc",
+ "diff_sha256": "1479fe94d10ddba7a98a61a9e027f9f91fa4fc01c0ae43f5ed67d5c667ef31bc",
+ "duration_s": 246.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 115 `baseChangeFunctor_obj ... := (rfl)`; Mathlib `ObjectProperty.lift` is `@[simps, implicit_reducible]` with `map f := homMk (F.map f)` (Mathlib/CategoryTheory/ObjectProperty/FullSubcategory.lean:158-161), and `homMk` is likewise `implicit_reducible` (line 82-84), so `(baseChangeFunctor f).map g` and `baseChangeMap f g` are definitionally equal at the same type.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/BaseChange.lean",
+   "fix": "Drop the transport and state the `.hom`-level form, matching the other lemmas in the file: `@[simp] lemma baseChangeFunctor_map_hom (f : R \u27f6 S) {G H} (g : G \u27f6 H) : ((baseChangeFunctor f).map g).hom = (Over.pullback (Spec.map f)).mapGrp.map g.hom := rfl`. (`(baseChangeFunctor f).map g = baseChangeMap f g := rfl` also typechecks, since the source/target are defeq by the same `rfl`.)",
+   "issue": "`baseChangeFunctor_map` states the morphism part with `eqToHom (baseChangeFunctor_obj f G)` on both sides, but `baseChangeFunctor_obj` is proved by `rfl` (line 115), so both are `eqToHom` of a reflexivity proof. As a `@[simp]` lemma this rewrites a clean goal into one carrying two eqToHom's whose types still mention `(baseChangeFunctor f).obj G` (itself a simp redex via `baseChangeFunctor_obj`), i.e. it injects transport junk that nothing removes. The proof `unfold baseChangeFunctor baseChangeMap baseChange; rfl` is undocumented defeq unfolding of three definitions.",
+   "line": 119
+  },
+  {
+   "evidence": "Line 67 `simp only [Functor.mapGrp_obj_X, Over.pullback_obj_left]`; `Over.pullback` is `@[simps! +simpRhs obj_left obj_hom map_left]` at Mathlib/CategoryTheory/Comma/Over/Pullback.lean:62-65 and `Functor.mapGrp` is `@[simps!]` at Mathlib/CategoryTheory/Monoidal/Grp.lean:610-613.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/BaseChange.lean",
+   "fix": "Prove both by `by simp [Functor.mapGrp_obj_X, Over.pullback_obj_left]` (or `Over.pullback_obj_left` alone for line 85), consistent with the `simp only` at line 67.",
+   "issue": "`baseChange_obj_X` (line 79) and `baseChange_obj_X_left` (line 85) are proved by bare `rfl`, which reaches through Mathlib's `Functor.mapGrp` object field and `Over.pullback`'s `obj g := Over.mk (pullback.snd g.hom f)` construction. These are exactly the facts Mathlib exports as `Functor.mapGrp_obj_X` and `Over.pullback_obj_left` \u2014 the same two lemmas this file invokes at line 67 \u2014 so the `rfl` proofs rely on an implementation detail that the simp-lemma proofs do not.",
+   "line": 79
+  }
+ ],
+ "head_sha": "6168e41938caff33960bee11a6f04a825c10479c",
+ "merge_base_sha": "874d47ed5274684956bed0e7ece62efe20318936",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2649,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bbeddd2e9a195888974aa5801246a6b1ac509422219393570cf50d9d10f28249",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T092733Z-2649-proof-quality-b2cf1f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T09:27:33Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proof-hygiene issues: baseChangeFunctor_map wraps a rfl object equality in eqToHom transport and is proved by unfold+rfl, and two characteristic lemmas are proved by bare rfl across Mathlib's mapGrp/Over.pullback definitions instead of the simp lemmas the file already knows.",
+ "transcript_blob": "0e507c18622e8a411752e94d23a675f8d3ea6ff84330c3342816746c22066b77",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 54908,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 54908,
+  "cache_read_input_tokens": 727691,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2398,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2398,
+    "cache_read_input_tokens": 69009,
+    "input_tokens": 2,
+    "output_tokens": 4201,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18878,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
