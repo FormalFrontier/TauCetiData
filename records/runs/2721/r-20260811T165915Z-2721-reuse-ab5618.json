@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.526476,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 59.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 302592,
+    "input_tokens": 362838,
+    "output_tokens": 2465,
+    "reasoning_output_tokens": 770
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a209c165a6751de328da2af4ff3381b9c8c6f568",
+ "cost_estimated": true,
+ "cost_usd": 0.526476,
+ "dedupe_key": "TauCetiProject/TauCeti|2721|788ce4ccd0f79acee7190e7581d8c81a042a55d4|reuse|gpt-5.6-sol|ce88b39773d791a9|production|4",
+ "diff_blob": "745cf10de7f6d944912da604f410f6e0d4a69d1926f2c9e1092a5648b063c995",
+ "diff_sha256": "745cf10de7f6d944912da604f410f6e0d4a69d1926f2c9e1092a5648b063c995",
+ "duration_s": 59.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Exchangeability/Basic.lean:185-196` defines `prefixSplitEquiv` with exactly the function used at CondExp.lean:90 and provides its apply lemma.",
+   "file": "TauCeti/Probability/Exchangeability/CondExp.lean",
+   "fix": "Write the split as `prefixSplitEquiv (\u03b1 := \u03b1) r` and use `(prefixSplitEquiv r).measurable`, simplifying with `prefixSplitEquiv_apply` where needed.",
+   "issue": "`hsplit` manually proves measurability of the forward prefix/tail split already provided by `prefixSplitEquiv`.",
+   "line": 89
+  },
+  {
+   "evidence": "Mathlib `Order/Monotone/Defs.lean:303` defines `Subsingleton.strictMono`; TauCeti already uses it for the identical `Fin 1` construction at Contractability.lean:90-91.",
+   "file": "TauCeti/Probability/Exchangeability/CondExp.lean",
+   "fix": "At both call sites use `Subsingleton.strictMono (fun _ : Fin 1 => m)` directly.",
+   "issue": "The local `hmono` proof is duplicated here and at line 191, and rederives Mathlib's singleton-domain monotonicity lemma.",
+   "line": 175
+  }
+ ],
+ "head_sha": "788ce4ccd0f79acee7190e7581d8c81a042a55d4",
+ "merge_base_sha": "a209c165a6751de328da2af4ff3381b9c8c6f568",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2721,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "370911c21c8ef9cd0e707b091f888df866100b5d6bccf124430be0804bd88dfa",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T165915Z-2721-reuse-ab5618",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T16:59:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The main duplication was removed, but three proof fragments still rederive existing APIs.",
+ "transcript_blob": "dffd253a304ab8094fa6553ea26f45bd384beeec111183762bb487c2c4cafaa1",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 302592,
+  "input_tokens": 362838,
+  "output_tokens": 2465,
+  "reasoning_output_tokens": 770
+ },
+ "verdict": "request_changes"
+}
