@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.214446,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 34.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 84992,
+    "input_tokens": 110400,
+    "output_tokens": 1497,
+    "reasoning_output_tokens": 700
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8acabad5eaae7d5cda14ccce230430f82079a216",
+ "cost_estimated": true,
+ "cost_usd": 0.214446,
+ "dedupe_key": "TauCetiProject/TauCeti|2716|3cb1a8cd950fe15b0e7aef931b81e132c5d5c4db|correctness|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "4d7f41cf0b9e333f2f5de03569ae11b36bef8806f24c85fb8f2435746193a8da",
+ "diff_sha256": "4d7f41cf0b9e333f2f5de03569ae11b36bef8806f24c85fb8f2435746193a8da",
+ "duration_s": 34.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Analysis/Calculus/LocalExtr/Basic.lean:45-46 explicitly says `fderiv` is zero for nondifferentiable functions. On \u211d, let `f 0 = 1` and `f t = t\u00b2/2` for `t \u2260 0`: `fderiv \u211d f` is the identity map, including value zero at 0 by totalization, so its derivative at 0 is invertible and lines 104-108 accept 0 although `f` is discontinuous there.",
+   "file": "TauCeti/Analysis/Calculus/Morse.lean",
+   "fix": "Include `ContDiffAt \u211d 2 f x` (or the required first/second differentiability data) in `IsNondegenerateCriticalPoint`, and propagate it through `IsMorseOn` and the characterization theorem.",
+   "issue": "`IsNondegenerateCriticalPoint` omits twice differentiability; since Mathlib totalizes `fderiv` to zero at nondifferentiable points, it can label even a discontinuity nondegenerate, and `IsMorseOn` at line 113 inherits this defect.",
+   "line": "104"
+  }
+ ],
+ "head_sha": "3cb1a8cd950fe15b0e7aef931b81e132c5d5c4db",
+ "merge_base_sha": "8acabad5eaae7d5cda14ccce230430f82079a216",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2716,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c2712a3aba225600618b9d0931dfd2f8d9dfc514fa009c274e949f175246c8b0",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T033441Z-2716-correctness-92ba52",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T03:34:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The core predicates classify nonsmooth functions as having nondegenerate critical points, so they do not faithfully formalize Morse critical points or Morse functions.",
+ "transcript_blob": "92386e34fb9c993a1ef47da729ae9730c53a063569bbfb5709796b66a5d87193",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 84992,
+  "input_tokens": 110400,
+  "output_tokens": 1497,
+  "reasoning_output_tokens": 700
+ },
+ "verdict": "block"
+}
