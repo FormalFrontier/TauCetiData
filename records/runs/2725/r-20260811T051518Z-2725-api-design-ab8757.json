@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.320907,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 52.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 177664,
+    "input_tokens": 212577,
+    "output_tokens": 1917,
+    "reasoning_output_tokens": 705
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8acabad5eaae7d5cda14ccce230430f82079a216",
+ "cost_estimated": true,
+ "cost_usd": 0.320907,
+ "dedupe_key": "TauCetiProject/TauCeti|2725|341287516a5e4b949dc0c381b33ea0eaf13b98ba|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "7be7be5509fe980e9e8e68dea8ae60d54706f332bb1eba0ecaf4b49eacf3f470",
+ "diff_sha256": "7be7be5509fe980e9e8e68dea8ae60d54706f332bb1eba0ecaf4b49eacf3f470",
+ "duration_s": 52.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 330\u2013333 expose `atlas` and `chartAt`; lines 344 and 355 already unfold the definition to prove the intended API.",
+   "file": "TauCeti/Analysis/Fredholm/LevelSet.lean",
+   "fix": "Make the definition irreducible and prove all intended behavior through public characteristic lemmas.",
+   "issue": "`levelSetChartedSpace` is `@[instance_reducible]`, exposing the structure literal and allowing downstream proofs to depend on its definitional implementation despite dedicated projection lemmas.",
+   "line": 324
+  },
+  {
+   "evidence": "Lines 336\u2013356 provide only `levelSetChartedSpace_chartAt` and `_atlas`, while the analogous canonical API in `TauCeti/Geometry/Manifold/Boundary/Charts.lean:252`, `:263`, `:275`, and `:287` exposes source, target, application, and inverse application.",
+   "file": "TauCeti/Analysis/Fredholm/LevelSet.lean",
+   "fix": "Add `@[simp]` characteristic lemmas for the installed chart's source, target, application, and inverse application (and mark the existing `chartAt` projection lemma appropriately), derived from the `levelSetChartModel_*` API.",
+   "issue": "The installed `ChartedSpace` API only identifies `chartAt` and `atlas`; it lacks source, target, application, and inverse-application lemmas, forcing the next roadmap step (chart-transition smoothness) to unfold `levelSetChartAt` and its implementation chain.",
+   "line": 336
+  }
+ ],
+ "head_sha": "341287516a5e4b949dc0c381b33ea0eaf13b98ba",
+ "merge_base_sha": "8acabad5eaae7d5cda14ccce230430f82079a216",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2725,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "71bd637f7dd8eb62b68c466816037a41be5eec58f6a96183275fd01dd2f0a700",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T051518Z-2725-api-design-ab8757",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T05:15:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The canonical charted-space interface exposes its implementation while omitting the characteristic chart lemmas needed by downstream manifold work.",
+ "transcript_blob": "f7574a82469fde4deaa20aa9b205b6d8b6c912ae76196b252f8a50fe71de9c58",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 177664,
+  "input_tokens": 212577,
+  "output_tokens": 1917,
+  "reasoning_output_tokens": 705
+ },
+ "verdict": "request_changes"
+}
