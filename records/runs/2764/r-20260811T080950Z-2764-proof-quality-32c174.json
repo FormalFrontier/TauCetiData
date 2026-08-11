@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.130327,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 35.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 34304,
+    "input_tokens": 48809,
+    "output_tokens": 1355,
+    "reasoning_output_tokens": 786
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b7e17a1a0e3859bcaaebd7006f02bf2dbaea66af",
+ "cost_estimated": true,
+ "cost_usd": 0.130327,
+ "dedupe_key": "TauCetiProject/TauCeti|2764|1c45c6cc5d63776f626416fe5e247c71a297a752|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "daa7997fe92c60bb1842f3b5384930be010c3892940678d00df3c9ab5af5ab8f",
+ "diff_sha256": "daa7997fe92c60bb1842f3b5384930be010c3892940678d00df3c9ab5af5ab8f",
+ "duration_s": 35.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Confirmed `rfl` at lines 156 and 250 after rewrites through continuous-map/operator wrappers.",
+   "file": "TauCeti/RepresentationTheory/Compact/CharacterProjection.lean",
+   "fix": "Replace these `rfl` steps with explicit interface lemmas, e.g. `simp only [weightFamily_apply, smul_apply]` at line 156 and `ContinuousLinearMap.one_def` at line 250.",
+   "issue": "`integratedOperator_apply` closes by `rfl`, implicitly unfolding `weightFamily` and operator application despite introducing `weightFamily_apply` to isolate that representation; line 250 similarly uses undocumented definitional equality between the operator `1` and `ContinuousLinearMap.id`.",
+   "line": 156
+  },
+  {
+   "evidence": "The chains include `ContinuousMap.comp_apply`, `ContinuousMap.coe_coe`, private unfolding lemmas, repeated `ContinuousLinearMap.comp_apply`/`smul_apply`, and low-level multiplication application lemmas; lines 305\u2013306 repeat the same pattern for trace.",
+   "file": "TauCeti/RepresentationTheory/Compact/CharacterProjection.lean",
+   "fix": "Use `simp only`/`simp` with the local application lemmas to normalize wrappers, leaving only the substantive representation and group-algebra rewrites explicit; factor a shared weighted-operator evaluation lemma if needed.",
+   "issue": "`conjOp_comp_weightFamily` is normalized by a 13-lemma `rw` chain; the analogous trace calculation at lines 305\u2013306 uses another long unfolding chain, making both proofs sensitive to Mathlib wrapper and coercion lemma renames.",
+   "line": 230
+  }
+ ],
+ "head_sha": "1c45c6cc5d63776f626416fe5e247c71a297a752",
+ "merge_base_sha": "b7e17a1a0e3859bcaaebd7006f02bf2dbaea66af",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2764,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f631da78add5ab70b3721db25d2482303835d8a435baea5c79b05b0cf4144488",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "b8161ef29f1bf922d3f9aea2b1b1e298bcd06078",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260811T080950Z-2764-proof-quality-32c174",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-11T08:09:50Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs depend on undocumented definitional unfolding or brittle normalization chains instead of the file's explicit interface lemmas and robust automation.",
+ "transcript_blob": "e4661550289f7909e1d566a7e5cfb54d53e92099ab914eacced5a576d3f6d934",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 34304,
+  "input_tokens": 48809,
+  "output_tokens": 1355,
+  "reasoning_output_tokens": 786
+ },
+ "verdict": "request_changes"
+}
