@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.375263,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 35.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 128256,
+    "input_tokens": 183571,
+    "output_tokens": 1152,
+    "reasoning_output_tokens": 256
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_estimated": true,
+ "cost_usd": 0.375263,
+ "dedupe_key": "TauCetiProject/TauCeti|2952|e7ce4decd4594b89227a0909c22ae4e7858e1d15|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "682aedbca54b48e7f7aeb5b5f77563b7683f83f9cd3fa2ac407c37e90afc34d1",
+ "diff_sha256": "682aedbca54b48e7f7aeb5b5f77563b7683f83f9cd3fa2ac407c37e90afc34d1",
+ "duration_s": 35.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 112 declares `{\u03b3 : \u211d \u2192 \u2102} {s : \u2102}`, but neither identifier occurs anywhere else in the declaration through its `Q a b` conclusion.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Remove `\u03b3` and `s` from the theorem signature; its confirmed hypotheses and conclusion mention only `Q`, endpoints, window geometry, and distance data.",
+   "issue": "`sorted_crossing_gluing_induction` publicly quantifies unused `{\u03b3 : \u211d \u2192 \u2102}` and `{s : \u2102}` parameters, making the generic combinator unnecessarily contour-specific and potentially leaving uninferable metavariables for consumers whose `Q` does not mention them.",
+   "line": 112
+  },
+  {
+   "evidence": "Confirmed declarations at lines 57 and 62 have no attribute, while the existing characteristic reduction `realWindingIntegrand_eq_div` at line 41 is marked `@[simp]`.",
+   "file": "TauCeti/Analysis/Contour/Winding/Integrand.lean",
+   "fix": "Add `@[simp]` to both lemmas; each strictly reduces a negated velocity or zero position and cannot loop.",
+   "issue": "The new canonical reduction lemmas `realWindingIntegrand_neg_right` and `realWindingIntegrand_zero_left` are unannotated, so `simp` does not use these normal forms through the public API.",
+   "line": 57
+  }
+ ],
+ "head_sha": "e7ce4decd4594b89227a0909c22ae4e7858e1d15",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2952,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "69097969907d2ddea53d961e0e53ddd721a1804d443b08d961e76788b3f7ea7f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T144956Z-2952-api-design-b6f1fb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T14:49:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface contains phantom contour parameters and omits expected simplification attributes for new normal-form lemmas.",
+ "transcript_blob": "b61176f427dbf1b46a2f570fae0be4ed0cc689614dff7b77fd18ddac5a8926ba",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 128256,
+  "input_tokens": 183571,
+  "output_tokens": 1152,
+  "reasoning_output_tokens": 256
+ },
+ "verdict": "request_changes"
+}
