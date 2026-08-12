@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.0548675,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 192.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 49529,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 49529,
+    "cache_read_input_tokens": 355723,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1589,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1589,
+      "cache_read_input_tokens": 64439,
+      "input_tokens": 2,
+      "output_tokens": 1972,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14785,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "cost_usd": 1.054868,
+ "dedupe_key": "TauCetiProject/TauCeti|2770|e36260a1f98f59a6625b7be4af130e53736787f7|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "58be5c1d6e06c6c88f88e8e8f43d966949b9bf54c2d2d737d812f6f6a40ded77",
+ "diff_sha256": "58be5c1d6e06c6c88f88e8e8f43d966949b9bf54c2d2d737d812f6f6a40ded77",
+ "duration_s": 192.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/AlgebraicGeometry/StructureSheaf.lean:930 `instance stalkAlgebra (p : PrimeSpectrum R) : Algebra R ((structureSheaf R).presheaf.stalk p)` and :940 `instance IsLocalization.to_stalk (p : PrimeSpectrum R) : IsLocalization.AtPrime ((structureSheaf R).presheaf.stalk p) p.asIdeal`; the PR's proofs use `f` only via `kernelPoint_asIdeal`.",
+   "file": "TauCeti/AlgebraicGeometry/TangentSpace/Affine.lean",
+   "fix": "State them for an arbitrary `x : Spec (CommRingCat.of R)` (`Algebra R (stalk x)` and `IsLocalization.AtPrime (stalk x) x.asIdeal`), then get the augmentation case by rewriting with `kernelPoint_asIdeal`.",
+   "issue": "`kernelStalkAlgebra` (74) and `kernelStalkIsLocalization` (89) are `instance`s whose heads mention `kernelPoint f`, so they fire at no other point, yet their content is point-generic: Mathlib already supplies both at every prime.",
+   "line": 74
+  },
+  {
+   "evidence": "Line 139: the body is `(Ideal.cotangentLocalizationEquiv (R\u209a := stalk (kernelPoint f)) (RingHom.ker f)).restrictScalars k`; `Ideal.cotangentLocalizationEquiv` (TauCeti/RingTheory/Ideal/Cotangent/Localization.lean:69) requires only `[p.IsMaximal]` and `[IsLocalization.AtPrime R\u209a p]`, and line 159 discharges `_toCotangent` by `exact` from the general lemma.",
+   "file": "TauCeti/AlgebraicGeometry/TangentSpace/Affine.lean",
+   "fix": "Add `cotangentLinearEquivZariski (x : Spec (CommRingCat.of R)) [x.asIdeal.IsMaximal] : x.asIdeal.Cotangent \u2243\u2097[R] ZariskiCotangentSpace (Spec (CommRingCat.of R)) x` with its `toCotangent` formula, and define the `f`-version as its specialization at `kernelPoint f` followed by `.restrictScalars k`; keep `kernelResidueFieldRingEquiv` and `_smul`, which are genuinely `f`-specific.",
+   "issue": "`kernelCotangentLinearEquivZariski` (135) and `kernelCotangentLinearEquivZariski_toCotangent` (146) are stated only for augmentation kernels, but nothing in them uses `f`, `k`, or `Algebra k H` beyond maximality plus a `restrictScalars`; the natural statement is at any closed point of `Spec R`.",
+   "line": 135
+  }
+ ],
+ "head_sha": "e36260a1f98f59a6625b7be4af130e53736787f7",
+ "merge_base_sha": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2770,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c6ae1803d8adb9035366f4a640e0c79d3a376e08ec87ff35317b7b9d75f6d22",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T033638Z-2770-generality-2ebf9b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T03:36:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The localization core is at the natural level, but the affine-scheme layer states point-generic material only at `kernelPoint f`: the stalk algebra/localization instances and the cotangent equivalence use the augmentation only through `kernelPoint_asIdeal` and maximality of `ker f`.",
+ "transcript_blob": "ef85d115c1c8d3e50adf61b37c79eac5c7066bb6fc8561d1ac6e290869796946",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 49529,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 49529,
+  "cache_read_input_tokens": 355723,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1589,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1589,
+    "cache_read_input_tokens": 64439,
+    "input_tokens": 2,
+    "output_tokens": 1972,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14785,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
