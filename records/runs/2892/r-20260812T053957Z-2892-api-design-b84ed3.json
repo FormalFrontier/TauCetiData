@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.209514,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 30.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 64768,
+    "input_tokens": 93150,
+    "output_tokens": 1174,
+    "reasoning_output_tokens": 459
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8ec7f124c694071fef010546f13a7edd41bb0294",
+ "cost_estimated": true,
+ "cost_usd": 0.209514,
+ "dedupe_key": "TauCetiProject/TauCeti|2892|153f5b1fae54e585e355d6ff492feb4ad3c10fb2|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "b4bcf1e419ac83f6896bd9aa1d2c273d8dfa7e9bdfdb0f3a3fec073e8ab403d0",
+ "diff_sha256": "b4bcf1e419ac83f6896bd9aa1d2c273d8dfa7e9bdfdb0f3a3fec073e8ab403d0",
+ "duration_s": 30.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 190\u2013239 provide equations for every metadata projection and only `presentation_relatorLetters`; line 168 alone exposes the complete record body.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/Monster.lean",
+   "fix": "Remove `@[expose]` and add a theorem characterizing `presentation.relators` or `presentation.transcribed` in terms of `relatorList`.",
+   "issue": "`presentation` is `@[expose]` although its metadata fields already have projection lemmas; the only missing characteristic field is its exact typed relator data, while `presentation_relatorLetters` is a lossy `Nat`-indexed encoding.",
+   "line": 168
+  },
+  {
+   "evidence": "The only grep hits declaring APIs for these names are `length_relatorList` at line 251 and `relatorList_cyclicallyReduced` at line 304; neither states their contents.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/Monster.lean",
+   "fix": "Add `additionalRelators_eq` and `relatorList_eq` (and mark appropriate membership forms `@[simp]`), or make `additionalRelators` private and characterize `relatorList` directly.",
+   "issue": "Public `additionalRelators` and `relatorList` (lines 153 and 158) are sealed but have no `*_eq` or membership API, so downstream users cannot recover the advertised decomposition into Coxeter, spider, and central relators without unfolding unavailable bodies.",
+   "line": 153
+  }
+ ],
+ "head_sha": "153f5b1fae54e585e355d6ff492feb4ad3c10fb2",
+ "merge_base_sha": "8ec7f124c694071fef010546f13a7edd41bb0294",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2892,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a8fa22ddd559101358443b80385b9b154a7c8a0f941136fd0b612da51e5db9e6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T053957Z-2892-api-design-b84ed3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T05:39:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The presentation body is exposed to compensate for a missing exact relator API, and two public relator-list definitions lack unfolding equations.",
+ "transcript_blob": "738dcad43bc467f1dc3ded88923682e2475ac3aa75e452bd06ebeecfdffc241d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 64768,
+  "input_tokens": 93150,
+  "output_tokens": 1174,
+  "reasoning_output_tokens": 459
+ },
+ "verdict": "request_changes"
+}
