@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9051505000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 114.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 52317,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 52317,
+    "cache_read_input_tokens": 240517,
+    "inference_geo": "not_available",
+    "input_tokens": 9,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2526,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2526,
+      "cache_read_input_tokens": 66290,
+      "input_tokens": 2,
+      "output_tokens": 5058,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9722,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 0.905151,
+ "dedupe_key": "TauCetiProject/TauCeti|2797|6b043a759fedf314224c634ebb761245517a387a|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "diff_sha256": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "duration_s": 114.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Model.lean:32/142/181 put the ambient declarations (`euclideanHalfSpaceBoundaryNormalEquiv`, `euclideanHalfSpaceBoundaryParam`, `euclideanHalfSpaceBoundaryProj`) in `namespace TauCeti` (Model.lean:27), while `namespace EuclideanHalfSpace` (Model.lean:274-341) contains only half-space-typed declarations (`boundaryParam`, `boundaryProj`, `boundaryProj_coe`, \u2026). `collarAmbientEquiv : (EuclideanSpace \u211d (Fin n) \u00d7 EuclideanSpace \u211d (Fin 1)) \u2243L[\u211d] EuclideanSpace \u211d (Fin (n + 1))` breaks that split.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "Move the three declarations to the root `TauCeti` namespace and name them after their content, e.g. `euclideanHalfSpaceBoundaryNormalProdEquiv` (the `EuclideanSpace \u211d (Fin 1)`-valued variant of `euclideanHalfSpaceBoundaryNormalEquiv`), with matching `_apply_zero`/`_apply_succ` lemmas.",
+   "issue": "`collarAmbientEquiv` (and its lemmas `collarAmbientEquiv_apply_zero`, line 65, and `collarAmbientEquiv_apply_succ`, line 71) is in namespace `TauCeti.EuclideanHalfSpace` but its statement mentions no `EuclideanHalfSpace` at all \u2014 it is a pure ambient-Euclidean coordinate splitting. It is also named after its downstream client (\"collar\") rather than after what it is.",
+   "line": 55
+  },
+  {
+   "evidence": "Collar.lean:122 `(collarHomeomorph n p).1 0 = p.2.1 0` vs Collar.lean:148 `collarHomeomorph n (x, (0 : EuclideanHalfSpace 1)) = boundaryParam n x`; the naming guide requires the name to describe the conclusion, and Model.lean:291 uses `_coe` for the `Subtype.val` step (`boundaryParam_coe`).",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "Name these after their conclusion, e.g. `collarHomeomorph_apply_zero_eq_boundaryParam` / `collarDiffeomorph_apply_zero_eq_boundaryParam` (or `..._boundaryParam` following `euclideanHalfSpaceBoundaryProj_param`, Model.lean:225). Optionally rename the coordinate-index family to `_apply_coe_zero`/`_apply_coe_succ`, since their LHS is `(f p).1 i`, a `Subtype.val` coercion.",
+   "issue": "`collarHomeomorph_apply_zero_normal` reads as a refinement of `collarHomeomorph_apply_zero` (line 120), but in the latter `zero` is the output coordinate index while here it is the input argument; the name also says nothing about the conclusion `= boundaryParam n x`. Same collision at `collarDiffeomorph_apply_zero` (line 217) vs `collarDiffeomorph_apply_zero_normal` (line 247).",
+   "line": 147
+  }
+ ],
+ "head_sha": "6b043a759fedf314224c634ebb761245517a387a",
+ "merge_base_sha": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2797,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6632a1f03e17aba3359f3489a4850ddbc8128990b89cc2f63e4b01e06d812dc0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T201434Z-2797-naming-b736e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T20:14:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Two naming issues: an ambient-Euclidean equivalence placed in the `EuclideanHalfSpace` namespace against the convention Model.lean establishes, and a `_apply_zero_normal` name that reads as a specialization of the unrelated `_apply_zero` lemma while failing to describe its conclusion.",
+ "transcript_blob": "607dd57fe5a5653ce7fa5f48470c67e78a0d831dd29d37d535925ccb352988a9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 52317,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 52317,
+  "cache_read_input_tokens": 240517,
+  "inference_geo": "not_available",
+  "input_tokens": 9,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2526,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2526,
+    "cache_read_input_tokens": 66290,
+    "input_tokens": 2,
+    "output_tokens": 5058,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9722,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

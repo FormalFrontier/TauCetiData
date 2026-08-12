@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.120843,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 214.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 50908,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 50908,
+    "cache_read_input_tokens": 348410,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2842,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2842,
+      "cache_read_input_tokens": 64565,
+      "input_tokens": 2,
+      "output_tokens": 6310,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17058,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 1.120843,
+ "dedupe_key": "TauCetiProject/TauCeti|2797|6b043a759fedf314224c634ebb761245517a387a|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "diff_sha256": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "duration_s": 214.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Collar.lean:84-86, 137, 143, 197-199; the forward lemmas collarAmbientEquiv_apply_zero/_succ (:64-74) have no `symm` counterpart. `Equiv.piUnique.invFun := uniqueElim` (Mathlib/Logic/Equiv/Defs.lean:563), `uniqueElim` defined by `rw [Unique.eq_default i]` (Mathlib/Logic/Unique.lean:224).",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "State and prove `collarAmbientEquiv_symm_apply_fst : ((collarAmbientEquiv n).symm y).1 = euclideanHalfSpaceBoundaryProj n y` and `collarAmbientEquiv_symm_apply_snd_apply_zero : ((collarAmbientEquiv n).symm y).2 0 = y 0` (same `apply_symm_apply` + forward-simp-lemma pattern already used in Model.lean:195-222), plus a `0 \u2264 ((collarAmbientEquiv n).symm y).2 0` lemma, and route all four sites through them instead of `exact`ing across the wrapper defeq.",
+   "issue": "No `collarAmbientEquiv_symm_*` lemmas exist, so every inverse-direction step is closed by defeq across wrappers. `collarHomeomorph_symm_apply_snd_apply_zero` (:143) proves a goal about `((collarAmbientEquiv n).symm y.1).2 0 : EuclideanSpace \u211d (Fin 1)` by `exact euclideanHalfSpaceBoundaryNormalEquiv_symm_apply_snd n y.1`, whose statement is about a bare `\u211d`; this only typechecks by unfolding `ContinuousLinearEquiv.piUnique`/`Equiv.uniqueElim`/`WithLp`. Same class at :86 and :199 (`exact hnormal`, twice \u2014 the identical nonnegativity argument duplicated in `invFun` and in `contMDiff_invFun`) and :137 (`exact euclideanHalfSpaceBoundaryNormalEquiv_symm_apply_fst`). None carries a comment.",
+   "line": 143
+  },
+  {
+   "evidence": "Collar.lean:181-183, 202-206; `lemma modelWithCornersEuclideanHalfSpace_apply (n : \u2115) [NeZero n] {p : EuclideanHalfSpace n} : ...` at Mathlib/Geometry/Manifold/Instances/Real.lean:248.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "Rewrite with the existing lemmas `modelWithCornersEuclideanHalfSpace_apply` / `modelWithCornersEuclideanHalfSpace_symm_apply` (and the `collarAmbientEquiv_symm_*` lemmas from the previous finding) so the coercion step is an explicit rewrite rather than `rfl`.",
+   "issue": "The `collarDiffeomorph` congruence steps close through the model-map coercion by bare defeq: `:183` `exact (J.right_inv (hrange p)).symm` bridges `J (J.symm x) = x` to a `.1`-component goal after `Subtype.ext`, and `:206` a trailing `rfl` after `rw [modelWithCorners_prod_coe]` identifies `Prod.map (\ud835\udce1 n) (\ud835\udce1\u2202 1)` with the subtype-valued `collarHomeomorph.symm` components. Both rely on `\ud835\udce1\u2202 k y` reducing to `y.1` without saying so.",
+   "line": 183
+  },
+  {
+   "evidence": "Collar.lean:87-99; `Prod.ext` used with component equalities at Mathlib/Data/Prod/Basic.lean:84, 221.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "Drop the `change` and close with `Prod.ext (congrArg Prod.fst h) (Subtype.ext (congrArg Prod.snd h))`; if the `change` really is required for elaboration, replace the comment with one stating why no rewrite reaches the goal.",
+   "issue": "`change` in `collarHomeomorph.left_inv` restates the goal only up to defeq of the anonymous-constructor fields (with `_` standing in for the membership proof). The comment says what it exposes, not why the goal cannot be reached otherwise; the following `hfst`/`hsnd` are already stated in the post-`change` form and `Prod.ext` takes `.1`/`.2` equalities, so the step looks removable.",
+   "line": 89
+  }
+ ],
+ "head_sha": "6b043a759fedf314224c634ebb761245517a387a",
+ "merge_base_sha": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2797,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0fec372a4f0cc20943df923b2e860db81cc115661257bf416334fe44ea0f12b6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T201850Z-2797-proof-quality-29e5c7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T20:18:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The forward direction of collarAmbientEquiv has characteristic lemmas, but the inverse direction has none: six proof steps close goals about `(collarAmbientEquiv n).symm` and the model coercions by undocumented definitional equality across the piUnique/WithLp and subtype wrappers. Also an unjustified `change` in `collarHomeomorph.left_inv`.",
+ "transcript_blob": "0d312e3dd78488a4d0d1493502ffe539c387b345e3bdb0896646f6a49dbc39a1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 50908,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 50908,
+  "cache_read_input_tokens": 348410,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2842,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2842,
+    "cache_read_input_tokens": 64565,
+    "input_tokens": 2,
+    "output_tokens": 6310,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17058,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

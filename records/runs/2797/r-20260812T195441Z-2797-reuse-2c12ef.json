@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.576545,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 407.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85552,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85552,
+    "cache_read_input_tokens": 1802560,
+    "inference_geo": "not_available",
+    "input_tokens": 48,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 558,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 558,
+      "cache_read_input_tokens": 101493,
+      "input_tokens": 2,
+      "output_tokens": 3860,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 32326,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 2.576545,
+ "dedupe_key": "TauCetiProject/TauCeti|2797|6b043a759fedf314224c634ebb761245517a387a|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "diff_sha256": "4b3c88cae52c513253f2ab60932e3bf4f11516f0932dc6b20aaa4b0f113863f2",
+ "duration_s": 407.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Geometry/Manifold/Diffeomorph.lean:276-283 (`@[simp] coe_toHomeomorph : \u21d1h.toHomeomorph = h`, `coe_toHomeomorph_symm`); Diffeomorph.lean:79-82 shows the structure extends `M \u2243 M'` with only `contMDiff_toFun`/`contMDiff_invFun`, so no continuity proof is needed. In-repo precedent for exactly this shape: `unitSphereEquiv` (TauCeti/Geometry/Sphere/LinearIsometry.lean:49, a plain `Equiv`) feeding `unitSphereDiffeomorph` (TauCeti/Geometry/Diffeomorphism/Sphere.lean:91) with a single diffeomorph-level `coe_unitSphereDiffeomorph_apply`.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Collar.lean",
+   "fix": "Make the underlying map a plain `Equiv` (drop the two continuity fields at 103-110), build `collarDiffeomorph` from it, then define `collarHomeomorph n := (collarDiffeomorph n).toHomeomorph`; replace `collarDiffeomorph_toHomeomorph` with `@[simp] theorem collarHomeomorph_eq : collarHomeomorph n = (collarDiffeomorph n).toHomeomorph := rfl` and delete the five `collarHomeomorph_*` lemmas. Mathlib's `Diffeomorph.coe_toHomeomorph`/`coe_toHomeomorph_symm` then discharge every homeomorph-level goal from the retained diffeomorph lemmas, keeping the diffeomorph API the API-design thread approved.",
+   "issue": "Ten characteristic lemmas state five facts twice: `collarHomeomorph_apply_zero/_apply_succ/_symm_apply_fst/_symm_apply_snd_apply_zero/_apply_zero_normal` (118-158) and the defeq-equal `collarDiffeomorph_*` copies (215-250), bridged by `collarDiffeomorph_toHomeomorph` which cannot fire (Mathlib's `@[simp] Diffeomorph.coe_toHomeomorph` normalizes `\u21d1h.toHomeomorph` to `\u21d1h`, i.e. homeomorph-coe rewrites *toward* the diffeomorph). The reply on the earlier thread is right that the diffeo lemmas cannot be derived from the homeo ones; the deduplication therefore has to run the other way. `collarHomeomorph`'s hand-written `continuous_toFun`/`continuous_invFun` (103-110) are likewise redundant, since `Diffeomorph` only needs `toEquiv` + `contMDiff` fields and supplies continuity via `Diffeomorph.toHomeomorph`.",
+   "line": 208
+  },
+  {
+   "evidence": "Model.lean:195-208 proves `((euclideanHalfSpaceBoundaryNormalEquiv n).symm y).1 = euclideanHalfSpaceBoundaryProj n y`, i.e. the two projections are literally the same map; Model.lean:41-51 vs 147-161 show `NormalEquiv n (x, 0)` and `euclideanHalfSpaceBoundaryParam n x` agree on coordinate 0 and on every `i.succ`. `grep -rn euclideanHalfSpaceBoundaryEquiv TauCeti | grep -v Model.lean` returns nothing.",
+   "file": "TauCeti/Geometry/Manifold/Boundary/Model.lean",
+   "fix": "Define `euclideanHalfSpaceBoundaryProj n := (ContinuousLinearMap.fst \u211d (EuclideanSpace \u211d (Fin n)) \u211d).comp (euclideanHalfSpaceBoundaryNormalEquiv n).symm.toContinuousLinearMap` and `euclideanHalfSpaceBoundaryParam n := (euclideanHalfSpaceBoundaryNormalEquiv n).toContinuousLinearMap.comp (ContinuousLinearMap.inl \u211d (EuclideanSpace \u211d (Fin n)) \u211d)`, deriving `..._apply` / `..._apply_zero` / `..._apply_succ` from `euclideanHalfSpaceBoundaryNormalEquiv_apply_zero/_apply_succ`, and delete the private `euclideanHalfSpaceBoundaryProjLinearMap` (+ its `_apply`). `euclideanHalfSpaceBoundaryLinearEquiv`/`euclideanHalfSpaceBoundaryEquiv` then lose their only consumer (grep shows no use outside Model.lean) and should go with them.",
+   "issue": "Making `euclideanHalfSpaceBoundaryNormalEquiv` public puts a third implementation of the same coordinate split in one file: `euclideanHalfSpaceBoundaryProjLinearMap` (163, `Fin.tail`) and `euclideanHalfSpaceBoundaryLinearEquiv` (73, `Fin.cons`/`Fin.tail`) hand-roll what the equiv now provides. The PR's own new lemmas prove the overlap, so the private plumbing is re-derivation rather than reuse \u2014 contrary to the PR description's claim that both consumers now use one coordinate split.",
+   "line": 32
+  }
+ ],
+ "head_sha": "6b043a759fedf314224c634ebb761245517a387a",
+ "merge_base_sha": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2797,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1767cd10c98772f8f75e08ad00bd2c8306dc91609ac5331177f2244e02d2f5c5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T195441Z-2797-reuse-2c12ef",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T19:54:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The collar file carries two parallel characteristic APIs (five homeomorph lemmas and five defeq-equal diffeomorph restatements) plus hand-written continuity that `Diffeomorph` already supplies, and Model.lean now holds a third hand-rolled implementation of the same coordinate split beside the newly public `euclideanHalfSpaceBoundaryNormalEquiv`. No duplication of Mathlib material was found.",
+ "transcript_blob": "6eeb273bc2bd8373c0662eec7824b41daf5b39066829497c9c1a6c5dc2185cc5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85552,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85552,
+  "cache_read_input_tokens": 1802560,
+  "inference_geo": "not_available",
+  "input_tokens": 48,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 558,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 558,
+    "cache_read_input_tokens": 101493,
+    "input_tokens": 2,
+    "output_tokens": 3860,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 32326,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
