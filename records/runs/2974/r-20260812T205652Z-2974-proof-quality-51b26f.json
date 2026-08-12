@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.9579089999999995,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 251.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 146858,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 146858,
+    "cache_read_input_tokens": 1893960,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1905,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1905,
+      "cache_read_input_tokens": 161452,
+      "input_tokens": 2,
+      "output_tokens": 5527,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19335,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 2.957909,
+ "dedupe_key": "TauCetiProject/TauCeti|2974|ff739c55ea98c9679de61e63c90af5558fe79f0d|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "0cf0b93568878551c25f3deda86412b73e472c4e2caaf1f969a6a517ec1b3082",
+ "diff_sha256": "0cf0b93568878551c25f3deda86412b73e472c4e2caaf1f969a6a517ec1b3082",
+ "duration_s": 251.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Compare lines 392-450 with 488-571: identical structure (`ht\u2080k`/`h\u03b4k` via `div_mul_cancel\u2080`, `hwl`/`hwr`, then `mul_le_mul_of_nonneg_right` + `abs_le.mpr`), with only the linear expression changed. Both `truncated_integral_spec_right` (476) and `_left` (601) close with `exact log_neg_eps_I_sub_log_eps_I h\u03b5`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "State it once: a private lemma taking `hlin : \u2200 s \u2208 Icc a b, fdBoundary H s - w = ((c + (s - a) * k : \u211d) : \u2102) * Complex.I` with `k \u2260 0`, the off-segment distance bound, and the adapted-branch slit hypothesis, concluding the truncated spec `= -\u03c0i` via `truncated_integral_spec_of_slit_branch` and `log_neg_eps_I_sub_log_eps_I`; instantiate it at `Icc 0 1` (`c = H - w.im`, `k = -(H - \u221a3/2)`, `c_branch = -1`) and at `Icc 3 4` (`c = \u221a3/2 - w.im`, `k = H - \u221a3/2`, `c_branch = 1`).",
+   "issue": "The right- and left-vertical developments are mirror duplicates, seven lemma pairs differing only in the affine height function and the sign of `w.re`: `fdBoundary_sub_of_le_one` (213) / `fdBoundary_sub_of_mem_Icc_three_four` (224); `slit_branch_vertical_right` (241) / `_left` (256); `fdBoundary_ne_right` (282) / `fdBoundary_ne_left` (309); `lt_norm_sub_right_of_off_segment` (340) / `lt_norm_sub_left_of_off_segment` (363); `norm_fdBoundary_sub_of_le_one` (384) / `norm_fdBoundary_sub_of_mem_Icc_three_four` (479); `right_window_endpoints` (392) / `left_window_endpoints` (488); `right_window_bounds` (417) / `left_window_near` (516) + `left_window_bounds` (540); and finally `truncated_integral_spec_right` (455) / `truncated_integral_spec_left` (576), which already share their last step. The reusable fact \u2014 a straight segment crossed transversally contributes `-\u03c0i` \u2014 is proved twice and stated never.",
+   "line": 211
+  },
+  {
+   "evidence": "`grep -n 'hasCauchyPVAt_iff.mpr'` \u2192 NonCorner.lean:643, NonCorner.lean:1074, Rho/Value.lean:443, Rho/AddOne/Value.lean:483; the Rho/Value.lean block (410-450) matches NonCorner.lean:621-648 line for line modulo the value of `F`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "Add a constructor to `TauCeti/Analysis/Contour/Cauchy/PrincipalValue/Basic.lean` beside `HasCauchyPVAt.intro`: given `0 < b`, `\u2200 \u03b5 \u2208 Ioo 0 b, IntervalIntegrable (truncated \u03b5) volume a b \u2227 \u222b \u2026 = F \u03b5`, and `Tendsto F (\ud835\udcdd[>] 0) (\ud835\udcdd L)`, conclude `HasCauchyPVAt \u03b3 a b f z\u2080 L`. Both new theorems then reduce to supplying `hspec` and the `F`-limit (`tendsto_neg_pi_sub_arcsin` / `tendsto_const_nhds`).",
+   "issue": "The `HasCauchyPVAt` assembly block \u2014 `hIoo`, `hspec : \u2200 \u03b5 \u2208 Ioo 0 b, integrable \u2227 integral = F \u03b5`, `Tendsto F`, then `hasCauchyPVAt_iff.mpr \u27e8filter_upwards \u2026, Tendsto.congr' \u2026\u27e9` \u2014 is written out twice in this file (621-648, 1053-1079) and is already present verbatim in `Winding/Rho/Value.lean:410-450` and `Winding/Rho/AddOne/Value.lean:483`. Four copies of the same ~20-line argument, none of it specific to the boundary contour.",
+   "line": 621
+  },
+  {
+   "evidence": "`Ioo_mem_nhdsGT : a < b \u2192 Ioo a b \u2208 \ud835\udcdd[>] a` is used 15 times across 9 files in this repo, including in the imported `TauCeti/Analysis/Contour/Cauchy/PrincipalValue/Basic.lean:237`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "Replace both blocks with `Ioo_mem_nhdsGT hb` (or drop them entirely if the constructor from the previous finding is added).",
+   "issue": "`hIoo : Ioo (0 : \u211d) b \u2208 \ud835\udcdd[>] 0` is reproved by hand (`rw [\u2190 Ioi_inter_Iio]; exact inter_mem self_mem_nhdsWithin (nhdsWithin_le_nhds (Iio_mem_nhds hb))`) at lines 624-627 and again at 1057-1059; this is exactly `Ioo_mem_nhdsGT`.",
+   "line": 624
+  }
+ ],
+ "head_sha": "ff739c55ea98c9679de61e63c90af5558fe79f0d",
+ "merge_base_sha": "b31d0ecf2f112dfb53d1d584b28e615521a939bd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2974,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5ee1abfd2ae4737ce16bac523ff29c4b7626475ae65ff9737784272d44d747a9",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T205652Z-2974-proof-quality-51b26f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T20:56:52Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are readable and free of defeq manipulation, but the vertical-edge half of the file is a near line-for-line mirror of itself across seven lemma pairs (~190 lines duplicated), and the principal-value assembly block is copy-pasted twice here on top of two existing copies in the corner files. Both are reusable facts left unstated.",
+ "transcript_blob": "2d56c9c12732ab3c4c1e9d41af0bc3d2d015112ec7025f82063e517c44663e44",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 146858,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 146858,
+  "cache_read_input_tokens": 1893960,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1905,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1905,
+    "cache_read_input_tokens": 161452,
+    "input_tokens": 2,
+    "output_tokens": 5527,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19335,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

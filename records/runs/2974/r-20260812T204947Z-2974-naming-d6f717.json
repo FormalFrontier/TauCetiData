@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.1668024999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 170.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 124880,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 124880,
+    "cache_read_input_tokens": 1043439,
+    "inference_geo": "not_available",
+    "input_tokens": 19,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4937,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4937,
+      "cache_read_input_tokens": 136442,
+      "input_tokens": 2,
+      "output_tokens": 4025,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13190,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 2.166802,
+ "dedupe_key": "TauCetiProject/TauCeti|2974|ff739c55ea98c9679de61e63c90af5558fe79f0d|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "0cf0b93568878551c25f3deda86412b73e472c4e2caaf1f969a6a517ec1b3082",
+ "diff_sha256": "0cf0b93568878551c25f3deda86412b73e472c4e2caaf1f969a6a517ec1b3082",
+ "duration_s": 170.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `PieceLog.lean:96:theorem windingNumber_fdBoundary_arc_eq_log (hw : 1 < w.im) : windingNumber (fdBoundary H) 1 3 w = \u2026`; `Basic.lean:396:theorem injOn_fdBoundary_arc (H : \u211d) : InjOn (fdBoundary H) (Icc 1 3)`; `Basic.lean:618:lemma norm_fdBoundary_arc (h1 : 1 \u2264 t) (h3 : t \u2264 3)`. Both files open `namespace TauCeti / namespace ModularForm`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "Move the stratum to an `of`-clause per the conventions' hypothesis rule: `windingNumber_fdBoundary_of_mem_arc` / `hasCauchyPVAt_fdBoundary_of_mem_arc`, and update the module docstring's `Main declarations` list and the call site in ValencePV.lean:409.",
+   "issue": "`windingNumber_fdBoundary_arc` (and `hasCauchyPVAt_fdBoundary_arc`, line 1048) use `_arc` for \"the point `w` is on the arc\", but in this same namespace `fdBoundary \u2026 arc` uniformly means \"the contour restricted to `t \u2208 [1,3]`\" \u2014 `injOn_fdBoundary_arc`, `norm_fdBoundary_arc`, `logDeriv_fdBoundary_arc`, `im_fdBoundary_arc_le`, and above all `windingNumber_fdBoundary_arc_eq_log` (PieceLog.lean:96), which is the winding over `1 3` about a point off the arc and of which the new name is a strict prefix. The new statements are over the full range `0 5`, so the name misdescribes the conclusion.",
+   "line": 1084
+  },
+  {
+   "evidence": "grep: `Basic.lean:530:theorem fdBoundary_four_sub_vertical (H : \u211d) {t : \u211d} (ht : t \u2208 Icc (0 : \u211d) 1)`; `Deriv.lean:246:lemma deriv_fdBoundary_four_sub_vertical (H : \u211d) {t : \u211d} (ht : t \u2208 Set.Ioo (0 : \u211d) 1)`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "Rename to `windingNumber_fdBoundary_of_mem_vertical` / `hasCauchyPVAt_fdBoundary_of_mem_vertical` (or `_of_re_eq_half_or_neg_half`), consistently with the arc pair.",
+   "issue": "Same defect for the vertical pair: `windingNumber_fdBoundary_vertical` (and `hasCauchyPVAt_fdBoundary_vertical`, line 616) use `_vertical` for \"`w` lies on an open vertical edge\", while `fdBoundary_four_sub_vertical` / `deriv_fdBoundary_four_sub_vertical` already use `vertical` for the contour piece `t \u2208 (0,1)`.",
+   "line": 653
+  },
+  {
+   "evidence": "File docstring lines 25-30: \"lies on one of three open smooth strata: the two open vertical edges, the open unit arc, or the open ceiling segment at height `H`. This file proves that on the first two \u2026; the ceiling stratum is not treated here\". `Main declarations` lists only the vertical and arc pairs.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/Winding/NonCorner.lean",
+   "fix": "Rename the file to what it proves (e.g. `Winding/VerticalAndArc.lean`) and retitle the module header accordingly, or extend it to the ceiling stratum.",
+   "issue": "The module name `Winding/NonCorner.lean` and its title \"Winding of the boundary contour at its smooth non-corner points\" advertise all non-corner points, but the file's own docstring lists three smooth strata and treats two: the open ceiling segment (`t \u2208 (4,5)`) is not covered. A reader importing `Winding.NonCorner` for the ceiling case finds nothing.",
+   "line": 0
+  }
+ ],
+ "head_sha": "ff739c55ea98c9679de61e63c90af5558fe79f0d",
+ "merge_base_sha": "b31d0ecf2f112dfb53d1d584b28e615521a939bd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2974,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a2ab8afd53fbbdb1468b5bdbdbb5c1fb257160bdbdc24d72cd33a5b92b654d7b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T204947Z-2974-naming-d6f717",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T20:49:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The public suffixes `_arc` and `_vertical` reuse tokens that already mean \"this piece of the contour\" everywhere else in `TauCeti.ModularForm` (including `windingNumber_fdBoundary_arc_eq_log`, of which the new name is a literal prefix), while here they mean \"the point `w` lies on that stratum\"; the hypotheses belong after `of`. The module name also claims all non-corner points while the ceiling stratum is untreated.",
+ "transcript_blob": "6ca9d5d221e6b2febb55c6e79494900821e8907d940bf0c460737c5ef2d1d2ca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 124880,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 124880,
+  "cache_read_input_tokens": 1043439,
+  "inference_geo": "not_available",
+  "input_tokens": 19,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4937,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4937,
+    "cache_read_input_tokens": 136442,
+    "input_tokens": 2,
+    "output_tokens": 4025,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13190,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
