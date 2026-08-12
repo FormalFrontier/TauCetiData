@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.273236,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 264.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 53072,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 53072,
+    "cache_read_input_tokens": 491200,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1296,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1296,
+      "cache_read_input_tokens": 68275,
+      "input_tokens": 2,
+      "output_tokens": 6304,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19523,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 1.273236,
+ "dedupe_key": "TauCetiProject/TauCeti|2940|4a92f401d02d75bd2ae2413b3f5f923384a728f9|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "diff_sha256": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "duration_s": 264.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/RingTheory/Binomial.lean:380` `def choose ... [BinomialRing R]`; `:277` `noncomputable instance {R} [AddCommMonoid R] [Module \u211a\u22650 R] [Pow R \u2115] : BinomialRing R`; grep `Module \u211a\u22650` over `code/TauCeti` matches only KostantForm.lean:66-68; `Mathlib/Algebra/Module/Rat.lean` has no `Module \u211a\u22650` instance for \u211a-algebras.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Make it `scoped instance` in `TauCeti.UniversalEnvelopingAlgebra` (or a genuine instance for `[Semiring A] [Algebra \u211a A]` in a shared file) so consumers get it by `open`, and fix the docstring to say it is what supplies `BinomialRing` for `Ring.choose`.",
+   "issue": "`kostantFormModuleNNRat` is a `local instance`, so it does not survive import; it is the only source of `Module \u211a\u22650 (UniversalEnvelopingAlgebra \u211a L)` and hence of the `BinomialRing` instance that `Ring.choose` needs. Downstream (the Chevalley construction that is supposed to consume this) cannot elaborate any goal mentioning `Ring.choose (\u03b9 \u211a (h i)) n`, so `choose_mem_kostantForm`, `kostantForm_le_iff`, `image_kostantCartanGenerators` and `choose_mem_kostantCartanGenerators` are unusable without each consumer re-declaring the instance \u2014 and a re-declared copy is a syntactically different instance term, so `simp`/`rw` will not match. The docstring is also wrong: divided powers need `[Algebra \u211a A]` (`Associative.lean:55,61`), not `Module \u211a\u22650`; the instance exists for `Ring.choose`.",
+   "line": 66
+  },
+  {
+   "evidence": "`Functoriality.lean:83` `map_\u03b9` vs `:91` `@[simp] map_\u03b9'` with the comment \"simp-normal form is `map_\u03b9'`\"; `Mathlib/Algebra/Lie/UniversalEnveloping.lean:132,136` `lift_\u03b9_apply`/`lift_\u03b9_apply'`; `KostantForm.lean:130` needs `simpa` to bridge the two forms.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Follow the convention this file's own dependency uses (`map_\u03b9`/`map_\u03b9'`, mirroring Mathlib's `lift_\u03b9_apply`/`lift_\u03b9_apply'`): state `dividedPower_mem_kostantForm` and `choose_mem_kostantForm` with `UniversalEnvelopingAlgebra.\u03b9`, and add primed `mkAlgHom`-form companions carrying the `@[simp]` tags.",
+   "issue": "`dividedPower_mem_kostantForm` (114) and `choose_mem_kostantForm` (122) are stated only in the unfolded `mkAlgHom \u211a L (TensorAlgebra.\u03b9 \u211a _)` form. The natural general-`n` statement in terms of `UniversalEnvelopingAlgebra.\u03b9` \u2014 the form used by `kostantForm_le_iff` (143) and by `rootVector_mem_kostantForm` (129) \u2014 does not exist, so a consumer holding an `\u03b9`-shaped goal must unfold `\u03b9` by hand; conversely `rootVector_mem_kostantForm`/`cartanVector_mem_kostantForm` are stated in the `\u03b9` form that `simp` immediately normalizes away, so they cannot fire.",
+   "line": 114
+  },
+  {
+   "evidence": "`kostantForm` (95) is a plain `def` with no `@[expose]` and no defining-equation lemma; the generator defs are used only by `kostantForm` (97) and by `image_kostant*` (161,174,188), which in turn serve only `map_kostantForm` (197).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Add `theorem kostantForm_def (e h) : kostantForm e h = Subring.closure (kostantGenerators e h) := (rfl)` (or a `kostantForm_induction` wrapper) and make `dividedPower_mem_kostantRootGenerators`/`choose_mem_kostantCartanGenerators` `private`; alternatively make the whole generator layer `private` and keep only `kostantForm_le_iff` plus an induction principle.",
+   "issue": "`kostantRootGenerators`, `kostantCartanGenerators`, `kostantGenerators` and the two trivial range-membership lemmas (100, 107) are public, but `kostantForm`'s body is not exposed and no lemma states `kostantForm e h = Subring.closure (kostantGenerators e h)`. Downstream the generator sets are therefore dead surface, and there is no elimination principle: `Subring.closure_induction` cannot be applied to `kostantForm`, which the announced follow-up PBW/integrality results will need.",
+   "line": 73
+  },
+  {
+   "evidence": "`Functoriality.lean:113` `@[simp] map_id`, `:122` `@[simp] map_comp` exist for the underlying map; `KostantForm.lean` exports only `coe_kostantFormMap_apply` (213) and `coe_kostantFormEquiv_apply` (246).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Add `kostantFormMap_id`, `kostantFormMap_comp`, `kostantFormEquiv_toRingHom : (kostantFormEquiv g e h).toRingHom = kostantFormMap g.toLieHom e h`, and a `@[simp] coe_kostantFormEquiv_symm_apply`; each follows from `coe_kostantFormMap_apply` with `RingHom.ext`/`Subtype.ext`.",
+   "issue": "`kostantFormMap` and `kostantFormEquiv` lack the interaction lemmas with the operations already in scope: no `kostantFormMap_id`/`kostantFormMap_comp` counterparts to the imported `map_id`/`map_comp`, and nothing links `kostantFormEquiv` to `kostantFormMap` or characterizes its inverse. A consumer transporting along a composite of pinned-root-datum isomorphisms has no lemma to rewrite with.",
+   "line": 204
+  }
+ ],
+ "head_sha": "4a92f401d02d75bd2ae2413b3f5f923384a728f9",
+ "merge_base_sha": "fce706c121399af2045ac4ecf8103ea398983222",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2940,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2d6f17c2c0ec0c7f36fb99b2d1ca7df2c46d2a4f1f3044f2fde09de076127547",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T154719Z-2940-api-design-3318e0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T15:47:19Z",
+ "submitted_by": "kim-em",
+ "summary": "The Cartan half of the public API is stated in terms of `Ring.choose`, whose `BinomialRing` instance comes solely from a file-local `Module \u211a\u22650` instance, so no consumer can state or reuse it. The general-`n` membership lemmas are exported only in the unfolded `mkAlgHom` form, and the exported generator sets have no lemma connecting them to `kostantForm`.",
+ "transcript_blob": "d661e605a7299d4784fbeb8177f04399bb899bcec6871d94deee95335a792dca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53072,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 53072,
+  "cache_read_input_tokens": 491200,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1296,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1296,
+    "cache_read_input_tokens": 68275,
+    "input_tokens": 2,
+    "output_tokens": 6304,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19523,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

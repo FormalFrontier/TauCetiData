@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8266870000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 311.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78591,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78591,
+    "cache_read_input_tokens": 986832,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2302,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2302,
+      "cache_read_input_tokens": 92788,
+      "input_tokens": 2,
+      "output_tokens": 2950,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21537,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 1.826687,
+ "dedupe_key": "TauCetiProject/TauCeti|2940|4a92f401d02d75bd2ae2413b3f5f923384a728f9|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "diff_sha256": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "duration_s": 311.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Ring/Subsemiring/Basic.lean:746 `def restrict (f : R \u2192+* S) (s' : \u03c3R) (s : \u03c3S) (h : \u2200 x \u2208 s', f x \u2208 s) : s' \u2192+* s := (f.domRestrict s').codRestrict s fun x => h x x.2`; line 750 `@[simp] theorem coe_restrict_apply ... = f x := rfl`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Define `kostantFormMap f e h := (map \u211a f).toRingHom.restrict (kostantForm e h) (kostantForm (fun i => f (e i)) (fun i => f (h i))) (fun x hx => by rw [\u2190 map_kostantForm f e h]; exact \u27e8x, hx, rfl\u27e9)`; the coe lemma then closes by `rfl` (or is subsumed by the existing `@[simp] RingHom.coe_restrict_apply`).",
+   "issue": "`kostantFormMap` hand-assembles `((map \u211a f).toRingHom.comp (kostantForm e h).subtype).codRestrict _ _`, which is verbatim the body of Mathlib's `RingHom.restrict`. `coe_kostantFormMap_apply` (line 212) then restates `RingHom.coe_restrict_apply`.",
+   "line": 204
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Ring/Subring/Basic.lean:975 `def subringMap (e : R \u2243+* S) : s \u2243+* s.map e.toRingHom`; coe lemma at Subsemiring/Basic.lean:890. TauCeti/Algebra/Lie/UniversalEnveloping/Functoriality.lean:165 `def mapEquiv (e : LieEquiv R L M) : \u2026 \u2243\u2090[R] \u2026`, with the same inverse argument at lines 176-180, and `mapEquiv_toAlgHom` at line 185.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Use `((mapEquiv \u211a g).toRingEquiv.subringMap (s := kostantForm e h)).trans (RingEquiv.subringCongr h')`, identifying `((mapEquiv \u211a g).toRingEquiv : _ \u2192+* _)` with `(map \u211a g.toLieHom).toRingHom` via `mapEquiv_toAlgHom` to get `h'` from `map_kostantForm`. `coe_kostantFormEquiv_apply` then follows from `RingEquiv.subsemiringMap_apply_coe`.",
+   "issue": "`kostantFormEquiv` re-derives an equivalence from `Subring.equivMapOfInjective` plus an inlined injectivity proof (`map_injective_of_leftInverse` with a hand `LieHom.ext`/`symm_apply_apply` argument). Mathlib already packages exactly this as `RingEquiv.subringMap`, and this PR's stated dependency `mapEquiv` \u2014 which contains that same `LieHom.ext`/`symm_apply_apply` step \u2014 is not used anywhere in the file.",
+   "line": 233
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Set/Image.lean:643 `theorem range_comp' (g : \u03b1 \u2192 \u03b2) (f : \u03b9 \u2192 \u03b1) : range (fun x => g (f x)) = g '' range f`; mathlib/Mathlib/RingTheory/Binomial.lean:533 `lemma map_choose`; TauCeti/RingTheory/DividedPowers/Associative.lean:90 `@[simp] theorem map_dividedPower`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "`rw [kostantRootGenerators, \u2190 Set.range_comp']; exact congrArg Set.range (funext fun p => by simp)` and likewise `rw [kostantCartanGenerators, \u2190 Set.range_comp']; exact congrArg Set.range (funext fun p => by simp [Ring.map_choose])`.",
+   "issue": "`image_kostantRootGenerators` and `image_kostantCartanGenerators` (line 174) prove `f '' range g = range (f \u2218 g)` by hand `ext`/`rintro` bashes; this is `Set.range_comp'`. The only non-plumbing content is the pointwise step, already available as `Associative.map_dividedPower` and `Ring.map_choose`.",
+   "line": 161
+  },
+  {
+   "evidence": "mathlib/Mathlib/Data/Set/Image.lean:646 `theorem range_subset_iff : range f \u2286 s \u2194 \u2200 y, f y \u2208 s`; `Set.union_subset_iff` in Mathlib/Order/SetNotation and Data/Set/Basic; the generator sets are `Set.range` by their definitions at lines 73 and 80.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Replace the body with `simp [kostantForm, kostantGenerators, kostantRootGenerators, kostantCartanGenerators, Subring.closure_le, Set.union_subset_iff, Set.range_subset_iff, Prod.forall]`.",
+   "issue": "After `Subring.closure_le`, the ten-line proof of `kostantForm_le_iff` re-derives `Set.union_subset_iff`, `Set.range_subset_iff` and `Prod.forall` by hand `rintro`/`obtain` on the two ranges.",
+   "line": 140
+  }
+ ],
+ "head_sha": "4a92f401d02d75bd2ae2413b3f5f923384a728f9",
+ "merge_base_sha": "fce706c121399af2045ac4ecf8103ea398983222",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2940,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7983a14f5fc37be59f3bee0f03194aeb08ef526281d5384db918ef039abd51d3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T153818Z-2940-reuse-6fccd8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T15:38:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The Kostant form itself is new material with no Mathlib or TauCeti counterpart, but four pieces of surrounding scaffolding re-derive located library API: RingHom.restrict, RingEquiv.subringMap (plus TauCeti's own mapEquiv), Set.range_comp', and Set.range_subset_iff/union_subset_iff.",
+ "transcript_blob": "015904b2fcf7f53194ba1788e90be08665a596830e14aca0f56ff1b93d8546f5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78591,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78591,
+  "cache_read_input_tokens": 986832,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2302,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2302,
+    "cache_read_input_tokens": 92788,
+    "input_tokens": 2,
+    "output_tokens": 2950,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21537,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

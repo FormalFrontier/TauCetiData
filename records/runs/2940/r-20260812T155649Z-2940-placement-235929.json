@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9722745,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 165.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43862,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43862,
+    "cache_read_input_tokens": 457633,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2876,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2876,
+      "cache_read_input_tokens": 57485,
+      "input_tokens": 2,
+      "output_tokens": 2113,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11842,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 0.972275,
+ "dedupe_key": "TauCetiProject/TauCeti|2940|4a92f401d02d75bd2ae2413b3f5f923384a728f9|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "diff_sha256": "fc9e8eff458659d40bcb548740d82d811f1c56f63b093713034d75173d84c311",
+ "duration_s": 165.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "KostantForm.lean:66-68 (`noncomputable local instance kostantFormModuleNNRat`); mathlib/Mathlib/RingTheory/Binomial.lean:277 `noncomputable instance {R} [AddCommMonoid R] [Module \u211a\u22650 R] [Pow R \u2115] : BinomialRing R`; `grep -rn \"\u211a\u22650\" TauCeti` returns only these two lines, so no earlier TauCeti file provides it.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/KostantForm.lean",
+   "fix": "Move it to an earlier general file \u2014 e.g. next to `TauCeti.Associative.dividedPower` in `TauCeti/RingTheory/DividedPowers/Associative.lean` (already imported here), or a dedicated general module \u2014 stated for an arbitrary `[AddCommMonoid A] [Module \u211a A]` (or \u211a-algebra), exported rather than `local`, and rename off the `kostantForm` prefix.",
+   "issue": "`kostantFormModuleNNRat : Module \u211a\u22650 (UniversalEnvelopingAlgebra \u211a L) := Module.compHom _ (algebraMap \u211a\u22650 \u211a)` is a general fact about any \u211a-module/\u211a-algebra, with no Lie or Kostant content, yet it is placed in this file, specialized to the enveloping algebra, and marked `local` so it does not escape. It is the only route to `BinomialRing` (mathlib/Mathlib/RingTheory/Binomial.lean:277 requires `[Module \u211a\u22650 R]`; Mathlib has no \u211a-algebra \u2192 \u211a\u22650-module instance \u2014 grep shows only `subsingleton_nnrat_module` and the `DivisibleHull` instance). Consequence: `kostantCartanGenerators`, `choose_mem_kostantForm` and the `Ring.choose` half of `kostantForm_le_iff` are exported, but a downstream Chevalley file cannot write `Ring.choose (\u03b9 \u211a (h i)) n` without re-declaring the instance itself.",
+   "line": 66
+  }
+ ],
+ "head_sha": "4a92f401d02d75bd2ae2413b3f5f923384a728f9",
+ "merge_base_sha": "fce706c121399af2045ac4ecf8103ea398983222",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2940,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c1c787d06cfe2c15e3c7acdc365d419ae84e82f0cca453be830fdf097e87fcc6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T155649Z-2940-placement-235929",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T15:56:49Z",
+ "submitted_by": "kim-em",
+ "summary": "File location and imports are correct, but the general `Module \u211a\u22650` instance that makes `Ring.choose` elaborate is declared as a Kostant-specific `local instance` in this file instead of living in an earlier general file, so the exported Cartan-generator API cannot be stated downstream.",
+ "transcript_blob": "a5ff1e5c184c10328e389d8efd3ed1abae2011bd0d0c12d32bf69ac3c8f62c32",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43862,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43862,
+  "cache_read_input_tokens": 457633,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2876,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2876,
+    "cache_read_input_tokens": 57485,
+    "input_tokens": 2,
+    "output_tokens": 2113,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11842,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
