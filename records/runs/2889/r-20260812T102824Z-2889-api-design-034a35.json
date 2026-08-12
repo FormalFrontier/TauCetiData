@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7630469999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 103.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 39753,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 39753,
+    "cache_read_input_tokens": 287030,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1681,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1681,
+      "cache_read_input_tokens": 54571,
+      "input_tokens": 1,
+      "output_tokens": 3732,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 8598,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "cost_usd": 0.763047,
+ "dedupe_key": "TauCetiProject/TauCeti|2889|e1dcd8ae641a16868778074a17d3b7600c99b2d9|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "851554a4a79cb71e0c5aa3bc392078e79f763e9bbeeccc024a6a9578cec6038c",
+ "diff_sha256": "851554a4a79cb71e0c5aa3bc392078e79f763e9bbeeccc024a6a9578cec6038c",
+ "duration_s": 103.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Sibling lemmas exist and are used exactly this way: `le_enlarge` at :221 used in `enlarge_idealOfDefinition` :232; `le_adjoin` at :250 used in `adjoin_idealOfDefinition` :261; `le_sup_left` at :316 used in `sup_idealOfDefinition` :331; `le_sup_right` at :322. `grep -n 'le_enlargeBounded'` in TauCeti/ returns nothing.",
+   "file": "TauCeti/RingTheory/Huber/RingOfDefinition.lean",
+   "fix": "Add `le_enlargeBounded : P.ringOfDefinition \u2264 (P.enlargeBounded B hB).ringOfDefinition` and `self_le_enlargeBounded : B \u2264 (P.enlargeBounded B hB).ringOfDefinition`; state `enlargeBounded_idealOfDefinition` with `Subring.inclusion (P.le_enlargeBounded B hB)` and close `isBounded_iff_exists_ringOfDefinition_ge` with `P.self_le_enlargeBounded B hB`.",
+   "issue": "No named inclusion lemmas for `enlargeBounded`. `P.ringOfDefinition \u2264 (P.enlargeBounded B hB).ringOfDefinition` must be inlined as `show ... by rw [enlargeBounded_ringOfDefinition]; exact le_sup_left` inside the statement of `enlargeBounded_idealOfDefinition`, and `B \u2264 (P.enlargeBounded B hB).ringOfDefinition` \u2014 the defining property of the construction \u2014 is reproved ad hoc at line 350 with `by simp`.",
+   "line": 296
+  },
+  {
+   "evidence": "`@[simp]` at :215 (`enlarge_ringOfDefinition`), :228 (`enlarge_idealOfDefinition`), :243/:257 (`adjoin_*`), :310/:328 (`sup_*`), :289 (`enlargeBounded_ringOfDefinition`); absent only at :295.",
+   "file": "TauCeti/RingTheory/Huber/RingOfDefinition.lean",
+   "fix": "Tag `enlargeBounded_idealOfDefinition` with `@[simp]` (matching `enlarge_ringOfDefinition`/`enlargeBounded_ringOfDefinition`, which are both simp).",
+   "issue": "`enlargeBounded_idealOfDefinition` carries no `@[simp]`, unlike every other `*_idealOfDefinition` lemma in the file. Because `enlargeBounded`'s body is not exposed, `enlarge_idealOfDefinition` cannot fire through it, so no simp lemma computes `(P.enlargeBounded B hB).idealOfDefinition`.",
+   "line": 294
+  }
+ ],
+ "head_sha": "e1dcd8ae641a16868778074a17d3b7600c99b2d9",
+ "merge_base_sha": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2889,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1ac6bf9b8ddd767f3eb6ba440446fee0df294b7a9b56c3fd74aa283367ee5b16",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T102824Z-2889-api-design-034a35",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T10:28:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `enlargeBounded` surface is missing the two inclusion lemmas every sibling construction in the file provides, which forces an inline `show ... by rw` proof term into the statement of `enlargeBounded_idealOfDefinition` and makes consumers reprove `B \u2264 (P.enlargeBounded B hB).ringOfDefinition`. The ideal lemma also lacks the `@[simp]` its three siblings carry.",
+ "transcript_blob": "33899c6cce13746c8792c62bc3dfb3f946f22a537e5962fd86c72af7faf8610d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 39753,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 39753,
+  "cache_read_input_tokens": 287030,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1681,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1681,
+    "cache_read_input_tokens": 54571,
+    "input_tokens": 1,
+    "output_tokens": 3732,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 8598,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
