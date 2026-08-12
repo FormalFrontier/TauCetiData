@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.134732,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 30.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 29184,
+    "input_tokens": 45820,
+    "output_tokens": 1232,
+    "reasoning_output_tokens": 646
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "673b22b65267a0100d4b96693a7dd4f7e54f3747",
+ "cost_estimated": true,
+ "cost_usd": 0.134732,
+ "dedupe_key": "TauCetiProject/TauCeti|2868|eb58a7efe9c0f1f26ceb059865bc6bd5afb63ff0|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "479cd01d32b71ebcfd34160caf0b8cf5d694c2364131fd440fcc7afaa74b5e8d",
+ "diff_sha256": "479cd01d32b71ebcfd34160caf0b8cf5d694c2364131fd440fcc7afaa74b5e8d",
+ "duration_s": 30.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 130\u2013131 declare `dividedPower_mul_eq_succ_smul ... : x * dividedPower n x = ...`.",
+   "file": "TauCeti/Algebra/Associative/DividedPower.lean",
+   "fix": "Rename it to `mul_dividedPower_eq_succ_smul`; do not retain the old name as an alias.",
+   "issue": "`dividedPower_mul_eq_succ_smul` is named as though its left side were `dividedPower n x * x`, but it states `x * dividedPower n x`, making the canonical API misleading.",
+   "line": 130
+  },
+  {
+   "evidence": "The definition is at line 59, while `rg -n 'dividedPower_def' code` has no hit.",
+   "file": "TauCeti/Algebra/Associative/DividedPower.lean",
+   "fix": "Add a public `dividedPower_def` restatement of `(n.factorial : \u211a)\u207b\u00b9 \u2022 x ^ n`, proved by `rfl`.",
+   "issue": "The new definition has no public `dividedPower_def` theorem, so consumers needing its normalization must unfold the implementation directly.",
+   "line": 59
+  },
+  {
+   "evidence": "Lines 90 and 98 declare these rewrite laws without attributes, unlike the zero, one, and map laws.",
+   "file": "TauCeti/Algebra/Associative/DividedPower.lean",
+   "fix": "Mark `dividedPower_smul` and `dividedPower_neg` with `@[simp]`; both rewrite a structurally more complex argument and do not create a loop.",
+   "issue": "The scalar and negation laws are normal-form lemmas but lack `@[simp]`, so simplification does not reduce divided powers of scaled or negated elements.",
+   "line": 90
+  }
+ ],
+ "head_sha": "eb58a7efe9c0f1f26ceb059865bc6bd5afb63ff0",
+ "merge_base_sha": "673b22b65267a0100d4b96693a7dd4f7e54f3747",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2868,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a8313f419ea84b9f2fbf1ee76a101d82ccdffea01394a6ec8b9b951606da8b42",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T003449Z-2868-api-design-3a2b1c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T00:34:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The public surface has a misleading recurrence name and lacks the standard defining restatement and normal-form automation for the new operation.",
+ "transcript_blob": "a528c730aa2cb5cf9bc60e4808a96618fce622fe90a75bf6e504ba981ab603d9",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 29184,
+  "input_tokens": 45820,
+  "output_tokens": 1232,
+  "reasoning_output_tokens": 646
+ },
+ "verdict": "request_changes"
+}
