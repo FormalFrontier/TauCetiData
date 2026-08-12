@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5813355,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 240.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72860,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72860,
+    "cache_read_input_tokens": 836713,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1343,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1343,
+      "cache_read_input_tokens": 88016,
+      "input_tokens": 2,
+      "output_tokens": 6053,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16831,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dcaae552461e5f81619f006a9226a57f8458619b",
+ "cost_usd": 1.581336,
+ "dedupe_key": "TauCetiProject/TauCeti|2897|c8cdc7a487859ae470a0b5e516d0d5dcf716de55|proof-quality|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "bcf3e183fe67a153f758809ea8f54a665724996791f0e9ae19759ca95ce205b9",
+ "diff_sha256": "bcf3e183fe67a153f758809ea8f54a665724996791f0e9ae19759ca95ce205b9",
+ "duration_s": 240.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Comodule.pointsAction` is defined as `(generalLinearEquiv A (A \u2297[R] V)).toMonoidHom.comp (pointsRepresentation V).asGroupHom` (PointsAction.lean:44-47), so this is a pure round trip. Copies: Tannaka/SemisimplePoint.lean:62-66, Tannaka/JordanDecomposition.lean:339-343, Representation/SemisimplePoint.lean:94-99. grep for `toLinearEquiv_ofLinearEquiv` in ./mathlib hits only Mathlib/Algebra/Algebra/Equiv.lean:618 (AlgEquiv, unrelated); no such GL lemma exists in ./code.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Add one `@[simp]` lemma next to `Comodule.pointsAction_toLinearMap` in Representation/PointsAction.lean \u2014 e.g. `toLinearEquiv_ofLinearEquiv_pointsAction : (LinearMap.GeneralLinearGroup.ofLinearEquiv (pointsAction V g)).toLinearEquiv = pointsAction V g` (or the more basic `ofLinearEquiv_pointsAction : ofLinearEquiv (pointsAction V g) = (pointsRepresentation V).asGroupHom g`) \u2014 and replace all three inline `have haction` blocks with it.",
+   "issue": "The fact `(ofLinearEquiv (Comodule.pointsAction M g)).toLinearEquiv = Comodule.pointsAction M g` is re-derived as a local `have` here, again at Tannaka/JordanDecomposition.lean:339-343 (a copy this PR touches instead of extracting), and in `generalLinearEquiv`-applied form at Representation/SemisimplePoint.lean:94-99. Each copy is stated with `generalLinearEquiv` and typechecks only through the MulEquiv-wrapper defeq.",
+   "line": 62
+  },
+  {
+   "evidence": "grep `cancel_epi\\] at`: PointFaithful.lean:64, PointFaithful.lean:103, Tannaka/SemisimplePoint.lean:75 \u2014 each followed by `rw [cancel_mono] at happ` and `congrArg SemimoduleCat.Hom.hom happ`. `fgPointFactorNatIso_congr` (JordanDecomposition.lean:222-236) already provides only the easy direction of the same fact.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Factor the shared step into one lemma \u2014 both `fgPointNatIsoHom_hom_app` and `fgPointSemisimplePartNatIso_hom_app` have the form `eqToHom h \u226b e.toModuleIso\u209b.hom \u226b eqToHom h.symm`, so state `eqToHom h \u226b e\u2081.toModuleIso\u209b.hom \u226b eqToHom h.symm = eqToHom h \u226b e\u2082.toModuleIso\u209b.hom \u226b eqToHom h.symm \u2194 e\u2081 = e\u2082` once (companion to the existing `fgPointFactorNatIso_congr`) and use it at all three sites.",
+   "issue": "Turning an equality of `Aut (FGComoduleCat.scalarExtensionFunctor \u2026)` into an equality of underlying linear maps (`congrArg (\u00b7.hom.app M)` \u2192 `rw [cancel_epi] at happ` \u2192 `rw [cancel_mono] at happ` \u2192 `congrArg SemimoduleCat.Hom.hom` \u2192 `simp only [LinearEquiv.toModuleIso\u209b_hom, SemimoduleCat.hom_ofHom]`) is the third verbatim copy of this idiom, and nothing states why the `eqToHom` legs may be cancelled.",
+   "line": 70
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:68,72 give only `ofLinearEquiv_mul` and `ofLinearEquiv_inv`; grep for `ofLinearEquiv_one` returns nothing in ./mathlib or ./code. Lines 153-154 type-ascribe `ofLinearEquiv (\u2026 ^ n) = ofLinearEquiv \u2026 ^ n` to `map_pow (generalLinearEquiv K _).symm.toMonoidHom`, which only elaborates through that defeq.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/SemisimplePoint.lean",
+   "fix": "Add `ofLinearEquiv_one : ofLinearEquiv (1 : M \u2243\u2097[R] M) = 1` and `ofLinearEquiv_pow : ofLinearEquiv (f ^ n) = ofLinearEquiv f ^ n` (both `rfl`, matching Mathlib's `ofLinearEquiv_mul`/`ofLinearEquiv_inv`) in a TauCeti GeneralLinearGroup file, then rewrite with them at lines 122-123, 151-155 and 186-187 instead of relying on `generalLinearEquiv.symm.toMonoidHom` being definitionally `ofLinearEquiv`.",
+   "issue": "`isSemisimplePoint_one` closes `IsSemisimple (ofLinearEquiv (1 : _ \u2243\u2097[K] _))` with `GeneralLinearGroup.isSemisimple_one`, which is stated for `(1 : GeneralLinearGroup K V)`, purely by wrapper unification. The same undocumented defeq (`generalLinearEquiv.symm` silently standing in for `ofLinearEquiv`) carries `hpow` at lines 151-154 and the `Commute` transport at lines 186-187, while `.inv` (line 132) and `.mul_of_commute` (line 184) correctly use the stated `ofLinearEquiv_inv`/`ofLinearEquiv_mul`.",
+   "line": 122
+  }
+ ],
+ "head_sha": "c8cdc7a487859ae470a0b5e516d0d5dcf716de55",
+ "merge_base_sha": "dcaae552461e5f81619f006a9226a57f8458619b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2897,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "12b450b86bf1a5af615abb849590016cfa56eb1f5429e76d783db04232f37e38",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T152735Z-2897-proof-quality-ffcf99",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T15:27:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The round-trip `ofLinearEquiv`/`toLinearEquiv` fact is now re-derived inline in three places (one of which this PR edits), the eqToHom-cancellation component-extraction chain is copied a third time without documentation, and the identity/power/commute steps in the new point file rely on undocumented definitional equality between `generalLinearEquiv.symm` and `ofLinearEquiv` while sibling proofs in the same file use stated lemmas.",
+ "transcript_blob": "e43e935883fa24ed61112707097c70c43e436b968d8e62442561be2a0e81f34b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72860,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72860,
+  "cache_read_input_tokens": 836713,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1343,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1343,
+    "cache_read_input_tokens": 88016,
+    "input_tokens": 2,
+    "output_tokens": 6053,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16831,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
