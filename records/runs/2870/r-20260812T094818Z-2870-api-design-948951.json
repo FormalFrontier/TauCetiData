@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6865970000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 265.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78566,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78566,
+    "cache_read_input_tokens": 704160,
+    "inference_geo": "not_available",
+    "input_tokens": 19,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1610,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1610,
+      "cache_read_input_tokens": 93455,
+      "input_tokens": 1,
+      "output_tokens": 3369,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21197,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "cost_usd": 1.686597,
+ "dedupe_key": "TauCetiProject/TauCeti|2870|d7437416e8ceefefdd2f7341080f7a6e548f3310|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "diff_sha256": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "duration_s": 265.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 123-125: `@[simp] lemma affineBCartanMatrix_transpose (n : \u2115) : (affineBCartanMatrix n)\u1d40 = adjoinPendant (CartanMatrix.C (n + 3)) \u27e81, by omega\u27e9`; lines 264-265: `theorem not_isFiniteType_affineBCartanMatrix_transpose (n : \u2115) : \u00ac IsFiniteType (affineBCartanMatrix n)\u1d40`. Mathlib `Mathlib/LinearAlgebra/Matrix/Cartan.lean:165`: `@[simp] theorem B_transpose : (B n).transpose = C n := by ext; simp only [...]; grind` \u2014 not `rfl`. The repo's own precedent avoids this: `DoubleEdge.lean:131` marks `doubleEdgeCartanMatrix_transpose` `@[simp]` and states no theorem whose subject is a transpose.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/ForkedDoubleEdge.lean",
+   "fix": "State it in the normal form: `theorem not_isFiniteType_adjoinPendant_cartanMatrix_C (n : \u2115) : \u00ac IsFiniteType (adjoinPendant (CartanMatrix.C (n + 3)) \u27e81, by omega\u27e9)`, proved by `rw [\u2190 affineBCartanMatrix_transpose]` then the existing argument. (Alternatively drop `@[simp]` from `affineBCartanMatrix_transpose`, but the normal-form statement is the one the consumer wants.)",
+   "issue": "`not_isFiniteType_affineBCartanMatrix_transpose` is stated about `(affineBCartanMatrix n)\u1d40`, but `@[simp] affineBCartanMatrix_transpose` (line 123) rewrites exactly that term to `adjoinPendant (CartanMatrix.C (n + 3)) \u27e81, _\u27e9`. The two are not defeq (`CartanMatrix.B_transpose` is proved by `ext \u2026 grind`, not `rfl`), so a consumer holding the C-oriented diagram \u2014 which is what the extraction step produces, and what any `simp` call leaves behind \u2014 cannot apply the theorem by `exact`; the file's headline result for that orientation is out of simp-normal form.",
+   "line": 264
+  }
+ ],
+ "head_sha": "d7437416e8ceefefdd2f7341080f7a6e548f3310",
+ "merge_base_sha": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2870,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "995f1ff93a75cfaf4ec516fd1382379f8e702e8e3f2398597aee6dcce8ddc428",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T094818Z-2870-api-design-948951",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:48:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is otherwise minimal, bodies are hidden, and the characteristic entry/submatrix/transpose API is complete and correctly annotated. But one of the two headline exclusions is stated on a term that the file's own `@[simp]` lemma rewrites away, so the C-orientation result does not apply to the matrix a consumer actually holds.",
+ "transcript_blob": "a3d3108ec8da76489eb9c6dfe3ea9d711366ed6aa4a1c6d02f6956af73904afc",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78566,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78566,
+  "cache_read_input_tokens": 704160,
+  "inference_geo": "not_available",
+  "input_tokens": 19,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1610,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1610,
+    "cache_read_input_tokens": 93455,
+    "input_tokens": 1,
+    "output_tokens": 3369,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21197,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

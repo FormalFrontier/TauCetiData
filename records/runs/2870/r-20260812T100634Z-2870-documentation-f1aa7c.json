@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.822403,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 293.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85765,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85765,
+    "cache_read_input_tokens": 691164,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1166,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1166,
+      "cache_read_input_tokens": 101098,
+      "input_tokens": 2,
+      "output_tokens": 3663,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24027,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "cost_usd": 1.822403,
+ "dedupe_key": "TauCetiProject/TauCeti|2870|d7437416e8ceefefdd2f7341080f7a6e548f3310|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "diff_sha256": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "duration_s": 293.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Chain.lean:95-98 states `- (if a + 1 = m then 0 else (if a + 1 = L then 2 else 1) * g (a + 1))`; Chain.lean:201-207 applies it with `L = 0`, where no position is a short end.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Chain.lean",
+   "fix": "Say the term is absent when the row is the last position of the range (`a + 1 = m`) and doubled when the next position is the short end (`a + 1 = L`). While there, restore the generality justification of the analogous `sum_range_chainEntry_mul` (\"...so the weight may take its values in any ring\"); as written \"Only ring operations and integer casts are used\" is a remark about the proof.",
+   "issue": "The docstring of `sum_range_chainBEntry_mul` says the forward term is \"absent when the row is the short end itself\", but the statement drops it when `a + 1 = m`, the end of the summation range, independently of `L`. For `L = 0` \u2014 the instantiation used two lemmas below to derive `sum_range_chainEntry_mul`, and the simply-laced case the file's own module docstring advertises \u2014 there is no short end at all, so the description is wrong for the lemma's other consumer.",
+   "line": 91
+  },
+  {
+   "evidence": "The following clause \"keep the path joining the branch vertex to the double edge\" already presupposes a path, i.e. connectedness; the file's opening sentence (line 16) speaks of a *connected* finite-type diagram.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/ForkedDoubleEdge.lean",
+   "fix": "Add the missing hypothesis: \"A connected acyclic diagram whose only multiple edge is a double edge...\".",
+   "issue": "\"An acyclic diagram whose only multiple edge is a double edge, and which has a branch vertex, carries one of these or one of their transposes\" is false without connectedness: `D\u2084 \u2294 B\u2082` is acyclic, has a branch vertex, has a double edge as its only multiple edge, and is of finite type, so it contains no `B\u0303\u2097` submatrix \u2014 and no path joins its branch vertex to its double edge.",
+   "line": 33
+  },
+  {
+   "evidence": "AffineD.lean:126-127 `\u2190 chainEntry_eq_cartanMatrix_A, chainEntry_def`; AffineD.lean:229 `sum_range_chainEntry_mul i.isLt fun _ \u21a6 (2 : \u211a)`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Chain.lean",
+   "fix": "Add `TauCeti.LinearAlgebra.RootSystem.FiniteType.AffineD` to the list (and name the forked double-edge module, `FiniteType.ForkedDoubleEdge`, as the other two are named).",
+   "issue": "The rewritten module docstring enumerates the diagrams built from chains \u2014 \"the stars of ...Star.Basic, the double-edge chains of ...DoubleEdge, and the forked double-edge diagrams - are all assembled from chains\" \u2014 but omits the affine-`D` double forks of `FiniteType/AffineD.lean`, an existing consumer of both `chainEntry` and `sum_range_chainEntry_mul`.",
+   "line": 21
+  }
+ ],
+ "head_sha": "d7437416e8ceefefdd2f7341080f7a6e548f3310",
+ "merge_base_sha": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2870,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "452eb7df52a1eca878e354ca4375d17bd5beffb90239247b7dc2b1c7fc58e3c7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T100634Z-2870-documentation-f1aa7c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T10:06:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Documentation is otherwise accurate and well-adapted (the comark/convention discussion checks out against Mathlib's `pairing i j = \u27e8\u03b1\u1d62, \u03b1\u2c7c^\u2228\u27e9`), but the docstring of the new main result `sum_range_chainBEntry_mul` mis-states when its forward term drops, and two module-docstring claims are false as written.",
+ "transcript_blob": "c7841ad11df84d6cbf1eea13ff7ee2443ebeef3ff6f353928172e364c2f9d929",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85765,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85765,
+  "cache_read_input_tokens": 691164,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1166,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1166,
+    "cache_read_input_tokens": 101098,
+    "input_tokens": 2,
+    "output_tokens": 3663,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24027,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

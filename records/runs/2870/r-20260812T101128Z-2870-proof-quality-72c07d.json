@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0504795,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 326.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 100724,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 100724,
+    "cache_read_input_tokens": 790015,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7920,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7920,
+      "cache_read_input_tokens": 109303,
+      "input_tokens": 2,
+      "output_tokens": 2110,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25182,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "cost_usd": 2.050479,
+ "dedupe_key": "TauCetiProject/TauCeti|2870|d7437416e8ceefefdd2f7341080f7a6e548f3310|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "diff_sha256": "89cb0aca83ada033f7686457dfc34f8c1b81009b5f9e889a023ab080bd1ec8f3",
+ "duration_s": 326.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Chain.lean:147-151 \u2014 comment says `(rfl)`, the proof body is `by unfold chainEntry chainBEntry; split_ifs <;> omega`. Contrast Chain.lean:58-64, where the same comment precedes an actual `(rfl)`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Chain.lean",
+   "fix": "Delete lines 147-148; the identical comment at lines 58-59 above `chainBEntry_def` is still accurate and covers the convention.",
+   "issue": "The comment \"`(rfl)`, not `rfl`: ... the parenthesised form keeps these equations out of the exported definitional-equality check\" now sits above `chainEntry_def`, whose proof the refactor changed to `by unfold chainEntry chainBEntry; split_ifs <;> omega` (line 151). It describes a proof form that is no longer there and reads as a constraint on how the lemma must be proved.",
+   "line": 147
+  },
+  {
+   "evidence": "Chain.lean:201-207; the two branches differ only in the simp set (`[chainEntry]` vs `[chainEntry, h0, Nat.sub_add_cancel h1, Nat.add_assoc]`). The `L = 0` sentinel convention is explained at the definition (Chain.lean:52-53) but its discharge here is not.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Chain.lean",
+   "fix": "Either add a one-line comment naming the three steps, or make them explicit: `rcases m with _ | k` and finish each branch with `simp only [chainEntry, Nat.succ_ne_zero, one_mul, Nat.succ_sub_one]` (or `rw [chainEntry]` plus explicit congruence) so the sentinel and the index shift are separately visible.",
+   "issue": "`sum_range_chainEntry_mul` is now two near-identical `simpa [...] using sum_range_chainBEntry_mul (L := 0) ...` calls whose simp sets silently perform three unrelated reconciliations at once: the sentinel branch `if m + 1 = 0 then 2 else 1` collapsing to `1`, the truncated-subtraction shift `m - 1 + 1 = m` (via the proof-carrying `Nat.sub_add_cancel h1`), and `m + 1 + 1 = m + 2`. Nothing in the proof says which step each simp argument does, so the reason the specialization works is invisible and the call is sensitive to any change in the shape of `sum_range_chainBEntry_mul`'s right-hand side.",
+   "line": 201
+  }
+ ],
+ "head_sha": "d7437416e8ceefefdd2f7341080f7a6e548f3310",
+ "merge_base_sha": "55173dc7913b0936bfa8961a20526b2aff410c76",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2870,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8d0aa53529863cab50fbb650ebddf50dca4705ce0e49e38586809de24d57023a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T101128Z-2870-proof-quality-72c07d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T10:11:28Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are robust and well-factored: automation-first, no defeq manipulation via show/change, and the type-A row sum is now genuinely derived from the shared type-B one. Two refactor leftovers in Chain.lean: a comment that misdescribes the proof it sits on, and an unexplained two-branch simpa carrying the whole specialization argument.",
+ "transcript_blob": "406e5b12ef7137de99122a7d13153389e122e209f31d51657b2ae16e31be4029",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 100724,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 100724,
+  "cache_read_input_tokens": 790015,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7920,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7920,
+    "cache_read_input_tokens": 109303,
+    "input_tokens": 2,
+    "output_tokens": 2110,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25182,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
