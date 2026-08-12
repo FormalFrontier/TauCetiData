@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.238685,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 168.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 63049,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 63049,
+    "cache_read_input_tokens": 510126,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3512,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3512,
+      "cache_read_input_tokens": 76036,
+      "input_tokens": 2,
+      "output_tokens": 3638,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13332,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "cost_usd": 1.238685,
+ "dedupe_key": "TauCetiProject/TauCeti|2853|70a17e736ad09015b4ddc2767fec62aa051d0a8f|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "diff_sha256": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "duration_s": 168.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/NumberTheory/ModularForms/CongruenceSubgroups.lean:198 `def Gamma0.negOne (N : \u2115) : \u21a5(Gamma0 N) := \u27e8-1, neg_one_mem_Gamma0\u27e9` and :201 `lemma Gamma0.coe_negOne (N : \u2115) : (Gamma0.negOne N : SL(2, \u2124)) = -1 := (rfl)` \u2014 the same construction, same `(rfl)` idiom. Mathlib/LinearAlgebra/CliffordAlgebra/SpinGroup.lean:296 `namespace spinGroup`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Rename to `spinGroup.negOne`, `spinGroup.coe_negOne`, `spinGroup.negOne_mem_ker_spinToSpecialOrthogonal`, updating the three uses at lines 368, 381, 391.",
+   "issue": "`negOneSpin` (and `coe_negOneSpin` at 323, `negOneSpin_mem_ker_spinToSpecialOrthogonal` at 342) appends the type name as a suffix instead of namespacing under the group, which is how this repo already names the identical construction and where users will look for it.",
+   "line": "317"
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/CliffordAlgebra/PinAction.lean:134 `theorem neg_one_mem_spinGroup_of_isUnit (Q : QuadraticForm R M) (v : M) (hvQ : IsUnit (Q v))` vs Kernel.lean:300-302 with `[Field K] [Nontrivial M] (hQ : Q.Nondegenerate)`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Rename this one `neg_one_mem_spinGroup_of_nondegenerate` (its hypothesis is `hQ`), leaving `neg_one_mem_spinGroup_of_isUnit` as is; update the use at line 319.",
+   "issue": "`neg_one_mem_spinGroup` takes the unqualified name but is the restricted version (`Field K`, `Nontrivial M`, `Q.Nondegenerate`), while the strictly more general lemma over a `CommRing` carries the qualified name `neg_one_mem_spinGroup_of_isUnit`. The short name advertises the general statement and delivers the special case.",
+   "line": "300"
+  },
+  {
+   "evidence": "Naming conventions, Logic dictionary: `\u2203` \u2192 `exists`. Repo precedent for the same shape in a private helper: TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Coordinate/HopfAlgebra.lean:307 `private theorem exists_eq_mul_inverse_algebraMap_pow`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Prefix all three with `exists_` (`exists_eq_algebraMap_of_contractLeft_eq_zero`, etc.). `eq_algebraMap_of_all_contractLeft_eq_zero` at 190 is a genuine equality and is correct as is.",
+   "issue": "`eq_algebraMap_of_contractLeft_eq_zero` (220), `eq_algebraMap_of_mem_even_of_commute` (235) and `coe_eq_algebraMap_of_mem_ker_spinToOrthogonal` (270) all conclude `\u2203 r, \u2026 = algebraMap K _ r`, but the names claim an equality; the naming dictionary maps `\u2203` to `exists`.",
+   "line": "220"
+  },
+  {
+   "evidence": "`grep -rl Projector Mathlib` returns no files; Mathlib uses `proj`/`linearProj` (e.g. `LinearMap.proj`, `Submodule.linearProjOfIsCompl`).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Rename to `basis_exteriorAlgebra_singleton_eq_\u03b9` (or similar naming the conclusion) and `coordinateProj`/`exteriorCoordProj`.",
+   "issue": "`basis_singleton` is an exterior-algebra statement (`b.ExteriorAlgebra {i} = ExteriorAlgebra.\u03b9 K (b i)`) living in the `TauCeti.CliffordAlgebra` namespace under a name that mentions neither the algebra nor the conclusion; `coordinateProjector` (112) uses \"Projector\", a term absent from Mathlib.",
+   "line": "124"
+  }
+ ],
+ "head_sha": "70a17e736ad09015b4ddc2767fec62aa051d0a8f",
+ "merge_base_sha": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2853,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c19e9dc4fec93339faa49d147a24e9563685ec42bbe1a0b0035a13a976c266bf",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T062702Z-2853-naming-c46bdb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T06:27:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The canonical `-1` element is named `negOneSpin` with a type-name suffix instead of following the repo's own `Gamma0.negOne`/`Gamma0.coe_negOne` precedent and Mathlib's `spinGroup` namespace, the unqualified `neg_one_mem_spinGroup` is given to the strictly less general of the two membership lemmas, and three existential lemmas are named `eq_algebraMap_\u2026`. No notation is introduced.",
+ "transcript_blob": "fbb0a364bded6ea155bcbeca8b0fb2c4508a1bf5a9e7960b1758c8407dc3266f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 63049,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 63049,
+  "cache_read_input_tokens": 510126,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3512,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3512,
+    "cache_read_input_tokens": 76036,
+    "input_tokens": 2,
+    "output_tokens": 3638,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13332,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

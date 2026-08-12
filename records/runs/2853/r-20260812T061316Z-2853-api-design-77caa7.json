@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3450465,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 245.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 61834,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 61834,
+    "cache_read_input_tokens": 497547,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3005,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3005,
+      "cache_read_input_tokens": 75328,
+      "input_tokens": 2,
+      "output_tokens": 2523,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18617,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "cost_usd": 1.345047,
+ "dedupe_key": "TauCetiProject/TauCeti|2853|70a17e736ad09015b4ddc2767fec62aa051d0a8f|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "diff_sha256": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "duration_s": 245.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Algebra/Group/Subgroup/Ker.lean:244-245`: `@[to_additive (attr := simp)] theorem mem_ker {f : G \u2192* M} {x : G} : x \u2208 f.ker \u2194 f x = 1` \u2014 membership is rewritten to the value form by default-priority simp, which is why `high` was needed here.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Add `@[simp] theorem spinToSpecialOrthogonal_negOneSpin : spinToSpecialOrthogonal Q (negOneSpin Q hQ) = 1` (the proof body at lines 346-353 already establishes it) and derive the membership statement from it via `MonoidHom.mem_ker`, dropping the `high` priority.",
+   "issue": "`@[simp high]` on `negOneSpin_mem_ker_spinToSpecialOrthogonal` exists only to preempt Mathlib's simp-normal form for kernel membership; the lemma simp actually wants, `spinToSpecialOrthogonal Q (negOneSpin Q hQ) = 1`, is absent, so a user reasoning about the map's value (not membership) has no lemma at all.",
+   "line": 341
+  },
+  {
+   "evidence": "`grep -rn \"negOne\" TauCeti/` returns only `neg_one_mem_spinGroup`, `negOneSpin`, `coe_negOneSpin`, `negOneSpin_mem_ker_spinToSpecialOrthogonal` \u2014 no inequality lemma; the argument appears only at Kernel.lean:393-404.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "State `theorem negOneSpin_ne_one (Q) [Invertible (2 : K)] [Nontrivial M] (hQ : Q.Nondegenerate) : negOneSpin Q hQ \u2260 1` in the `NegOne` section (it needs no `FiniteDimensional`) and use it in `card_ker_spinToSpecialOrthogonal`.",
+   "issue": "`negOneSpin Q hQ \u2260 1` is proven inline (lines 393-404, an `algebraMap_injective` plus `Invertible.ne_zero (2 : K)` argument) instead of being exposed. It is the characteristic fact distinguishing the two kernel elements, needed by the stated downstream product (the `1 \u2192 \u2124/2 \u2192 Spin \u2192 SO \u2192 1` sequence, `orderOf (negOneSpin ..) = 2`), and a consumer must redo the whole argument.",
+   "line": 393
+  },
+  {
+   "evidence": "Kernel.lean:220 and 235 are `private theorem`; `grep -rn \"contractLeft\" TauCeti/` shows a public contraction API in `TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean:557,568`, and the repo has no other statement of the even-center fact (`grep -rn \"Commute.*\u03b9 Q\"` hits only this file).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Make these two public (keeping the exterior-basis and `coordinateProjector` helpers private); they complement the already-public contraction API in `Filtration.lean` (`contractLeft_mem_filtration`).",
+   "issue": "`eq_algebraMap_of_mem_even_of_commute` (an even Clifford element commuting with every `\u03b9 Q v` is scalar \u2014 the center computation of Lawson\u2013Michelsohn I \u00a72) and its companion `eq_algebraMap_of_contractLeft_eq_zero` (line 220: all contractions vanish \u21d2 scalar) are general Clifford-algebra results independent of the Spin group, kept `private` and thus unusable by any other file.",
+   "line": 235
+  }
+ ],
+ "head_sha": "70a17e736ad09015b4ddc2767fec62aa051d0a8f",
+ "merge_base_sha": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2853,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7c4f5fd726d221de02f474bb6409a98e5d1c0e536d29f89bc4e795d077a4821d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T061316Z-2853-api-design-77caa7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T06:13:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The `negOneSpin` surface is missing two characteristic facts \u2014 `negOneSpin \u2260 1` (proven inline inside the cardinality proof) and the map-value lemma `spinToSpecialOrthogonal Q (negOneSpin Q hQ) = 1`, whose absence is patched with a `@[simp high]` priority hack against Mathlib's `MonoidHom.mem_ker` normal form. The file's general Clifford results (an even element commuting with all vectors is scalar) are also locked behind `private`.",
+ "transcript_blob": "108b7f724732b68c1a4d02346a836173f0dd1fa7aefbf0c5476daa8dcd3eb919",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61834,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 61834,
+  "cache_read_input_tokens": 497547,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3005,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3005,
+    "cache_read_input_tokens": 75328,
+    "input_tokens": 2,
+    "output_tokens": 2523,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18617,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

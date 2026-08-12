@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0361494999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 381.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78814,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78814,
+    "cache_read_input_tokens": 989109,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2638,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2638,
+      "cache_read_input_tokens": 92675,
+      "input_tokens": 2,
+      "output_tokens": 6634,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 29654,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "cost_usd": 2.036149,
+ "dedupe_key": "TauCetiProject/TauCeti|2853|70a17e736ad09015b4ddc2767fec62aa051d0a8f|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "diff_sha256": "4e355809b3654acfb0234a12604d1fa7ca20b877bf8b78accab8cb6914e77426",
+ "duration_s": 381.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PinAction.lean:134 `neg_one_mem_spinGroup_of_isUnit (Q) (v) (hvQ : IsUnit (Q v))` is declared before `variable (Q) [Invertible (2 : R)]` at PinAction.lean:176, so it holds over `CommRing R` with no characteristic hypothesis; its proof (lines 137-149) only uses `\u03b9 (a \u2022 v) * \u03b9 v = algebraMap (a * Q v) = -1`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "State `theorem neg_one_mem_spinGroup (Q : QuadraticForm K M) (hQ : Q \u2260 0) : (-1 : CliffordAlgebra Q) \u2208 spinGroup Q`, proved by `obtain \u27e8v, hv\u27e9 := DFunLike.ne_iff.mp hQ; exact neg_one_mem_spinGroup_of_isUnit Q v (isUnit_iff_ne_zero.mpr (by simpa using hv))`. Derive `Q \u2260 0` from `hQ.radical_eq_bot` + `Nontrivial M` at the one call site in `card_ker_spinToSpecialOrthogonal`.",
+   "issue": "`neg_one_mem_spinGroup` assumes `[Invertible (2 : K)]`, `[Nontrivial M]` and `hQ : Q.Nondegenerate`; none is needed. All the proof extracts is a single `v` with `Q v \u2260 0`, and the whole `BilinForm`/`associated`/`isSymm` detour exists only to recover that.",
+   "line": 300
+  },
+  {
+   "evidence": "The proof at Kernel.lean:346-353 is `rw [MonoidHom.mem_ker]; apply Subtype.ext; apply LinearEquiv.ext; intro m; rw [coe_spinToSpecialOrthogonal_apply]; apply \u03b9_injective Q; rw [\u03b9_spinVectorAction_apply]; simp` \u2014 it uses only `\u03b9_spinVectorAction_apply` (Spin/Action.lean:115, `CommRing R` + `Invertible 2`) and centrality of `-1`; `hQ` and `Nontrivial M` appear nowhere except inside `negOneSpin`'s own type.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Weaken `negOneSpin`/`coe_negOneSpin` to `hQ : Q \u2260 0` per the previous finding, and state the kernel fact at its natural level over `CommRing R`: `theorem mem_ker_spinToSpecialOrthogonal_of_coe_eq_neg_one (Q : QuadraticForm R M) [Invertible (2 : R)] (x : spinGroup Q) (h : (x : CliffordAlgebra Q) = -1) : x \u2208 MonoidHom.ker (spinToSpecialOrthogonal Q)`, then obtain `negOneSpin_mem_ker_spinToSpecialOrthogonal` as a one-line corollary.",
+   "issue": "`negOneSpin` (317), `coe_negOneSpin` (323) and `negOneSpin_mem_ker_spinToSpecialOrthogonal` (342) inherit `[Field K]`, `[Nontrivial M]` and `hQ : Q.Nondegenerate` from the same over-strong membership lemma. In particular the mathematical content of line 342 \u2014 a Spin element whose coercion is `-1` acts trivially, because `-1` is central and `star (-1) * (-1) = 1` \u2014 needs no nondegeneracy, no `Nontrivial M` and no field.",
+   "line": 317
+  },
+  {
+   "evidence": "mathlib `LinearAlgebra/ExteriorAlgebra/Basis.lean:21` declares `variable {R M : Type*} {m n : \u2115} {I : Type*} [LinearOrder I] [CommRing R] [AddCommGroup M] [Module R M]` for `Module.Basis.ExteriorAlgebra`, `basis_apply`, `basis_apply_ofCard` and `basis_mul_of_disjoint`; mathlib `Contraction.lean:50-52` declares `contractLeft` over `[CommRing R]`. Spin/Action.lean:48-49 shows `spinToOrthogonal`/`\u03b9_spinVectorAction_apply` need only `[CommRing R] [Invertible (2 : R)]`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Drop the `K`/`Field` variable in `section Exterior` and use the file's ambient `{R} [CommRing R]`; move lines 251 and 328 out of the field sections into a `CommRing` section carrying only `[Invertible (2 : R)]`. This puts the reusable fact `eq_algebraMap_of_all_contractLeft_eq_zero` (an exterior element annihilated by every contraction is scalar) at its natural level.",
+   "issue": "`variable {K : Type u} [Field K] [Module K M]` for `section Exterior` (lines 77-213) is unused: every declaration there (`contractLeft_\u03b9Multi_eq_zero`, `contractLeft_basis_eq_zero_of_not_mem`, `coordinateProjector`, `coordinateProjector_basis_of_not_mem`, `basis_singleton`, `coordinateProjector_basis_of_mem`, `coordinateProjector_repr_of_mem`, `eq_algebraMap_of_all_contractLeft_eq_zero`) holds over the file's ambient `[CommRing R]`. Same unused `Field` on `commute_\u03b9_of_mem_ker_spinToOrthogonal` (251) and `mem_ker_spinToOrthogonal_of_mem_ker_spinToSpecialOrthogonal` (328).",
+   "line": 77
+  }
+ ],
+ "head_sha": "70a17e736ad09015b4ddc2767fec62aa051d0a8f",
+ "merge_base_sha": "f7aaa6df91011d8623d880c19e6cc3f69e1d46f4",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2853,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4411c01f475f29074486f90020cad3376de41b97e788034afc6db1bc10305749",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T061721Z-2853-generality-63fd4e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T06:17:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The public `-1` API is stated far above its natural level: `neg_one_mem_spinGroup` and everything derived from it assume a field, `Invertible 2`, `Nontrivial M` and `Nondegenerate`, where the PR's own `neg_one_mem_spinGroup_of_isUnit` shows `Q \u2260 0` (over a field) or `IsUnit (Q v)` (over a commutative ring) suffices. The `Field K` variable is also visibly unused across the exterior section and three further lemmas.",
+ "transcript_blob": "ceae3b8f2b7496fbdd8efb451817f07d9d9821b03debdf073b2ff60f99f0e328",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78814,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78814,
+  "cache_read_input_tokens": 989109,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2638,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2638,
+    "cache_read_input_tokens": 92675,
+    "input_tokens": 2,
+    "output_tokens": 6634,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 29654,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
