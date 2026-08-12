@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.766409,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 128.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 38273,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 38273,
+    "cache_read_input_tokens": 276108,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2127,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2127,
+      "cache_read_input_tokens": 52645,
+      "input_tokens": 2,
+      "output_tokens": 3814,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9595,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 0.766409,
+ "dedupe_key": "TauCetiProject/TauCeti|2901|267ee678f0ef411853a012b14b8cad09db9ebf83|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9c00b858ef0d80a25e4c2ed23be3187dbc9ed05a5bd139e436af155a24536428",
+ "diff_sha256": "9c00b858ef0d80a25e4c2ed23be3187dbc9ed05a5bd139e436af155a24536428",
+ "duration_s": 128.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `patchTopology_le|isCompact_of_isClopen_patchTopology` over ./code: no matches. PatchPresentation.lean:24 'It says nothing about Lemma 7.5(1)'.",
+   "file": "",
+   "fix": "Rewrite the description to the landed names (`isCompact_of_isClosed_generateFrom`, `isCompact_of_isClosed_patchTopology`, `isCompact_basicOpen`, `isCompact_basicOpenFinset`) and their actual proof route, and drop the 7.5(1) claim.",
+   "issue": "The PR description's headline block advertises `TauCeti.ValuationSpectrum.patchTopology_le` and `isCompact_of_isClopen_patchTopology`; neither exists. The 'The argument' and 'Provenance' sections describe a proof via `patchTopology_le`/`continuous_id_of_le`, but what landed routes through `TauCeti.isCompact_of_isClosed_generateFrom`. The opening also claims to close the Lemma 7.5(1) gap, which the new module docstring explicitly denies (PatchPresentation.lean:24).",
+   "line": 0
+  },
+  {
+   "evidence": "PatchCriterion.lean:91-94 and 103-106 show both proofs bypass `isCompact_of_isClosed_generateFrom` (line 99).",
+   "file": "TauCeti/Topology/Spectral/PatchCriterion.lean",
+   "fix": "Keep the first sentence ('Every set closed for the witness topology is quasi-compact for the generated topology.') and delete the rest, or reword to 'the neighbouring lemmas are the special cases at a member and at a finite intersection' only if they are actually rerouted through it.",
+   "issue": "Docstring of `isCompact_of_isClosed_generateFrom` says 'the two lemmas around it are its instances at a member and at a finite intersection'. False in the code: `isCompact_sInter_of_isClopen_generateFrom` (line 90) proves itself via `isCompact_of_patch`, and `isCompact_of_isClopen_generateFrom` (line 103) via `isCompact_sInter_of_isClopen_generateFrom`; neither uses this lemma. It also documents usage/proof rather than the statement.",
+   "line": 96
+  },
+  {
+   "evidence": "Line 241-245: statement is `IsCompact (basicOpenFinset T s)`; the clopen fact is already documented at line 211-212 on `isClopen_patchTopology_basicOpenFinset`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/PatchPresentation.lean",
+   "fix": "Reduce to '`Spv(A)(T/s)` is quasi-compact.', matching `isCompact_basicOpen` at line 236.",
+   "issue": "`isCompact_basicOpenFinset`'s docstring is '`Spv(A)(T/s)` is quasi-compact: a finite intersection of patch-clopen basic opens is patch-clopen.' The clause after the colon describes the proof and states a clopen-ness conclusion, not the compactness the lemma delivers.",
+   "line": 241
+  },
+  {
+   "evidence": "SpvOfIdeal/Spectral.lean:44-46: '`Spv (A, I)` is *not* pro-constructible in `Spv A` in general \u2026 which Wedhorn's Remark 7.6 denies.'",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/PatchPresentation.lean",
+   "fix": "Write 'since `spvOfIdeal` is not in general closed in `Spv A`' and cite Wedhorn Remark 7.6, cross-referencing `TauCeti/AlgebraicGeometry/AdicSpace/SpvOfIdeal/Spectral.lean`.",
+   "issue": "Module docstring asserts flatly that '`spvOfIdeal` is not closed in `Spv A`'. Stated without qualifier or reference it is an overclaim (it fails in degenerate cases where `spvOfIdeal` is the whole space); the sibling file states only the qualified, referenced version.",
+   "line": 25
+  },
+  {
+   "evidence": "Lines 231-245: only line 234 passes `isClopen_patchTopology_of_mem_basicOpens`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/PatchPresentation.lean",
+   "fix": "Say what it is: 'The basic opens satisfy the patch criterion's clopen hypothesis `\u2200 U \u2208 \u2026, IsClopen[patchTopology A] U`.'",
+   "issue": "Docstring of `isClopen_patchTopology_of_mem_basicOpens` says it is 'the hypothesis the patch criterion's quasi-compactness lemmas take, packaged once for the two instantiations below'. It is used exactly once, in `isCompact_of_isClosed_patchTopology` (line 233); the two lemmas below take an `IsClosed` hypothesis and never mention it.",
+   "line": 221
+  }
+ ],
+ "head_sha": "267ee678f0ef411853a012b14b8cad09db9ebf83",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2901,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8f400a3c095887b0510ee24807be1562a45419a5864903e744bdc10d05d59887",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T084144Z-2901-documentation-5cb981",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:41:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The new declarations are documented, but several docstrings state relationships the code does not have, one describes the proof instead of the result, one module-doc assertion is an unqualified overclaim, and the PR description advertises two lemma names that do not exist in the diff.",
+ "transcript_blob": "51cbc54a6119bb851e3e27f815dd1c44cc8ff1c152aa9641e20754ade3b12432",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 38273,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 38273,
+  "cache_read_input_tokens": 276108,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2127,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2127,
+    "cache_read_input_tokens": 52645,
+    "input_tokens": 2,
+    "output_tokens": 3814,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9595,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
