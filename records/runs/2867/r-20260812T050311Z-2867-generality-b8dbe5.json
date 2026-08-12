@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8412625,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 266.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 145051,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 145051,
+    "cache_read_input_tokens": 1680357,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6247,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6247,
+      "cache_read_input_tokens": 155303,
+      "input_tokens": 2,
+      "output_tokens": 2890,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20009,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2ebf8f0b67d8751ec308a69430920ed33dbf07e2",
+ "cost_usd": 2.841263,
+ "dedupe_key": "TauCetiProject/TauCeti|2867|00cca70fa186c2b112cdbe6f867fcaec22f9c78e|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "5482fb9c572f4ce0d87091ed3761577ed6179335cb8c837ffb1838ab0a2756ce",
+ "diff_sha256": "5482fb9c572f4ce0d87091ed3761577ed6179335cb8c837ffb1838ab0a2756ce",
+ "duration_s": 266.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PwC1ImmersionOn.lean:225 `(hdiff t (left_mem_Icc.mpr htd.le)).hasDerivWithinAt.mono \u2026` and :246 `(hdiff t (right_mem_Icc.mpr hct.le)).hasDerivWithinAt.mono \u2026` are the only occurrences of `hdiff` in either proof.",
+   "file": "TauCeti/Analysis/Contour/PwC1ImmersionOn.lean",
+   "fix": "Weaken both to `hdiff : DifferentiableWithinAt \u211d \u03b3 (Icc t d) t` (resp. `DifferentiableWithinAt \u211d \u03b3 (Icc c t) t`) and replace `(hdiff t _).hasDerivWithinAt` with `hdiff.hasDerivWithinAt`. The OnCurve call sites already have `DifferentiableOn` and can pass `.differentiableWithinAt (left_mem_Icc.mpr \u2026)`.",
+   "issue": "`IsPwC1ImmersionOn.derivWithin_ne_zero_right` assumes `hdiff : DifferentiableOn \u211d \u03b3 (Icc t d)` but applies it at the single point `t` only (`hdiff t (left_mem_Icc.mpr htd.le)`); the conclusion `derivWithin \u03b3 (Icc t d) t \u2260 0` depends only on the germ at `t` within the set. Same in `derivWithin_ne_zero_left` (line 241), which uses `hdiff t (right_mem_Icc.mpr hct.le)` only.",
+   "line": 220
+  },
+  {
+   "evidence": "OnCurve.lean:145 `h\u03b3c := hdiff.continuousOn.mono hsub_cd` and :146 `hdw := hlip.continuousOn.mono hsub_cd` are the only uses of `hdiff` and `hlip` in the proof (lines 141\u2013180).",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Replace `hdiff`/`hlip`/`K` by `ContinuousOn \u03b3 (Icc c d)` and `ContinuousOn (derivWithin \u03b3 (Icc c d)) (Icc c d)`; the call sites already have both (`(hdiffL t ht').continuousOn`, `(hlipL t ht').continuousOn`).",
+   "issue": "`intervalIntegrable_realWindingIntegrand_window` assumes `hdiff : DifferentiableOn \u211d \u03b3 (Icc c d)` and `hlip : LipschitzOnWith K (derivWithin \u03b3 (Icc c d)) (Icc c d)`, but each is consumed only through `.continuousOn`; the `C^{1,1}` data (and the `{K : \u211d\u22650}` parameter) is never used quantitatively \u2014 the quantitative content comes from `hbdd`.",
+   "line": 136
+  },
+  {
+   "evidence": "PiecewiseC1On.lean:292 `intervalIntegrable_deriv_aux hC1 (p.filter (\u00b7 \u2208 Ioo (min a b) (max a b))).card (min a b) (max a b) le_rfl \u2026` and :349 the identical pattern for `isBounded_image_deriv_aux`; these are the only consumers.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "State the public form as `\u2200 c d : \u211d, c \u2264 d \u2192 Icc c d \u2286 uIcc a b \u2192 Q c d`, doing the `card`-induction internally (`suffices \u2200 n, \u2026`). The two private wrappers `intervalIntegrable_deriv_aux` and `isBounded_image_deriv_aux` then reduce to direct applications.",
+   "issue": "The newly public `piecewise_gluing_induction` states its conclusion as `\u2200 n (c d : \u211d), (p.filter (\u00b7 \u2208 Ioo c d)).card \u2264 n \u2192 c \u2264 d \u2192 Icc c d \u2286 uIcc a b \u2192 Q c d`, exposing the induction counter and a `card \u2264 n` hypothesis that is proof scaffolding: both call sites instantiate `n` with the card and discharge it with `le_rfl`.",
+   "line": 239
+  }
+ ],
+ "head_sha": "00cca70fa186c2b112cdbe6f867fcaec22f9c78e",
+ "merge_base_sha": "2ebf8f0b67d8751ec308a69430920ed33dbf07e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2867,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8e7611cd5059b741a499d6e18dd41a395fb428e1d81984748106d93239eb1216",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T050311Z-2867-generality-b8dbe5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T05:03:11Z",
+ "submitted_by": "kim-em",
+ "summary": "Three new declarations carry hypotheses stronger than their proofs use: two public immersion lemmas demand DifferentiableOn where only a pointwise DifferentiableWithinAt is applied, the window-integrability lemma demands DifferentiableOn plus LipschitzOnWith where only continuity is used, and the newly public gluing induction exposes an induction counter every caller discharges with le_rfl. The earlier orientation point on IsPiecewiseC1On.isBounded_image_deriv is resolved at head.",
+ "transcript_blob": "65d350b5aa5afd4693e54b4ac57c4314657c385b9f423c8ba927e72dbc2b66e7",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 145051,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 145051,
+  "cache_read_input_tokens": 1680357,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6247,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6247,
+    "cache_read_input_tokens": 155303,
+    "input_tokens": 2,
+    "output_tokens": 2890,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20009,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

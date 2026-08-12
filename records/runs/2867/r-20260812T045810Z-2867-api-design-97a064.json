@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.9512365000000007,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 300.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 121818,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 121818,
+    "cache_read_input_tokens": 2352873,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2834,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2834,
+      "cache_read_input_tokens": 135483,
+      "input_tokens": 2,
+      "output_tokens": 3284,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20230,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2ebf8f0b67d8751ec308a69430920ed33dbf07e2",
+ "cost_usd": 2.951237,
+ "dedupe_key": "TauCetiProject/TauCeti|2867|00cca70fa186c2b112cdbe6f867fcaec22f9c78e|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "5482fb9c572f4ce0d87091ed3761577ed6179335cb8c837ffb1838ab0a2756ce",
+ "diff_sha256": "5482fb9c572f4ce0d87091ed3761577ed6179335cb8c837ffb1838ab0a2756ce",
+ "duration_s": 300.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 93: `\u2203 R > 0, \u2203 L_R L_L : \u2102, L_R \u2260 0 \u2227 L_L \u2260 0 \u2227 ...`; line 63-65 of the private `exists_one_sided_tangents` already yields `Tendsto (deriv \u03b3) (\ud835\udcdd[>] t\u2080) (\ud835\udcdd L_R) \u2227 Tendsto (deriv \u03b3) (\ud835\udcdd[<] t\u2080) (\ud835\udcdd L_L)`.",
+   "file": "TauCeti/Analysis/Contour/InvSubCPVExistence.lean",
+   "fix": "Add the two tangent characterizations to the conclusion: `Tendsto (deriv \u03b3) (\ud835\udcdd[>] t\u2080) (\ud835\udcdd L_R) \u2227 Tendsto (deriv \u03b3) (\ud835\udcdd[<] t\u2080) (\ud835\udcdd L_L)`. The proof already obtains both from `exists_one_sided_tangents` (line 101, binders `h_tend_R`, `h_tend_L`) and discards them. Otherwise drop the imaginary-part claim from the docstring and module index.",
+   "issue": "`exists_radius_perWindow_tendsto_log_norm_add_arg` is exposed \"for callers ... that need the limit's real or imaginary part\" (module doc, line 37-40), but the imaginary part is `((-L_L)/(\u03b3 (t\u2080-\u03c1) - s)).arg + ((\u03b3 (t\u2080+\u03c1) - s)/L_R).arg` where `L_R`, `L_L` are existentially bound with only `\u2260 0` recorded. Nothing pins them to the one-sided tangents, so no caller can extract any determinate imaginary part; the sole in-repo consumer (OnCurve.lean:349, `\u03a8`-argument) uses only the real part. The advertised half of the interface is vacuous.",
+   "line": 90
+  },
+  {
+   "evidence": "`grep -rn piecewise_gluing_induction TauCeti` matches only PiecewiseC1On.lean (lines 51, 239, 275, 281, 326, 332); `grep -rn isBounded_image_deriv_aux` matches only PiecewiseC1On.lean:327,349.",
+   "file": "TauCeti/Analysis/Contour/PiecewiseC1On.lean",
+   "fix": "Mark it `private`, remove it from the Main results list (line 51-53), and delete the `Winding.RealIntegral.OnCurve` attribution from the docstring. Expose it when a cross-file consumer actually appears \u2014 as `sorted_crossing_gluing_induction` legitimately has.",
+   "issue": "`piecewise_gluing_induction` is public but has no consumer outside its own file: both instantiations, `intervalIntegrable_deriv_aux` (line 276) and `isBounded_image_deriv_aux` (line 327), are `private` in this same file. Its docstring compounds this by attributing the second consumer to `Winding.RealIntegral.OnCurve`, where no `isBounded_image_deriv_aux` exists.",
+   "line": 239
+  },
+  {
+   "evidence": "`grep -n \"LipschitzOnWith .*(derivWithin\" OnCurve.lean` \u2192 lines 221, 429, 466, 484, 510, i.e. five copies of the same hypothesis block; no `IsC11`-style predicate exists (`grep -rn \"IsC11|IsPwC11\" TauCeti` \u2192 no matches).",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Name it \u2014 e.g. `Contour.IsC11AtCrossingsOn \u03b3 a b s` (or a per-point `IsC11OnEachSideAt \u03b3 t`), placed alongside the other HW regularity predicates in `RegularityConditions.lean` or in `Winding/LipschitzBoundedIntegrand.lean` \u2014 use it in all three public statements, and supply one introduction lemma from the usual source (`ContDiffOn \u211d 2 \u03b3` on a two-sided neighbourhood, matching `Winding/BoundedIntegrand.lean`'s hypothesis).",
+   "issue": "The `C^{1,1}` crossing hypothesis is an unnamed 8-binder nested existential repeated verbatim in three public signatures (lines 465-470, 483-488, 509-514) and two private ones (221, 428). There is no named predicate and no introduction lemma anywhere in the repo, so a downstream consumer (HW Thm 3.3, the roadmap's Layer 2 target) must reconstruct the raw term and prove `LipschitzOnWith K (derivWithin \u03b3 (Icc t (t + \u03b5)))` by hand.",
+   "line": 465
+  },
+  {
+   "evidence": "`private def windowPieceSum` (line 109), `private theorem hasCauchyPVAt_along_sorted` (line 170), both cited from the public docstring at lines 114-120 and the module doc at line 50-53.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Rewrite the public docstring and module entry in terms of the public `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint_re_boundary` / `..._of_interiorDisjoint`, which are the reachable forms that track the aggregated value.",
+   "issue": "The docstring of the newly public `sorted_crossing_gluing_induction` directs users to \"Reach for `hasCauchyPVAt_along_sorted` instead when the conclusion needs the explicit `windowPieceSum` value\" \u2014 both `hasCauchyPVAt_along_sorted` (line 170) and `windowPieceSum` (line 109) are `private`, so that advice names declarations no external caller can reach. The module-doc entry (line 50-53) repeats the `windowPieceSum` reference.",
+   "line": 118
+  },
+  {
+   "evidence": "PwC1ImmersionOn.lean lines 38-53 list only the pre-existing results; PiecewiseC1On.lean lines 49-53 list `intervalIntegrable_deriv` and `piecewise_gluing_induction` but not `isBounded_image_deriv`.",
+   "file": "TauCeti/Analysis/Contour/PwC1ImmersionOn.lean",
+   "fix": "Add one index line per new public theorem in each file's `## Main results` section; drop the `piecewise_gluing_induction` entry when it is made private.",
+   "issue": "Newly exposed public declarations are missing from their files' Main results indexes: `IsPwC1ImmersionOn.derivWithin_ne_zero_right`/`_left` (lines 218, 239) are absent here, and `IsPiecewiseC1On.isBounded_image_deriv` (PiecewiseC1On.lean:346) is absent from that file's index \u2014 which instead lists the helper `piecewise_gluing_induction`.",
+   "line": 38
+  }
+ ],
+ "head_sha": "00cca70fa186c2b112cdbe6f867fcaec22f9c78e",
+ "merge_base_sha": "2ebf8f0b67d8751ec308a69430920ed33dbf07e2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2867,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0909ab0fecababbfd1e212fdfdd9d33e7a2954ffa059798ac9671d3af70cdadb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T045810Z-2867-api-design-97a064",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T04:58:10Z",
+ "submitted_by": "kim-em",
+ "summary": "The rename and deletions are clean, but the newly public `exists_radius_perWindow_tendsto_log_norm_add_arg` exposes an \"explicit\" limit whose imaginary part is expressed through existentially bound, uncharacterized constants, so the value it advertises is unusable; `piecewise_gluing_induction` is exposed with no consumer outside its own file; and the `C^{1,1}` crossing hypothesis is an 8-binder anonymous existential duplicated verbatim across three public signatures.",
+ "transcript_blob": "e15685acb6299ec9915038977986e876e2ea5e55ae0c46c011ea5bc6786ddd3f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 121818,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 121818,
+  "cache_read_input_tokens": 2352873,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2834,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2834,
+    "cache_read_input_tokens": 135483,
+    "input_tokens": 2,
+    "output_tokens": 3284,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20230,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
