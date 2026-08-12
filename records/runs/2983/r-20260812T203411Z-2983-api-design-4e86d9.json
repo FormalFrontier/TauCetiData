@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.260012,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 131584,
+    "input_tokens": 160480,
+    "output_tokens": 1658,
+    "reasoning_output_tokens": 457
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "91d6a69de6dbc5e331b60ab5d758274a6bb24289",
+ "cost_estimated": true,
+ "cost_usd": 0.260012,
+ "dedupe_key": "TauCetiProject/TauCeti|2983|864cbf7a606577899b9dee84949ec044a67c68e6|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "147d810ea630503c14595e302b0a0fa92e50ad1e65c6c8def83ef9cf10348ad9",
+ "diff_sha256": "147d810ea630503c14595e302b0a0fa92e50ad1e65c6c8def83ef9cf10348ad9",
+ "duration_s": 41.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 121\u2013126 claim the kernel is the cokernel of unit signatures, while the actual codomain is a quotient of `K\u02e3`; lines 133\u2013136 only recover the relative index numerically.",
+   "file": "TauCeti/NumberTheory/NumberField/NarrowClassGroup/Signature.lean",
+   "fix": "Make the canonical equivalence target `(fieldSignatures K) \u29f8 (unitSignatures K).subgroupOf (fieldSignatures K)` (or expose that equivalence instead of this intermediate one), and derive the cardinality results from it.",
+   "issue": "`kerToClassGroupEquiv` is advertised as the signature cokernel but exposes the intermediate quotient `K\u02e3 \u29f8 comap ...`, so consumers cannot use the canonical quotient of `fieldSignatures K` by `unitSignatures K` without reconstructing another isomorphism theorem.",
+   "line": 124
+  },
+  {
+   "evidence": "`fieldSignatures` and `unitSignatures` are defined as ranges at lines 119\u2013127, but only `range_fieldUnitSignature` exists at lines 137\u2013142; repository grep finds no `range_unitSignature`.",
+   "file": "TauCeti/NumberTheory/NumberField/Units/Signature.lean",
+   "fix": "Add `range_unitSignature : (unitSignature (K := K)).range = unitSignatures K`, parallel to `range_fieldUnitSignature`.",
+   "issue": "`unitSignatures` lacks the range equality supplied for the parallel `fieldSignatures`, leaving its defining API incomplete when general `MonoidHom.range` lemmas require the literal range expression.",
+   "line": 125
+  }
+ ],
+ "head_sha": "864cbf7a606577899b9dee84949ec044a67c68e6",
+ "merge_base_sha": "0cb0805cf3b29ce592496f186518b790270affa4",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2983,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9281894075c1717f9bdb320200d946ac645ffd0054f7c25d3c9356c4c6e38c03",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T203411Z-2983-api-design-4e86d9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T20:34:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The public API does not expose the claimed signature cokernel directly, and the parallel range definitions have asymmetric characterization lemmas.",
+ "transcript_blob": "f09b5dfdc904c70df769c907c542c42a5f47c46c0606b61c103e96403590f82c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 131584,
+  "input_tokens": 160480,
+  "output_tokens": 1658,
+  "reasoning_output_tokens": 457
+ },
+ "verdict": "request_changes"
+}
