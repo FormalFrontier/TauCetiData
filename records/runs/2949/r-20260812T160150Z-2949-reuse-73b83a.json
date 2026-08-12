@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.380767,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 71.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 129024,
+    "input_tokens": 184547,
+    "output_tokens": 1288,
+    "reasoning_output_tokens": 481
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_estimated": true,
+ "cost_usd": 0.380767,
+ "dedupe_key": "TauCetiProject/TauCeti|2949|b9c36b8a6fdc5c3e7532c616defcef6171825471|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "f74303895668597b9cc3ac82c19176a17500c034bd2b3468425188908060342e",
+ "diff_sha256": "f74303895668597b9cc3ac82c19176a17500c034bd2b3468425188908060342e",
+ "duration_s": 71.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Algebra/Lie/Quotient.lean:181 declares `[simp] theorem LieSubmodule.Quotient.surjective_mk' : Function.Surjective (mk' N)`, while `mkQ.toFun` is `LieSubmodule.Quotient.mk`.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Basic.lean",
+   "fix": "Delete `mkQ_surjective`; use `LieSubmodule.Quotient.surjective_mk'` directly (with `simpa [LieIdeal.mkQ]` where necessary).",
+   "issue": "`LieIdeal.mkQ_surjective` directly restates `LieSubmodule.Quotient.surjective_mk'` for the definitionally identical quotient function.",
+   "line": "95"
+  },
+  {
+   "evidence": "Lines 91 and 121 mark both component equations `[simp]`, and the declaration's own comment states that simp already proves this equation.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Basic.lean",
+   "fix": "Delete it and prove consumers with `simp`; in `liftQ_comp_mkQ`, use `ext x; simp`.",
+   "issue": "`liftQ_apply_mkQ` duplicates the result already obtained by the `[simp]` lemmas `mkQ_apply` and `liftQ_apply_mk`.",
+   "line": "129"
+  }
+ ],
+ "head_sha": "b9c36b8a6fdc5c3e7532c616defcef6171825471",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2949,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "89373dcdd32393a73ae79121f2e9978ffd563f06ceb2086fcc89ed654279bbde",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T160150Z-2949-reuse-73b83a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T16:01:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The quotient interface duplicates an existing Mathlib surjectivity theorem, and one additional exported lemma is already proved by the adjacent simp API.",
+ "transcript_blob": "45f20921771cc9cd8abfca60c30fab04a705a8b554b59d93c1668351b3ca6580",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 129024,
+  "input_tokens": 184547,
+  "output_tokens": 1288,
+  "reasoning_output_tokens": 481
+ },
+ "verdict": "block"
+}
