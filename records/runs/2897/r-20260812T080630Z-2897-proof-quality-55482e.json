@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5971775,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 241.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75041,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75041,
+    "cache_read_input_tokens": 708017,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2595,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2595,
+      "cache_read_input_tokens": 88945,
+      "input_tokens": 2,
+      "output_tokens": 7774,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19253,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d9ea2acaae07267aa0cb3a668e331ad9c21a54ab",
+ "cost_usd": 1.597177,
+ "dedupe_key": "TauCetiProject/TauCeti|2897|c99619a313239dd7e98814b6e4fed6d420d8d5fe|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fcc169a575b8fb48d8856026af639b7a793003dabb2c3bc199a2384f3decbd86",
+ "diff_sha256": "fcc169a575b8fb48d8856026af639b7a793003dabb2c3bc199a2384f3decbd86",
+ "duration_s": 241.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Functoriality.lean:82-87; contrast PointsAction.lean:53 `-- \\`pointsAction\\` has no equation lemma to rewrite with; \\`change\\` spells out its definitional unfolding once, explicitly.`",
+   "file": "TauCeti/LinearAlgebra/JordanChevalley/Functoriality.lean",
+   "fix": "Either add a comment stating why the goal is unreachable by rewriting, or drop the `change`: prove `heq` by `Units.ext`/`LinearMap.ext` and rewrite with `LinearMap.GeneralLinearGroup.congrLinearEquiv_apply`, `toLinearEquiv_inv`, `LinearEquiv.coe_inv`.",
+   "issue": "The new `isSemisimple_conj_iff` uses `change` with no comment justifying it; it restates `(h * g * h\u207b\u00b9) v` as a nested application of `toLinearEquiv`, i.e. relies on unstated defeq across the `Units`/`LinearEquiv` wrappers. Every other `change` in this repo is documented (JordanDecomposition.lean:124, Multiplicative.lean:177, PointsAction.lean:53).",
+   "line": 85
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/Units/Hom.lean:83 `theorem coe_map_inv (f : M \u2192* N) (u : M\u02e3) : \u2191(map f u)\u207b\u00b9 = f \u2191u\u207b\u00b9`.",
+   "file": "TauCeti/LinearAlgebra/GeneralLinearGroup/Adjoin.lean",
+   "fix": "Use `rw [\u2190 hunit, Units.coe_map_inv]` (or `simp [Units.coe_map_inv]`) instead of the bare `rfl`.",
+   "issue": "`hinv` is closed by `rw [\u2190 hunit]; rfl`, i.e. by undocumented definitional equality between `\u2191(Units.map B.subtype hx.unit)\u207b\u00b9` and `((hx.unit\u207b\u00b9 : B\u02e3) : B : A)`. An explicit Mathlib lemma covers exactly this step.",
+   "line": 58
+  },
+  {
+   "evidence": "SemisimplePoint.lean:110-113; Adjoin.lean:94-97 adds `ofLinearEquiv_pow`; mathlib/Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:68,72 list only `ofLinearEquiv_mul`/`ofLinearEquiv_inv`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Add `GeneralLinearGroup.ofLinearEquiv_one` next to `ofLinearEquiv_pow` in Adjoin.lean (`map_one (generalLinearEquiv K V).symm`) and rewrite with it before `exact`.",
+   "issue": "`isSemisimplePoint_one` does `rw [map_one]` leaving the goal on `ofLinearEquiv (1 : _ \u2243\u2097[K] _)` and then closes it with `exact GeneralLinearGroup.isSemisimple_one`, unifying `ofLinearEquiv 1` with `1` by defeq. Mathlib has `ofLinearEquiv_mul`/`ofLinearEquiv_inv` but no `ofLinearEquiv_one`, and the PR itself adds `ofLinearEquiv_pow` for precisely this reason \u2014 so the `one` case is the only unstated one.",
+   "line": 112
+  },
+  {
+   "evidence": "SemisimplePoint.lean:190-204 duplicates PointFaithful.lean:58-70 and PointFaithful.lean:100-106 (`rw [cancel_epi] at happ` / `rw [cancel_mono] at happ` / `congrArg SemimoduleCat.Hom.hom happ`).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Factor the block into one reusable lemma (e.g. in JordanDecomposition.lean or ScalarExtension.lean) of the form `eqToHom h \u226b e\u2081.toModuleIso\u209b.hom \u226b eqToHom h.symm = eqToHom h \u226b e\u2082.toModuleIso\u209b.hom \u226b eqToHom h.symm \u2194 e\u2081 = e\u2082`, and use it here and at the two existing copies.",
+   "issue": "The reverse direction re-derives, for a third time, the boilerplate that turns equality of two `Aut (scalarExtensionFunctor \u2026)` into equality of the underlying linear maps: `congrArg (\u00b7.hom.app M)` \u2192 `rw [cancel_epi]` \u2192 `rw [cancel_mono]` \u2192 `congrArg SemimoduleCat.Hom.hom` \u2192 `simpa only [LinearEquiv.toModuleIso\u209b_hom, SemimoduleCat.hom_ofHom, \u2026]`. This eqToHom-cancellation chain is unexplained and brittle to any change in the component shape.",
+   "line": 190
+  }
+ ],
+ "head_sha": "c99619a313239dd7e98814b6e4fed6d420d8d5fe",
+ "merge_base_sha": "6b0ff373f14030da9589cf87ddb65b75154a8cfb",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2897,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "298f803e8022464bec95b07d1d3e2a9c81d109a5f5384d46668457230719dd2f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T080630Z-2897-proof-quality-55482e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:06:30Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly short and lemma-driven, but the PR adds one undocumented `change`, two places that close goals by unspoken coercion defeq where an explicit lemma exists or should be added, and a third copy of the cancel_epi/cancel_mono component-extraction boilerplate.",
+ "transcript_blob": "c6fe160219460eda5255b1533a3b293b5f8bc2252cf64a9ae231942864b33ea4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75041,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75041,
+  "cache_read_input_tokens": 708017,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2595,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2595,
+    "cache_read_input_tokens": 88945,
+    "input_tokens": 2,
+    "output_tokens": 7774,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19253,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
