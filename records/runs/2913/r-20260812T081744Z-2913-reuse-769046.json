@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.175723,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 295.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 84623,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 84623,
+    "cache_read_input_tokens": 1507840,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3498,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3498,
+      "cache_read_input_tokens": 97624,
+      "input_tokens": 2,
+      "output_tokens": 4732,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22480,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.175723,
+ "dedupe_key": "TauCetiProject/TauCeti|2913|879401842813dd8b84cffb0e4ba1f77b2609c605|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d1a9ec224dacd3dafb4e12e166c1d332ee2cfb395ab9999f6d149f61fa0fe9a5",
+ "diff_sha256": "d1a9ec224dacd3dafb4e12e166c1d332ee2cfb395ab9999f6d149f61fa0fe9a5",
+ "duration_s": 295.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/GroupTheory/Coxeter/Matrix.lean:73 `diagonal i : M i i = 1`, line 85 `attribute [simp] diagonal`. The parallel file `Coxeter/Matrix.lean` correctly adds no such restatement for `coxeterMatrixOfBase`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Coxeter/DynkinType.lean",
+   "fix": "Delete the lemma; at its single use site (line 165, inside `coxeterMatrix_eq_of_isSimplyLaced`) write `t.coxeterMatrix.diagonal i` or let `simp` close it.",
+   "issue": "`coxeterMatrix_apply_self : t.coxeterMatrix i i = 1` is exactly Mathlib's `CoxeterMatrix.diagonal`, which is already a simp lemma (`attribute [simp] diagonal`, Mathlib/GroupTheory/Coxeter/Matrix.lean:85); its own proof is `t.coxeterMatrix.diagonal i`.",
+   "line": 133
+  },
+  {
+   "evidence": "Diff lines 113-142 against TauCeti/LinearAlgebra/RootSystem/Coxeter/Matrix.lean:227-244 and 164-167, 269-276.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Coxeter/DynkinType.lean",
+   "fix": "In `Coxeter/Matrix.lean` factor one construction, e.g. `def coxeterMatrixOfCartanMatrix (A : Matrix B B \u2124) (hdiag : \u2200 i, A i i = 2) (hsymm : \u2200 i j, A i j = 0 \u2194 A j i = 0) (hmem : \u2200 {i j}, i \u2260 j \u2192 A i j * A j i \u2208 ({0,1,2,3} : Set \u2124)) : CoxeterMatrix B`, with its `_apply` and `_eq_two_iff` lemmas, and define both `coxeterMatrixOfBase P b` and `t.coxeterMatrix` from it. All three hypotheses exist on both sides: `RootPairing.Base.cartanMatrix_apply_same` / `DynkinType.cartanMatrix_apply_same` (DynkinType.lean:244), `Base.cartanMatrix_apply_eq_zero_iff_symm` / `DynkinType.cartanMatrix_apply_eq_zero_iff_symm` (DynkinType.lean:288), and the two `cartanMatrix_mul_cartanMatrix_mem_of_ne`.",
+   "issue": "`DynkinType.coxeterMatrix` is a verbatim clone of `coxeterMatrixOfBase` (Coxeter/Matrix.lean:227-236): identical `M := .of fun i j \u21a6 coxeterOrder (A i j * A j i)`, identical `isSymm` proof (`ext i j; simp [Matrix.transpose_apply, mul_comm]`), identical `diagonal i := by simp`, identical `off_diagonal` via `two_le_coxeterOrder`. The derived lemmas clone too: `coxeterMatrix_apply` (129) vs `coxeterMatrixOfBase_apply` (Matrix.lean:243, down to the same `(rfl)` comment), and `coxeterMatrix_apply_eq_two_iff` (138) re-proves `cartanMatrix_mul_cartanMatrix_eq_zero_iff` (Matrix.lean:164-167) inline with the same `or_iff_left_iff_imp.mpr fun h \u21a6 ...cartanMatrix_apply_eq_zero_iff_symm.mpr h` term. `cartanMatrix_mul_cartanMatrix_mem_of_ne` even repeats the existing name in a second namespace.",
+   "line": 113
+  }
+ ],
+ "head_sha": "879401842813dd8b84cffb0e4ba1f77b2609c605",
+ "merge_base_sha": "d9ea2acaae07267aa0cb3a668e331ad9c21a54ab",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2913,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2f494f1b2ccd1cd5cb1d836229bcfef97b270f266b8fdfd18891156fd0d35f56",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T081744Z-2913-reuse-769046",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:17:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The per-type identifications are new material, but `DynkinType.coxeterMatrix` and its entry API are a verbatim clone of the existing `coxeterMatrixOfBase` construction in `Coxeter/Matrix.lean` (same fields, same proofs, same lemma set, one name even colliding), and `coxeterMatrix_apply_self` restates Mathlib's `CoxeterMatrix.diagonal`, which is already `@[simp]`.",
+ "transcript_blob": "4f949622493c9208b7a87dcd33479e4b624d04b60cfd4952f0ec4ca8b5a5010f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 84623,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 84623,
+  "cache_read_input_tokens": 1507840,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3498,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3498,
+    "cache_read_input_tokens": 97624,
+    "input_tokens": 2,
+    "output_tokens": 4732,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22480,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}

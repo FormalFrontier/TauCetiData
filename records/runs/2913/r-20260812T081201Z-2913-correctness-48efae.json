@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.437202,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 342.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 97090,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 97090,
+    "cache_read_input_tokens": 1543090,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3567,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3567,
+      "cache_read_input_tokens": 110022,
+      "input_tokens": 2,
+      "output_tokens": 4344,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27253,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.437202,
+ "dedupe_key": "TauCetiProject/TauCeti|2913|879401842813dd8b84cffb0e4ba1f77b2609c605|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d1a9ec224dacd3dafb4e12e166c1d332ee2cfb395ab9999f6d149f61fa0fe9a5",
+ "diff_sha256": "d1a9ec224dacd3dafb4e12e166c1d332ee2cfb395ab9999f6d149f61fa0fe9a5",
+ "duration_s": 342.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Statement is `(D n).coxeterMatrix \u2260 CoxeterMatrix.D n` (line 244); the positive results it is contrasted with are stated up to reindexing at lines 336-346. Mathlib's `CoxeterMatrix.D` (mathlib/Mathlib/GroupTheory/Coxeter/Matrix.lean:143-149) labels every consecutive pair `3` plus `(n-1, n-3)`, giving n edges on n nodes; `CartanMatrix.D` (Mathlib/LinearAlgebra/Matrix/Cartan.lean:126-134) gives edges `(k,k+1)` for `k \u2264 n-4` plus `(n-3,n-2)`, `(n-3,n-1)`, i.e. n-1 edges.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Coxeter/DynkinType.lean",
+   "fix": "Either strengthen to `\u2200 e : Fin n \u2243 Fin n, (D n).coxeterMatrix \u2260 (CoxeterMatrix.D n).reindex e` \u2014 the reindex-invariant witness is already in the prose: `CoxeterMatrix.D n` has the triangle `n-3, n-2, n-1` (pairwise entry 3) whereas the type `D\u2099` diagram is a tree, or count the entries equal to `3` (2(n-1) vs 2n) \u2014 or soften both docstrings to say only that the two matrices differ in the Bourbaki numbering.",
+   "issue": "`coxeterMatrix_D_ne_coxeterMatrixD` only proves inequality in the standard numbering, but its docstring (\"Mathlib's `CoxeterMatrix.D n` is not the Coxeter matrix of type `D\u2099`\") and the module doc (\"the one type not matched to a Mathlib matrix\", line 31) assert non-matching up to relabelling. Everywhere else the file matches a base's Coxeter matrix to a named one only after a `reindex` (`exists_coxeterMatrixOfBase_eq_A`, `_G2`), so the on-the-nose inequality does not rule out `(D n).coxeterMatrix = (CoxeterMatrix.D n).reindex e` for some `e`, which is the question a user asking for a `_D` corollary actually has.",
+   "line": 243
+  },
+  {
+   "evidence": "Line 326: `\u2203 e : b.support \u2243 Fin t.rank, coxeterMatrixOfBase P b = t.coxeterMatrix.reindex e.symm`; proof body (lines 327-331) uses only `he i j`/`he j i`, so the stronger form needs no extra work.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Coxeter/DynkinType.lean",
+   "fix": "State the general form with the matching relabelling as a hypothesis, e.g. `theorem HasCartanType.coxeterMatrixOfBase_eq {e : b.support \u2243 Fin t.rank} (he : \u2200 i j, b.cartanMatrix i j = t.cartanMatrix (e i) (e j)) : coxeterMatrixOfBase P b = t.coxeterMatrix.reindex e.symm`, and derive the existential (and the `_A`/`_G2` corollaries) from it. The current proof already establishes exactly this for the `e` it obtains.",
+   "issue": "`exists_coxeterMatrixOfBase_eq` is a bare existential, but its docstring claims the identification holds \"under the very relabelling of the simple roots by the Bourbaki nodes that matches the two Cartan matrices\". The statement asserts no relation between the `e` it produces and any Cartan-matching `e` the caller already holds, so a user with a witness from `hasCartanType_iff` cannot transport it and must reprove \u2014 and downstream (`weylCoxeterSystem`, node-indexed generators) that link is exactly what is needed.",
+   "line": 325
+  }
+ ],
+ "head_sha": "879401842813dd8b84cffb0e4ba1f77b2609c605",
+ "merge_base_sha": "d9ea2acaae07267aa0cb3a668e331ad9c21a54ab",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2913,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "68a370079d9dc22fddb82d7f12c265dfd7290781993a7bbc04f8bcdee4d3de2e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T081201Z-2913-correctness-48efae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:12:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The per-type identifications (A, B, C, E\u2086, E\u2087, E\u2088, F\u2084, G\u2082) and the transport to a base are faithful; I checked each Cartan/Coxeter adjacency pattern against Mathlib and the D-type triangle analysis, and all are correct. Two statements are strictly weaker than the headline claims their docstrings make.",
+ "transcript_blob": "ae39010f5da2a0969cdc681e32ce8f559998f02ca55c2fb325312e0bfabdfbfa",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 97090,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 97090,
+  "cache_read_input_tokens": 1543090,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3567,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3567,
+    "cache_read_input_tokens": 110022,
+    "input_tokens": 2,
+    "output_tokens": 4344,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27253,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
