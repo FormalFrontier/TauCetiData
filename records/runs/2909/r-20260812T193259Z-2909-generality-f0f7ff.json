@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3252155,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 201.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 68597,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 68597,
+    "cache_read_input_tokens": 495257,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2981,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2981,
+      "cache_read_input_tokens": 82115,
+      "input_tokens": 2,
+      "output_tokens": 3519,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15054,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 1.325216,
+ "dedupe_key": "TauCetiProject/TauCeti|2909|e848cd74ef66d33636023ef3fcec985bebd0c7c0|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "4e67ca1899aade2c40b7eac284c39f3c0636aa57a7dc28ff06ee853ed96ecab0",
+ "diff_sha256": "4e67ca1899aade2c40b7eac284c39f3c0636aa57a7dc28ff06ee853ed96ecab0",
+ "duration_s": 201.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Star/Classification.lean:86` `private theorem starCartanMatrix_zero_eq_submatrix_A (b c : \u2115) : starCartanMatrix ![0, b, c] = (CartanMatrix.A (b + c + 1)).submatrix (starAEmbedding b c) (starAEmbedding b c)`, with `starAEmbedding_injective` at :63. `DynkinType.lean:168` `@[simp] lemma valid_A {n : \u2115} : (A n).Valid \u2194 1 \u2264 n`, so validity is automatic; `DynkinType.lean:233` `cartanMatrix_A` and `:140` `rank_A` supply the rest. The D branch stays valid without `h\u2113`: `DynkinType.lean:171` `valid_D \u2194 4 \u2264 n`, and sorted `a = b = 1 \u2264 c` forces `c \u2265 1`. Author's contest points at #2907, whose subject is a branch-free *general diagram*; `StarHasCartanType ![0,b,c] (A _)` is a different statement, so this is not duplication of that lane.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star/Classification.lean",
+   "fix": "Add `starIndexEquivA (b c : \u2115) : StarIndex ![0, b, c] \u2243 Fin (b + c + 1)` by `Equiv.ofBijective starAEmbedding` (card `1 + (0 + b + c) = b + c + 1`), exactly as `starIndexEquivD` is built; add `starHasCartanType_A`; then replace the `absurd h0 (h\u2113 (\u03c3 0))` branch at line 385 with `\u27e8A (\u2113 (\u03c3 1) + \u2113 (\u03c3 2) + 1), by simp [valid_A], hback _ _\u27e9` and drop `h\u2113`.",
+   "issue": "`h\u2113 : \u2200 i, \u2113 i \u2260 0` is a too-strong hypothesis: the empty-arm case is a chain of type `A (b + c + 1)`, and every ingredient for it is already in this file. The theorem is named `..._of_star`, not `_of_fork`, so the restriction is also invisible from the name.",
+   "line": 362,
+   "verdict": "CONFIRMED"
+  },
+  {
+   "evidence": "`grep -rn isFiniteType_starCartanMatrix_submatrix_iff TauCeti/` returns only its own declaration at `Star/Basic.lean:225-231`; `Star/Classification.lean:375` uses `_comp_iff` explicitly instead. `FiniteType/Basic.lean:201` offers only the injection form `IsFiniteType.submatrix {e : C \u2192 B} (he : Function.Injective e)`, so `Star/Basic.lean:213-219` re-derives the equiv direction by the `hm : m = (m \u2218 e) \u2218 e.symm` funext trick \u2014 repeated verbatim at `Star/Classification.lean:314-318` for `starHasCartanType_comp_iff`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star/Basic.lean",
+   "fix": "Prove the general lemma once next to `IsFiniteType.submatrix` \u2014 `theorem IsFiniteType.submatrix_equiv_iff {A : Matrix B B \u2124} (e : C \u2243 B) : IsFiniteType (A.submatrix e e) \u2194 IsFiniteType A` \u2014 then `isFiniteType_starCartanMatrix_comp_iff` is `by rw [starCartanMatrix_comp]; exact submatrix_equiv_iff _`, and delete `isFiniteType_starCartanMatrix_comp` and `isFiniteType_starCartanMatrix_submatrix_iff`.",
+   "issue": "`isFiniteType_starCartanMatrix_submatrix_iff` has no call site, and its content is star-free: it is `IsFiniteType (A.submatrix e e) \u2194 IsFiniteType A` for an `Equiv`, specialized to `A := starCartanMatrix m`. Together with `isFiniteType_starCartanMatrix_comp` and `_comp_iff` that is the same general fact written three times at the star level.",
+   "line": 225,
+   "verdict": "CONFIRMED"
+  }
+ ],
+ "head_sha": "e848cd74ef66d33636023ef3fcec985bebd0c7c0",
+ "merge_base_sha": "fce706c121399af2045ac4ecf8103ea398983222",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2909,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "b749c6385eab7d45f1eb706f793748a9f68d8f9821f402698ac8c5bfb3151954",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T193259Z-2909-generality-f0f7ff",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T19:32:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem still carries an avoidable `\u2200 i, \u2113 i \u2260 0` hypothesis: the A-chain identification it needs is already proved privately in the same file, and `valid_A` needs nothing. Separately, the star-free fact \"finite type is invariant under an equiv reindexing\" is restated three times at the star level, one of them with no call site.",
+ "transcript_blob": "6421018633fee63af8e54b63183f659a6710b0da21763fadbf674e63c69326c4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 68597,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 68597,
+  "cache_read_input_tokens": 495257,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2981,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2981,
+    "cache_read_input_tokens": 82115,
+    "input_tokens": 2,
+    "output_tokens": 3519,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15054,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

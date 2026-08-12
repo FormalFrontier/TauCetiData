@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8843359999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 281.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79176,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79176,
+    "cache_read_input_tokens": 1053790,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1940,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1940,
+      "cache_read_input_tokens": 93735,
+      "input_tokens": 2,
+      "output_tokens": 2632,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22039,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 1.884336,
+ "dedupe_key": "TauCetiProject/TauCeti|2909|e848cd74ef66d33636023ef3fcec985bebd0c7c0|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "4e67ca1899aade2c40b7eac284c39f3c0636aa57a7dc28ff06ee853ed96ecab0",
+ "diff_sha256": "4e67ca1899aade2c40b7eac284c39f3c0636aa57a7dc28ff06ee853ed96ecab0",
+ "duration_s": 281.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Classification.lean:329-331,337-339,343-345,349-351`; `mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean:56` `def Matrix (m n \u03b1) : Type _ := m \u2192 n \u2192 \u03b1` with the implementation note at lines 40-45 (\"not advisable\"), and `Matrix.ext_iff` at line 69; `Matrix.submatrix_apply` is already used as a rewrite elsewhere in this same file (e.g. line 91).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/FiniteType/Star/Classification.lean",
+   "fix": "Add one private helper and make all four proofs one line each: `private lemma starHasCartanType_of_eq_submatrix {t : DynkinType} (e : StarIndex \u2113 \u2243 Fin t.rank) (h : starCartanMatrix \u2113 = t.cartanMatrix.submatrix e e) : StarHasCartanType \u2113 t := \u27e8e, fun v w \u21a6 by rw [h, Matrix.submatrix_apply]\u27e9`, then e.g. `exact starHasCartanType_of_eq_submatrix (starIndexEquivD c) (by simpa using starCartanMatrix_one_one_eq_submatrix_D c)`. This also removes the four-fold repetition of the `refine \u2026 ; simp only [cartanMatrix_X] ; exact congrFun \u2026` pattern.",
+   "issue": "`exact congrFun (congrFun (starCartanMatrix_one_one_eq_submatrix_D c) v) w` applies `congrFun` to an equality of `Matrix _ _ \u2124`, which only elaborates by unfolding `Matrix m n \u03b1 := m \u2192 n \u2192 \u03b1`, and then closes the goal by a second undocumented defeq (`(A.submatrix e e) v w` vs `A (e v) (e w)`, i.e. unfolding `Matrix.submatrix` and `Matrix.of`). Same at lines 339 (E6), 345 (E7), 351 (E8). Mathlib's `Matrix` docstring explicitly discourages this pi-type view and supplies `Matrix.ext_iff` / `Matrix.submatrix_apply` instead.",
+   "line": 331
+  }
+ ],
+ "head_sha": "e848cd74ef66d33636023ef3fcec985bebd0c7c0",
+ "merge_base_sha": "fce706c121399af2045ac4ecf8103ea398983222",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2909,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "ba832d3cda8de5690850ba027eb497aaba84c328f1402287eea431bf32b21b3b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T194431Z-2909-proof-quality-df6ba6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T19:44:31Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are automation-based, free of `change`/`show`, and the earlier `\u25b8` casts and unused conjunct are gone. The four headline identifications still derive their entrywise statement from a matrix-level equation by treating `Matrix` as a pi type and `submatrix` as its unfolding, twice-undocumented definitional equality that a one-line helper lemma removes.",
+ "transcript_blob": "f66399be76c89d4fcdc9aea4bb941fcfcf172561e2f93815fcaaa901fca30a4f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79176,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79176,
+  "cache_read_input_tokens": 1053790,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1940,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1940,
+    "cache_read_input_tokens": 93735,
+    "input_tokens": 2,
+    "output_tokens": 2632,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22039,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
