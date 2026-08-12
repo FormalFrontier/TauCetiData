@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2712515000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 174.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 55638,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 55638,
+    "cache_read_input_tokens": 757983,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1226,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1226,
+      "cache_read_input_tokens": 70911,
+      "input_tokens": 1,
+      "output_tokens": 2951,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13144,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe51389032a4279d9335d628e54acad718a02341",
+ "cost_usd": 1.271252,
+ "dedupe_key": "TauCetiProject/TauCeti|2979|85aa377b560cd7fe74e6eed7ef923330aec31a1f|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "21ba561ef954344ef14ca3572fa8fe984005400936d558650e5015a2972fe463",
+ "diff_sha256": "21ba561ef954344ef14ca3572fa8fe984005400936d558650e5015a2972fe463",
+ "duration_s": 174.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diffing Connected.lean:59-87 against FiniteType.lean:69-99 and Smooth.lean:58-75 yields only the property name; the `of_iso` proof terms are character-identical modulo `@GeometricallyConnected`/`@LocallyOfFiniteType`/`@Smooth`.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Introduce one shared construction, e.g. `def affineGroupSchemeObjectProperty (P : MorphismProperty Scheme) (S : CommRingCat.{u}) : ObjectProperty (AffineGroupSchemeCat S) := fun G => P G.obj.X.hom` with `instance [P.RespectsIso] : (affineGroupSchemeObjectProperty P S).IsClosedUnderIsomorphisms` and the `P`-generic membership instance (place it next to `AffineGroupSchemeCat` in `AffineGroupScheme/Basic.lean` or `Equivalence.lean`), then define this file's property as `affineGroupSchemeObjectProperty @GeometricallyConnected` and port `FiniteType.lean`/`Smooth.lean` to it (repo policy allows the refactor; ship it as its own PR if preferred).",
+   "issue": "`geometricallyConnectedAffineGroupSchemeProperty`, its `@[simp]` `_iff` lemma (65), the `IsClosedUnderIsomorphisms` instance (73-77), the `FullSubcategory` abbrev (80), and the object-level instance (85-87) are a third verbatim copy of the same scaffolding: `FiniteType.lean:69-99` (`fun G => LocallyOfFiniteType G.obj.X.hom`, `Iff.rfl`, `of_iso e hG := (MorphismProperty.over_iso_iff _ ((Grp.forget _).mapIso ((affineGroupSchemeProperty S).\u03b9.mapIso e))).mp hG`, `G.property`) and `Smooth.lean:58-75` (same, for `@Smooth`). Only the morphism property changes.",
+   "line": 59
+  },
+  {
+   "evidence": "Compare Connected.lean:129-150 with FiniteType.lean:124-145 and Smooth.lean:103-126; and Connected.lean:154-193 with FiniteType.lean:152-194. Substituting the property name turns one into the other.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Prove the transfer once, generically: `theorem affineGroupSchemeObjectProperty_inverseImage (P) (Q : ObjectProperty (CommHopfAlgCat R)) (h : \u2200 H, Q H \u2194 P (((hopfSpec (CommRingCat.of R)).obj (op H)).X.hom)) : (affineGroupSchemeObjectProperty P _).inverseImage (commHopfAlgCatOpEquivAffineGroupSchemeCat _).functor = Q.op`, plus a generic `restrict` equivalence and its `functorComp\u03b9Iso`. Then this file supplies only `geometricallyConnectedCommHopfAlg_iff_geometricallyConnected_hopfSpec` (92) as the hypothesis `h`, and `FiniteType.lean`/`Smooth.lean` supply theirs.",
+   "issue": "`geometricallyConnectedAffineGroupSchemeProperty_inverseImage` (124-150), `geometricallyConnectedCommHopfAlgCatOpEquivAffineGroupSchemeCat` (154-161), the private `...FunctorComp\u03b9Iso` (165-173) and the public `...functorComp\u03b9Iso` (177-193) reproduce `FiniteType.lean:119-145`, `152-159`, `165-173`, `178-194` line for line (same `let G := \u27e8(hopfSpec _).obj H, by apply (affineGroupSchemeProperty_iff _).mpr; rw [\u2190 essImage_hopfSpec]; exact \u27e8H, \u27e8Iso.refl _\u27e9\u27e9\u27e9`, same `preimageIso` witness, same `opEquivalence \u2026|>.symm.trans <| \u2026 .congrFullSubcategory`, same `Iso.refl _` plus `isoWhiskerRight/associator/isoWhiskerLeft` chain). `smoothAffineGroupSchemeProperty_inverseImage` (Smooth.lean:98-126) is a third copy of the first half.",
+   "line": 124
+  },
+  {
+   "evidence": "Connected.lean:54 and Connected.lean:98 declare the same witness for the same property in the same file; `grep -n RespectsIso TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean` returns both.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Delete lines 97-99 and the stale comment. Also check whether the private instance itself is needed at all: Mathlib already has `instance : IsStableUnderBaseChange @GeometricallyConnected` (Mathlib/AlgebraicGeometry/Geometrically/Connected.lean:47) and `instance (priority := 900) IsStableUnderBaseChange.respectsIso` (Mathlib/CategoryTheory/MorphismProperty/Limits.lean:211); if search finds it, drop the private instance too.",
+   "issue": "The local `let : MorphismProperty.RespectsIso @GeometricallyConnected := MorphismProperty.IsStableUnderBaseChange.respectsIso` (97-99) and its comment (\"This witness is not a global instance\") are now dead: the PR adds exactly that term as a file-scoped `private instance geometricallyConnected_respectsIso` at 53-55, in scope from line 56 onward.",
+   "line": 97
+  }
+ ],
+ "head_sha": "85aa377b560cd7fe74e6eed7ef923330aec31a1f",
+ "merge_base_sha": "c29375f982243150a3c7f75dfae9c84dae9c5ad5",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2979,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3b499bd4dbfbe9aed23732dc4188a00799dfa6e4c5a271dfbd7afa8c627dbe15",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T185645Z-2979-reuse-0cb044",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:56:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The added object-property scaffolding and restricted-equivalence block are a rename-level clone of the existing finite-type (and smooth) restrictions of the same anti-equivalence; the shared construction should be factored out and instantiated rather than copied a third time. The new private RespectsIso instance also makes the pre-existing local witness in the same file dead.",
+ "transcript_blob": "5162610ffe820f113fd03a426bef242361e99b27a5c2aa77bbf0f6d1feaedc27",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 55638,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 55638,
+  "cache_read_input_tokens": 757983,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1226,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1226,
+    "cache_read_input_tokens": 70911,
+    "input_tokens": 1,
+    "output_tokens": 2951,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13144,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

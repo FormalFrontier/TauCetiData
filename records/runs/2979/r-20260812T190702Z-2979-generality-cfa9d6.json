@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2123765,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 174.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 55219,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 55219,
+    "cache_read_input_tokens": 645383,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1422,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1422,
+      "cache_read_input_tokens": 70296,
+      "input_tokens": 2,
+      "output_tokens": 4470,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13230,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe51389032a4279d9335d628e54acad718a02341",
+ "cost_usd": 1.212376,
+ "dedupe_key": "TauCetiProject/TauCeti|2979|85aa377b560cd7fe74e6eed7ef923330aec31a1f|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "21ba561ef954344ef14ca3572fa8fe984005400936d558650e5015a2972fe463",
+ "diff_sha256": "21ba561ef954344ef14ca3572fa8fe984005400936d558650e5015a2972fe463",
+ "duration_s": 174.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diff of TauCeti/AlgebraicGeometry/AffineGroupScheme/FiniteType.lean:152-194 against Connected.lean:154-193 differs only in the identifiers `finiteType`/`geometricallyConnected` and `R`/`k`; both bodies are `(ObjectProperty.opEquivalence _).symm.trans <| (...).congrFullSubcategory _` and `Functor.isoWhiskerRight _ _ \u226a\u226b Functor.associator _ _ _ \u226a\u226b Functor.isoWhiskerLeft _ _`.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Add, next to `commHopfAlgCatOpEquivAffineGroupSchemeCat`, a generic `commHopfAlgCatOpEquivAffineGroupSchemeCat.restrict {Q : ObjectProperty (CommHopfAlgCat.{u} S)} {P : ObjectProperty (AffineGroupSchemeCat S)} [P.IsClosedUnderIsomorphisms] (h : P.inverseImage (commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor = Q.op) : (Q.FullSubcategory)\u1d52\u1d56 \u224c P.FullSubcategory` together with its `restrict.functorComp\u03b9Iso`, and define both the finite-type and the connected equivalences as one-line applications.",
+   "issue": "`geometricallyConnectedCommHopfAlgCatOpEquivAffineGroupSchemeCat` (154-161), the private `...FunctorComp\u03b9Iso` (165-173) and `...functorComp\u03b9Iso` (177-193) are identical to FiniteType.lean:152-194 up to renaming \u2014 they mention no property-specific fact whatsoever (the proofs are `Iso.refl _` and a fixed whiskering chain). This is a special case proved separately from a result that is general in the two object properties.",
+   "line": 154
+  },
+  {
+   "evidence": "Connected.lean:129-150, FiniteType.lean:124-145 and Smooth.lean:103-126 are character-identical modulo the property name (`let G := \u27e8(hopfSpec _).obj H, \u2026\u27e9`, `let e := (affineGroupSchemeProperty _).\u03b9.preimageIso (\u2026functorComp\u03b9Iso _).app H`, `rw [ObjectProperty.prop_inverseImage_iff, \u2026_iff, ObjectProperty.op_iff]`, two `prop_of_iso` branches).",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "State it once: `theorem inverseImage_of_hopfSpec_iff {P : MorphismProperty Scheme.{u}} [P.RespectsIso] (Q : ObjectProperty (CommHopfAlgCat.{u} R)) (h : \u2200 H, Q H \u2194 P (((hopfSpec (CommRingCat.of R)).obj (op H)).X.hom)) : (\u2026P\u2026).inverseImage (commHopfAlgCatOpEquivAffineGroupSchemeCat _).functor = Q.op`, then this PR's theorem is `exact inverseImage_of_hopfSpec_iff _ (geometricallyConnectedCommHopfAlg_iff_geometricallyConnected_hopfSpec k)`.",
+   "issue": "`geometricallyConnectedAffineGroupSchemeProperty_inverseImage` (124-150) is the third copy of the same 25-line proof (FiniteType.lean:119-145, Smooth.lean:98-126). The only property-specific input is the pointwise comparison already proved at line 92; everything else (the `G`/`e` construction, the `prop_of_iso` transport) is generic.",
+   "line": 124
+  },
+  {
+   "evidence": "FiniteType.lean:69-99, Smooth.lean:58-75 and Connected.lean:59-87 all read `fun G => _ G.obj.X.hom` with the identical `of_iso e hG := (MorphismProperty.over_iso_iff _ ((Grp.forget _).mapIso ((affineGroupSchemeProperty S).\u03b9.mapIso e))).mp hG`; no generic helper exists (`grep -rn \"ofMorphismProperty\" code/TauCeti` returns nothing).",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Define `def affineGroupSchemeMorphismProperty (P : MorphismProperty Scheme.{u}) (S : CommRingCat.{u}) : ObjectProperty (AffineGroupSchemeCat S) := fun G => P G.obj.X.hom` with `instance [P.RespectsIso] : (affineGroupSchemeMorphismProperty P S).IsClosedUnderIsomorphisms` proved once from `MorphismProperty.over_iso_iff`, and let the finite-type, smooth and connected properties be applications of it.",
+   "issue": "`geometricallyConnectedAffineGroupSchemeProperty` plus its `_iff` simp lemma, `IsClosedUnderIsomorphisms` instance, `...Cat` abbrev and property-extraction instance (59-87) instantiate a construction that is uniform in a `MorphismProperty Scheme`; this is the third instance in the repo.",
+   "line": 59
+  },
+  {
+   "evidence": "Connected.lean:53-55 declares `private instance geometricallyConnected_respectsIso : MorphismProperty.RespectsIso @GeometricallyConnected := MorphismProperty.IsStableUnderBaseChange.respectsIso`, the same term as the local `let` at 98-99, and it precedes the theorem at 92.",
+   "file": "TauCeti/AlgebraicGeometry/AffineGroupScheme/Connected.lean",
+   "fix": "Delete lines 97-99; the file-level `private instance geometricallyConnected_respectsIso` already supplies what `cancel_left_of_respectsIso` needs at line 101.",
+   "issue": "The in-proof witness `let : MorphismProperty.RespectsIso @GeometricallyConnected` (97-99) is now redundant \u2014 the PR adds the same instance file-wide at line 53 \u2014 and its comment \"This witness is not a global instance\" is false as of this PR.",
+   "line": 97
+  }
+ ],
+ "head_sha": "85aa377b560cd7fe74e6eed7ef923330aec31a1f",
+ "merge_base_sha": "c29375f982243150a3c7f75dfae9c84dae9c5ad5",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2979,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "800c4539571cbb12db88e6d2a4cc8d238a6f7ab68c7af420f95ffb67ee59dc12",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T190702Z-2979-generality-cfa9d6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T19:07:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematical content sits at the natural level, but the packaging duplicates a construction that is generic in the morphism/object property: the restricted-equivalence block is token-identical to the finite-type one and contains no connectedness-specific reasoning, and the property boilerplate plus its inverse-image proof are now a third copy (FiniteType, Smooth, Connected). Prove these once in general and derive all three special cases.",
+ "transcript_blob": "f740659c5bbd3e3e5ded01b63d56f0df0b12350463a1efae1b21278cb5a75091",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 55219,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 55219,
+  "cache_read_input_tokens": 645383,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1422,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1422,
+    "cache_read_input_tokens": 70296,
+    "input_tokens": 2,
+    "output_tokens": 4470,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13230,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
