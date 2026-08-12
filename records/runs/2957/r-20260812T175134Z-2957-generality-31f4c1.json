@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8104695,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 291.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 137355,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 137355,
+    "cache_read_input_tokens": 1650119,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 637,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 637,
+      "cache_read_input_tokens": 153217,
+      "input_tokens": 2,
+      "output_tokens": 2304,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21967,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 2.810469,
+ "dedupe_key": "TauCetiProject/TauCeti|2957|3316c3e7fae3b2882611190bb81a2cce4951ecd8|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "diff_prompt_sha256": "a984b4aea86b937ba6a5ec72b245d870e41a4475cecd2755485231a1299cf873",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "duration_s": 291.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 88-100: the proof's only use of the two-sided hypothesis is `h\u03b3.mono (Icc_subset_Icc (by linarith) le_rfl)` and `h\u03b3.mono (Icc_subset_Icc le_rfl (by linarith))` \u2014 it immediately splits into the two halves and never relates them.",
+   "file": "TauCeti/Analysis/Contour/Crossing/LipschitzRegularity.lean",
+   "fix": "State it one-sided per side: `(hct : c < t) (htd : t < d) (h\u03b3L : ContDiffOn \u211d 2 \u03b3 (Icc c t)) (h\u03b3R : ContDiffOn \u211d 2 \u03b3 (Icc t d)) : HasLipschitzDerivOnEachSideAt \u03b3 t`. The existing proof body works verbatim with `Icc c t`/`Icc t d` in place of `Icc (t - \u03b5) t`/`Icc t (t + \u03b5)`; the two-sided `C\u00b2` case is then `h\u03b3.mono` on each half at the call site.",
+   "issue": "`hasLipschitzDerivOnEachSideAt_of_contDiffOn` assumes `ContDiffOn \u211d 2 \u03b3 (Icc (t - \u03b5) (t + \u03b5))` \u2014 a symmetric window with the same regularity across `t` \u2014 while the sibling introduction lemma `hasLipschitzDerivOnEachSideAt_of_lipschitzOnWith` (line 75) takes arbitrary `c < t < d` with independent per-side data. A curve with a corner at `t` (the case this predicate was introduced for, per its own docstring at line 44) is not `C\u00b9` across `t`, so it cannot use this lemma at all and must redo the `ContDiffOn.derivWithin` + `ContDiffOn.exists_lipschitzOnWith` steps by hand.",
+   "line": 88
+  },
+  {
+   "evidence": "Lines 69-72: `calc |(z\u207b\u00b9 * v).im| \u2264 \u2016z\u207b\u00b9 * v\u2016 := Complex.abs_im_le_norm _` then `_ = \u2016v\u2016 / \u2016z\u2016 := by rw [norm_mul, norm_inv, mul_comm, \u2190 div_eq_mul_inv]` \u2014 neither step mentions `hm` or `hz`; only the final `_ \u2264 \u2016v\u2016 / m := by gcongr` uses them. `norm_inv` holds unconditionally in a normed division ring, including at `z = 0`.",
+   "file": "TauCeti/Analysis/Contour/Winding/Integrand.lean",
+   "fix": "Prove `abs_realWindingIntegrand_le_div_norm {z v : \u2102} : |realWindingIntegrand z v| \u2264 \u2016v\u2016 / \u2016z\u2016` (the existing first two calc steps, unchanged), and either drop the `m` form or keep it as a one-line corollary `(le_div_norm ..).trans (by gcongr)`. The single call site (`RealIntegral/OnCurve.lean:375`) already chains a `gcongr` step to `Cd / m`, so it can absorb the denominator comparison into that same step.",
+   "issue": "`abs_realWindingIntegrand_le_div_of_le_norm` assumes `0 < m` and `m \u2264 \u2016z\u2016`, but the first two calc steps already prove the hypothesis-free `|realWindingIntegrand z v| \u2264 \u2016v\u2016 / \u2016z\u2016`, which also holds at `z = 0` (LHS `= |(0\u207b\u00b9 * v).im| = 0`, RHS `= \u2016v\u2016 / 0 = 0`). The special case is proved directly instead of being derived from the general statement.",
+   "line": 67
+  }
+ ],
+ "head_sha": "3316c3e7fae3b2882611190bb81a2cce4951ecd8",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2957,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "d89e60509bb20458b1e27bfe14d1a42b0b011dd8334c3c4a5e9134f6be19b856",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T175134Z-2957-generality-31f4c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T17:51:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new API lemmas carry hypotheses stronger than their proofs need: the C\u00b2 introduction lemma for HasLipschitzDerivOnEachSideAt requires a symmetric two-sided C\u00b2 window (excluding the corner case the predicate exists for), and the crude integrand bound bakes in a positive lower bound m that only the last calc step uses. Everything else sits at the natural level.",
+ "transcript_blob": "f914f8c1afe25bdbc4136e2832b134a51e1d980e106f2b233b984863dc6c5c97",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 137355,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 137355,
+  "cache_read_input_tokens": 1650119,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 637,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 637,
+    "cache_read_input_tokens": 153217,
+    "input_tokens": 2,
+    "output_tokens": 2304,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21967,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

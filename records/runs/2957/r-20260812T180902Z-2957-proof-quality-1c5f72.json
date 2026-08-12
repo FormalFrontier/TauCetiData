@@ -1,0 +1,127 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8904609999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 250.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 155770,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 155770,
+    "cache_read_input_tokens": 1582760,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1439,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1439,
+      "cache_read_input_tokens": 170830,
+      "input_tokens": 2,
+      "output_tokens": 4453,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19182,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 2.890461,
+ "dedupe_key": "TauCetiProject/TauCeti|2957|3316c3e7fae3b2882611190bb81a2cce4951ecd8|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "diff_prompt_sha256": "a984b4aea86b937ba6a5ec72b245d870e41a4475cecd2755485231a1299cf873",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "duration_s": 250.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n derivWithin_congr_set TauCeti/Analysis/Contour/PwC1ImmersionOn.lean \u2192 228, 246, 286, 327, all four new in this PR with the same body; Mathlib/Order/Filter/Basic.lean:935 `theorem eventuallyEq_set {s t : Set \u03b1} : s =\u1da0[l] t \u2194 \u2200\u1da0 x in l, x \u2208 s \u2194 x \u2208 t`.",
+   "file": "TauCeti/Analysis/Contour/PwC1ImmersionOn.lean",
+   "fix": "Extract two private lemmas, e.g. `derivWithin_Icc_congr_left_endpoint : t < d \u2192 t < d' \u2192 derivWithin \u03b3 (Icc t d) t = derivWithin \u03b3 (Icc t d') t` and its right-endpoint mirror, and call them at all four sites; use `Filter.eventuallyEq_set` (`Eventually.set_eq`) instead of building the set equality by `propext` on membership.",
+   "issue": "The same reusable fact \u2014 `derivWithin \u03b3` at a shared endpoint does not depend on the other endpoint \u2014 is proved inline four times (lines 228, 246, 286, 327), each as a 6-8 line `derivWithin_congr_set` + `filter_upwards` + `simp only [mem_Icc]` + `propext` block. Lines 228 and 286 prove the identical statement `derivWithin \u03b3 (Icc t d) t = derivWithin \u03b3 (Icc t d') t`; 246 and 327 are its left mirror.",
+   "line": 228
+  },
+  {
+   "evidence": "OnCurve.lean:178-381; `h_int` at 294-325, `h_bdd` at 365-380 with its inputs `h\u03c1_lip_bdd`, `hm`, `hCd` all obtained earlier and passable as hypotheses.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Lift the boundedness block into a private lemma (crossing finset, window radius, per-window boundedness, off-window distance bound `m`, derivative bound `Cd` \u2192 boundedness on `Icc a b`) and the integrability block into another; supply the induction's base case inline (via a `have` before the `refine`) rather than as a trailing `?_`.",
+   "issue": "`isBounded_intervalIntegrable_cauchyPV_of_interior_crossings` has a 195-line proof body (178-381). Two blocks are self-contained: the boundedness assembly (357-380) uses only `T`, `\u03c1`, the per-crossing bounded windows, `hm`/`hm_pos` and the `deriv \u03b3` bound, none of the principal-value data; the integrability gluing (294-325) likewise. Additionally, the base case of the `sorted_crossing_gluing_induction` call is deferred as `?_` at line 297 (inside the first argument's lambda) and discharged 23 lines later at 320-325, separating it from the goal it belongs to.",
+   "line": 178
+  },
+  {
+   "evidence": "OnCurve.lean:116-125 \u2014 `h_sub_bdd` appears only in `hsub_cd := h_sub_bdd.trans h_sub_cd` and `(hbdd.subset (Set.image_mono h_sub_bdd))`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Drop `p'`, `q'`, `h_sub_bdd`; take `hbdd` on `Icc p q` and `Icc p q \u2286 Icc c d` directly, and let the two call sites (312-317) shrink with `.subset (Set.image_mono ...)`, which they already effectively do.",
+   "issue": "`intervalIntegrable_realWindingIntegrand_window` carries redundant parameters: `p'`, `q'` and `h_sub_bdd : Icc p q \u2286 Icc p' q'` are used only at line 125 to shrink `hbdd` to `Icc p q`, so the hypothesis pair is equivalent to just asking for boundedness on `Icc p q`.",
+   "line": 115
+  }
+ ],
+ "head_sha": "3316c3e7fae3b2882611190bb81a2cce4951ecd8",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2957,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "22af6140819f44fea9562681dc4302da76b5be8465e03aae86a4c70f9aa20f8b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T180902Z-2957-proof-quality-1c5f72",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:09:02Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mathematically well-structured and the PVAggregation/PiecewiseC1On generic-induction refactors are a real improvement, but the same derivWithin-endpoint-congruence argument is written out four times instead of being a lemma, and the main assembly is a 195-line proof with two independently factorable blocks.",
+ "transcript_blob": "5f0e78eb31a316d20f02451f4a959e9a0930853ebe92435902ee1bb3fa3fa821",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 155770,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 155770,
+  "cache_read_input_tokens": 1582760,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1439,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1439,
+    "cache_read_input_tokens": 170830,
+    "input_tokens": 2,
+    "output_tokens": 4453,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19182,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

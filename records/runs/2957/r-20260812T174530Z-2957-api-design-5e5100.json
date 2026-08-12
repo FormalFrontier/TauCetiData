@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.6668045,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 364.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 145744,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 145744,
+    "cache_read_input_tokens": 3207477,
+    "inference_geo": "not_available",
+    "input_tokens": 47,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 550,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 550,
+      "cache_read_input_tokens": 161693,
+      "input_tokens": 2,
+      "output_tokens": 3169,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21710,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fce706c121399af2045ac4ecf8103ea398983222",
+ "cost_usd": 3.666805,
+ "dedupe_key": "TauCetiProject/TauCeti|2957|3316c3e7fae3b2882611190bb81a2cce4951ecd8|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "diff_prompt_sha256": "a984b4aea86b937ba6a5ec72b245d870e41a4475cecd2755485231a1299cf873",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "4a7b3ec77e81cbdd609b62284e15709088e03128edd0373d9d1e29ae4cd70c54",
+ "duration_s": 364.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`LipschitzRegularity.lean:63` `@[simp] theorem hasLipschitzDerivOnEachSideAt_iff ... := Iff.rfl`. No in-repo use relies on the attribute: the only consumer applies it explicitly (`OnCurve.lean:219` `hasLipschitzDerivOnEachSideAt_iff.mp`). Sibling opaque-predicate iffs are not simp: `PwC1ImmersionOn.lean:97 isPwC1ImmersionOn_iff`, `Cauchy/PrincipalValue/Basic.lean:121 hasCauchyPVAt_iff`, `:142 cauchyPVExistsAt_iff`, `Cycle/Basic.lean:247 isIn_iff`.",
+   "file": "TauCeti/Analysis/Contour/Crossing/LipschitzRegularity.lean",
+   "fix": "Drop `@[simp]`; keep it as a plain characteristic iff, as with every sibling predicate-characterization `Iff.rfl` lemma in this subtree.",
+   "issue": "`hasLipschitzDerivOnEachSideAt_iff` is `@[simp]`, so any `simp` rewrites the named predicate into a 4-level nested `derivWithin` existential \u2014 the opposite of a normal form, and contrary to this file's own docstring (\"An opaque `def` ... consumers destructure it via `hasLipschitzDerivOnEachSideAt_iff` ... rather than unfolding it directly\"). It also defeats the two intro lemmas for a user whose goal has been simp-unfolded, and the predicate is the public hypothesis of all three theorems in `Winding/RealIntegral/OnCurve.lean`.",
+   "line": 63
+  },
+  {
+   "evidence": "`SegmentSum.lean:30-40` lists `integral_deriv_div_sub_eq_sum_log`, `integral_inv_sub_mul_deriv_eq_sum_log`, `integral_deriv_div_sub_eq_log_norm_add_I_mul_sum_log_im`, `integral_inv_sub_mul_deriv_eq_log_norm_add_I_mul_sum_log_im`; `grep -n '^theorem' SegmentSum.lean` returns those four plus the new `:172`. `PwC1ImmersionOn.lean:44-58` lists the other public results but not `:265`/`:306`.",
+   "file": "TauCeti/Analysis/Contour/Winding/SegmentSum.lean",
+   "fix": "Add a bullet for `re_integral_inv_sub_mul_deriv_eq_log_norm` to `SegmentSum.lean`'s Main results, and bullets for the two `exists_lipschitzOnWith_derivWithin_shrink_*` theorems to `PwC1ImmersionOn.lean`'s.",
+   "issue": "The new public theorem `re_integral_inv_sub_mul_deriv_eq_log_norm` is not added to the module docstring's `## Main results` list, which previously enumerated exactly the file's four public theorems \u2014 so the rendered module page now under-reports the public surface. Same problem in `PwC1ImmersionOn.lean:265,306`: the new public `IsPwC1ImmersionOn.exists_lipschitzOnWith_derivWithin_shrink_right`/`_left` are absent from that file's Main-results list, although the PR did add `derivWithin_ne_zero_right`/`_left` to it.",
+   "line": 172
+  }
+ ],
+ "head_sha": "3316c3e7fae3b2882611190bb81a2cce4951ecd8",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2957,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "7c0410e88f336dd74f6b2ee96d085b46f946ee8fcf63da2b7665a2a234d57da3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T174530Z-2957-api-design-5e5100",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T17:45:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The compatibility-layer removal and the newly-public surface are clean and all justified by out-of-file consumers, but `hasLipschitzDerivOnEachSideAt_iff` is marked `@[simp]`, which unconditionally destroys the very abstraction the PR's public theorems take as a hypothesis, and two new public theorems are missing from their modules' Main-results lists.",
+ "transcript_blob": "014b186d90e229f968df7822d93c7e3c536d7a681c152f93d296efa619391a2e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 145744,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 145744,
+  "cache_read_input_tokens": 3207477,
+  "inference_geo": "not_available",
+  "input_tokens": 47,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 550,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 550,
+    "cache_read_input_tokens": 161693,
+    "input_tokens": 2,
+    "output_tokens": 3169,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21710,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
