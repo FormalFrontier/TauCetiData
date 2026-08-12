@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4950240000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 203.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 65054,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 65054,
+    "cache_read_input_tokens": 906100,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 647,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 647,
+      "cache_read_input_tokens": 80906,
+      "input_tokens": 2,
+      "output_tokens": 2402,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15351,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b0d3460537798dba65edf5c1a39e69dbd47eb262",
+ "cost_usd": 1.495024,
+ "dedupe_key": "TauCetiProject/TauCeti|2964|ed742febe90620d2ef08b29958603b2fcc0b28dc|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c8b46745255df3077e013baff023cd50d238721a5fe826bf674de47f5415438c",
+ "diff_sha256": "c8b46745255df3077e013baff023cd50d238721a5fe826bf674de47f5415438c",
+ "duration_s": 203.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "GL level carries the full characterization \u2014 `isSemisimple_isUnipotent_unique` (TauCeti/LinearAlgebra/JordanChevalley/Multiplicative.lean:169), `jordanDecomposition_spec` (:196), `eq_jordanDecomposition_iff` (:205), `semisimplePart_eq_self` (:319), `unipotentPart_eq_one_of_isSemisimple` (:328) \u2014 and `Functoriality.lean:111` shows `eq_jordanDecomposition_iff` is the load-bearing tool. The new file has no counterpart to any of them.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition.lean",
+   "fix": "Add the point-level analogue of `TauCeti.GeneralLinearGroup.isSemisimple_isUnipotent_unique`: given `Commute s u`, `s * u = g`, and per-`M` `IsSemisimple (ofLinearEquiv (pointsAction M s))` / `IsUnipotent (ofLinearEquiv (pointsAction M u))`, conclude `s = semisimplePart k H K g \u2227 u = unipotentPart k H K g`; then derive `semisimplePart_one`, `unipotentPart_one` and the self/one specializations. All ingredients are public: `Comodule.pointsAction` is a `MonoidHom` (PointsAction.lean:44) so `map_mul` transports the factorization and commutation componentwise, and `Tannaka.scalarExtensionComponent_ext` (Tannaka/Monoidal.lean:101) with `Tannaka.scalarExtensionComponent_fgPointTensorIso` and `fgPointTensorIsoEquiv.injective` turns componentwise equality back into equality of points.",
+   "issue": "`semisimplePart`/`unipotentPart` have no elimination principle: nothing states that a commuting factorization `g = s * u` acting semisimply/unipotently in every finite-dimensional comodule *is* this decomposition. Consequently `semisimplePart k H K 1 = 1`, `unipotentPart` of a point that is already semisimple, and the next roadmap step (functoriality under morphisms of affine groups) are unprovable from this interface; a consumer must re-enter `fgPointTensorIsoEquiv` and the tensor-iso layer.",
+   "line": 57
+  },
+  {
+   "evidence": "Lines 71\u201385 define the pair and its two `rfl` projections; no other declaration in the file or repo mentions `jordanDecomposition` at point level. Compare Multiplicative.lean:196,205 where the pair is characterized.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition.lean",
+   "fix": "Either give it the characterizing lemma (`(s, u) = jordanDecomposition k H K g \u2194 <commuting semisimple\u2013unipotent factorization>`, from the uniqueness lemma above), or delete the definition and its two projection lemmas and keep `semisimplePart`/`unipotentPart` as the surface.",
+   "issue": "`jordanDecomposition` duplicates the two parts as a pair whose only API is `jordanDecomposition_fst`/`_snd`, both `(rfl)`. Unlike the GL-level pair (which is primitive via `Classical.choose` and carries `jordanDecomposition_spec`/`eq_jordanDecomposition_iff`), this one asserts nothing \u2014 not even that its components commute or multiply to `g`.",
+   "line": 71
+  },
+  {
+   "evidence": "`Comodule.pointsAction_toLinearMap` is `@[simp]` (PointsAction.lean:50); `IsSemisimple` is stated on `GeneralLinearGroup K V` (Multiplicative.lean:60), and lines 163/172 of the new file rewrite with these two lemmas by hand.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition.lean",
+   "fix": "Mark both `@[simp]`. No loop: LHS `ofLinearEquiv (pointsAction M (semisimplePart k H K g))` reduces to `GeneralLinearGroup.semisimplePart (ofLinearEquiv (pointsAction M g))`, the same normal form the `endOfPoint_*` simp lemmas reach through the `@[simp]` `Comodule.pointsAction_toLinearMap`.",
+   "issue": "`ofLinearEquiv_pointsAction_semisimplePart` and `ofLinearEquiv_pointsAction_unipotentPart` (line 147) are the characteristic identifications in the `GeneralLinearGroup` unit form \u2014 the form in which `GeneralLinearGroup.IsSemisimple`/`IsUnipotent` are stated and in which the file itself uses them \u2014 but are not `@[simp]`, while the coerced linear-map versions `endOfPoint_semisimplePart`/`endOfPoint_unipotentPart` are.",
+   "line": 135
+  }
+ ],
+ "head_sha": "ed742febe90620d2ef08b29958603b2fcc0b28dc",
+ "merge_base_sha": "fb0eea905d77dc3ecbe455b0c246f66fe4558a7c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2964,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b3cfe7ecf4a4dbb6dbeb703eeadada6099182f9a1e7406c2b566fc6a4613fe41",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T162118Z-2964-api-design-850b16",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T16:21:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The reconstructed points come with representation-wise identifications but no uniqueness/characterization lemma, so nothing about a concrete point's parts can be proved without reopening the Tannakian construction; `jordanDecomposition` is an inert pair with only two `rfl` projections.",
+ "transcript_blob": "5a90977eca9ccd4defc736deed5ca7fbeeeb4999ce6a2707272835832e5c7629",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 65054,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 65054,
+  "cache_read_input_tokens": 906100,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 647,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 647,
+    "cache_read_input_tokens": 80906,
+    "input_tokens": 2,
+    "output_tokens": 2402,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15351,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
