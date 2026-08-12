@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8267279999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 268.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 146347,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 146347,
+    "cache_read_input_tokens": 1634802,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6883,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6883,
+      "cache_read_input_tokens": 155963,
+      "input_tokens": 2,
+      "output_tokens": 2777,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19494,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "cost_usd": 2.826728,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|0e4841e314c18ea1c891726f055e5888ae7fdfed|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "diff_sha256": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "duration_s": 268.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 443-457: `h\u03b3` occurs only in `have h\u03b3R := h\u03b3.mono ...` and `have h\u03b3L := h\u03b3.mono ...`; everything after uses `h\u03b3R`/`h\u03b3L`. Compare the sibling intro `hasLipschitzDerivOnEachSideAt_of_lipschitzOnWith` (line 428), which already takes arbitrary one-sided pieces `Icc c t` / `Icc t d`, and the file's own header (lines 18-24) stating the point is crossings 'at a corner, where the two one-sided tangents may differ'. Grep shows no consumer of `hasLipschitzDerivOnEachSideAt_of_contDiffOn` in the repo, so restating it costs nothing.",
+   "file": "TauCeti/Analysis/Contour/Winding/LipschitzBoundedIntegrand.lean",
+   "fix": "State it on the two one-sided pieces: `{c t d : \u211d} (hct : c < t) (htd : t < d) (h\u03b3R : ContDiffOn \u211d 2 \u03b3 (Icc t d)) (h\u03b3L : ContDiffOn \u211d 2 \u03b3 (Icc c t)) : HasLipschitzDerivOnEachSideAt \u03b3 t`. The existing proof body goes through verbatim with `h\u03b3R`/`h\u03b3L` in place of `h\u03b3.mono ...`, since `uniqueDiffOn_Icc`, `convex_Icc` and `isCompact_Icc` only need `c < t` and `t < d`.",
+   "issue": "`hasLipschitzDerivOnEachSideAt_of_contDiffOn` requires `ContDiffOn \u211d 2 \u03b3 (Icc (t - \u03b5) (t + \u03b5))`, a symmetric two-sided C\u00b2 neighborhood, but the proof uses it only via `h\u03b3.mono` to `Icc t (t + \u03b5)` and `Icc (t - \u03b5) t` (lines 445-446) and then works entirely with the halves. A curve that is C\u00b2 on `[c, t]` and on `[t, d]` with different one-sided tangents \u2014 the corner case `HasLipschitzDerivOnEachSideAt` was introduced to cover \u2014 satisfies the predicate but not this hypothesis, so the only smooth-data intro route offered is unusable exactly where the file's boundedness result is new.",
+   "line": 443
+  }
+ ],
+ "head_sha": "0e4841e314c18ea1c891726f055e5888ae7fdfed",
+ "merge_base_sha": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8dfd65287a1c62a0770f8589d0e51b5370ed1c1a7942c6b5a047075d568fdb67",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T132736Z-2910-generality-db3c52",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T13:27:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic gluing inductions now subsume all their consumers, so the earlier duplication and endpoint-crossing points are resolved or withdrawn. One remaining issue: the C\u00b2-to-C^{1,1} introduction lemma assumes a two-sided C\u00b2 neighborhood that its own proof immediately discards, excluding the corner case the file exists for.",
+ "transcript_blob": "f2357b74273dcc9c8f4bb97f2bf845ff6d92e8b927e17ebb5de086f95ca7b327",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 146347,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 146347,
+  "cache_read_input_tokens": 1634802,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6883,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6883,
+    "cache_read_input_tokens": 155963,
+    "input_tokens": 2,
+    "output_tokens": 2777,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19494,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

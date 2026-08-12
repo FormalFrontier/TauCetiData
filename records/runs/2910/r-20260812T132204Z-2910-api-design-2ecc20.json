@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.597782,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 331.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 162685,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 162685,
+    "cache_read_input_tokens": 2621692,
+    "inference_geo": "not_available",
+    "input_tokens": 1169,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2483,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2483,
+      "cache_read_input_tokens": 176701,
+      "input_tokens": 2,
+      "output_tokens": 3140,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23758,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "cost_usd": 3.597782,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|0e4841e314c18ea1c891726f055e5888ae7fdfed|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "diff_sha256": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "duration_s": 331.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "category": "incomplete-api",
+   "evidence": "LipschitzBoundedIntegrand.lean:443-457; the lemma's own docstring (437-442) concedes it is \"as opposed to the merely `C^{1,1}` corner case this file's boundedness result was built to also cover\". `hasLipschitzDerivOnEachSideAt_of_lipschitzOnWith` (line 428) is the only other intro and takes raw `LipschitzOnWith (derivWithin \u03b3 (Icc c t)) (Icc c t)` hypotheses, for which nothing in the repo produces a witness: `grep -rn \"LipschitzOnWith\" TauCeti` yields hits only in this file, `OnCurve.lean`, `Complex/Conformal/NormalFamilies.lean` (for `f`, not a derivative) and three `Geometry/Lie` files.",
+   "file": "TauCeti/Analysis/Contour/Winding/LipschitzBoundedIntegrand.lean",
+   "fix": "Replace `hasLipschitzDerivOnEachSideAt_of_contDiffOn` with the one-sided-pieces form `(hct : c < t) (htd : t < d) (h\u03b3R : ContDiffOn \u211d 2 \u03b3 (Icc t d)) (h\u03b3L : ContDiffOn \u211d 2 \u03b3 (Icc c t)) : HasLipschitzDerivOnEachSideAt \u03b3 t`. The current proof already reduces to exactly this \u2014 lines 445-446 are just `h\u03b3.mono` onto the two halves \u2014 so the body is unchanged below those two lines, and the two-sided form is recovered by the caller applying `.mono` itself. Per the compatibility policy, drop the two-sided form rather than keeping both.",
+   "issue": "`hasLipschitzDerivOnEachSideAt_of_contDiffOn` demands `ContDiffOn \u211d 2 \u03b3 (Icc (t - \u03b5) (t + \u03b5))` \u2014 a two-sided `C\u00b2` neighborhood. At a corner (the case this whole file, the `_corner` theorem, and `HasLipschitzDerivOnEachSideAt` were built for) the one-sided second derivatives differ, so no such \u03b5 exists. A user with `ContDiffOn \u211d 2 \u03b3 (Icc c t)` and `ContDiffOn \u211d 2 \u03b3 (Icc t d)` \u2014 a piecewise-`C\u00b2` immersion whose crossing sits at a breakpoint \u2014 therefore has no introduction lemma and must redo the `ContDiffOn.derivWithin` + `ContDiffOn.exists_lipschitzOnWith` + `uniqueDiffOn_Icc` derivation by hand to reach `hasLipschitzDerivOnEachSideAt_of_lipschitzOnWith`.",
+   "line": 443
+  },
+  {
+   "category": "misleading-docs",
+   "evidence": "Mathlib/Topology/EMetricSpace/Lipschitz.lean:81 `LipschitzOnWith.mono (hf : LipschitzOnWith K f t) (h : s \u2286 t) : LipschitzOnWith K f s` shrinks only the second argument, leaving `f = derivWithin \u03b3 (Icc c t)` fixed; the actual set-change lemma is Mathlib/Analysis/Calculus/Deriv/Basic.lean:487 `derivWithin_subset`.",
+   "file": "TauCeti/Analysis/Contour/Winding/LipschitzBoundedIntegrand.lean",
+   "fix": "Delete the sentence (the lemma already accepts arbitrary `c < t < d`, so no shrinking is ever needed), or replace it with the correct route via `derivWithin_subset` plus the differentiability at the new endpoint.",
+   "issue": "`hasLipschitzDerivOnEachSideAt_of_lipschitzOnWith`'s docstring states \"A caller whose one-sided pieces are wider than it ultimately needs can restrict along `DifferentiableOn.mono`/`LipschitzOnWith.mono` first, since both hypotheses are monotone in the underlying set.\" This is false for the Lipschitz hypothesis: the set occurs twice with opposite variance, once as the `derivWithin` set argument. `LipschitzOnWith.mono` yields `LipschitzOnWith K (derivWithin \u03b3 (Icc c t)) (Icc c' t)`, not the required `LipschitzOnWith K (derivWithin \u03b3 (Icc c' t)) (Icc c' t)`, so the advertised route does not typecheck.",
+   "line": 425
+  }
+ ],
+ "head_sha": "0e4841e314c18ea1c891726f055e5888ae7fdfed",
+ "merge_base_sha": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6f2a950b753ab924eaef29a9b6ea775035a55e51957e666ad4164254e31c8932",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T132204Z-2910-api-design-2ecc20",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T13:22:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The `C\u00b2` introduction lemma for `HasLipschitzDerivOnEachSideAt` requires a two-sided `C\u00b2` neighborhood, which by construction excludes the corner crossings the predicate exists to admit, so the headline case has no introduction route; and the sibling introduction lemma's docstring advertises a shrinking route via `LipschitzOnWith.mono` that does not typecheck.",
+ "transcript_blob": "c61025d2e4ace71336ccf56efeed5f4191f39d5ae61cab66c336d4624c9a27c5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 162685,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 162685,
+  "cache_read_input_tokens": 2621692,
+  "inference_geo": "not_available",
+  "input_tokens": 1169,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2483,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2483,
+    "cache_read_input_tokens": 176701,
+    "input_tokens": 2,
+    "output_tokens": 3140,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23758,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

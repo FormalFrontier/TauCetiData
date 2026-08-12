@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3692225000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 213.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 147227,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 147227,
+    "cache_read_input_tokens": 871705,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7857,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7857,
+      "cache_read_input_tokens": 155869,
+      "input_tokens": 2,
+      "output_tokens": 4053,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16080,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "cost_usd": 2.369223,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|0e4841e314c18ea1c891726f055e5888ae7fdfed|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "diff_sha256": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "duration_s": 213.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PVAggregation.lean:189-190 == 229-230 == 279-280 == OnCurve.lean:277-278 (`.sort (\u00b7 \u2264 \u00b7)`, `Finset.sortedLT_sort`, `a le_rfl hab`); PVAggregation.lean:192-195 == 232-235 == 282-285 == OnCurve.lean:279-282 (the three `(Finset.mem_sort _).mp` conversions); PVAggregation.lean:201 == 241 == 290 == OnCurve.lean:297-298 (the `.mpr` conversion). No consumer anywhere uses the `List` form directly: `grep -n 'sorted_crossing_gluing_induction' TauCeti/` returns only the definition and these four `Finset.sort` call sites.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "State the induction over `(crossings : Finset \u211d)` with `h_lo`/`h_hi`/`h_pair`/`h_win`/`h_far` quantified over `t \u2208 crossings`, and hide the `Finset.sort`/`SortedLT`/`mem_sort` scaffolding inside its proof via `suffices` \u2014 exactly the shape this PR uses for `piecewise_gluing_induction` (PiecewiseC1On.lean:238, where the fuel-`n` induction is hidden by `suffices h : \u2200 n, ...`). Also factor the repeated window wrapper into a private `hasCauchyPVAt_window` helper.",
+   "issue": "`sorted_crossing_gluing_induction` is stated over a raw `List \u211d` with `SortedLT`, but every consumer passes `crossings.sort (\u00b7 \u2264 \u00b7)`, so each repeats the same adapter verbatim: `(crossings.sort (\u00b7 \u2264 \u00b7)) (Finset.sortedLT_sort crossings) (fun h => hr_nonneg (Finset.nonempty_iff_ne_empty.mpr fun he => h (by simp [he]))) a le_rfl hab` plus three `(Finset.mem_sort _).mp` wrappers and one `.mpr`. Four copies: PVAggregation.lean:189-201, 229-241, 279-290, and OnCurve.lean:277-298. The three PVAggregation copies additionally repeat the same window wrapper `hasCauchyPVAt_iff.mpr \u27e8eventually_intervalIntegrable_truncated_window hab (h_lo t h_mem) (h_hi t h_mem) (hr_nonneg \u27e8t, h_mem\u27e9) h_int_tr, _\u27e9` (196-200, 236-240, 286-289).",
+   "line": 112
+  },
+  {
+   "evidence": "Proof body spans OnCurve.lean:186-360, 3.5x the 50-line threshold. Lines 336-359 depend only on `T`, `\u03c1`, `h\u03c1_lip_bdd`, `h\u03c1_le_\u03c1lip`, `hm`, `hm_pos`, and the `Cd` bound from `isBounded_image_deriv` \u2014 all passable as hypotheses; the only non-`Icc a b` fact used is `abs_realWindingIntegrand_le_div_of_le_norm` at line 355.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Extract that block as a preliminary lemma: given `T : Finset \u211d`, `\u03c1`, `0 < m`, `Cd`, hypotheses (i) `\u2200 t\u2080 \u2208 T, IsBounded (h '' Icc (t\u2080 - \u03c1) (t\u2080 + \u03c1))`, (ii) `\u2200 u \u2208 Icc a b, (\u2200 t\u2080 \u2208 T, u \u2209 Ioo (t\u2080 - \u03c1) (t\u2080 + \u03c1)) \u2192 m \u2264 \u2016\u03b3 u - s\u2016`, (iii) `\u2200 t \u2208 Icc a b, \u2016deriv \u03b3 t\u2016 \u2264 Cd`, conclude `IsBounded (h '' Icc a b)`. It is the natural companion to `abs_realWindingIntegrand_le_div_of_le_norm`, which this PR adds in Integrand.lean.",
+   "issue": "`isBounded_intervalIntegrable_cauchyPV_of_interior_crossings` is a single 175-line proof (186-360). The boundedness block (336-359) is self-contained and states a genuinely general fact that is currently inlined: a function bounded on each of finitely many windows and estimated by `\u2016deriv \u03b3\u2016 / m` outside them is bounded on `[a, b]`.",
+   "line": 177
+  }
+ ],
+ "head_sha": "0e4841e314c18ea1c891726f055e5888ae7fdfed",
+ "merge_base_sha": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0d295c4c1821e7725fbc4d78be61f93791d644cea39beacd6d115ff177a61ea5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T134350Z-2910-proof-quality-7be24a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T13:43:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic gluing induction is a real improvement, but `sorted_crossing_gluing_induction` is stated over a raw sorted `List` while all four consumers pass `Finset.sort`, so ~12 lines of identical `mem_sort` plumbing (plus a 4-line window-integrability wrapper) are copy-pasted at each call site. Separately, the 175-line assembly proof in OnCurve.lean still contains a cleanly extractable general boundedness lemma.",
+ "transcript_blob": "b6cc980ad7082a2f5a610c9b0fffae7652620c19c095c61a2d7671c51278b7fe",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 147227,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 147227,
+  "cache_read_input_tokens": 871705,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7857,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7857,
+    "cache_read_input_tokens": 155869,
+    "input_tokens": 2,
+    "output_tokens": 4053,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16080,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 5.294093,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 420.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 177889,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 177889,
+    "cache_read_input_tokens": 5632002,
+    "inference_geo": "not_available",
+    "input_tokens": 71,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1898,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1898,
+      "cache_read_input_tokens": 192490,
+      "input_tokens": 2,
+      "output_tokens": 2745,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25611,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "cost_usd": 5.294093,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|0e4841e314c18ea1c891726f055e5888ae7fdfed|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "diff_sha256": "f7047e1058bca6bd505e24b8f640b3c721002f5c7bf9f7314bc58f69cea47547",
+ "duration_s": 420.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Analysis/Calculus/FDeriv/Measurable.lean:400 `theorem measurable_deriv ... (f : \ud835\udd5c \u2192 F) : Measurable (deriv f)`, :404 `stronglyMeasurable_deriv`, :416 `aestronglyMeasurable_deriv`. Already used in-repo: `TauCeti/Analysis/Contour/Winding/Continuity.lean:57` (`AEStronglyMeasurable.mul ?_ (aestronglyMeasurable_deriv \u03b3 _)` for the very same integrand `(\u03b3 t - w)\u207b\u00b9 * deriv \u03b3 t`) and `TauCeti/Analysis/Contour/Dixon/H1Diff.lean:77`. `hdw'` is used only at OnCurve.lean:126 \u2192 134-136, i.e. solely for this measurability step.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Replace `hd_aem` with `(aestronglyMeasurable_deriv \u03b3 _)` (as at `TauCeti/Analysis/Contour/Winding/Continuity.lean:57`), state `haesm` directly for `fun t => (\u03b3 t - s)\u207b\u00b9 * deriv \u03b3 t`, and delete `hdw`/`hdw'`, `hcongr`, `haesm_h`, `haesm_h'`. The signature then needs only `hpq`, `h_sub_bdd`, `ContinuousOn \u03b3 (Icc p q)` and `hbdd`; drop `c`, `d`, `h_sub_cd`, and the two `.continuousOn` arguments at the call sites (OnCurve.lean:293,296).",
+   "issue": "`intervalIntegrable_realWindingIntegrand_window` obtains a.e. strong measurability of the integrand by first building it for `derivWithin \u03b3 (Icc c d)` (lines 126, 129-143) and then transferring to `deriv \u03b3` through an a.e. congruence on `Ioo p q` (lines 144-153). Mathlib's `aestronglyMeasurable_deriv \u03b3 \u03bc` / `stronglyMeasurable_deriv \u03b3` hold for any `\u03b3 : \u211d \u2192 \u2102` with no hypotheses, so this ~25-line detour re-derives a located lemma; it also forces the extra hypothesis `hdw'` (line 117) and, with it, the `c d` piece parameters and `h_sub_cd` (lines 115-116), and the caller must supply `(hlipL t ht').continuousOn` / `(hlipR t ht').continuousOn` at lines 293 and 296.",
+   "line": 129
+  }
+ ],
+ "head_sha": "0e4841e314c18ea1c891726f055e5888ae7fdfed",
+ "merge_base_sha": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8b3148d22cc53768a220fe3189a0e5e7ec396ad60497a0aa5f58c13b34f2a4d2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T131504Z-2910-reuse-41292a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T13:15:04Z",
+ "submitted_by": "kim-em",
+ "summary": "Prior findings (the duplicated sorted-crossing induction and the hand-rolled derivWithin set-congruence) are fixed. One reuse defect remains: the new window-integrability helper re-derives measurability of `deriv \u03b3` through `derivWithin` continuity plus an a.e. congruence, where Mathlib's unconditional `aestronglyMeasurable_deriv` \u2014 already used elsewhere in this repo \u2014 gives it directly, dragging a superfluous hypothesis and caller arguments along.",
+ "transcript_blob": "d51c8958ca38429f2109d541bdf04e846c95dabfd1e11c62e9cdab0f78678012",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 177889,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 177889,
+  "cache_read_input_tokens": 5632002,
+  "inference_geo": "not_available",
+  "input_tokens": 71,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1898,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1898,
+    "cache_read_input_tokens": 192490,
+    "input_tokens": 2,
+    "output_tokens": 2745,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25611,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
