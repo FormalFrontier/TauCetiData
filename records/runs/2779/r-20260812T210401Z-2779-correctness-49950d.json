@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8380054999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 349.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 76304,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 76304,
+    "cache_read_input_tokens": 899823,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4661,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4661,
+      "cache_read_input_tokens": 88142,
+      "input_tokens": 2,
+      "output_tokens": 3054,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24660,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "cost_usd": 1.838005,
+ "dedupe_key": "TauCetiProject/TauCeti|2779|95b778f5226741e940edc7b292448f330eef89b5|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e31074e2469b99b2357b9b1facb1370813f861c4e1e292b706740b23951df5f2",
+ "diff_sha256": "e31074e2469b99b2357b9b1facb1370813f861c4e1e292b706740b23951df5f2",
+ "duration_s": 349.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "n = 3, x = id, left = 0, right = 1: bottom = 0, top = 1, `cIoo 0 1 = \u2205`, so the rectangle is empty and X-disjoint under this definition even when `G.X 0 = 0`, i.e. when the single square it covers holds an X. Corroborating merged artifact: `GridRectangle.avoidsMarkings_of_le_two` (Rectangle/Basic.lean:243) proves every rectangle of a 2\u00d72 grid avoids all markings, though every square of a 2\u00d72 diagram carries a marking.",
+   "file": "TauCeti/KnotTheory/Grid/Differential/Minus.lean",
+   "fix": "Add the rectangle's square region (`Grid.cIco left right \u00d7\u02e2 Grid.cIco bottom top`, per the chosen square-labeling convention) to `GridRectangle` as its own prerequisite PR, rebuild `AvoidsMarkings`/`fullyBlockedRectangles` on it, and then define `minusRectangles` by disjointness from `G.XSet` on that region.",
+   "issue": "`minusRectangles` imposes `Disjoint R.toGridRectangle.interior G.XSet`, but `interior = cIoo left right \u00d7\u02e2 cIoo bottom top` (Rectangle/Basic.lean:159) is the set of interior grid *points*, not the squares the rectangle covers (which is a half-open cyclic box of size (right-left)\u00b7(top-bottom)). Rectangles whose only X lies in the boundary strip of squares are wrongly counted, so this is not `{r \u2208 Rect\u00b0(x,y) : r \u2229 \ud835\udd4f = \u2205}`.",
+   "line": 128
+  },
+  {
+   "evidence": "With n = 3, x = id, left = 0, right = 1, bottom = 0, top = 1 and `G.O 0 = 0`, `interiorOColumns G = \u2205` and the weight is `1`, whereas the rectangle is the single square (0,0) holding O\u2080, whose OSS weight is `V\u2080`.",
+   "file": "TauCeti/KnotTheory/Grid/Differential/Minus.lean",
+   "fix": "Define the interior-O columns against the rectangle's square region rather than `interior`, once that region exists; the specialization theorem then compares the corrected minus and fully blocked coefficients.",
+   "issue": "Same defect in the weight: `interiorOColumns` collects columns `i` with `(i, G.O i) \u2208 R.toGridRectangle.interior`, so `minusRectangleWeight` (line 96) omits every O in the rectangle's boundary strip of squares. The monomial is therefore not `V\u2081^{O\u2081(r)} \u22ef V\u2099^{O\u2099(r)}`; `constantCoeff_minusRectangleCoefficient` (line 201) and `fullyBlockedRectangles_eq_filter_minusRectangles` (line 160) are self-consistent but inherit the same wrong region.",
+   "line": 69
+  }
+ ],
+ "head_sha": "95b778f5226741e940edc7b292448f330eef89b5",
+ "merge_base_sha": "0b8e21cf377e6e35fd4d8d16b9061c62fcea0cfe",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2779,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "68c327eb9e88b50c64328ac1b43a17a0c95ab8a21a3f6783cf2e08c79803d8ef",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T210401Z-2779-correctness-49950d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T21:04:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The new minus differential decides marking containment with GridRectangle.interior (the open cyclic box of interior grid points), not with the set of squares the rectangle occupies, so minusRectangles admits rectangles containing an X and minusRectangleWeight undercounts the O-multiplicities; the resulting map is not the GC\u207b differential of Ozsv\u00e1th\u2013Stipsicz\u2013Szab\u00f3 Chapter 4. The correct marking region does not exist in the repo and must be added first.",
+ "transcript_blob": "74cfd34b4238cb49cc2b35de6642370dbf0fa64010d8d55b519db6b63e338f03",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 76304,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 76304,
+  "cache_read_input_tokens": 899823,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4661,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4661,
+    "cache_read_input_tokens": 88142,
+    "input_tokens": 2,
+    "output_tokens": 3054,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24660,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
