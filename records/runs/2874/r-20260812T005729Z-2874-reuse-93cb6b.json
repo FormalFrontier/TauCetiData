@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.27834,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 44.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 145920,
+    "input_tokens": 175536,
+    "output_tokens": 1910,
+    "reasoning_output_tokens": 897
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7348b03e0c7ed52c8ba55343b5216989ce6b31a1",
+ "cost_estimated": true,
+ "cost_usd": 0.27834,
+ "dedupe_key": "TauCetiProject/TauCeti|2874|84de78bdb8f96c86f1a7cb7712762df9715806ae|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "4a41feb07983c7ac5467bbcf3593be01652fb8ff250da63be870fba9bd2659ca",
+ "diff_sha256": "4a41feb07983c7ac5467bbcf3593be01652fb8ff250da63be870fba9bd2659ca",
+ "duration_s": 44.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`scripts/roadmap_label.py:245-250` already defines `ensure_label` using `gh label create ... --force`, which both creates missing labels and heals colour/description.",
+   "file": "scripts/pr_status/labels.py",
+   "fix": "Reuse or factor the existing `roadmap_label.ensure_label` approach based on `gh label create --force`, retaining the desired local error policy in a shared helper.",
+   "issue": "`ensure_label` and `_reconcile_label_presentation` reimplement create-or-update label handling with GET/JSON/PATCH plumbing.",
+   "line": 119
+  },
+  {
+   "evidence": "The blocks at lines 95-121 and 190-211 both create the same App token, checkout `scripts/pr_status`, and run `labels.py reconcile`; only the PR expression differs.",
+   "file": ".github/workflows/pr-labels.yml",
+   "fix": "Extract the shared labeling job into a reusable workflow or shared action accepting the resolved PR number, leaving only event-specific resolution and concurrency inputs at the callers.",
+   "issue": "`label-resolved` duplicates the token, checkout, permissions, and reconciliation steps from `label`; the comment explicitly requires manually keeping the copies synchronized.",
+   "line": 180
+  }
+ ],
+ "head_sha": "84de78bdb8f96c86f1a7cb7712762df9715806ae",
+ "merge_base_sha": "7348b03e0c7ed52c8ba55343b5216989ce6b31a1",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2874,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ec959640e3dcaeb0de3196ce7e5b402949941072aae271711cdc0b8d73c5274d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T005729Z-2874-reuse-93cb6b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T00:57:29Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR duplicates both existing label-reconciliation machinery and an entire workflow job, creating parallel implementations that can drift.",
+ "transcript_blob": "fc36523f64a5445903a36107c03544138dbb604d329faf736392e1931124759d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 145920,
+  "input_tokens": 175536,
+  "output_tokens": 1910,
+  "reasoning_output_tokens": 897
+ },
+ "verdict": "request_changes"
+}
