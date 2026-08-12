@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2884825000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 234.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64371,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64371,
+    "cache_read_input_tokens": 377529,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 8064,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 8064,
+      "cache_read_input_tokens": 72806,
+      "input_tokens": 1,
+      "output_tokens": 5399,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17807,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8ec7f124c694071fef010546f13a7edd41bb0294",
+ "cost_usd": 1.288483,
+ "dedupe_key": "TauCetiProject/TauCeti|2899|c211c05fb65bd374838bdd8d484059dd2b62724d|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8a06a5bdc45a8cd81d517f4ac835adbeabf3315c8711292b92e1ee88cf06881c",
+ "diff_sha256": "8a06a5bdc45a8cd81d517f4ac835adbeabf3315c8711292b92e1ee88cf06881c",
+ "duration_s": 234.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rln coxeterRelators TauCeti/` returns only `Presentation/Coxeter.lean` and this new file; `Coxeter.lean:55` states its purpose is \"reusable Coxeter-presentation machinery needed by milestone S1\", yet it offers no way to build a `CoxeterMatrix` from a diagram, so lines 150-163 and 174-180 are reusable facts hidden in `TauCeti.Sporadic.BabyMonster`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/BabyMonster.lean",
+   "fix": "Add `CoxeterMatrix.ofEdges [DecidableEq B] (edges : List (B \u00d7 B)) : CoxeterMatrix B` with its `apply` lemma, and a `neighbors`/`mem_neighbors_iff` pair, to `TauCeti/GroupTheory/Presentation/Coxeter.lean`; then this file becomes `def coxeterMatrix : CoxeterMatrix (Fin 11) := .ofEdges edges` and keeps only the group-specific `decide` checks (`edges_eq`, `neighbors_branchNode`, `map_length_neighbors`).",
+   "issue": "The `coxeterMatrix` construction and all three of its field proofs (`isSymm` via `ext`/`if_congr or_comm`, `diagonal` via `simp`, `off_diagonal` via `split <;> omega`) contain nothing specific to Y433 or to `Fin 11` \u2014 they are generic in the edge list and the node type given `DecidableEq`. The same holds for `neighbors` (line 174) and `mem_neighbors_iff` (line 179), which are the generic \"read the degree off the matrix\" helper. Every future diagram row must re-derive them verbatim; the PR description itself names the in-flight Monster row (#2892) as another Y-diagram presentation.",
+   "line": 150
+  }
+ ],
+ "head_sha": "c211c05fb65bd374838bdd8d484059dd2b62724d",
+ "merge_base_sha": "8ec7f124c694071fef010546f13a7edd41bb0294",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2899,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7570ddd83479b99ea473a995a3886a835566c0f39a04cdc7902430223922ede1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T142057Z-2899-proof-quality-eda413",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T14:20:57Z",
+ "submitted_by": "kim-em",
+ "summary": "Proof scripts are short, robust, and free of undocumented defeq manipulation. The one issue is that the generic edge-list-to-CoxeterMatrix construction and its three field proofs, plus the neighbors/degree machinery, are hand-rolled inside a group-specific namespace instead of the reusable Coxeter file.",
+ "transcript_blob": "68aeead8e1b354b6330842545a9659867529d2bedcbc4d35dea685d77daa7d03",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64371,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64371,
+  "cache_read_input_tokens": 377529,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8064,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 8064,
+    "cache_read_input_tokens": 72806,
+    "input_tokens": 1,
+    "output_tokens": 5399,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17807,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
