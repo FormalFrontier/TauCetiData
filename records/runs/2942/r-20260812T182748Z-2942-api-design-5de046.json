@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5994665000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 180.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 76219,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 76219,
+    "cache_read_input_tokens": 951319,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 716,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 716,
+      "cache_read_input_tokens": 92002,
+      "input_tokens": 1,
+      "output_tokens": 3255,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13450,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 1.599467,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 180.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep shows no `IsMDissipative.tendsto_smul_resolvent_apply_atTop` / `.exp_yosidaApproximation_uniformCauchySeqOn_compact` anywhere in the tree post-PR; LimitSemigroup.lean:121-127 and 134-140 contain the identical five-line argument block.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Restore the three `IsMDissipative.*` statements as one-line `M = 1` specializations of the generalized lemmas (as the PR description claims was done) and call them at the three sites. This is not a compatibility ask: they are the canonical interface for a hypothesis class the repo maintains, exactly parallel to `exp_yosidaApproximation_uniformCauchySeqOn_compact_of_pow_le`.",
+   "issue": "The `IsMDissipative.*` specializations (`tendsto_smul_resolvent_apply_atTop`, `tendsto_yosidaApproximation_apply_atTop`, `exp_yosidaApproximation_uniformCauchySeqOn_compact`, `..._of_mem`) are deleted with nothing named in their place, so the m-dissipative half now has no entry point: the `(K := 1) (M := 1)` instantiation is repeated verbatim at LimitSemigroup.lean:121-127 and LimitSemigroup.lean:134-140, and again at LumerPhillips.lean:84-86. This is asymmetric with the Hille--Yosida half, which does get its named one-line specializations in `HilleYosida/Convergence.lean`.",
+   "line": 369
+  },
+  {
+   "evidence": "grep for `nonneg_of_norm_resolvent_le` across `code/` returns only the declaration at Yosida.lean:316; Dense.lean:39 uses `K := |C| + \u2016g\u2016 + 1`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Delete it; if a later stage needs it, state it then for a single `lambda` (`0 < lambda \u2192 \u2016R(lambda, A)\u2016 \u2264 M / lambda \u2192 0 \u2264 M`).",
+   "issue": "`nonneg_of_norm_resolvent_le` has no consumer anywhere in the repository \u2014 the density argument it was introduced for now goes through `ContinuousLinearMap.tendsto_apply_of_dense`, which builds its own positive constant `|C| + \u2016g\u2016 + 1`. It is also stated with a hypothesis family over all `lambda > 0` while the proof uses only `lambda = 1`.",
+   "line": 316
+  },
+  {
+   "evidence": "grep for `norm_resolvent_le_of_pow_le` across `code/` returns no hits; Convergence.lean:74 and :95 both contain the inline `simpa using hpow 1 le_rfl lambda hlambda`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/HilleYosida/Convergence.lean",
+   "fix": "Add the named lemma `norm_resolvent_le_of_pow_le : (\u2200 n, 1 \u2264 n \u2192 \u2016R(lambda, A) ^ n\u2016 \u2264 M / lambda ^ n) \u2192 \u2016R(lambda, A)\u2016 \u2264 M / lambda` and use it at both sites, or drop the claim from the description.",
+   "issue": "`norm_resolvent_le_of_pow_le`, named in the PR description as part of this file's surface, does not exist; the `n = 1` extraction is inlined as `by simpa using hpow 1 le_rfl lambda hlambda` at lines 74 and 95. Every later stage of the milestone consuming the power-bound hypothesis set will need the same step.",
+   "line": 74
+  },
+  {
+   "evidence": "Yosida.lean:306-312: conclusion is `\u2016lambda \u2022 LinearPMap.resolvent A lambda\u2016 \u2264 M` from `hbound`, with no converse.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "State it as an iff for `0 < lambda` (both directions are `field_simp`-level), or reword the docstring to describe the one implication actually proved.",
+   "issue": "The docstring of `norm_smul_resolvent_le` says the resolvent bound \"is exactly the statement that the scaled resolvent has norm at most `M`\", but only the forward implication is proved, so the advertised equivalence is not available to a caller who has `\u2016lambda \u2022 R\u2016 \u2264 M`.",
+   "line": 304
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "306fc7df93b7487115a05d0025732875b9418b33ec1201d7606f5dee98f60b88",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T182748Z-2942-api-design-5de046",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:27:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The generalization of the convergence stage to a general resolvent constant is sound, but it deletes the m-dissipative entry points without replacement, so the same six-line hypothesis-discharge block is now pasted at three call sites; the PR also adds one lemma with no consumer and omits one it advertises.",
+ "transcript_blob": "11f2e537ad4e32ca8c1818deb9e67d42db498ffd1608b0bd09f3167ac33d2ad6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 76219,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 76219,
+  "cache_read_input_tokens": 951319,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 716,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 716,
+    "cache_read_input_tokens": 92002,
+    "input_tokens": 1,
+    "output_tokens": 3255,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13450,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

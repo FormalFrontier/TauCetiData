@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2273025,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 276.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 106640,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 106640,
+    "cache_read_input_tokens": 1197757,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4579,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4579,
+      "cache_read_input_tokens": 118560,
+      "input_tokens": 2,
+      "output_tokens": 3396,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21469,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 2.227302,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 276.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Contradicted inside the same PR: `HilleYosida/Convergence.lean:26-29` (\"the bounds on the higher powers are what make the exponentials uniformly bounded ... is the reason the Hille--Yosida hypotheses are not weakened to a bound on `R(lambda, A)` alone\") and `HilleYosida/Approximation.lean:25-27` (\"this argument uses the bounds on *all* resolvent powers; that distinction is exactly why the exponent-zero Hille--Yosida hypothesis for general `M` is stronger than a bound on the resolvent alone\").",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Rewrite the paragraph to say the convergence `A_lambda x -> A x` uses the resolvent bound (constant K), while the compact-time Cauchy statement additionally requires an independent uniform bound `\u2016exp (s A_lambda)\u2016 \u2264 M` supplied either by `norm_exp_smul_yosidaApproximation_le_one` (dissipative) or by `norm_exp_smul_yosidaApproximation_le` (all resolvent power bounds) \u2014 as the section docstring at lines 369-375 already states correctly.",
+   "issue": "The module docstring claims that \"for a densely defined operator with that bound [\u2016R(lambda, A)\u2016 \u2264 M / lambda] ... a sharp exponential comparison proves that the associated semigroups are Cauchy uniformly on compact time intervals, with the factor `M ^ 2`\". That implication is false for M > 1: from \u2016R\u2016 \u2264 M/lambda alone the split of line 153 only gives \u2016exp (t A_lambda)\u2016 \u2264 exp(-t\u00b7lambda)\u00b7exp(t\u00b7lambda\u00b2\u2016R\u2016) \u2264 exp(t\u00b7lambda\u00b7(M-1)), which is unbounded in lambda, so no uniform exponential bound and no Cauchy conclusion. The actual theorems (lines 384, 448) take the exponential bound M as a separate hypothesis `hexp` with the resolvent constant renamed K precisely because it does not follow.",
+   "line": 26
+  },
+  {
+   "evidence": "`grep -rn norm_resolvent_le_of_pow_le code/` returns no matches; `LimitSemigroup.lean:121-127,134-140` and `LumerPhillips.lean:84-86` contain the inlined specializations.",
+   "file": "",
+   "fix": "Correct the description to match the code, or add the named lemma if it was intended.",
+   "issue": "The PR description misstates the delivered API in three places: it says `Convergence.lean` contains `norm_resolvent_le_of_pow_le` (no such declaration exists anywhere; the n = 1 extraction is inlined as `by simpa using hpow 1 le_rfl lambda hlambda` at Convergence.lean:75,96), that the file is 113 lines (it is 103), and that the three `IsMDissipative.*` lemmas \"keep their statements and become one-line specializations, so Generation/LimitSemigroup.lean and Generation/LumerPhillips.lean are unchanged\" (they are deleted, and both files are changed, each call site re-discharging the M = 1 hypotheses inline).",
+   "line": 0
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7702cda923d632c8db97350a1b50d1b93cfdd27a5ef880748a721d9a23c3e384",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T181448Z-2942-correctness-6f2fe2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:14:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The theorem statements are faithful: the M-generalized resolvent, Duhamel and density estimates are correct, non-vacuous, and instantiated at M = 1 downstream. But the Yosida.lean module docstring asserts that the compact-time Cauchy conclusion follows from the resolvent bound alone, which is false for M > 1 and contradicts the rest of the PR.",
+ "transcript_blob": "19677f974e910aba839066623dab74b236baa25d0c5e9aa1077360e1d3ea9586",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 106640,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 106640,
+  "cache_read_input_tokens": 1197757,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4579,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4579,
+    "cache_read_input_tokens": 118560,
+    "input_tokens": 2,
+    "output_tokens": 3396,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21469,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

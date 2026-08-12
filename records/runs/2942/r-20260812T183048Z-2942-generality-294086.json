@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7306644999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 273.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 83628,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 83628,
+    "cache_read_input_tokens": 702291,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3663,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3663,
+      "cache_read_input_tokens": 96464,
+      "input_tokens": 2,
+      "output_tokens": 5245,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20734,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 1.730664,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 273.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -rn 'nonneg_of_norm_resolvent_le' TauCeti/ \u2192 only TauCeti/Analysis/Semigroups/Generation/Yosida.lean:316; proof body is `hbound 1 one_pos`; Dense.lean:39 `let K : \u211d := |C| + \u2016g\u2016 + 1`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Delete the lemma. If a later PR needs it, state it at a single resolvent point: `(hlambda : 0 < lambda) (hbound : \u2016LinearPMap.resolvent A lambda\u2016 \u2264 M / lambda) : 0 \u2264 M`.",
+   "issue": "`nonneg_of_norm_resolvent_le` has no consumer: grep over the repo returns only its own declaration. The PR description says it exists to make the density argument's `M + 1` positive, but that argument now goes through `ContinuousLinearMap.tendsto_apply_of_dense`, which builds `K := |C| + \u2016g\u2016 + 1` and never needs `0 \u2264 M`. Its hypothesis is also over-quantified: the proof instantiates only `lambda = 1`.",
+   "line": 316
+  },
+  {
+   "evidence": "mathlib/Mathlib/Topology/UniformSpace/UniformConvergence.lean:437 `def UniformCauchySeqOn (F : \u03b9 \u2192 \u03b1 \u2192 \u03b2) (p : Filter \u03b9) (s : Set \u03b1)`; only `UniformCauchySeqOn.cauchySeq` (line 572) needs `[SemilatticeSup \u03b9]`. mathlib/Mathlib/Topology/MetricSpace/Cauchy.lean:70 `Metric.uniformCauchySeqOn_iff` is the atTop-only characterization the proof happens to use.",
+   "file": "TauCeti/Analysis/Normed/Operator/Dense.lean",
+   "fix": "State it as `{p : Filter \u03b9}` with `hbound : \u2200\u1da0 i in p, \u2200 z \u2208 s, \u2016f i z\u2016 \u2264 C` and conclusion `UniformCauchySeqOn _ p s`, dropping the two order instances; unfold `UniformCauchySeqOn` via `Metric.mem_uniformity_dist` and `Filter.eventually_prod_iff` instead of `Metric.uniformCauchySeqOn_iff`. The Yosida call site (`Yosida.lean:457`) instantiates `p := atTop` unchanged.",
+   "issue": "`uniformCauchySeqOn_apply_of_dense` is stated only for `atTop` with `[Nonempty \u03b9] [SemilatticeSup \u03b9]`, though the 3\u03b5 argument uses nothing about the index order. `UniformCauchySeqOn` carries an arbitrary `p : Filter \u03b9` throughout Mathlib, and the sibling lemma in this same file (`tendsto_apply_of_dense`, line 32) is already filter-general. The file is presented as general-purpose operator infrastructure, so the restriction is user-visible under-generalization.",
+   "line": 83
+  },
+  {
+   "evidence": "grep -rn 'IsMDissipative\\.(tendsto_smul_resolvent|exp_yosidaApproximation|tendsto_yosidaApproximation)' TauCeti/ returns nothing; LimitSemigroup.lean:121-127 and :134-140 repeat `(fun _ h => hA.mem_resolventSet h) (fun _ h => by simpa [one_div] using hA.norm_resolvent_le h) (fun _ h _ hs => norm_exp_smul_yosidaApproximation_le_one (hA.mul_norm_resolvent_le_one h) h hs)` verbatim.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Keep the general lemmas and derive the m-dissipative case once, e.g. `IsMDissipative.exp_yosidaApproximation_uniformCauchySeqOn_compact` and `.tendsto_yosidaApproximation_apply_atTop` as one-line specializations in the dissipative namespace, and call those at the three sites.",
+   "issue": "The m-dissipative special case is no longer derived anywhere: `IsMDissipative.tendsto_smul_resolvent_apply_atTop`, `.tendsto_yosidaApproximation_apply_atTop` and `.exp_yosidaApproximation_uniformCauchySeqOn_compact` were deleted (contrary to the PR description, which states they are kept as one-line specializations), and the identical `(K := 1) (M := 1)` instantiation blob is now open-coded at LimitSemigroup.lean:121-127, LimitSemigroup.lean:134-140 and LumerPhillips.lean:84-86.",
+   "line": 121
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "17c32ee33d82bff6460af53e2e4b3ccddf530dadc2c316c1b6cdf8787c8fab05",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T183048Z-2942-generality-294086",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:30:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The generalization of the convergence stage from dissipativity to a resolvent bound `M / lambda` is at the right level, and the K/M split in the Cauchy estimates is justified by its two distinct suppliers. Three level issues remain: an unused lemma with an over-quantified hypothesis, an atTop-only statement of a filter-agnostic density argument, and the m-dissipative special case being open-coded at three sites instead of derived once.",
+ "transcript_blob": "b13fcbd7f06193e68009b4f716181a8dccd350c70971a029f2f74847dd2a768f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 83628,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 83628,
+  "cache_read_input_tokens": 702291,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3663,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3663,
+    "cache_read_input_tokens": 96464,
+    "input_tokens": 2,
+    "output_tokens": 5245,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20734,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

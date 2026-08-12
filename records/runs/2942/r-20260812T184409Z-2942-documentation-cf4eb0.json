@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.501386,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 193.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73861,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73861,
+    "cache_read_input_tokens": 743560,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3434,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3434,
+      "cache_read_input_tokens": 86926,
+      "input_tokens": 2,
+      "output_tokens": 2583,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14644,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 1.501386,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 193.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Yosida.lean:384-389 `{K M : \u211d} ... (hbound : ... \u2264 K / lambda) (hexp : ... \u2016exp (s \u2022 yosidaApproximation A lambda)\u2016 \u2264 M)`; contrast Yosida.lean:371 \"take independent resolvent and exponential bounds, with constants `K` and `M` respectively\".",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Rewrite the header paragraph to state both hypotheses and use the code's names: resolvent bound with constant `K`, uniform exponential bound `\u2016exp (s A_lambda)\u2016 \u2264 M`, with `M ^ 2` coming from the two Duhamel exponential factors; m-dissipative operators supply `K = M = 1`.",
+   "issue": "The module docstring says the convergence stage is \"stated against the resolvent bound `\u2016R(lambda, A)\u2016 \u2264 M / lambda`\" and that from that bound \"a sharp exponential comparison proves that the associated semigroups are Cauchy uniformly on compact time intervals, with the factor `M ^ 2`\". The two Cauchy theorems actually take a second, independent hypothesis `hexp : \u2016exp (s \u2022 yosidaApproximation A lambda)\u2016 \u2264 M` (Yosida.lean:387, 451), and there the resolvent constant is `K` while `M` is the exponential constant contributing `M ^ 2`. The header therefore promises the resolvent bound suffices and swaps the meaning of `M` relative to the declarations and to the section docstring at line 371.",
+   "line": 26
+  },
+  {
+   "evidence": "`grep -rn \"IsMDissipative.tendsto_smul_resolvent\\|IsMDissipative.exp_yosidaApproximation\\|IsMDissipative.tendsto_yosidaApproximation\" TauCeti/` returns nothing; LimitSemigroup.lean:121,134 and LumerPhillips.lean:84 are changed; `nonneg_of_norm_resolvent_le` has no use outside its own declaration (Yosida.lean:316).",
+   "file": "",
+   "fix": "Update the description to the API actually shipped: the `IsMDissipative.*` wrappers are removed and their call sites instantiate the general lemmas at `K = M = 1`; describe `Dense.lean` and its two theorems; drop the stale `M + 1` rationale (and either use or drop the now-unused `nonneg_of_norm_resolvent_le`).",
+   "issue": "The PR description does not match the delivered change: it says the `IsMDissipative.tendsto_smul_resolvent_apply_atTop`, `.tendsto_yosidaApproximation_apply_atTop` and `.exp_yosidaApproximation_uniformCauchySeqOn_compact` specializations \"keep their statements ... so `Generation/LimitSemigroup.lean` and `Generation/LumerPhillips.lean` are unchanged\" (they are deleted and both files are edited); it explains a `epsilon / (3 (M + 1))` split and a role for `nonneg_of_norm_resolvent_le` that exist nowhere in the diff; and it never mentions the new 141-line file `TauCeti/Analysis/Normed/Operator/Dense.lean` into which those density arguments were moved.",
+   "line": 0
+  },
+  {
+   "evidence": "Yosida.lean:306-308: `(hbound : \u2016LinearPMap.resolvent A lambda\u2016 \u2264 M / lambda) : \u2016lambda \u2022 LinearPMap.resolvent A lambda\u2016 \u2264 M` \u2014 a one-directional implication.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Say the bound \"implies\" `\u2016lambda \u2022 R(lambda, A)\u2016 \u2264 M` (for `0 < lambda`), or state the lemma as an `iff`.",
+   "issue": "The docstring of `norm_smul_resolvent_le` says the resolvent bound \"is exactly the statement that the scaled resolvent `lambda R(lambda, A)` has norm at most `M`\", promising an equivalence; the theorem proves only the forward implication.",
+   "line": 304
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1447aa3ebfb63968ce9a39117c4eda654dcd1beba14c9b5f10815969a391ab21",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T184409Z-2942-documentation-cf4eb0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:44:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The new module and declaration docstrings are mostly accurate, but the Yosida.lean module header now misstates the hypothesis set of the generalized Cauchy theorems (it omits the exponential bound and reuses `M` for the resolvent constant that the code calls `K`), one new lemma docstring claims an equivalence it does not prove, and the PR description describes an API that the diff does not deliver.",
+ "transcript_blob": "d9481149378720936badbafbd72b41113b305f0ce45c2f6e68bf7a1a5d939a8a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73861,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73861,
+  "cache_read_input_tokens": 743560,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3434,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3434,
+    "cache_read_input_tokens": 86926,
+    "input_tokens": 2,
+    "output_tokens": 2583,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14644,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

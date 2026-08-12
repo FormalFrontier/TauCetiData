@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0497624999999995,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 267.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72119,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72119,
+    "cache_read_input_tokens": 1596791,
+    "inference_geo": "not_available",
+    "input_tokens": 43,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 671,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 671,
+      "cache_read_input_tokens": 87947,
+      "input_tokens": 1,
+      "output_tokens": 1949,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20192,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 2.049762,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 267.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n 'IsMDissipative\\|Dissipative' TauCeti/Analysis/Semigroups/Generation/Yosida.lean` \u2192 only `8:public import TauCeti.Analysis.Semigroups.Dissipative.Basic`. All `LinearPMap.*` names the file uses (`resolvent`, `resolventSet`, `resolvent_smul_sub_apply`, `apply_resolvent`, `resolvent_mem_domain`, `resolvent_apply_comm`, `resolvent_comm`) are declared in `TauCeti/Analysis/Normed/Operator/Resolvent/Unbounded.lean:136,167,181,191,196,231,276`; `Dissipative/Basic.lean:7` public-imports `Resolvent.Identity`, which public-imports that file.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Replace line 8 with `public import TauCeti.Analysis.Normed.Operator.Resolvent.Unbounded` (the module that actually defines the used names), and add `public import TauCeti.Analysis.Semigroups.Dissipative.Basic` to `Generation/LimitSemigroup.lean`, which uses `IsMDissipative` and currently gets it transitively through Yosida.lean.",
+   "issue": "`public import TauCeti.Analysis.Semigroups.Dissipative.Basic` is unused after this diff: the file no longer mentions `IsDissipative`/`IsMDissipative` anywhere. It survives only because `Dissipative.Basic` publicly re-exports the resolvent API, so every downstream consumer (`HilleYosida/Approximation.lean`, the new `Convergence.lean`) now publicly depends on the dissipativity theory for nothing.",
+   "line": 8
+  },
+  {
+   "evidence": "`grep -rn 'nonneg_of_norm_resolvent_le' .` \u2192 one hit, `TauCeti/Analysis/Semigroups/Generation/Yosida.lean:316` (its own declaration). The PR description justifies it as making `M + 1` positive in the density argument, but that argument now lives in `Normed/Operator/Dense.lean` and uses `let K : \u211d := |C| + 1` (Dense.lean:47, 95), which needs no sign hypothesis.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Delete it; if it is wanted as API, put it beside the resolvent definition in `TauCeti/Analysis/Normed/Operator/Resolvent/Unbounded.lean` rather than in the Yosida generation file.",
+   "issue": "`nonneg_of_norm_resolvent_le` is a pure resolvent-bound fact (no Yosida approximation, no semigroup, `omit [CompleteSpace X]`) placed inside the \"Strong convergence of the approximations\" section, where it elaborates nothing: it is used by no declaration in the repository.",
+   "line": 316
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4e56a9b41e560b52b2aff1da9f0105c9000bcac4ce7be5d71c9594f45653a680",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T183522Z-2942-placement-2793be",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:35:22Z",
+ "submitted_by": "kim-em",
+ "summary": "Yosida.lean now imports the dissipativity theory it no longer uses, and an unused generic resolvent lemma was parked in the Yosida convergence section. Both new files are otherwise in their natural homes with used, narrow imports.",
+ "transcript_blob": "80448b4b3981321e0e16bce489337a79e33a664282ce69f3001040178033d46c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72119,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72119,
+  "cache_read_input_tokens": 1596791,
+  "inference_geo": "not_available",
+  "input_tokens": 43,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 671,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 671,
+    "cache_read_input_tokens": 87947,
+    "input_tokens": 1,
+    "output_tokens": 1949,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20192,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

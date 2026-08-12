@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.017635,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 259.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 90236,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 90236,
+    "cache_read_input_tokens": 1167122,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2029,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2029,
+      "cache_read_input_tokens": 104706,
+      "input_tokens": 2,
+      "output_tokens": 7123,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19960,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 2.017635,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 259.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Convergence.lean:66,87 declare `_of_pow_le[_of_mem]` with `hpow : \u2200 n, 1 \u2264 n \u2192 \u2200 lambda, 0 < lambda \u2192 \u2016LinearPMap.resolvent A lambda ^ n\u2016 \u2264 M / lambda ^ n`; TauCeti/Analysis/Normed/Operator/Exponential.lean:51 `ContinuousLinearMap.norm_exp_smul_le_mul_exp_of_norm_pow_le` and HilleYosida/Approximation.lean:61 `norm_smul_resolvent_pow_le` are the repo precedents for the same hypothesis.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/HilleYosida/Convergence.lean",
+   "fix": "Rename to `exp_yosidaApproximation_uniformCauchySeqOn_compact_of_norm_resolvent_pow_le` and `..._of_norm_resolvent_pow_le_of_mem`, updating the two `## Main results` entries (lines 39, 41).",
+   "issue": "`exp_yosidaApproximation_uniformCauchySeqOn_compact_of_pow_le` (and `..._of_pow_le_of_mem`, line 66) tags its hypothesis as `pow_le`, but the hypothesis is a bound on the *norms* of the resolvent powers, `\u2016R(lambda, A) ^ n\u2016 \u2264 M / lambda ^ n`. The repo already names this hypothesis shape `of_norm_pow_le` and this exact object `norm_smul_resolvent_pow_le`, so `of_pow_le` both understates the hypothesis and is inconsistent with the neighbours it specializes.",
+   "line": 87
+  },
+  {
+   "evidence": "Yosida.lean:257 `norm_smul_resolvent_sub_le` vs Yosida.lean:306 `norm_smul_resolvent_le`; the file's own pointwise convention is `tendsto_smul_resolvent_apply_atTop` (line 330) and `yosidaApproximation_apply_eq_smul_resolvent_apply` (line 348).",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Rename to `norm_smul_resolvent_apply_sub_self_le` (or at minimum `norm_smul_resolvent_apply_sub_le`) and update its two uses in `tendsto_smul_resolvent_apply_atTop_of_mem`.",
+   "issue": "`norm_smul_resolvent_sub_le` is a pointwise statement (`\u2016lambda \u2022 R(lambda,A) x - x\u2016 \u2264 M \u2016A x\u2016 / lambda`) but carries no `apply`, and this PR adds the operator-level `norm_smul_resolvent_le` (`\u2016lambda \u2022 R(lambda,A)\u2016 \u2264 M`) 50 lines below it. The two names now differ only by `_sub`, so `norm_smul_resolvent_sub_le` reads as a bound on `\u2016lambda \u2022 R - _\u2016` rather than on the vector difference; the same file uses `_apply` for pointwise forms elsewhere.",
+   "line": 257
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9bfe778453082e72248bc17105081e2de28c2cdfda385641d0750a0889811a53",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T183950Z-2942-naming-4bb4d9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:39:50Z",
+ "submitted_by": "kim-em",
+ "summary": "Names are mostly conclusion-describing and consistent with the adjacent Yosida/Hille--Yosida declarations, but the new Hille--Yosida specializations use an `of_pow_le` hypothesis tag that contradicts the repo's own `of_norm_pow_le`/`norm_..._pow_le` precedent, and the renamed `norm_smul_resolvent_sub_le` is now ambiguous against the operator-level `norm_smul_resolvent_le` added beside it.",
+ "transcript_blob": "356caf6d3c0a53df15d8c46d50a3509db2d18bfe1be9a56f6fd64a90995e16f0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 90236,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 90236,
+  "cache_read_input_tokens": 1167122,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2029,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2029,
+    "cache_read_input_tokens": 104706,
+    "input_tokens": 2,
+    "output_tokens": 7123,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19960,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

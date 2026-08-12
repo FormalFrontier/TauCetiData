@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2557325000000006,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 276.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 91895,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 91895,
+    "cache_read_input_tokens": 1607355,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1518,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1518,
+      "cache_read_input_tokens": 106876,
+      "input_tokens": 2,
+      "output_tokens": 1778,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20304,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "cost_usd": 2.255733,
+ "dedupe_key": "TauCetiProject/TauCeti|2942|040bcaa98c0a0067cdb231c460ea871f430a5aaa|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "diff_sha256": "9b516e137215538cfb672975d678309dedbf840ecdf461cd5de3ab8b9087a0da",
+ "duration_s": 276.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Convergence.lean:66-81 vs 87-102: identical hypothesis lists; the only difference is `(x : A.domain)` vs `(x : X)` and the coercion in the statement.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/HilleYosida/Convergence.lean",
+   "fix": "Delete `..._of_pow_le_of_mem`; consumers use `exp_yosidaApproximation_uniformCauchySeqOn_compact_of_pow_le hM hres hpow hdense (x : X) hT`. If a domain-vector spelling is wanted, prove it by exactly that term rather than by a second call into `..._compact_of_mem`.",
+   "issue": "`exp_yosidaApproximation_uniformCauchySeqOn_compact_of_pow_le_of_mem` has exactly the same hypotheses (hM, hres, hpow, hdense, hT) as `exp_yosidaApproximation_uniformCauchySeqOn_compact_of_pow_le` in the same file, and its conclusion is that lemma applied to `(x : X)`. Unlike the Yosida.lean pair (where the whole-space version is proved from the domain version), neither is used to prove the other here, so the domain version adds nothing.",
+   "line": 66
+  },
+  {
+   "evidence": "grep of `hA.norm_resolvent_le` shows the identical `by simpa [one_div]` discharge at LimitSemigroup.lean:124, 137 and LumerPhillips.lean:86; `norm_exp_smul_yosidaApproximation_le_one (hA.mul_norm_resolvent_le_one h) h hs` at LimitSemigroup.lean:125-126 and 138-139.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Restore the three `IsMDissipative.*` one-line specializations in Yosida.lean (each `:= general_lemma (fun _ h => hA.mem_resolventSet h) (fun _ h => by simpa [one_div] using hA.norm_resolvent_le h) ... hdense ...`) and call them at LimitSemigroup.lean:121, 134 and LumerPhillips.lean:84.",
+   "issue": "The m-dissipative instantiation block `(K := 1) (M := 1) (fun _ h => hA.mem_resolventSet h) (fun _ h => by simpa [one_div] using hA.norm_resolvent_le h) (fun _ h _ hs => norm_exp_smul_yosidaApproximation_le_one (hA.mul_norm_resolvent_le_one h) h hs)` is repeated verbatim at LimitSemigroup.lean:121-126 and 134-139, and its resolvent half again at LumerPhillips.lean:84-86. The PR description claims `IsMDissipative.tendsto_smul_resolvent_apply_atTop`, `.tendsto_yosidaApproximation_apply_atTop` and `.exp_yosidaApproximation_uniformCauchySeqOn_compact` were kept as one-line specializations, but they were deleted, so each call site re-derives the same specialization.",
+   "line": 121
+  },
+  {
+   "evidence": "grep `nonneg_of_norm_resolvent_le` over TauCeti/ returns only the declaration at Yosida.lean:316; Dense.lean:38 defines `K : \u211d := |C| + \u2016g\u2016 + 1`, needing no nonnegativity of `C`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/Yosida.lean",
+   "fix": "Delete `nonneg_of_norm_resolvent_le`; if a later PR needs `0 \u2264 M`, it is `(norm_nonneg _).trans (hbound 1 one_pos)` inline.",
+   "issue": "`nonneg_of_norm_resolvent_le` has no consumer anywhere in the repository; it is a two-line wrapper around `norm_nonneg (LinearPMap.resolvent A 1)` composed with `hbound 1 one_pos`. Its stated purpose (positivity of `M + 1` in the density argument) does not arise, since `ContinuousLinearMap.tendsto_apply_of_dense` builds its constant as `|C| + \u2016g\u2016 + 1`.",
+   "line": 316
+  }
+ ],
+ "head_sha": "040bcaa98c0a0067cdb231c460ea871f430a5aaa",
+ "merge_base_sha": "90ea200923309bb7c7807f3644e322bab5beae67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2942,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e19e81c8f9ff5c8a0826fe08b4b9219419ffa01c5a1fe76478a3bc39c53935fe",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T181924Z-2942-reuse-fc6783",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T18:19:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The new density-extension lemmas are genuinely absent from Mathlib (its Ascoli file still lists the dense-subset statement as a TODO), but the PR adds a domain-vector Hille--Yosida lemma that its own whole-space sibling directly subsumes, duplicates the m-dissipative specialization inline at three call sites instead of keeping the one-line `IsMDissipative` wrappers, and adds an unused nonnegativity wrapper.",
+ "transcript_blob": "265a9d2e625136872dd2ced48ec4c2a0c082ce1d103829241e3801ff88fff51d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 91895,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 91895,
+  "cache_read_input_tokens": 1607355,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1518,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1518,
+    "cache_read_input_tokens": 106876,
+    "input_tokens": 2,
+    "output_tokens": 1778,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20304,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
