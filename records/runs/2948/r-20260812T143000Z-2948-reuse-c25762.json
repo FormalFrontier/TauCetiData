@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.032824,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 348.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75869,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75869,
+    "cache_read_input_tokens": 1218786,
+    "inference_geo": "not_available",
+    "input_tokens": 36,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1090,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1090,
+      "cache_read_input_tokens": 91278,
+      "input_tokens": 2,
+      "output_tokens": 3238,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25938,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_usd": 2.032824,
+ "dedupe_key": "TauCetiProject/TauCeti|2948|bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "diff_sha256": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "duration_s": 348.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Filtration.lean:59 `abbrev pbwFiltration ... := TauCeti.Algebra.wordFiltration uea\u03b9\u2097 k`; every proof body on lines 67\u2013134 is `TauCeti.Algebra.wordFiltration_* uea\u03b9\u2097 ...`; grep for `pbwFiltration` outside this file returns nothing.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Delete these declarations and the duplicate instance; callers use the generic lemmas directly (`TauCeti.Algebra.wordFiltration_mono uea\u03b9\u2097` etc.) since the abbrev is defeq and the generic `@[simp]` lemmas already fire. Keep at most `prod_\u03b9_mem_pbwFiltration`/`pbwFiltration_le_iff`/`\u03b9_mem_pbwFiltration_one`, which do bridge `uea\u03b9` vs `uea\u03b9\u2097`. Contrast the Clifford file, where `filtration` is a non-reducible `def` and its restatements do earn their place.",
+   "issue": "`pbwFiltration`/`pbwFiltrationPrevious` are `abbrev`s (reducible) for `TauCeti.Algebra.wordFiltration uea\u03b9\u2097` / `wordFiltrationPrevious uea\u03b9\u2097`, so the whole block of restatements is a parallel API with no content: `pbwFiltrationPrevious_zero` (67), `pbwFiltrationPrevious_succ` (71), `algebraMap_mem_pbwFiltration` (95), `\u03b9_range_le_pbwFiltration_one` (104), `pbwFiltration_mono` (87), `pbwFiltration_zero` (91), `pbwFiltration_mul` (109), `mul_mem_pbwFiltration` (114), `pbwFiltration_eq_iSup_pow` (119), `pbwFiltration_succ_eq_sup` (125), `pbwFiltration_one` (131) are each literally `TauCeti.Algebra.wordFiltration_* uea\u03b9\u2097`, and the `IsRingFiltration` instance (171) duplicates `wordFiltration.instIsRingFiltration`, which typeclass synthesis already finds through the reducible abbrev. Nothing in the repo consumes any of them.",
+   "line": 67
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/TensorAlgebra/Basic.lean:217 `theorem adjoin_range_\u03b9 : Algebra.adjoin R (Set.range (\u03b9 R (M := M))) = \u22a4`; Basic.lean:227 shows the map-through-a-surjection idiom; TauCeti/Algebra/WordFiltration.lean:194 `iSup_wordFiltration_eq_adjoin`; grep of `iSup_wordFiltration_eq_adjoin` in TauCeti/ hits only its own definition.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Prove `Algebra.adjoin R (Set.range uea\u03b9) = \u22a4` from `TensorAlgebra.adjoin_range_\u03b9` + `AlgHom.map_adjoin` + `Algebra.map_top` + surjectivity of `mkAlgHom` (the idiom Mathlib uses at `TensorAlgebra.range_lift`), then get `iSup_pbwFiltration_eq_top` from `iSup_wordFiltration_eq_adjoin` and `Algebra.top_toSubmodule`; delete the private induction.",
+   "issue": "`exists_mem_pbwFiltration_mkAlgHom` (136\u2013159) re-runs `TensorAlgebra.induction` to prove that the generators generate, which Mathlib's `TensorAlgebra.adjoin_range_\u03b9` already provides, and it bypasses this PR's own `TauCeti.Algebra.iSup_wordFiltration_eq_adjoin` \u2014 which is left with no consumer anywhere in the repo.",
+   "line": 136
+  },
+  {
+   "evidence": "Filtration.lean:110-120 (`| 0 => \u22a5 | k + 1 => filtration Q k`, then two `(rfl)` lemmas) is character-for-character TauCeti/Algebra/WordFiltration.lean:53-66.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "`def filtrationPrevious (Q) : \u2115 \u2192 Submodule R (CliffordAlgebra Q) := TauCeti.Algebra.wordFiltrationPrevious (\u03b9 Q)` and prove the two lemmas as `TauCeti.Algebra.wordFiltrationPrevious_zero (\u03b9 Q)` / `_succ (\u03b9 Q) k`, matching how the rest of the file now delegates.",
+   "issue": "The refactor factored `filtration` into `wordFiltration` but left `filtrationPrevious` (110\u2013113) and `filtrationPrevious_zero`/`filtrationPrevious_succ` (115\u2013120) as a verbatim copy of the new generic `wordFiltrationPrevious` and its two lemmas.",
+   "line": 110
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Algebra/Operations.lean:595 `instance idemSemiring : IdemSemiring (Submodule R A)` (hence `Monoid`, so `pow_add`/`pow_mul` apply) and Operations.lean:269 `instance : MulLeftMono (Submodule R A)` (hence `pow_le_pow_right'`); Operations.lean:99 `Submodule.one_le`.",
+   "file": "TauCeti/Algebra/WordFiltration.lean",
+   "fix": "Add the characterization `wordFiltration f k = (1 \u2294 LinearMap.range f) ^ k` and derive the arithmetic lemmas from `pow_add`, `pow_mul`, `pow_zero`, `pow_one` and `pow_le_pow_right' (Submodule.one_le.2 \u2026)`, keeping only the span-level lemmas (`prod_map_mem_wordFiltration`, `wordFiltration_le_iff`) as hand proofs.",
+   "issue": "`wordFiltration f k = (1 \u2294 LinearMap.range f) ^ k` holds (it is `wordFiltration_pow f 1 k` combined with `wordFiltration_one`), so `wordFiltration_mul` (124), `wordFiltration_pow` (146), `wordFiltration_mono` (87), `wordFiltration_zero` (92) and `wordFiltration_one` (190) re-prove by hand what Mathlib's submodule monoid/order API gives.",
+   "line": 124
+  }
+ ],
+ "head_sha": "bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2948,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "479f10e69f081b9d7721babc8fb139885f82b189b28240ded9cb1522537ee53f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T143000Z-2948-reuse-c25762",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T14:30:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic `wordFiltration` and the PBW filtration itself are genuinely new (no PBW filtration exists in Mathlib), but the PBW file is largely a parallel API of one-line restatements over a reducible abbrev, the exhaustivity proof re-derives what the PR's own `iSup_wordFiltration_eq_adjoin` plus Mathlib's `TensorAlgebra.adjoin_range_\u03b9` already give, and the Clifford refactor leaves `filtrationPrevious` un-factored.",
+ "transcript_blob": "425a0f69f9c676e97aa94e370fb69e80891dcbf2ed2e0758d8708ec5fe062778",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75869,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75869,
+  "cache_read_input_tokens": 1218786,
+  "inference_geo": "not_available",
+  "input_tokens": 36,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1090,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1090,
+    "cache_read_input_tokens": 91278,
+    "input_tokens": 2,
+    "output_tokens": 3238,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25938,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.35323,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 223.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 58853,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 58853,
+    "cache_read_input_tokens": 634814,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 726,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 726,
+      "cache_read_input_tokens": 74626,
+      "input_tokens": 2,
+      "output_tokens": 5723,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17256,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_usd": 1.35323,
+ "dedupe_key": "TauCetiProject/TauCeti|2948|bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "diff_sha256": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "duration_s": 223.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Lie/UniversalEnveloping.lean:65 `def UniversalEnvelopingAlgebra := (UniversalEnvelopingAlgebra.ringCon R L).Quotient`, :72 `def mkAlgHom := RingCon.mk\u2090 R _`; mathlib/Mathlib/RingTheory/Congruence/Basic.lean:117 `theorem mk\u2090_surjective (c : RingCon R) : Function.Surjective (c.mk\u2090 (\u03b1 := \u03b1))`. The same file's porting notes (lines 104-118) still reference `RingQuot.liftAlgHom_mkAlgHom_apply`, showing this implementation has already changed once.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Use the named lemma: `RingCon.mk\u2090_surjective (\u03b1 := R) (UniversalEnvelopingAlgebra.ringCon R L)` (after unfolding `mkAlgHom` by name, as Mathlib itself does with `simp [mkAlgHom]`), or document why no lemma-level route exists.",
+   "issue": "`show Function.Surjective (mkAlgHom R L) from Quotient.mk_surjective` typechecks only by unfolding the bundled `AlgHom` `mkAlgHom` = `RingCon.mk\u2090 R _` down to a raw `Quotient.mk`, i.e. through Mathlib's implementation of `UniversalEnvelopingAlgebra` as a `RingCon.Quotient`, with no comment justifying it.",
+   "line": 165
+  },
+  {
+   "evidence": "Filtration.lean:76-78 states `(l.map uea\u03b9).prod \u2208 \u2026` but applies `TauCeti.Algebra.prod_map_mem_wordFiltration uea\u03b9\u2097 hl`, whose conclusion is about `l.map \u21d1uea\u03b9\u2097`; mathlib/Mathlib/Algebra/Lie/Basic.lean:355 `@[simp, norm_cast] theorem coe_toLinearMap (f : L\u2081 \u2192\u2097\u2045R\u2046 L\u2082) : \u21d1(f : L\u2081 \u2192\u2097[R] L\u2082) = f` is exactly the bridging lemma.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Insert the explicit lemma \u2014 e.g. `simp only [\u2190 LieHom.coe_toLinearMap]` before applying the generic result (or `simpa using`) \u2014 or state these three lemmas with `uea\u03b9\u2097` for consistency with `pbwFiltration`, which is defined from `uea\u03b9\u2097`. Drop the `by exact` wrappers once the coercion is handled explicitly.",
+   "issue": "Statements phrased with the `LieHom` coercion `\u21d1uea\u03b9` are discharged by generic lemmas about `\u21d1uea\u03b9\u2097 = \u21d1(LieHom.toLinearMap (\u03b9 R))`; the proofs go through only by coercion defeq, undocumented. Same pattern at line 83 (`pbwFiltration_le_iff`) and line 100 (`\u03b9_mem_pbwFiltration_one`); the redundant `by exact` wrappers at 77-78 and 83-84 are the symptom.",
+   "line": 77
+  },
+  {
+   "evidence": "Grep over `TauCeti/`: `iSup_wordFiltration_eq_adjoin` occurs only at WordFiltration.lean:31 (docstring) and :194 (statement). mathlib/Mathlib/LinearAlgebra/TensorAlgebra/Basic.lean:217 `theorem adjoin_range_\u03b9 : Algebra.adjoin R (Set.range (\u03b9 R (M := M))) = \u22a4`, and :228 shows the `Algebra.map_top`/`AlgHom.map_adjoin` idiom.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Derive exhaustivity from `TauCeti.Algebra.iSup_wordFiltration_eq_adjoin`, reducing it to a reusable `Algebra.adjoin R (Set.range \u21d1(UniversalEnvelopingAlgebra.\u03b9 R)) = \u22a4` proved from `TensorAlgebra.adjoin_range_\u03b9`, `AlgHom.map_adjoin` and `Algebra.map_top` plus surjectivity of `mkAlgHom`; delete the private induction.",
+   "issue": "`exists_mem_pbwFiltration_mkAlgHom` re-runs a four-case `TensorAlgebra.induction` to prove what the generic `iSup_wordFiltration_eq_adjoin` added in this same PR already states; that generic lemma has no consumer anywhere in the repo, so the reusable form of the argument is dead while the private ad-hoc form carries the proof.",
+   "line": 136
+  }
+ ],
+ "head_sha": "bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2948,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b9e1250797b76cab251bb8c32945721bfb99a751d744eb9bf4a6c33348c05927",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T150200Z-2948-proof-quality-eb5fc9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T15:02:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The shared extraction is clean, but the PBW file leans on undocumented definitional equalities: the enveloping algebra's quotient implementation is unfolded to raw `Quotient.mk`, and several statements phrased with the `LieHom` coercion are closed by lemmas about its `toLinearMap`. The exhaustivity proof also re-does by hand what the generic lemma added in this same PR already gives.",
+ "transcript_blob": "98f94d26bf51bf2debf810a588fa3460ddedcb51945bb0662006fea293d6c71a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58853,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 58853,
+  "cache_read_input_tokens": 634814,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 726,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 726,
+    "cache_read_input_tokens": 74626,
+    "input_tokens": 2,
+    "output_tokens": 5723,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17256,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

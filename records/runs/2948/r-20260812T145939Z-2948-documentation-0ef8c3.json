@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.051488,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 140.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 60958,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 60958,
+    "cache_read_input_tokens": 327150,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 757,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 757,
+      "cache_read_input_tokens": 76700,
+      "input_tokens": 2,
+      "output_tokens": 3932,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10507,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_usd": 1.051488,
+ "dedupe_key": "TauCetiProject/TauCeti|2948|bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "diff_sha256": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "duration_s": 140.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Statement at lines 119-122: `pbwFiltration R L k = \u2a06 i : {i : \u2115 // i \u2264 k}, LinearMap.range uea\u03b9\u2097 ^ (i : \u2115)`; compare the accurate docstring on `wordFiltration_eq_iSup_pow`, TauCeti/Algebra/WordFiltration.lean:171-172.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Use the generic wording: \"The `k`-th PBW filtration step is the supremum of the powers of the generator range of degree at most `k`.\"",
+   "issue": "Docstring \"The PBW filtration is the increasing union of powers of the canonical generator range\" misdescribes the statement, which is that the *k*-th step equals the supremum of the powers with exponent `\u2264 k`. It mentions no `k`, so it reads as an exhaustivity claim (that is `iSup_pbwFiltration_eq_top`), and the powers `range uea\u03b9\u2097 ^ i` are not an increasing family (`^0 = 1` is not below `^1`).",
+   "line": 118
+  },
+  {
+   "evidence": "Mathlib/Algebra/Lie/UniversalEnveloping.lean:81 `def \u03b9 : L \u2192\u2097\u2045R\u2046 UniversalEnvelopingAlgebra R L`; the file's own `pbwFiltration` docstring (line 57) correctly says \"canonical Lie generators\".",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Write \"words of length at most `k` in the range of `UniversalEnvelopingAlgebra.\u03b9 R`\" (or `\u03b9(L)`).",
+   "issue": "Module docstring bullet says \"words of length at most `k` in `\u03b9(R)`\". `UniversalEnvelopingAlgebra.\u03b9 R : L \u2192\u2097\u2045R\u2046 U` sends elements of `L`, not of `R`; the words are in the image of `L`.",
+   "line": 30
+  },
+  {
+   "evidence": "Line 105-106 `def filtration ... := TauCeti.Algebra.wordFiltration (\u03b9 Q) k`; module docstring lines 23-35 still describe the construction as bespoke.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Add one sentence to each of the two module docstrings (and to the `filtration` / `pbwFiltration` docstrings) stating that this is the specialization of `TauCeti.Algebra.wordFiltration` to `\u03b9 Q` / `\u03b9 R`, with the shared API in `TauCeti/Algebra/WordFiltration.lean`.",
+   "issue": "After the refactor `filtration Q k` is by definition `TauCeti.Algebra.wordFiltration (\u03b9 Q) k`, but neither the def docstring nor the module docstring says so, so a reader cannot discover the generic API or that the Clifford and PBW filtrations are the same object. Same omission in TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean:57 and its module docstring, which never mentions `TauCeti.Algebra.wordFiltration`.",
+   "line": 100
+  },
+  {
+   "evidence": "Lines 193-215 prove `iSup_wordFiltration_eq_adjoin`; lines 219-227 define `instGradedMonoid` and `instIsRingFiltration`; the Main-results list (lines 28-33) names only `instIsRingFiltration`.",
+   "file": "TauCeti/Algebra/WordFiltration.lean",
+   "fix": "Drop \"exactly\" or extend the list to include exhaustivity onto `Algebra.adjoin R (Set.range f)` and the `GradedMonoid`/`IsRingFiltration` instances; add `wordFiltration.instGradedMonoid` to the Main-results list.",
+   "issue": "The module docstring claims the file \"records exactly the properties independent of those relations: monotonicity, multiplicativity, the first two steps, and comparison with powers of the range of `f`\", but that closed enumeration omits `iSup_wordFiltration_eq_adjoin` and the two instances; `instGradedMonoid` is also absent from the Main-results list.",
+   "line": 22
+  },
+  {
+   "evidence": "Lines 170-172: `instance : IsRingFiltration (pbwFiltration R L) (pbwFiltrationPrevious R L)` \u2014 anonymous, and not mentioned in lines 28-34.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Add a bullet for the bundled `IsRingFiltration (pbwFiltration R L) (pbwFiltrationPrevious R L)` instance, as `WordFiltration.lean` does for its own.",
+   "issue": "The \"Main definitions and results\" list omits the `IsRingFiltration` instance, which is anonymous and is the file's principal downstream-facing export (the sole reason `pbwFiltrationPrevious` exists); it is therefore undiscoverable from the module header.",
+   "line": 28
+  }
+ ],
+ "head_sha": "bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2948,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e154fc4a5f2df294ce260e5a08fd30391636e946189abca8a2838da500acbfa7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T145939Z-2948-documentation-0ef8c3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T14:59:39Z",
+ "submitted_by": "kim-em",
+ "summary": "Docstrings are present throughout, but the PBW file contains an inaccurate docstring that misdescribes what its lemma states, a wrong symbol in the module header, and neither the PBW nor the Clifford file tells the reader that its filtration is now the specialization of the new shared `wordFiltration` API.",
+ "transcript_blob": "0274d0d17beecba6d24aaafeea0c2f1c011a24a50e419725d282bfeabcac71b0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 60958,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 60958,
+  "cache_read_input_tokens": 327150,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 757,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 757,
+    "cache_read_input_tokens": 76700,
+    "input_tokens": 2,
+    "output_tokens": 3932,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10507,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

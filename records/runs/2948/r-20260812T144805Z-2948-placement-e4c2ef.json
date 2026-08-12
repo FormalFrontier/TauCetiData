@@ -1,0 +1,143 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.015991,
+   "error_kind": "unknown_error",
+   "model": "claude-opus-5",
+   "returncode": 1,
+   "secs": 191.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 0,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "",
+    "input_tokens": 0,
+    "iterations": [],
+    "output_tokens": 0,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  },
+  {
+   "cost_usd": 1.8929329999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 313.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 74792,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 74792,
+    "cache_read_input_tokens": 1063994,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3613,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3613,
+      "cache_read_input_tokens": 87678,
+      "input_tokens": 2,
+      "output_tokens": 2128,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23875,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "cost_usd": 1.908924,
+ "dedupe_key": "TauCetiProject/TauCeti|2948|bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "diff_sha256": "6ee3cfd07f8f75d769e7ed1dbeb78b8845249c4793c02111e3cada303c063797",
+ "duration_s": 504.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/Algebra/Subalgebra/Lattice.lean:8: public import Mathlib.Algebra.Algebra.Operations`; `Operations.lean:84,99,219,442` define `one_eq_span`, `one_le`, `mul_mem_mul`, `span_mul_span`; `SetLike.GradedMonoid` is at `mathlib/Mathlib/Algebra/GradedMonoid.lean:522`, imported by `Mathlib/RingTheory/FilteredAlgebra/Basic.lean:9`. `Mathlib.Algebra.DirectSum.Internal` adds only `DirectSum.Algebra` and `Order.Antidiag.Prod`, neither used.",
+   "file": "TauCeti/Algebra/WordFiltration.lean",
+   "fix": "Delete the `Mathlib.Algebra.DirectSum.Internal` import.",
+   "issue": "`public import Mathlib.Algebra.DirectSum.Internal` is unused: the file never uses direct sums or internal gradings, and every submodule-multiplication lemma it does use comes from `Mathlib.Algebra.Algebra.Operations`, already imported transitively by `Mathlib.Algebra.Algebra.Subalgebra.Lattice` on the next line.",
+   "line": 8
+  },
+  {
+   "evidence": "`TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean:110-125` defines `filtrationPrevious | 0 => \u22a5 | k + 1 => filtration Q k` verbatim as `TauCeti/Algebra/WordFiltration.lean:52-66`; cf. `TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean:63` which reuses the generic one.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Define `filtrationPrevious Q := TauCeti.Algebra.wordFiltrationPrevious (\u03b9 Q)` and prove the two lemmas by `TauCeti.Algebra.wordFiltrationPrevious_zero/_succ (\u03b9 Q)`, matching the rest of the file.",
+   "issue": "`filtrationPrevious` (and its `_zero`/`_succ` lemmas) is still defined by hand, duplicating the new `TauCeti.Algebra.wordFiltrationPrevious`; every other declaration in the file was rerouted to the generic version, and the new PBW file uses the generic one via `pbwFiltrationPrevious`.",
+   "line": 110
+  }
+ ],
+ "head_sha": "bc3e6a0257866dbfb2e0b02808fa8a295e32e4e2",
+ "merge_base_sha": "f5ea9f450ea128f2aa497dd09d5a357f59c0a06e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2948,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9fcef2cadcc3b91212f7663e48542498a6019c93c3e083686039ed3222f831ab",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T144805Z-2948-placement-e4c2ef",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T14:48:05Z",
+ "submitted_by": "kim-em",
+ "summary": "Both new files are in their natural homes, but the generic file carries a redundant `Mathlib.Algebra.DirectSum.Internal` import, and the Clifford refactor leaves `filtrationPrevious` as an unfactored duplicate of the new generic `wordFiltrationPrevious`.",
+ "transcript_blob": "793030c369f4087f01c79ab4b7b7701c3eb21560ad58c7ad9cb6f93dcba83a68",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 74792,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 74792,
+  "cache_read_input_tokens": 1063994,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3613,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3613,
+    "cache_read_input_tokens": 87678,
+    "input_tokens": 2,
+    "output_tokens": 2128,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23875,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
