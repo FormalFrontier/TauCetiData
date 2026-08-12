@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.6050355000000005,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 562.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 95808,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 95808,
+    "cache_read_input_tokens": 1080733,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 14881,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 14881,
+      "cache_read_input_tokens": 97426,
+      "input_tokens": 2,
+      "output_tokens": 12724,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 43526,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "30eccb18620affaeff08bdfdf7bb58128e7a54a9",
+ "cost_usd": 2.605036,
+ "dedupe_key": "TauCetiProject/TauCeti|2839|0741a61adc142ef10237751a1f4a66b387ced50c|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "40426a35de8493bd1694e5ecd785da0437f2ea61ecf48d101bceca2bfe1b7be7",
+ "diff_sha256": "40426a35de8493bd1694e5ecd785da0437f2ea61ecf48d101bceca2bfe1b7be7",
+ "duration_s": 562.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "l. 378 \"as recorded for the `R_H2` block in the source\" vs l. 21-22 \"The three blocks have freely reduced lengths `80`, `160`, and `309`, giving the published total length `549`\" and l. 200-201 \"Free reduction gives block lengths 80, 160, and 309, agreeing with the source's total 549\".",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/Lyons.lean",
+   "fix": "Either cite where the source records the per-block figures, or reword the three docstrings to say the block figures are computed by this transcription and only their sum 549 is the published figure.",
+   "issue": "The docstrings of `lyPresentation_reducedH2Length`, `lyPresentation_reducedH1Length` and `lyPresentation_reducedExtensionLength` say 80/160/309 are \"as recorded for the R_H2/R_H1/R_G block in the source\", but the module docstring (l. 21-22) and `transcriptionNotes` (l. 201) attribute only the total 549 to Gebhardt. One of the two is false; if the source publishes only the total, three of the four length theorems are decompositions of a single check dressed as independent source comparisons, which misleads the required independent source-to-Lean read-through.",
+   "line": 377
+  },
+  {
+   "evidence": "GroupPresentation.lean l. 153-155: \"A published presentation length is normally measured after free and cyclic reduction of each relator, so this is what makes `totalLength` comparable with such a figure.\" Siblings prove it: ONan.lean:338, Suzuki.lean:285, Mathieu.lean:272, Fischer/TwentyThree.lean:193. Non-reducedness: Relator.lean l. 91-97 gives `toWord (.pow (.inv (conj c b)) 2) = [(b,false),(c,false),(b,true),(b,false),(c,false),(b,true)]`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/Lyons.lean",
+   "fix": "Add the decidable check `\u2200 w \u2208 lyPresentation.relators, FreeGroup.IsCyclicallyReduced (FreeGroup.reduce w)` (the `FreeGroup.reduce` form, since the raw compiled words are not reduced) and say in the docstring/notes that this is what makes 549 comparable with the published length.",
+   "issue": "`lyPresentation_reducedTotalLength` is the row's only external cross-check, but nothing establishes it measures the published quantity. A published presentation length is measured after free *and cyclic* reduction (GroupPresentation.lean l. 132-133, 151-155), and this row proves no reducedness statement at all, unlike every other sporadic row. `relatorsCyclicallyReduced` is in fact false here: `.pow (.inv (Relator.conj c b)) 2` compiles to `b\u207b\u00b9c\u207b\u00b9b b\u207b\u00b9c\u207b\u00b9b`, and `div` joins cancel (relator 9's LHS ends in `b`, `invRev` of its RHS starts with `b\u207b\u00b9`), so `totalLength` is not 549 either. If any compiled word is freely reduced but not cyclically reduced, its source letter count is smaller and the 549 agreement is apples-to-oranges.",
+   "line": 402
+  },
+  {
+   "evidence": "l. 116-120: `Relator.div (Relator.sourceComm z (\u2026)) (b \u2b1d c \u2b1d bInv \u2b1d cInv)`; `Relator.toFreeGroup_sourceComm` (Relator.lean l. 238-242) gives `r\u207b\u00b9s\u207b\u00b9rs`, whereas the written word `b c b\u207b\u00b9 c\u207b\u00b9` is `\u2045b,c\u2046`. `sourceComm` is used for every other bracket in the file (l. 63, 64, 117).",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Sporadic/Lyons.lean",
+   "fix": "Record in `transcriptionNotes` how the source prints this right-hand side; if it is bracketed, transcribe it as `Relator.sourceComm b c` (or `Relator.sourceComm (.inv b) (.inv c)` if barred), matching the treatment of the left side.",
+   "issue": "R_G relator 4 is the only relator whose *relation*, not merely its word, depends on the commutator convention, and it is transcribed inconsistently: the left side uses `Relator.sourceComm` (source convention `x\u207b\u00b9y\u207b\u00b9xy`) while the right side is the hand-written word `b c b\u207b\u00b9 c\u207b\u00b9`, which is Mathlib's `\u2045b,c\u2046` and equals the source's `[b\u0304,c\u0304]`, not the source's `[b,c] = b\u207b\u00b9c\u207b\u00b9bc`. If the source prints a bracket there, the transcribed relation is a different group element and the presented group is not Ly; no check in the module can detect this, since both candidate words have length 4 and the 549 total is unchanged.",
+   "line": 120
+  }
+ ],
+ "head_sha": "0741a61adc142ef10237751a1f4a66b387ced50c",
+ "merge_base_sha": "30eccb18620affaeff08bdfdf7bb58128e7a54a9",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2839,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8030fff249b8a56b819dec603934a14497c372ea16d45d8f46ce9d091b50a0ad",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T104056Z-2839-correctness-1a5f6b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T10:40:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The transcription is structurally coherent and its internal checks are sound, but the three block-length theorems misattribute author-computed figures to the source, and the row's only external cross-check (total length 549) is not established to measure the same quantity as a published presentation length, since no reducedness property is proved and the compiled words are provably not freely reduced.",
+ "transcript_blob": "a74350c05b2da4ef1941a2d17ad2eac2522ab07fddf38ed4891211c36b85bacd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 95808,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 95808,
+  "cache_read_input_tokens": 1080733,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14881,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 14881,
+    "cache_read_input_tokens": 97426,
+    "input_tokens": 2,
+    "output_tokens": 12724,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 43526,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
