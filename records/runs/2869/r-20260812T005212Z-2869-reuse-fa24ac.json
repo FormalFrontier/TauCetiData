@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.287511,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 52.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 168192,
+    "input_tokens": 196851,
+    "output_tokens": 2004,
+    "reasoning_output_tokens": 764
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "673b22b65267a0100d4b96693a7dd4f7e54f3747",
+ "cost_estimated": true,
+ "cost_usd": 0.287511,
+ "dedupe_key": "TauCetiProject/TauCeti|2869|8b3001067c63a0f4fe0bc15729b3f3ef511fce32|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "993bd33a7673632f251eb21cd3d1cd21cb1d9d69b093e4ad3bc363eac0885065",
+ "diff_sha256": "993bd33a7673632f251eb21cd3d1cd21cb1d9d69b093e4ad3bc363eac0885065",
+ "duration_s": 52.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The definition proves `he : \u2039Fintype m\u203a = Unique.fintype`, rewrites by `he`, and returns `_root_.Matrix.uniqueRingEquiv`; `mathlib/Mathlib/LinearAlgebra/Matrix/Unique.lean:52` defines that existing equivalence.",
+   "file": "TauCeti/RingTheory/Semisimple/BasicAlgebra.lean",
+   "fix": "Delete the wrapper and evaluation lemmas; at the sole use near line 178, reconcile the `Fintype` instances locally with `Subsingleton.elim` and use `_root_.Matrix.uniqueRingEquiv` directly.",
+   "issue": "`Matrix.ringEquivOfUnique` directly repackages Mathlib's `Matrix.uniqueRingEquiv`; its two evaluation lemmas at lines 117 and 125 are duplicate scaffolding for that wrapper.",
+   "line": 110
+  },
+  {
+   "evidence": "Lines 186\u2013187 define `IsBasic A := IsReduced (A \u29f8 Ring.jacobson A)`, while lines 191\u2013192 repeat precisely that statement as `Iff.rfl`; its only grep hit as a consumer is `SemisimpleQuotient.lean:314`.",
+   "file": "TauCeti/RingTheory/Semisimple/BasicAlgebra.lean",
+   "fix": "Delete the theorem and unfold with `change IsReduced (A \u29f8 Ring.jacobson A)` or `simpa only [IsBasic]`; update `PathAlgebra.isBasic` similarly.",
+   "issue": "`isBasic_iff_isReduced` is exactly `Iff.rfl`, duplicating the public definition `IsBasic` from line 186 and adding a parallel unfolding API.",
+   "line": 191
+  }
+ ],
+ "head_sha": "8b3001067c63a0f4fe0bc15729b3f3ef511fce32",
+ "merge_base_sha": "d886d3a78bac9fb80772b899b6bd575e53a30dbf",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2869,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9185538fe8fb39542167901ce86734acf56c89f7f348d2d8b83f05d39edcbd49",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T005212Z-2869-reuse-fa24ac",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T00:52:12Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces a public replacement for an existing Mathlib equivalence and an unnecessary theorem that merely restates a definition.",
+ "transcript_blob": "667af24c0e8ed3367ba42429b2170be2c70eb96b1c884f29dbaa94ae8388876f",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 168192,
+  "input_tokens": 196851,
+  "output_tokens": 2004,
+  "reasoning_output_tokens": 764
+ },
+ "verdict": "block"
+}
