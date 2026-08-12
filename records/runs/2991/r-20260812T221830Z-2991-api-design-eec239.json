@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.949617,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 289.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87246,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87246,
+    "cache_read_input_tokens": 1053326,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6295,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6295,
+      "cache_read_input_tokens": 97450,
+      "input_tokens": 2,
+      "output_tokens": 3515,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21392,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c411d2dc769d33cfd11b4942367214e418cbc238",
+ "cost_usd": 1.949617,
+ "dedupe_key": "TauCetiProject/TauCeti|2991|d51bda8a5c9b4bd47c7e726374e28bfedc3e62cd|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9575857a823bcb065b7d1e2b8f00224971ea158c4aabcfde3a214fe63c983abe",
+ "diff_sha256": "9575857a823bcb065b7d1e2b8f00224971ea158c4aabcfde3a214fe63c983abe",
+ "duration_s": 289.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Torus.lean:85-86 `def diagonalTorus ... := MonoidHom.range (diagGL (k := k) (n := n))`; Torus.lean:89-91 `@[simp] theorem mem_diagonalTorus_iff`; Centralizer.lean:132 `= (diagGL (k := F) (n := 2)).range`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Centralizer.lean",
+   "fix": "State `Subgroup.centralizer {diagGL t} = diagonalTorus F 2`. `Torus.lean` sits under `RepresentationTheory` (it imports `ClassicalGroups.Standard`), so first move `diagonalTorus`, `mem_diagonalTorus_iff`, `diagonalTorusEquiv` and the centralizer lemmas down to `TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Diagonal.lean` (with `isUnit_apply_of_isDiag`), updating all uses and deleting the old location \u2014 no forwarding module, per the compatibility policy. The `Nat.card (diagonalTorus k n) = (Nat.card k - 1) ^ n` fact then belongs on the torus, not inside this centralizer file.",
+   "issue": "`centralizer_diagGL` states the split torus as the raw `(diagGL (k := F) (n := 2)).range`, but that subgroup already has a canonical name: `TauCeti.diagonalTorus k n := MonoidHom.range (diagGL (k := k) (n := n))` (TauCeti/RepresentationTheory/ClassicalGroups/Torus.lean:85-86), with `@[simp] mem_diagonalTorus_iff`, `diagonalTorusEquiv` and `centralizer_diagonalTorus` attached to it. Consumers of the new theorem land on a spelling none of that API matches syntactically, so `mem_diagonalTorus_iff` will not fire and the two split-torus results cannot be combined without unfolding. `natCard_centralizer_diagGL` repeats the problem by recomputing `Nat.card` of that subgroup from `diagGL_injective` rather than from the named torus.",
+   "line": 132
+  },
+  {
+   "evidence": "Commute.lean:67-69 `private theorem scalar_add_smul_apply ... = (if i = j then a else 0) + b * M i j`; Centralizer.lean:138-141 states and proves the same equation for `M := diagGL t`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Commute.lean",
+   "fix": "Make `scalar_add_smul_apply` public (it is the characteristic entry lemma for the commutant description) and replace the `hentry` block in `centralizer_diagGL` with it.",
+   "issue": "`scalar_add_smul_apply` \u2014 the entrywise reading of the `a \u2022 1 + b \u2022 M` normal form that `commute_finTwo_iff` hands out \u2014 is `private`, yet its statement is re-proved verbatim by the first consumer: `Centralizer.lean:138-141` establishes `(h : Matrix _ _ F) i j = (if i = j then a else 0) + b * (diagGL t) i j` by `rw [hab]; simp [Matrix.scalar_apply, Matrix.diagonal_apply]`, which after the rewrite is exactly `scalar_add_smul_apply a b i j`. A helper with a demonstrated use outside the file it serves should not be private: every user of `commute_finTwo_iff` has to redo this unfolding by hand.",
+   "line": 67
+  },
+  {
+   "evidence": "Centralizer.lean:99-103; Mathlib/GroupTheory/Subgroup/Centralizer.lean:52 `mem_centralizer_singleton_iff {g k : G}`; Mathlib/Algebra/Group/Commute/Units.lean:52 `Commute.units_val_iff` (arbitrary monoid).",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Centralizer.lean",
+   "fix": "Generalize to `{M : Type*} [Monoid M] {g h : M\u02e3} : h \u2208 Subgroup.centralizer {g} \u2194 Commute (g : M) (h : M)`, and place it with the group-theory material rather than in the `GL\u2082` file.",
+   "issue": "`mem_centralizer_singleton_iff_commute_coe` is exported only for `g h : GL (Fin 2) F` with `[Field F]`, but neither the statement nor the proof uses the size or the field: it is `Subgroup.mem_centralizer_singleton_iff` composed with `Commute.units_val_iff`, valid for units of any monoid. As stated, no `GL n R` consumer can use it and the same coercion transport gets rewritten by hand elsewhere (Torus.lean:149-151).",
+   "line": 99
+  },
+  {
+   "evidence": "NonSplitTorus.lean:181 `natCard_eq : Nat.card (GL2NonSplitTorus F E hE) = Nat.card F ^ 2 - 1` (no `Fintype`); Centralizer.lean:267,272-273 `variable [Fintype F]` and `... = Fintype.card F ^ 2 - 1` proved by `rw [..., natCard_eq, Nat.card_eq_fintype_card]`; Mathlib/Algebra/GroupWithZero/Units/Fintype.lean:40 `Nat.card_units [GroupWithZero \u03b1]`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Centralizer.lean",
+   "fix": "State both `natCard_centralizer_*` lemmas with `Nat.card F`, matching `GL2NonSplitTorus.natCard_eq`, and drop `[Fintype F]` from `natCard_centralizer_gl2NonSplitTorusHom` (its proof becomes `rw [centralizer_gl2NonSplitTorusHom hE hx, natCard_eq]`). Keep `[Fintype F]` only on the `ncard_carrier_mk_*` counting results, which genuinely need `Matrix.card_GL_field`.",
+   "issue": "`natCard_centralizer_gl2NonSplitTorusHom` adds `[Fintype F]` purely to restate its own ingredient in `Fintype.card`: the proof is `centralizer_gl2NonSplitTorusHom` then `natCard_eq`, and `GL2NonSplitTorus.natCard_eq` is `Nat.card F ^ 2 - 1` with no finiteness hypothesis (`Nat.card_units` is unconditional). The `GL2NonSplitTorus` namespace now carries two card conventions for the same quantity, so a consumer combining `natCard_eq` and `natCard_centralizer_gl2NonSplitTorusHom` must insert `Nat.card_eq_fintype_card`. Same convention split in `natCard_centralizer_diagGL` (line 166).",
+   "line": 272
+  }
+ ],
+ "head_sha": "d51bda8a5c9b4bd47c7e726374e28bfedc3e62cd",
+ "merge_base_sha": "576d9a41d47dc7d4778b9aed9ae977237c5b82c4",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2991,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "96ea5406adbbfc14f63e1f88794394c2f752c0991f9981500d7313887c5f27b1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T221830Z-2991-api-design-eec239",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T22:18:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The centralizer of a split element is stated against the raw `MonoidHom.range diagGL` although the repo already names that subgroup `TauCeti.diagonalTorus`, giving two public spellings of the same object; a private helper is re-proved verbatim in the consumer file; and one general units lemma is exported only for `GL (Fin 2)` over a field.",
+ "transcript_blob": "df677fc9c8b180b2b90419649cfe4a514950ae1ca6ea4a2889ad31d9b73184b6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87246,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87246,
+  "cache_read_input_tokens": 1053326,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6295,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6295,
+    "cache_read_input_tokens": 97450,
+    "input_tokens": 2,
+    "output_tokens": 3515,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21392,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
