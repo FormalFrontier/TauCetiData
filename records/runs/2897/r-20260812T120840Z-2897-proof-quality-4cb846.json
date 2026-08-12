@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6552665,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 290.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72230,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72230,
+    "cache_read_input_tokens": 654691,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10672,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10672,
+      "cache_read_input_tokens": 78057,
+      "input_tokens": 1,
+      "output_tokens": 2810,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23674,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "cost_usd": 1.655266,
+ "dedupe_key": "TauCetiProject/TauCeti|2897|f9b4ee37381271b65b68c197b32358f5e1f96e39|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "bcf3e183fe67a153f758809ea8f54a665724996791f0e9ae19759ca95ce205b9",
+ "diff_sha256": "bcf3e183fe67a153f758809ea8f54a665724996791f0e9ae19759ca95ce205b9",
+ "duration_s": 290.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `toLinearEquiv_ofLinearEquiv` hits only Mathlib/Algebra/Algebra/Equiv.lean:618 (AlgEquiv, unrelated); the three copies are Tannaka/SemisimplePoint.lean:62-66, JordanDecomposition.lean:339-343, Representation/SemisimplePoint.lean:94-99.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Add `@[simp] theorem LinearMap.GeneralLinearGroup.toLinearEquiv_ofLinearEquiv (f : M \u2243\u2097[R] M) : (ofLinearEquiv f).toLinearEquiv = f := (generalLinearEquiv R M).apply_symm_apply f` in the repo's GeneralLinearGroup layer (e.g. LinearAlgebra/GeneralLinearGroup/Intertwining.lean, transitively imported by all three sites) and drop the three `have haction` blocks.",
+   "issue": "The round-trip fact `(ofLinearEquiv (pointsAction M g)).toLinearEquiv = pointsAction M g` is re-derived inline here, again at JordanDecomposition.lean:339 (a copy this PR edits rather than extracts), and in `generalLinearEquiv`-applied form at Representation/SemisimplePoint.lean:94-99. No such lemma exists in Mathlib or the repo.",
+   "line": 62
+  },
+  {
+   "evidence": "Duplicates PointFaithful.lean:59-70 and PointFaithful.lean:99-106 (`rw [cancel_epi] at happ` / `rw [cancel_mono] at happ` / `congrArg SemimoduleCat.Hom.hom happ`).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/SemisimplePoint.lean",
+   "fix": "Factor it into one reusable lemma near `fgPointNatIsoHom_hom_app` \u2014 from `eqToHom _ \u226b e\u2081.toModuleIso\u209b.hom \u226b eqToHom _ = eqToHom _ \u226b e\u2082.toModuleIso\u209b.hom \u226b eqToHom _` conclude `e\u2081 = e\u2082` \u2014 and use it at all three sites.",
+   "issue": "The chain turning equality of two `Aut (FGComoduleCat.scalarExtensionFunctor \u2026)` into equality of underlying linear maps (`congrArg (\u00b7.hom.app M)` \u2192 `rw [cancel_epi] at happ` \u2192 `rw [cancel_mono] at happ` \u2192 `congrArg SemimoduleCat.Hom.hom` \u2192 `simp only [LinearEquiv.toModuleIso\u209b_hom, SemimoduleCat.hom_ofHom]`) is a third verbatim copy, and nothing documents why the `eqToHom` legs cancel.",
+   "line": 70
+  },
+  {
+   "evidence": "grep for `ofLinearEquiv_one` returns nothing in ./mathlib or ./code; Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:68,72 provide only `ofLinearEquiv_mul` and `ofLinearEquiv_inv`, which the `.inv`/`.mul_of_commute` proofs here do use (lines 132, 184).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/SemisimplePoint.lean",
+   "fix": "Mirror the sibling `.pow` proof (line 151-155): insert `have hone : ofLinearEquiv (1 : _ \u2243\u2097[K] _) = 1 := map_one (LinearMap.GeneralLinearGroup.generalLinearEquiv K _).symm.toMonoidHom` and `rw [hone]` before applying `isSemisimple_one`.",
+   "issue": "`isSemisimplePoint_one` does `rw [map_one]`, leaving `IsSemisimple (ofLinearEquiv (1 : _ \u2243\u2097[K] _))`, and closes it with `GeneralLinearGroup.isSemisimple_one`, which is stated for `(1 : GeneralLinearGroup K V)`; the step is pure unification through the `Units`/`LinearEquiv` monoid instances, with no `ofLinearEquiv_one` lemma anywhere.",
+   "line": 122
+  }
+ ],
+ "head_sha": "f9b4ee37381271b65b68c197b32358f5e1f96e39",
+ "merge_base_sha": "fe0f8c385bfa5897c84cc8b9521cf7340a83fb08",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2897,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "48616be4776b3a67a89ed58b3c3960d653953c8e61478c8ee9817a8b3b23d50e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T120840Z-2897-proof-quality-4cb846",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T12:08:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The coercion-heavy subproofs flagged earlier are fixed, but the PR inlines the same `ofLinearEquiv`/`toLinearEquiv` round-trip `have` for a third time, adds a third copy of the undocumented cancel_epi/cancel_mono component-extraction chain, and closes the `one` case by raw wrapper unification while its sibling `pow` case uses a stated map lemma.",
+ "transcript_blob": "d5939870009decbf467c7389600a8953224f5a190d121874437d5df8148d46ec",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72230,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72230,
+  "cache_read_input_tokens": 654691,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10672,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10672,
+    "cache_read_input_tokens": 78057,
+    "input_tokens": 1,
+    "output_tokens": 2810,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23674,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
