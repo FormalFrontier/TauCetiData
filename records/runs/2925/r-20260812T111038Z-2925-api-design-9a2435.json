@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2393429999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 232.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 58411,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 58411,
+    "cache_read_input_tokens": 391526,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 8243,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 8243,
+      "cache_read_input_tokens": 66667,
+      "input_tokens": 2,
+      "output_tokens": 6997,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17918,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "075fcddf404096eb5653a1f4db5585a3811c3a0d",
+ "cost_usd": 1.239343,
+ "dedupe_key": "TauCetiProject/TauCeti|2925|723f702b619892779de4efc341b95df033d96f5e|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8e42e6e6ca569f1e89e5948c64c23f5af45bb82d04909e66e5d9bcea34f4a17d",
+ "diff_sha256": "8e42e6e6ca569f1e89e5948c64c23f5af45bb82d04909e66e5d9bcea34f4a17d",
+ "duration_s": 232.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 122 `(CliffordAlgebra.involute (Q := (0 : QuadraticForm K P.W))).toLinearMap`; lines 125-127 prove `parity_apply` by `(rfl)`. The roadmap's standing conventions list `CliffordAlgebra.involute` under \"Reuse Mathlib's Clifford ... vocabulary ... Never introduce a private synonym for any of these\" (SpinRepresentations/README.md), and this file's own docstring (l.43) claims \"there is no bespoke exterior-algebra vocabulary here\". Consistent with the prior api-design round: the author's linter output there reports `parity_contract` as \"simp can prove this\".",
+   "file": "TauCeti/RepresentationTheory/Spin/Polarization/CliffordAction.lean",
+   "fix": "Delete `parity` and `parity_apply`; define `lineOperator` as `toSpanSingleton K _ involute.toLinearMap \u2218 P.lineCoordinate` and state the remaining lemmas on `involute`. Then drop `parity_parity`, `parity_contract` and `contract_contract`, which become the upstream lemmas themselves, and close `cliffordOperator_sq` with `simp only [wedge_apply, contract_apply, involute_involute, involute_contractLeft, contractLeft_contractLeft, ...]`. Keep `contract_wedge` (it carries the `pairingEquiv_apply` translation) and `parity_wedge`.",
+   "issue": "`SpinPolarizationData.parity` is a synonym for `CliffordAlgebra.involute` at `Q = 0`: its body is `(involute (Q := 0)).toLinearMap` and it depends on `P` only through `P.W`, adding no data. Consequently three public lemmas are verbatim restatements after `rfl`-unfolding: `parity_parity` (l.205) is `CliffordAlgebra.involute_involute` (mathlib/Mathlib/LinearAlgebra/CliffordAlgebra/Conjugation.lean:62), `parity_contract` (l.216) is this PR's own `TauCeti.CliffordAlgebra.involute_contractLeft` at `d := P.pairingEquiv y`, and `contract_contract` (l.191) is `CliffordAlgebra.contractLeft_contractLeft` (Contraction.lean:188); `wedge_wedge` (l.187) is `ExteriorAlgebra.\u03b9_sq_zero` plus one `mul_assoc`. The file also exposes two names for one operator: `lineOperator_apply`, `spinAction_\u03b9_parity` state the RHS with `involute`, while `cliffordOperator_add_apply`, `parity_wedge`, `parity_contract` state it with `P.parity`.",
+   "line": 121
+  },
+  {
+   "evidence": "grep for `parity` in the file yields `parity`, `parity_apply`, `parity_parity`, `parity_wedge`, `parity_contract`, `lineOperator`, `spinAction_\u03b9_parity` \u2014 none quantified over a general `v : V`. This is what the roadmap's `spinPlus_invariant` (Suggested.lean:229) needs: the spin group is even (`spinGroup.involute_eq`), and invariance of the even part follows from parity-conjugation of the action.",
+   "file": "TauCeti/RepresentationTheory/Spin/Polarization/CliffordAction.lean",
+   "fix": "Add `cliffordOperator_parity (v : V) : P.parity * P.cliffordOperator v = -(P.cliffordOperator v * P.parity)` (or its `involute` form after the fix above) proved by the same coordinate case split as `cliffordOperator_sq`, and expose the `spinAction`-level corollary.",
+   "issue": "The three anticommutators with parity are recorded only against the component operators `P.wedge`/`P.contract`, never against `cliffordOperator` or `spinAction`. The characteristic fact that the action is `\u2124/2`-odd \u2014 `involute * P.cliffordOperator v = -(P.cliffordOperator v * involute)`, equivalently `spinAction Q P (involute a) = involute \u2218 spinAction Q P a \u2218 involute` \u2014 is absent, so a consumer must re-run `P.decompositionEquiv.surjective` and reassemble `parity_wedge`/`parity_contract`/`parity_parity` from the implementation layer.",
+   "line": 143
+  }
+ ],
+ "head_sha": "723f702b619892779de4efc341b95df033d96f5e",
+ "merge_base_sha": "909314c207a45b5aea9a876553e58af7a2e6b191",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2925,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d15e54a69bd3c647a605c3e719137e929573c74c337b947cbda23101846005aa",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T111038Z-2925-api-design-9a2435",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T11:10:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The exposed surface carries a pure synonym for `CliffordAlgebra.involute` and three public lemmas that restate Mathlib (and this PR's own upstream lemma) verbatim after unfolding it, while the one fact the parity operator exists to supply \u2014 that `cliffordOperator` is odd \u2014 is never stated at the operator level, so no consumer can use it without redoing the coordinate decomposition.",
+ "transcript_blob": "072d8fcddfd57f5f883a00eac40c246d1c79d0045571546c3ca66ae910b75e53",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 58411,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 58411,
+  "cache_read_input_tokens": 391526,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 8243,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 8243,
+    "cache_read_input_tokens": 66667,
+    "input_tokens": 2,
+    "output_tokens": 6997,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17918,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
