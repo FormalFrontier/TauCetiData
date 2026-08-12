@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.551173,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 235.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62483,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62483,
+    "cache_read_input_tokens": 917652,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2002,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2002,
+      "cache_read_input_tokens": 76980,
+      "input_tokens": 2,
+      "output_tokens": 2093,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18398,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "cost_usd": 1.551173,
+ "dedupe_key": "TauCetiProject/TauCeti|2981|2bb0c7fc2b479a1460de7ef9d87085052bca0270|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "diff_sha256": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "duration_s": 235.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib Mathlib/GroupTheory/SpecificGroups/Cyclic/Basic.lean:150 `theorem mem_zpowers_of_prime_card {p : \u2115} [hp : Fact p.Prime] (h : Nat.card G = p) {g g' : G} (hg : g \u2260 1) : g' \u2208 zpowers g` (root namespace, `open Subgroup`); `Nat.fact_prime_two` instance at Mathlib/Data/Nat/Prime/Defs.lean:469; `z \u2260 1` is exactly the argument already made in `card_ker_spinToSpecialOrthogonal` (Kernel.lean:264-265).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Replace the bullet with `exact fun x \u21a6 mem_zpowers_of_prime_card (p := 2) (card_ker_spinToSpecialOrthogonal hM Q hQ) (fun h \u21a6 spinGroup.negOne_ne_one Q hQ.ne_zero (congrArg Subtype.val h))`.",
+   "issue": "The 9-line first bullet re-derives `\u2200 x, x \u2208 zpowers z` by case-splitting on `mem_ker_spinToSpecialOrthogonal_iff`, although the card-2 fact fed to the second bullet already gives it via a Mathlib lemma.",
+   "line": 287
+  },
+  {
+   "evidence": "mathlib Mathlib/Algebra/Group/Subgroup/Ker.lean:626 `@[to_additive (attr := simp)] lemma MulEquiv.range_eq_top (e : G \u2243* G') : (e : G \u2192* G').range = \u22a4`; `MulEquiv.toMonoidHom_eq_coe` (Mathlib/Algebra/Group/Equiv/Defs.lean:519) makes it match `.toMonoidHom.range`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/DoubleCover.lean",
+   "fix": "Drop the `have` and rewrite with `MulEquiv.range_eq_top`: `rw [MonoidHom.range_comp, MulEquiv.range_eq_top, \u2190 MonoidHom.range_eq_map, Subgroup.range_subtype]`.",
+   "issue": "`have hrange : (\u2026).toMonoidHom.range = \u22a4 := MonoidHom.range_eq_top.mpr (\u2026).surjective` re-proves an existing `@[simp]` lemma.",
+   "line": 58
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/QuadraticForm/Radical.lean:22 `theorem ne_zero [Nontrivial M] {Q : QuadraticForm R M} (hQ : Q.Nondegenerate) : Q \u2260 0` \u2014 the only existing form, which is why the `Nontrivial` derivation is inlined at each use.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Add one lemma beside `QuadraticMap.Nondegenerate.ne_zero` in TauCeti/LinearAlgebra/QuadraticForm/Radical.lean, e.g. `theorem ne_zero_of_finrank_pos (hM : 0 < Module.finrank K M) (hQ : Q.Nondegenerate) : Q \u2260 0 := have : Nontrivial M := Module.nontrivial_of_finrank_pos hM; hQ.ne_zero`, and use `hQ.ne_zero_of_finrank_pos hM` at all six sites.",
+   "issue": "The proof term `(by let _ : Nontrivial _ := Module.nontrivial_of_finrank_pos h; exact hQ.ne_zero)` is copied six times inside statements: Kernel.lean:304, 307, 321, 324 and DoubleCover.lean:70, 101 (plus the matching `let` lines in the proofs).",
+   "line": 304
+  }
+ ],
+ "head_sha": "2bb0c7fc2b479a1460de7ef9d87085052bca0270",
+ "merge_base_sha": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2981,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5719c00f895019a94b5d1591f8a22f274923aa6fa15481d7d3c81457e6b77da5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T213548Z-2981-reuse-8e9c8c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T21:35:48Z",
+ "submitted_by": "kim-em",
+ "summary": "No duplicated mathematics: neither Mathlib nor TauCeti already packages the Spin double cover or the kernel/ZMod 2 equivalence, and Mathlib's zmodMulEquivOfGenerator is reused correctly. Three places re-derive located Mathlib lemmas or repeat the same scaffolding six times.",
+ "transcript_blob": "f3b13d451c640ed8fad921e50b2c4eb35c872335709d9c1617818309e6ffc5e5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62483,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62483,
+  "cache_read_input_tokens": 917652,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2002,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2002,
+    "cache_read_input_tokens": 76980,
+    "input_tokens": 2,
+    "output_tokens": 2093,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18398,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.933686,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 151.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46951,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46951,
+    "cache_read_input_tokens": 297292,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4075,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4075,
+      "cache_read_input_tokens": 59375,
+      "input_tokens": 2,
+      "output_tokens": 4234,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12335,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "cost_usd": 0.933686,
+ "dedupe_key": "TauCetiProject/TauCeti|2981|2bb0c7fc2b479a1460de7ef9d87085052bca0270|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "diff_sha256": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "duration_s": 151.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "GroupExtension fields at mathlib/Mathlib/GroupTheory/GroupExtension/Defs.lean:74-84 (`inl : N \u2192* E`); `Subgroup.coe_subtype` at mathlib/Mathlib/Algebra/Group/Subgroup/Defs.lean:575; existing rfl-lemma for the other field at DoubleCover.lean:81-85.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/DoubleCover.lean",
+   "fix": "Add `@[simp] theorem spinDoubleCoverOfSurjective_inl : (spinDoubleCoverOfSurjective hV Q hQ hsurj).inl = (MonoidHom.ker (spinToSpecialOrthogonal Q)).subtype.comp (zmodTwoMulEquivSpinKernel hV Q hQ).toMonoidHom := rfl`, then prove this lemma by `simp [spinDoubleCoverOfSurjective_inl, Subgroup.coe_subtype, zmodTwoMulEquivSpinKernel_apply_ofAdd_one]`. That also removes the same defeq reliance in `inl_injective` (line 54-55, `Subtype.ext h`) and gives downstream users an unfolding lemma for `inl` rather than only its value at `ofAdd 1`.",
+   "issue": "`change ((zmodTwoMulEquivSpinKernel hV Q hQ (Multiplicative.ofAdd 1) : ...) : spinGroup Q) = _` reaches the goal by definitional unfolding of the structure field `inl` across `MonoidHom.comp` and `Subgroup.subtype`. The comment states what the step exposes, not why the goal is unreachable by rewriting; the sibling field already has an explicit lemma (`spinDoubleCoverOfSurjective_rightHom`, line 84, `rfl`) while `inl` has none.",
+   "line": 75
+  },
+  {
+   "evidence": "`zmodMulEquivOfGenerator` takes both `hg : \u2200 x, x \u2208 zpowers g` and `hn : Nat.card G = n` explicitly (mathlib/Mathlib/GroupTheory/SpecificGroups/Cyclic.lean:453-461); the same construction is done term-mode at TauCeti/AlgebraicGeometry/EllipticCurve/Aut.lean:203-210 with the characterization by `simp only [autGroupMulEquiv, ...]` at line 219.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Build it in term mode, as the repo already does for the identical construction: `let _ : Nontrivial M := Module.nontrivial_of_finrank_pos hM; zmodMulEquivOfGenerator (g := z) (fun x => ...) (card_ker_spinToSpecialOrthogonal hM Q hQ)`, and prove line 312 with `simp only [zmodTwoMulEquivSpinKernel, zmodMulEquivOfGenerator_apply_ofAdd_one]`.",
+   "issue": "`zmodTwoMulEquivSpinKernel` is a data definition (`MulEquiv`) constructed in tactic mode via `apply zmodMulEquivOfGenerator` with the two side goals left to bullets, and its characterization at line 312 then reopens it with `rw [zmodTwoMulEquivSpinKernel]`. The definitional content of the equivalence \u2014 and the equation lemma the `rw` depends on \u2014 is whatever `apply` elaborates, which is brittle and obscures the map being defined.",
+   "line": 278
+  },
+  {
+   "evidence": "grep `nontrivial_of_finrank_pos` in TauCeti/LinearAlgebra/CliffordAlgebra/Spin: Kernel.lean:258,282,305,309,311,322,326 and DoubleCover.lean:71,73,102; `QuadraticMap.Nondegenerate.ne_zero` requires `[Nontrivial M]` at TauCeti/LinearAlgebra/QuadraticForm/Radical.lean:22.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/Kernel.lean",
+   "fix": "Add one lemma next to `QuadraticMap.Nondegenerate.ne_zero`, e.g. `theorem Nondegenerate.ne_zero_of_finrank_pos [FiniteDimensional K M] {Q : QuadraticForm K M} (hQ : Q.Nondegenerate) (hM : 0 < Module.finrank K M) : Q \u2260 0 := let _ := Module.nontrivial_of_finrank_pos hM; hQ.ne_zero`, and write `spinGroup.negOne Q (hQ.ne_zero_of_finrank_pos hM)` at all six sites.",
+   "issue": "`by let _ : Nontrivial M := Module.nontrivial_of_finrank_pos hM; exact hQ.ne_zero` is repeated six times, four of them inside theorem statements: Kernel.lean:304-306, 307-310, 321-323, 324-327 and DoubleCover.lean:70-72, 101-103 (plus proof-level `let`s at Kernel.lean:282, 311 and DoubleCover.lean:73). The statements of the `simp` lemmas are dominated by boilerplate that every user must reproduce.",
+   "line": 304
+  }
+ ],
+ "head_sha": "2bb0c7fc2b479a1460de7ef9d87085052bca0270",
+ "merge_base_sha": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2981,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8d8b84cbb1537d16ce09c71521add7b1402b958afd9a983a96329d39853cebb4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T215600Z-2981-proof-quality-863579",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T21:56:00Z",
+ "submitted_by": "kim-em",
+ "summary": "Three proof-hygiene issues: an undocumented `change` that unfolds the `GroupExtension.inl` field through comp/subtype defeq instead of an explicit lemma, a data definition built by `apply` in tactic mode and then reopened with `rw`, and a six-fold repetition of the `Nontrivial`-derivation boilerplate inside theorem statements.",
+ "transcript_blob": "c5eb7733a41a6fcb7ec25f622a8818ec01207a55b35dd64ba986a7154506476c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46951,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46951,
+  "cache_read_input_tokens": 297292,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4075,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4075,
+    "cache_read_input_tokens": 59375,
+    "input_tokens": 2,
+    "output_tokens": 4234,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12335,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

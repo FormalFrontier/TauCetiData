@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5913390000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 284.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69817,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69817,
+    "cache_read_input_tokens": 693532,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6587,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6587,
+      "cache_read_input_tokens": 79729,
+      "input_tokens": 1,
+      "output_tokens": 4669,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21557,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "cost_usd": 1.591339,
+ "dedupe_key": "TauCetiProject/TauCeti|2981|2bb0c7fc2b479a1460de7ef9d87085052bca0270|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "diff_sha256": "60bc7b73bbb01cee9265fbf213e637733a3fff7606416571150dbeb673f3d0b5",
+ "duration_s": 284.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`GroupTheory/GroupExtension/Defs.lean:72` defines `structure GroupExtension` with no `@[ext]` attribute (grep for `ext` in that file hits only tactic uses at lines 132/141/144/307). `DoubleCover.lean:89-93` defines `spinDoubleCover` with no `@[expose]`; the repo's `(rfl)` idiom for cross-module defeq is used at `Kernel.lean:95` (`coe_negOne ... := (rfl)`).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Spin/DoubleCover.lean",
+   "fix": "Add the `_def` bridge `theorem spinDoubleCover_eq [IsSepClosed K] (hV) (Q) (hQ) : spinDoubleCover hV Q hQ = spinDoubleCoverOfSurjective hV Q hQ (spinToSpecialOrthogonal_surjective Q hQ) := (rfl)`, and derive `spinDoubleCover_inl_ofAdd_one`/`spinDoubleCover_rightHom` from it (or drop them in favour of a `@[simp]` bridge).",
+   "issue": "`spinDoubleCover` is a plain specialization of `spinDoubleCoverOfSurjective`, but no lemma records that. Its body is `public` without `@[expose]`, so downstream cannot unfold it, and Mathlib's `GroupExtension` has no `@[ext]` lemma, so equality of the two terms is unprovable outside this file. Every property of the general extension (splittings, `conjAct`, any future centrality or index result) must therefore be re-proved for `spinDoubleCover`; the PR already duplicates `_inl_ofAdd_one` and `_rightHom` for exactly this reason.",
+   "line": 89
+  }
+ ],
+ "head_sha": "2bb0c7fc2b479a1460de7ef9d87085052bca0270",
+ "merge_base_sha": "7ae6d044cdd2e23723b72a0a9e2372e0ff2ce9f0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2981,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c70df32d926801469294ad21a217c7f6044fa9136eb1f861130a53528005ed4a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T214130Z-2981-api-design-e07d76",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T21:41:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The kernel equivalence and its characteristic lemmas are fine, but `spinDoubleCover` is disconnected from `spinDoubleCoverOfSurjective` in the exported interface: no `_def`/`_eq` bridge, unexposed body, and no `@[ext]` on Mathlib's `GroupExtension`, so nothing about the general construction transfers to the specialization and every fact must be restated.",
+ "transcript_blob": "0d3bbfac0e7981f5c176ce95ca5d592526c824ac477e8be9b939bca8d78ed10b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69817,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69817,
+  "cache_read_input_tokens": 693532,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6587,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6587,
+    "cache_read_input_tokens": 79729,
+    "input_tokens": 1,
+    "output_tokens": 4669,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21557,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
