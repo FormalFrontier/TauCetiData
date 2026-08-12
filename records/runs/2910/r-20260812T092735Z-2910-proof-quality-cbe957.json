@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4548155,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 268.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 135007,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 135007,
+    "cache_read_input_tokens": 1100011,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2188,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2188,
+      "cache_read_input_tokens": 149318,
+      "input_tokens": 2,
+      "output_tokens": 8370,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20244,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.454816,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 268.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PVAggregation.lean lines 141-145 vs 191-196, 146-151 vs 197-202, 152-162 vs 203-215 are identical tactic text; only lines 163-164 vs 216 differ. The docstring justifies two *statements* (the value-tracking one needs `windowPieceSum`) but not the copied *proof*.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Generalize the invariant to depend on the remaining list, `Q : List \u211d \u2192 \u211d \u2192 \u211d \u2192 Prop`, with `h_piece : ... \u2192 Q [] l u` and a cons-glue hypothesis `Q [] a (t - r) \u2192 Qwin t \u2192 Q rest (t + r) b \u2192 Q (t :: rest) a b`; then `hasCauchyPVAt_along_sorted` instantiates it at `Q L l u := HasCauchyPVAt \u03b3 l u g s (windowPieceSum r p w b L l)` and the Prop-valued form at `Q _ l u := Q l u`, and the copied induction is deleted. This is exactly the refactor this PR performs for `piecewise_gluing_induction` in `PiecewiseC1On.lean:238`.",
+   "issue": "`sorted_crossing_gluing_induction`'s proof (lines 130-164) duplicates `hasCauchyPVAt_along_sorted`'s proof (lines 180-216) verbatim: identical `hr_nonneg`, `h_head_lo`, `h_head_hi`, `h_rest_above`, `h_left`, `h_rest` steps, differing only in the closing `hglue ...` vs `(h_left.concat _).concat h_rest`. ~30 lines of the same list geometry now live twice in one file, so any fix to the window-separation reasoning must be made twice.",
+   "line": 121
+  },
+  {
+   "evidence": "OnCurve.lean:326-336 and OnCurve.lean:354-366 are the same three-line `h_ne` body and the same `intervalIntegrable_inv_sub_mul_deriv` argument triple, the second written in `refine ... ?_ ?_` form.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Hoist one `have h_piece_data : \u2200 l u, a \u2264 l \u2192 l \u2264 u \u2192 u \u2264 b \u2192 (\u2200 t \u2208 Icc l u, m \u2264 \u2016\u03b3 t - s\u2016) \u2192 (\u2200 t \u2208 Icc l u, \u03b3 t \u2260 s) \u2227 IntervalIntegrable (fun t => (\u03b3 t - s)\u207b\u00b9 * deriv \u03b3 t) volume l u` above both uses (or a private lemma) and apply it in the `h_int` and `h_piece_re` callbacks.",
+   "issue": "The plain-piece reasoning is written out twice inside the same proof: `h_ne : \u2200 t \u2208 Icc l u, \u03b3 t \u2260 s` (lines 326-329) is repeated verbatim at lines 354-357, and the `intervalIntegrable_inv_sub_mul_deriv` invocation with the same three arguments (continuity mono, `h_ne`, `intervalIntegrable_deriv.mono_set`) is repeated at lines 330-336 and 361-366.",
+   "line": 326
+  },
+  {
+   "evidence": "Proof body spans OnCurve.lean:226-407; `h_int` (300-341) and `h_bdd` (378-406) each depend only on `T`, `\u03c1`, `h\u03c1_lip_bdd`/`hbddL`/`hbddR`, `h_far`, `h\u03b3_cont`, and `h_imm`, all of which can be passed as hypotheses.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Extract the two blocks as private lemmas parameterized by the shared data already available at that point (the crossing finset `T`, the common radius `\u03c1`, the per-crossing bounded windows, and the off-window distance bound `m`), and let the main theorem assemble their outputs.",
+   "issue": "`isBounded_intervalIntegrable_cauchyPV_of_interior_crossings` is a single ~180-line proof (lines 226-407) establishing three independent conclusions. Two self-contained blocks are factorable: the interval-integrability gluing (lines 300-341) and the boundedness assembly (lines 378-406).",
+   "line": 217
+  },
+  {
+   "evidence": "OnCurve.lean:295-296 introduces `h_far` without destructuring; `hm_pos : 0 < h_far.choose` at line 382 and the bound `r := Cd / h_far.choose` at line 394 read through `Exists.choose`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "`obtain \u27e8m, hm_pos, hm\u27e9 := exists_complement_windows_dist_lower_bound h\u03b3_cont h_complete (fun _ => \u03c1) fun t _ => h\u03c1_pos` and use `m`, `hm_pos`, `hm` throughout.",
+   "issue": "`h_far` is left as a bare existential and consumed through `h_far.choose` / `h_far.choose_spec.1` / `.choose_spec.2` at eight sites (lines 324, 329, 357, 382, 399, 401, 402, 403), so the distance lower bound appears in intermediate statements as `Cd / h_far.choose` instead of a named constant.",
+   "line": 295
+  },
+  {
+   "evidence": "grep for `hL_tend_R`/`hL_tend_L`/`hL_R`/`hL_L` in `TauCeti/` shows occurrences only at the two `choose!` binder lines (InvSubCPVExistence.lean:160, OnCurve.lean:250) and inside `exists_radius_perWindow_tendsto_log_norm_add_arg`'s own proof (lines 104-111).",
+   "file": "TauCeti/Analysis/Contour/InvSubCPVExistence.lean",
+   "fix": "Bind the unused components as `_` in both `choose!` calls, or drop the `L_R \u2260 0` / `L_L \u2260 0` / two `Tendsto` conjuncts from `exists_radius_perWindow_tendsto_log_norm_add_arg`'s conclusion, whose docstring (line 84) justifies them as being for callers that no caller exercises.",
+   "issue": "`choose! R hR_pos L_R L_L hL_R hL_L hL_tend_R hL_tend_L h_spec` binds six names (`L_R`, `L_L`, `hL_R`, `hL_L`, `hL_tend_R`, `hL_tend_L`) that the proof never uses \u2014 the window witness is `\u27e8_, h_spec ...\u27e9` at line 171. The same pattern in `OnCurve.lean:250` leaves `hL_R`, `hL_L`, `hL_tend_R`, `hL_tend_L` unused (only `L_R`, `L_L` are used, at lines 367-368).",
+   "line": 160
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cfdaa70a64db2da31f48895bc7be53fba4300c32d66136fff3e84586c46cfea2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T092735Z-2910-proof-quality-cbe957",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:27:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The new generic gluing induction in PVAggregation.lean is a verbatim copy of the existing hasCauchyPVAt_along_sorted induction rather than a shared lemma, and the 180-line assembly proof in OnCurve.lean repeats its plain-piece reasoning twice inside itself. Both are mechanical to factor, and the PR already demonstrates the right pattern in PiecewiseC1On.lean.",
+ "transcript_blob": "909c0826cdd9061160863ed7e1da2c9092618001db18cd35b64b7dff12a5f4a2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 135007,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 135007,
+  "cache_read_input_tokens": 1100011,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2188,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2188,
+    "cache_read_input_tokens": 149318,
+    "input_tokens": 2,
+    "output_tokens": 8370,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20244,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

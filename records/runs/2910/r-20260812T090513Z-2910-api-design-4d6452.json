@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7190600000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 320.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 127487,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 127487,
+    "cache_read_input_tokens": 1614514,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4007,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4007,
+      "cache_read_input_tokens": 139979,
+      "input_tokens": 2,
+      "output_tokens": 3586,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23520,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.71906,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 320.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"LipschitzOnWith\" TauCeti` returns hits only in `Winding/LipschitzBoundedIntegrand.lean`, `Winding/RealIntegral/OnCurve.lean:198,201`, `Complex/Conformal/NormalFamilies.lean` (for `f`, not a derivative) and three `Geometry/Lie` files \u2014 no lemma yields a Lipschitz `derivWithin`. Mathlib provides the pieces: `ContDiffOn.derivWithin` (Mathlib/Analysis/Calculus/ContDiff/Deriv.lean:64) and `ContDiffOn.exists_lipschitzOnWith` (Mathlib/Analysis/Calculus/ContDiff/RCLike.lean:149).",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Add the characteristic intro lemmas next to the definition: (i) `isLipschitzOnEachSideAt_of_contDiffOn : 0 < \u03b5 \u2192 ContDiffOn \u211d 2 \u03b3 (Icc (t - \u03b5) (t + \u03b5)) \u2192 IsLipschitzOnEachSideAt \u03b3 t`, via `ContDiffOn.derivWithin` + `ContDiffOn.exists_lipschitzOnWith` on each half; and (ii) a restriction form taking `DifferentiableOn`/`LipschitzOnWith (derivWithin \u03b3 (Icc c t))`/`(Icc t d)` on arbitrary one-sided pieces `c < t < d`.",
+   "issue": "`IsLipschitzOnEachSideAt` is a new public predicate that gates all three public results, but it has no introduction lemma and no restriction/shrinking lemma. Nothing in the repo produces `LipschitzOnWith K (derivWithin \u03b3 (Icc ...))`, so a caller must build the 8-binder existential from scratch \u2014 including the natural `C\u00b2` case the roadmap's next Layer 1 target (the `\u00bd\u00b7k\u00b7|\u039b\u0307|` crossing value, stated for `C\u00b2` crossings) will need, and the case where the caller already has `C^{1,1}` on wider one-sided pieces `[c, t]`, `[t, d]` and must shrink to the `\u03b5L`/`\u03b5R` form.",
+   "line": 196
+  },
+  {
+   "evidence": "`grep -rn \"realWindingIntegrand\" TauCeti`: every other statement (`CrossingValue/Basic.lean:114`, `CrossingValue/Curvature.lean:154,180`, `BoundedIntegrand.lean:131`, `LipschitzBoundedIntegrand.lean`, `OnCurve.lean:486`) uses `realWindingIntegrand`; `Basic.lean:76-79` is the only unfolded one. `grep -rn \"windingNumber_eq_real_integral_of_closed\" TauCeti` shows no callers.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/Basic.lean",
+   "fix": "Restate `windingNumber_eq_real_integral_of_closed`'s conclusion as `\u222b t in a..b, realWindingIntegrand (\u03b3 t - w) (deriv \u03b3 t)` (the proof already goes through `realWindingIntegrand_eq_div`/`realWindingIntegrand_def`); it has no in-repo callers, so nothing else changes.",
+   "issue": "The canonical API now states HW Prop 2.3 two ways: the new `windingNumber_eq_real_integral_of_closed_interior_crossings` concludes with `\u222b realWindingIntegrand (\u03b3 t - s) (deriv \u03b3 t)`, while its sibling `windingNumber_eq_real_integral_of_closed` in the same directory concludes with the unfolded `((\u03b3 t - w).re * (deriv \u03b3 t).im - ...) / Complex.normSq (\u03b3 t - w)`. A consumer cannot move between the off-curve and on-curve forms by `rw`, and the named abstraction is bypassed in exactly the one place it is the subject.",
+   "line": 70
+  },
+  {
+   "evidence": "OnCurve.lean:409-414 and 438-443 are byte-identical docstrings on two different declarations; `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings` is declared `private theorem` at line 217, and `_uIcc` is `private theorem` at line 415.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Give the `_uIcc` bundle its own docstring describing the three facts it returns; in the two public docstrings, drop the reference to the private name (state the content, or point at `windingNumber_eq_real_integral_of_closed_interior_crossings`).",
+   "issue": "`isBounded_intervalIntegrable_cauchyPV_of_interior_crossings_uIcc` carries a verbatim copy of the boundedness projection's docstring \u2014 it calls itself \"Projection of `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings`\" and the \"boundedness half\", though it is the orientation-generic bundle of all three facts and is what the projections project from. Separately, the two public theorems at lines 444 and 457 document themselves as projections of `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings`, a `private` declaration that never appears in generated docs (and is not the theorem they actually project from \u2014 that is the `_uIcc` form).",
+   "line": 415
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cb3132e791f0c2ce62b4da52158e8b0f97964b39413f99987e88b2b873d0824c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T090513Z-2910-api-design-4d6452",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:05:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The new public hypothesis-predicate `IsLipschitzOnEachSideAt` ships with no introduction or restriction API, so no consumer can discharge `h\u03b3_lip` for a concrete curve; additionally the two sibling HW Prop 2.3 theorems now state the same integral in two different spellings, and several docstrings on the new public surface point at a private declaration or are verbatim copies of the wrong one.",
+ "transcript_blob": "40b4b0fa881b73db51c46e8d82748b50c565bf2d4bd0dd718378c9205d4cd8b6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 127487,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 127487,
+  "cache_read_input_tokens": 1614514,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4007,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4007,
+    "cache_read_input_tokens": 139979,
+    "input_tokens": 2,
+    "output_tokens": 3586,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23520,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

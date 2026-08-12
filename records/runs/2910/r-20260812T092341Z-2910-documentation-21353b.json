@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.411129,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 233.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 112541,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 112541,
+    "cache_read_input_tokens": 1618884,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3503,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3503,
+      "cache_read_input_tokens": 125537,
+      "input_tokens": 2,
+      "output_tokens": 4933,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17112,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.411129,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 233.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 409-414 are byte-identical to lines 438-443, but the statement at 419-423 is a three-way conjunction, not `Bornology.IsBounded ...` alone.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Rewrite as: the `uIcc` (orientation-generic) form of `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings`, obtained by reducing to `a \u2264 b` and negating the principal value / flipping the integral in the reversed case; state that it supplies all three facts the projections below read off.",
+   "issue": "The docstring on `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings_uIcc` is copied verbatim from `isBounded_image_realWindingIntegrand_of_interior_crossings` (lines 438-443): it announces only the 'boundedness half' and calls the declaration a 'Projection of isBounded_intervalIntegrable_cauchyPV_of_interior_crossings'. The declaration is neither \u2014 it is the orientation-generic wrapper returning boundedness, interval-integrability, and the Cauchy-PV witness with its real and imaginary parts.",
+   "line": 409
+  },
+  {
+   "evidence": "OnCurve.lean:481 `(h_imm : IsPwC1ImmersionOn \u03b3 a b)`; RealIntegral/Basic.lean:69-79 hypotheses are `hclosed`, `hP`, `h\u03b3_cont`, `h\u03b3_diff`, `h_avoid`, `h_int` \u2014 no immersion.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Say it recovers the avoiding case *for piecewise-`C\u00b9` immersions* only, and that `Basic`'s theorem remains needed because it applies to curves that are not immersions.",
+   "issue": "Module docstring overclaims: \"(That regularity hypothesis is satisfied vacuously when \u03b3 never meets s, so this also reproves the avoiding case, but the two are kept as separate theorems since their proofs are unrelated.)\" This file's theorem requires `IsPwC1ImmersionOn`; `RealIntegral/Basic.lean`'s `windingNumber_eq_real_integral_of_closed` requires only continuity, differentiability off a countable set, avoidance, and integrability, so it is strictly more general and is not reproved here. The stated reason for keeping both (unrelated proofs) hides the actual reason (incomparable hypotheses).",
+   "line": 38
+  },
+  {
+   "evidence": "PVAggregation.lean:170 `private theorem hasCauchyPVAt_along_sorted`; the `_re_boundary` proof (diff) opens with `exact sorted_crossing_gluing_induction (Q := fun l u => \u2203 v, HasCauchyPVAt ... \u2227 v.re = \u03a8 u - \u03a8 l)`.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Drop the '(e.g. to pin its real part)' example and point external callers at the public `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint_re_boundary` / `hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint` when they need an explicit aggregated value; mention `hasCauchyPVAt_along_sorted` only as the in-file instance.",
+   "issue": "The public `sorted_crossing_gluing_induction` docstring says \"Reach for `hasCauchyPVAt_along_sorted` instead when the conclusion needs the explicit `windowPieceSum` value (e.g. to pin its real part)\". `hasCauchyPVAt_along_sorted` is `private` (line 170), so no caller outside this file can reach for it, and the cited example is wrong: the file's own real-part-pinning theorem `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint_re_boundary` pins the real part *through* this generic combinator.",
+   "line": 118
+  },
+  {
+   "evidence": "Statement at lines 131-137 binds only `c d p q p' q'`; the agreement step at 167-168 is `derivWithin_of_mem_nhds (Icc_mem_nhds (lt_of_le_of_lt hcp ht.1) (lt_of_lt_of_le ht.2 hqd))` for `t \u2208 Ioo p q`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Replace 'off the single point `t\u2080`' with 'off the endpoints `c`, `d` of the piece (a null set)'.",
+   "issue": "`intervalIntegrable_realWindingIntegrand_window`'s docstring claims `derivWithin \u03b3 (Icc c d)` agrees with `deriv \u03b3` \"off the single point `t\u2080`\", but `t\u2080` is not a variable of this statement (there is no crossing hypothesis at all); the proof only uses agreement on `Ioo c d`, i.e. off the two endpoints `c` and `d`.",
+   "line": 120
+  },
+  {
+   "evidence": "grep for 'along the real embeddings' in ./code returns only this line; the section contains only `re_integral_inv_sub_mul_deriv_eq_log_norm` (lines 101-116).",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Retitle, e.g. `### The real part of the plain-piece contour integral`.",
+   "issue": "Section header `### The real part of a complex derivative along the real embeddings` does not describe its contents: the section holds one lemma about the real part of the plain-piece *contour integral* telescoping to a log-norm difference. The phrase occurs nowhere else in the repo, so it appears to be left over from an earlier draft.",
+   "line": 99
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0f5117671bb940018cb35de5e4aa3565995ba3e5b517b418f0299f0f88914879",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T092341Z-2910-documentation-21353b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:23:41Z",
+ "submitted_by": "kim-em",
+ "summary": "All new declarations and files are documented, but several docstrings are inaccurate: a verbatim copy-paste onto the private uIcc wrapper describes only the boundedness half, the module docstring overclaims that this file reproves the avoiding case, a public docstring points readers at a private lemma with an example its own sibling contradicts, and one docstring references a variable that does not exist in the statement.",
+ "transcript_blob": "0e4378d15163f541d19ead7a517dc8f8e9e585f69af03ac8e157aeb11bf30914",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 112541,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 112541,
+  "cache_read_input_tokens": 1618884,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3503,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3503,
+    "cache_read_input_tokens": 125537,
+    "input_tokens": 2,
+    "output_tokens": 4933,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17112,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

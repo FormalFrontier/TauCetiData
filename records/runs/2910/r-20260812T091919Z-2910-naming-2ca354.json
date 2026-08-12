@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.812374,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 262.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 136242,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 136242,
+    "cache_read_input_tokens": 1761268,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2668,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2668,
+      "cache_read_input_tokens": 150073,
+      "input_tokens": 2,
+      "output_tokens": 2743,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20523,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.812374,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 262.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "OnCurve.lean:196-202 \u2014 `abbrev IsLipschitzOnEachSideAt (\u03b3 : \u211d \u2192 \u2102) (t : \u211d) : Prop := \u2203 \u03b5R > 0, \u2203 KR : \u211d\u22650, DifferentiableOn \u211d \u03b3 (Icc t (t + \u03b5R)) \u2227 LipschitzOnWith KR (derivWithin \u03b3 (Icc t (t + \u03b5R))) (Icc t (t + \u03b5R)) \u2227 \u2026`; the file's own docstring at line 190 calls it \"the `C^{1,1}` crossing-regularity hypothesis\".",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Rename to name the constrained object, e.g. `HasLipschitzDerivWithinOnEachSideAt` or `IsC11OnEachSideAt`, and update the five use sites (lines 220, 418, 447, 460, 483).",
+   "issue": "`IsLipschitzOnEachSideAt \u03b3 t` reads \"\u03b3 is Lipschitz on each side at t\", but the predicate asserts `LipschitzOnWith KR (derivWithin \u03b3 (Icc t (t + \u03b5R))) \u2026` \u2014 Lipschitz-ness of the *derivative* (C^{1,1}), not of \u03b3. Worse, \u03b3 itself is already Lipschitz on each side under `IsPwC1ImmersionOn`, so the hypothesis `h\u03b3_lip` in the four public signatures (lines 418, 447, 460, 483) reads as vacuous to a caller.",
+   "line": 196
+  },
+  {
+   "evidence": "PVAggregation.lean:240 `\u2203 L : \u2102, HasCauchyPVAt \u03b3 a b g s L \u2227 L.re = \u03a8 b - \u03a8 a` vs. line 282 `CauchyPVExistsAt \u03b3 a b g s` for `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint`; the explicit-value sibling is `hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint`. `CauchyPVExistsAt \u03b3 a b f z\u2080` is `\u2203 L, HasCauchyPVAt \u03b3 a b f z\u2080 L` (PrincipalValue/Basic.lean:44).",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Rename to the conclusion, e.g. `exists_hasCauchyPVAt_re_eq_of_perWindow_tendsto_of_interiorDisjoint`, and update the module docstring bullet (line 45) and the call site in `OnCurve.lean:340`.",
+   "issue": "`cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint_re_boundary` concludes `\u2203 L : \u2102, HasCauchyPVAt \u03b3 a b g s L \u2227 L.re = \u03a8 b - \u03a8 a`, not `CauchyPVExistsAt`. The file's naming dichotomy is exactly that `cauchyPVExistsAt_*` yields `CauchyPVExistsAt` and `hasCauchyPVAt_*` yields an explicit-value `HasCauchyPVAt`; this name picks the wrong half, so it does not describe its conclusion.",
+   "line": 226
+  },
+  {
+   "evidence": "OnCurve.lean:181-182 `(hm : 0 < m) (hz : m \u2264 \u2016z\u2016) : |realWindingIntegrand z v| \u2264 \u2016v\u2016 / m`. Repo precedent for the suffix is the other direction: PrincipalValue/Basic.lean:201-203 `\u2026_of_norm_le` with `\u2016\u03b3 s - z\u2080\u2016 \u2264 \u03b5`, and PseudoHyperbolic.lean:159 `norm_one_sub_conj_mul_self_of_norm_le_one (hw : \u2016w\u2016 \u2264 1)`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Rename to `abs_realWindingIntegrand_le_div_of_le_norm`.",
+   "issue": "`abs_realWindingIntegrand_le_div_of_norm_le` names its hypothesis backwards: the hypothesis is `hz : m \u2264 \u2016z\u2016` (\"le_norm\"), while `_of_norm_le` states `\u2016z\u2016 \u2264 m` \u2014 the opposite, and the direction under which the bound is false.",
+   "line": 181
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "39f2c4cfc99d7ccb4b2e60328ad79f7061aba358ce77e0d7921fdd1ab68dbe24",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T091919Z-2910-naming-2ca354",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:19:19Z",
+ "submitted_by": "kim-em",
+ "summary": "Three naming defects: a public predicate whose name attributes Lipschitz-ness to the curve rather than its derivative, an aggregation lemma whose head names the wrong conclusion type, and a helper whose `_of_norm_le` clause states its hypothesis backwards. No new notation.",
+ "transcript_blob": "d34941b6a5cdf1bbe60191aacb71c7c6bd2ae074a832d0f3da23c4b2188d7fdb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 136242,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 136242,
+  "cache_read_input_tokens": 1761268,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2668,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2668,
+    "cache_read_input_tokens": 150073,
+    "input_tokens": 2,
+    "output_tokens": 2743,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20523,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

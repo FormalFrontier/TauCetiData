@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.206757,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 252.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 111274,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 111274,
+    "cache_read_input_tokens": 1207866,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4179,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4179,
+      "cache_read_input_tokens": 123594,
+      "input_tokens": 2,
+      "output_tokens": 3565,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17666,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 2.206757,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 252.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "PVAggregation.lean:130-164 vs 180-216 are identical modulo those two substitutions; the PR's own OnCurve.lean provenance paragraph admits the file `uses the same induction shape by hand \u2026 rather than through the generic combinator`. All three consumers (line 243, line 285, OnCurve.lean:302) fit the value-carrying form: only line 446's use needs the explicit `windowPieceSum` value, which the form above still supplies.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Keep one induction: generalize to a value-carrying invariant `Q : \u211d \u2192 \u211d \u2192 \u2102 \u2192 Prop` with `hglue : Q l u\u2080 v\u2081 \u2192 Q u\u2080 u v\u2082 \u2192 Q l u (v\u2081 + v\u2082)` and conclusion `Q a b (windowPieceSum r p w b sorted a)`. Then `hasCauchyPVAt_along_sorted` is the instance `Q l u v := HasCauchyPVAt \u03b3 l u g s v`, the new re-boundary aggregation is `Q l u v := HasCauchyPVAt \u03b3 l u g s v \u2227 v.re = \u03a8 u - \u03a8 l`, and the Prop-valued integrability use is the instance with `p := fun _ _ => 0`, `w := fun _ => 0` and `Q` ignoring its value argument. Delete the second induction.",
+   "issue": "`sorted_crossing_gluing_induction` (lines 121-164) duplicates `hasCauchyPVAt_along_sorted` (lines 170-216) line for line \u2014 same `intro`/`induction`, same `h_rest_above`, `h_left`, IH invocation and final gluing \u2014 differing only in `Q l u` vs `HasCauchyPVAt \u03b3 l u g s (windowPieceSum \u2026)` and `hglue` vs `.concat`. The PR adds a general form but leaves the special case proved separately instead of deriving it.",
+   "line": 121
+  },
+  {
+   "evidence": "Compare the sibling combinator added in the same PR, `piecewise_gluing_induction` (PiecewiseC1On.lean:231-\u2026), whose statement abstracts everything its proof does not use (only `p : Finset \u211d`, `uIcc a b` and `Q` remain); `sorted_crossing_gluing_induction` does not.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Replace the three parameters by one predicate `{P : \u211d \u2192 Prop}`: `h_piece : \u2026 \u2192 (\u2200 t \u2208 Icc l u, P t) \u2192 Q l u` and `\u2026 \u2192 (\u2200 u \u2208 Icc a b, (\u2200 t \u2208 sorted, u \u2209 Ioo (t - r) (t + r)) \u2192 P u)`; instantiate `P := fun t => m \u2264 \u2016\u03b3 t - s\u2016` at both call sites.",
+   "issue": "The combinator is stated over `{\u03b3 : \u211d \u2192 \u2102} {s : \u2102} {m : \u211d}` with the plain-piece condition hard-wired to `m \u2264 \u2016\u03b3 u - s\u2016`, but the proof never inspects \u03b3, s, or m \u2014 `h_far`'s output is passed straight to `h_piece` (lines 134-135, 147, 152-162). A public general-purpose gluing lemma is thereby narrower than its proof.",
+   "line": 121
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cbd1016950efc90905e043ed576570c7deafa76566f7165a632f0aa18e3e8eb1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T091034Z-2910-generality-012cb8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T09:10:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `sorted_crossing_gluing_induction` is a near-verbatim second copy of the existing `hasCauchyPVAt_along_sorted` induction rather than a generalization that subsumes it, and it is stated at a narrower level than its proof supports (\u03b3/s/m are never inspected).",
+ "transcript_blob": "fef64bc95b15f459d5a5d3cc9fd4065f8098d007a7fbd6de0aaa178202d1ea0f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 111274,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 111274,
+  "cache_read_input_tokens": 1207866,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4179,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4179,
+    "cache_read_input_tokens": 123594,
+    "input_tokens": 2,
+    "output_tokens": 3565,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17666,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

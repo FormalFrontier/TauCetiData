@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 4.3794975,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 455.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 159145,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 159145,
+    "cache_read_input_tokens": 3780871,
+    "inference_geo": "not_available",
+    "input_tokens": 54,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6009,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6009,
+      "cache_read_input_tokens": 169635,
+      "input_tokens": 2,
+      "output_tokens": 1654,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 33944,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 4.379498,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 455.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 409-423: the docstring text is identical to lines 438-443, but the statement at 419-423 is a three-fold conjunction ending in `\u2203 L, HasCauchyPVAt ... \u2227 L.re = ... \u2227 L.im = ...`.",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Rewrite the docstring to state the triple it returns and its role as the orientation-generic form of `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings`.",
+   "issue": "The private helper `isBounded_intervalIntegrable_cauchyPV_of_interior_crossings_uIcc` carries a docstring copied verbatim from the public `isBounded_image_realWindingIntegrand_of_interior_crossings` (line 438): it advertises only the \"boundedness half\" and calls itself a \"Projection of\" the `Icc`-form theorem, whereas it actually returns the full triple (boundedness, interval-integrability, and the Cauchy-PV witness with its real and imaginary parts) and is the uIcc-generic source the three projections are taken from, not a projection.",
+   "line": 409
+  },
+  {
+   "evidence": "OnCurve.lean:38-40 vs. the hypotheses of `windingNumber_eq_real_integral_of_closed` in RealIntegral/Basic.lean:73-79 (no `IsPwC1ImmersionOn`) and of `windingNumber_eq_real_integral_of_closed_interior_crossings` at OnCurve.lean:480-483 (`h_imm : IsPwC1ImmersionOn \u03b3 a b`).",
+   "file": "TauCeti/Analysis/Contour/Winding/RealIntegral/OnCurve.lean",
+   "fix": "Say the new theorem specializes to avoiding curves that are piecewise-C\u00b9 immersions, and that `Basic`'s theorem remains strictly more general for non-immersed curves (while assuming integrability, which this one derives).",
+   "issue": "The module docstring claims that because `h\u03b3_lip` is vacuous when `\u03b3` never meets `s`, \"this also reproves the avoiding case\". It does not: `windingNumber_eq_real_integral_of_closed_interior_crossings` additionally requires `IsPwC1ImmersionOn \u03b3 a b`, while `windingNumber_eq_real_integral_of_closed` (RealIntegral/Basic.lean:73) only requires continuity on `uIcc a b`, differentiability off a countable set, avoidance, and integrability \u2014 no immersion. Neither theorem subsumes the other, so the stated redundancy is false and invites deleting the strictly more general avoiding-case result.",
+   "line": 38
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ac57a8802b27ef10e94f111c40f28522041bd717e6d43827e5cacdcf4bd22bb7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T084639Z-2910-correctness-2abd89",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:46:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics checks out: the PV real part telescopes to log\u2016\u03b3 b \u2212 s\u2016 \u2212 log\u2016\u03b3 a \u2212 s\u2016 (vanishing by closedness), the imaginary part is the ordinary real integral, and the boundedness/integrability at C^{1,1} crossings are genuinely derived, not assumed. Two docstrings state something the declaration below them does not.",
+ "transcript_blob": "425d799e0c2fc7b983e04fb4cdcfe6e82586534e07643f384870aa2ae9a199ac",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 159145,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 159145,
+  "cache_read_input_tokens": 3780871,
+  "inference_geo": "not_available",
+  "input_tokens": 54,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6009,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6009,
+    "cache_read_input_tokens": 169635,
+    "input_tokens": 2,
+    "output_tokens": 1654,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 33944,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

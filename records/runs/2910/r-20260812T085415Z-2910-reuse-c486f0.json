@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.7241625,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 329.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 158236,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 158236,
+    "cache_read_input_tokens": 2982061,
+    "inference_geo": "not_available",
+    "input_tokens": 44,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 353,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 353,
+      "cache_read_input_tokens": 174382,
+      "input_tokens": 2,
+      "output_tokens": 5049,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24069,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "cost_usd": 3.724162,
+ "dedupe_key": "TauCetiProject/TauCeti|2910|f3511ca01564a306be0a03e0fb122c8d788e3039|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "diff_sha256": "85b7944bfddf6479f3bb462b6b2c40bd498cb71327d6d21de76a02d969f652c4",
+ "duration_s": 329.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Read of PVAggregation.lean lines 121-164 vs 170-216; `grep -rn \"windowPieceSum\\|hasCauchyPVAt_along_sorted\" TauCeti` returns hits only inside PVAggregation.lean, so nothing outside the file depends on the explicit-value form.",
+   "file": "TauCeti/Analysis/Contour/Crossing/PVAggregation.lean",
+   "fix": "Delete `hasCauchyPVAt_along_sorted` and instantiate its two consumers through the new combinator: `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint` (line 271) with `Q l u := \u2203 v, HasCauchyPVAt \u03b3 l u g s v` (glue = `.concat`), exactly as the new `_re_boundary` form at line 243 already does \u2014 this also removes the `dite`/`choose` witness hack at line 287; and `hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint` (line 428) with `Q l u := HasCauchyPVAt \u03b3 l u g s (\u03a6 (\u03b3 u) - \u03a6 (\u03b3 l))` (glue = `.concat` plus `ring` on `(\u03a6(\u03b3 u\u2080)-\u03a6(\u03b3 l)) + (\u03a6(\u03b3 u)-\u03a6(\u03b3 u\u2080))`), which additionally retires the now-dead `windowPieceSum` (line 109), `windowLexEmb` (311), `orderEmbOfFin_window_fst_snd` (320), `windowPieceSum_eq_sum_intervalGapsWithin_add_sum` (341) and `windowPieceSum_boundary` (395).",
+   "issue": "`sorted_crossing_gluing_induction` (lines 130-164) is a line-for-line copy of the existing private `hasCauchyPVAt_along_sorted`'s proof (lines 180-216): identical `hr_nonneg`, `h_head_lo`, `h_head_hi`, `h_rest_above`, `h_left`, `h_rest` blocks, differing only in `Q l u` vs `HasCauchyPVAt \u03b3 l u g s (windowPieceSum \u2026)` and the final `hglue` vs `.concat`. The PR adds the generalization but leaves the specialization in place, so the file now carries the same induction twice.",
+   "line": 121
+  },
+  {
+   "evidence": "`Mathlib/Analysis/Calculus/Deriv/Basic.lean:494`: `theorem derivWithin_congr_set (h : s =\u1da0[\ud835\udcdd x] t) : derivWithin f s x = derivWithin f t x`. On `Iio (min d d')` (a neighbourhood of `t` since `t < min d d'`), `x \u2208 Icc t d \u2194 t \u2264 x \u2194 x \u2208 Icc t d'`, so the hypothesis holds with no differentiability assumption.",
+   "file": "TauCeti/Analysis/Contour/PwC1ImmersionOn.lean",
+   "fix": "Replace `heq` with `derivWithin_congr_set (h : Icc t d =\u1da0[\ud835\udcdd t] Icc t d')`, proved by `filter_upwards [Iio_mem_nhds (lt_min htd hlt')]` (resp. `Ioi_mem_nhds (max_lt hct hlt')` for the left form), and drop the `hdiff` hypothesis from both signatures and from the two call sites in `RealIntegral/OnCurve.lean`.",
+   "issue": "The `heq` step of `IsPwC1ImmersionOn.derivWithin_ne_zero_right` (lines 224-232) re-derives, via two `HasDerivWithinAt` witnesses on `Icc t (min d d')` plus `UniqueDiffWithinAt`, the independence of `derivWithin` from the right-piece \u2014 exactly Mathlib's `derivWithin_congr_set`. Same in `derivWithin_ne_zero_left` (lines 244-252). Because the hand-rolled route needs a derivative witness, both lemmas carry a `hdiff : DifferentiableWithinAt \u211d \u03b3 \u2026 t` hypothesis that the Mathlib lemma does not need, and callers must construct it (RealIntegral/OnCurve.lean:272, 275).",
+   "line": 218
+  }
+ ],
+ "head_sha": "f3511ca01564a306be0a03e0fb122c8d788e3039",
+ "merge_base_sha": "32712ebd789e192ec7f4c4143b052548254a457b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2910,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "93f9a3a1a5812cd128f49d23e57a3230e36fb7de429f6c1dfbba95d38a6bd152",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T085415Z-2910-reuse-c486f0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T08:54:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The new generic gluing induction in PVAggregation is a verbatim clone of the existing private `hasCauchyPVAt_along_sorted` rather than a replacement for it, leaving two copies of the same 35-line recursion in one file; and the new one-sided non-vanishing lemmas re-derive Mathlib's `derivWithin_congr_set`. Everything else reuses existing Tau Ceti and Mathlib API correctly.",
+ "transcript_blob": "81dac8cf4e7c5e23c87b5ae3c94e93596f3da5f0d40ed9b32a2f4f687dd8b1b2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 158236,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 158236,
+  "cache_read_input_tokens": 2982061,
+  "inference_geo": "not_available",
+  "input_tokens": 44,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 353,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 353,
+    "cache_read_input_tokens": 174382,
+    "input_tokens": 2,
+    "output_tokens": 5049,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24069,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
