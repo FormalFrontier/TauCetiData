@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.312516,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 39.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 79872,
+    "input_tokens": 126324,
+    "output_tokens": 1344,
+    "reasoning_output_tokens": 313
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6b0ff373f14030da9589cf87ddb65b75154a8cfb",
+ "cost_estimated": true,
+ "cost_usd": 0.312516,
+ "dedupe_key": "TauCetiProject/TauCeti|2891|987c2f33551ab8d7ab36fddb346915b19347c295|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "6c725173874254ad6a5c27e5687a13ec50aeb8ef067696fa6184f7d95b59d760",
+ "diff_sha256": "6c725173874254ad6a5c27e5687a13ec50aeb8ef067696fa6184f7d95b59d760",
+ "duration_s": 39.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 291\u2013299 apply `SemimoduleCat.hom_ext`, replace the goal with an equality of `LinearMap.comp`/`TensorProduct.map` via `change`, then discharge it using `htensor`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/Monoidal.lean",
+   "fix": "Use an explicit bridge lemma, or add a comment explaining why rewriting cannot expose the linear-map goal and which wrappers are being reduced.",
+   "issue": "`isMonoidal_of_linear_components` uses `change` after `SemimoduleCat.hom_ext` to identify categorical composition and tensoring with linear-map composition without documenting the required definitional reduction.",
+   "line": "292"
+  },
+  {
+   "evidence": "Lines 316\u2013320 apply `Units.ext`, use `change` to expose `Comodule.pointsAction = LinearMap.id`, and immediately rewrite the point-action lemmas.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/Monoidal.lean",
+   "fix": "Use a named coercion/extensionality lemma if available, or comment why `Units.ext` does not expose a rewriteable linear-map goal.",
+   "issue": "`ofLinearEquiv_pointsAction_tensorUnit_eq_one` uses `change` to reduce equality in `GeneralLinearGroup` to equality of underlying linear maps without documenting this definitional-equality dependency.",
+   "line": "317"
+  },
+  {
+   "evidence": "Lines 351\u2013356 extract `SemimoduleCat.Hom.hom`, rewrite two wrapper lemmas, then use `change` to obtain the `d.comp (TensorProduct.map ...) = ...comp d` equality.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/Monoidal.lean",
+   "fix": "Introduce an explicit conversion lemma or add a comment explaining why ordinary rewriting cannot reach this form and which definitional equalities are intended.",
+   "issue": "`distribBaseChange_comp_pointsAction` uses `change ... at hlin` to identify the underlying categorical tensor-hom equality with linear-map composition, again without documenting the wrapper reduction.",
+   "line": "354"
+  }
+ ],
+ "head_sha": "987c2f33551ab8d7ab36fddb346915b19347c295",
+ "merge_base_sha": "6b0ff373f14030da9589cf87ddb65b75154a8cfb",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 2891,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "1e51e96a61eaac1ee8f9a2fdd491718d1433465be568674df03999e3a425f21a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260812T070102Z-2891-proof-quality-635686",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-12T07:01:02Z",
+ "submitted_by": "kim-em",
+ "summary": "Three new proofs use undocumented definitional-equality manipulation across categorical, unit, and linear-map wrappers.",
+ "transcript_blob": "dcb3202c719c094536bc402a32038410e3aef99dbd3b4028ea93849b23ed6d60",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 79872,
+  "input_tokens": 126324,
+  "output_tokens": 1344,
+  "reasoning_output_tokens": 313
+ },
+ "verdict": "request_changes"
+}
