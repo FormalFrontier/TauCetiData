@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3823185,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 233.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62867,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62867,
+    "cache_read_input_tokens": 590779,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 305,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 305,
+      "cache_read_input_tokens": 79061,
+      "input_tokens": 2,
+      "output_tokens": 3405,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17854,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "35069a2f2bdc585a7e2db0df423b6b8fad919ac1",
+ "cost_usd": 1.382319,
+ "dedupe_key": "TauCetiProject/TauCeti|3059|675e3200dca4ec07152cd31d5edf2912b38b5b91|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1eb06990c4eb530bb7030ad5af465d7f9b245058449cabf45d632acdd74385ed",
+ "diff_sha256": "1eb06990c4eb530bb7030ad5af465d7f9b245058449cabf45d632acdd74385ed",
+ "duration_s": 233.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `dividedPower_smul_mem_admissibleLattice` at AdmissibleLattice.lean:123 with no `ringChoose_smul_mem_*` anywhere; `ringChoose_mem_kostantForm` exists at Kostant/Form.lean:161 and is already used at AdmissibleLattice.lean:119. `grep -rn \"admissibleLattice\" TauCeti` returns only the defining file, so no consumer currently compensates.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Add `theorem ringChoose_smul_mem_admissibleLattice (i : \u03ba) (n : \u2115) {x : V} (hx : x \u2208 admissibleLattice e h v) : Ring.choose (_root_.UniversalEnvelopingAlgebra.\u03b9 \u211a (h i)) n \u2022 x \u2208 admissibleLattice e h v := smul_mem_admissibleLattice (ringChoose_mem_kostantForm e h i n) hx`, next to line 127, and list it in the `Main definitions and results` block. With both direct forms present, `generator_smul_mem_admissibleLattice` \u2014 currently unused in the repo and strictly weaker than `smul_mem_admissibleLattice` \u2014 can be dropped.",
+   "issue": "Only the root half of the stability API gets a directly usable lemma. `dividedPower_smul_mem_admissibleLattice` names the `e\u1d62\u207d\u207f\u207e` case, but there is no counterpart for the Cartan generators `Ring.choose (\u03b9 \u211a (h i)) n`, even though `generator_smul_mem_admissibleLattice` (line 114) proves both cases and `Kostant/Form.lean` develops the two families symmetrically (`dividedPower_mem_kostantForm`:155 / `ringChoose_mem_kostantForm`:161, `rootVector_mem_kostantForm`:167 / `cartanVector_mem_kostantForm`:172). The torus half of the Chevalley\u2013Demazure construction the PR description targets needs exactly the missing form, and reaching it through `generator_smul_mem_admissibleLattice` forces the consumer to build a `kostantGenerators` membership by hand.",
+   "line": 123
+  },
+  {
+   "evidence": "AdmissibleLattice.lean:24-26 (\"both are proved here\": stability and fullness) contradicts AdmissibleLattice.lean:30-31 (\"deliberately *not* claimed is that `V_\u2124` is a finitely generated `\u2124`-module\"); the file contains no finiteness or freeness statement (`grep -n \"Finite\\|Free\" AdmissibleLattice.lean` is empty).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Reword line 24 to state what is actually proved \u2014 that `V_\u2124` is `U_\u2124`-stable and full \u2014 and say plainly that \"lattice\" is provisional until finite generation is available, instead of claiming the name is earned. (Renaming to something like `kostantOrbit` would also resolve it, but a corrected docstring suffices for this angle.)",
+   "issue": "The module docstring asserts \"Two things have to be true for `V_\u2124` to deserve the name, and both are proved here\", listing stability and fullness. Neither implies that `V_\u2124` is a lattice: that requires finite generation / `\u2124`-freeness, which lines 30-34 of the same docstring explicitly disclaim as unproved pending integral PBW. A reader of the public `admissibleLattice` name and its documentation is told the object has been certified as a lattice when the file proves only that it is a full, `U_\u2124`-stable subgroup.",
+   "line": 24
+  }
+ ],
+ "head_sha": "675e3200dca4ec07152cd31d5edf2912b38b5b91",
+ "merge_base_sha": "35069a2f2bdc585a7e2db0df423b6b8fad919ac1",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3059,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "552d90275a0e988f3b262f2ae303773c06675ba028cfd28b049a99836dee5992",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T110413Z-3059-api-design-bf0665",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T11:04:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is minimal and bodies are unexposed, but the stability API is developed on only one of the two generator families, and the module docstring claims the name `lattice` is earned by properties that do not establish it. Both are one-line fixes.",
+ "transcript_blob": "289659ef7436f59aa1b3f87eaa8e3c398d5f00dfa3db18d0eb9ede7088a85db8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62867,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62867,
+  "cache_read_input_tokens": 590779,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 305,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 305,
+    "cache_read_input_tokens": 79061,
+    "input_tokens": 2,
+    "output_tokens": 3405,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17854,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5636295000000004,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 264.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64890,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64890,
+    "cache_read_input_tokens": 715145,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 686,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 686,
+      "cache_read_input_tokens": 80703,
+      "input_tokens": 2,
+      "output_tokens": 4638,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21820,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "35069a2f2bdc585a7e2db0df423b6b8fad919ac1",
+ "cost_usd": 1.56363,
+ "dedupe_key": "TauCetiProject/TauCeti|3059|675e3200dca4ec07152cd31d5edf2912b38b5b91|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1eb06990c4eb530bb7030ad5af465d7f9b245058449cabf45d632acdd74385ed",
+ "diff_sha256": "1eb06990c4eb530bb7030ad5af465d7f9b245058449cabf45d632acdd74385ed",
+ "duration_s": 264.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `Mathlib/Algebra/Lie/OfAssociative.lean:392: def lieSubalgebraOfSubalgebra (R) (A) (A' : Subalgebra R A) : LieSubalgebra R A`; `Mathlib/Algebra/Lie/Subalgebra.lean:377: @[simp] lemma mem_comap {x : L} : x \u2208 K\u2082.comap f \u2194 f x \u2208 K\u2082 := Iff.rfl`. `\u03b9 R : L \u2192\u2097\u2045R\u2046 UniversalEnvelopingAlgebra R L` (Mathlib/Algebra/Lie/UniversalEnveloping.lean:81).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean",
+   "fix": "Define `comapSubalgebra R L A := (lieSubalgebraOfSubalgebra R U A).comap (UniversalEnvelopingAlgebra.\u03b9 R)` and prove `mem_comapSubalgebra` from `LieSubalgebra.mem_comap`; the `change`, the two defeq `have`s and the commutator argument all disappear.",
+   "issue": "`comapSubalgebra` hand-rolls `lie_mem'` with a `change` plus two definitional-equality `have hx' : \u03b9 R x \u2208 A := hx` transports; Mathlib already has this object: `lieSubalgebraOfSubalgebra R A A'` (Mathlib/Algebra/Lie/OfAssociative.lean:392) and `LieSubalgebra.comap` with `@[simp] mem_comap : x \u2208 K\u2082.comap f \u2194 f x \u2208 K\u2082 := Iff.rfl` (Mathlib/Algebra/Lie/Subalgebra.lean:371,377).",
+   "line": 202
+  },
+  {
+   "evidence": "`Submodule.map_coe` (Mathlib/Algebra/Module/Submodule/Map.lean:62), `AddSubgroup.coe_toIntSubmodule` (Mathlib/Algebra/Module/Submodule/Lattice.lean:426), `Subring.coe_toAddSubgroup`/`mem_toAddSubgroup` (Mathlib/Algebra/Ring/Subring/Defs.lean:412,416) are all available and `@[simp]`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Rewrite through the existing coe lemmas instead: `rw [\u2190 SetLike.mem_coe, admissibleLattice, Submodule.map_coe, AddSubgroup.coe_toIntSubmodule, Subring.coe_toAddSubgroup, LinearMap.coe_restrictScalars]` and close with `simp [Set.mem_image, LinearMap.toSpanSingleton_apply]`, so the identification is carried by named lemmas.",
+   "issue": "In `mem_admissibleLattice_iff` the mirrored `rintro \u27e8u, hu, rfl\u27e9; exact \u27e8u, hu, rfl\u27e9` in both directions is not a real case split: after the `simp only` the two sides differ only by `u \u2208 (kostantForm e h).toAddSubgroup.toIntSubmodule` vs `u \u2208 kostantForm e h`, and `hu` is passed across that two-wrapper gap by undocumented defeq (if they were syntactically equal `simp only` would have closed the goal).",
+   "line": 95
+  },
+  {
+   "evidence": "`admissibleLattice` (line 84-86) uses `.restrictScalars \u2124`; `hlattice` (line 199) states the image under `.restrictScalars \u211a`; the gap is bridged only by `exact` at line 203.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Prove `hlattice` by rewriting: `rw [admissibleLattice, Submodule.map_coe, LinearMap.coe_restrictScalars, LinearMap.coe_restrictScalars, AddSubgroup.coe_toIntSubmodule, Subring.coe_toAddSubgroup]`, so the \u211a/\u2124 restriction step is made by `LinearMap.coe_restrictScalars` rather than by unifier unfolding.",
+   "issue": "`exact mem_admissibleLattice_iff` closes `hlattice` across three coercion layers at once \u2014 `x \u2208 \u2191S` vs `x \u2208 S`, and `(toSpanSingleton U V v).restrictScalars \u211a` applied where `admissibleLattice` is defined with `restrictScalars \u2124`. Silently identifying the \u211a- and \u2124-restrictions of the same map is exactly the defeq reliance the module should avoid, and it is undocumented.",
+   "line": 203
+  },
+  {
+   "evidence": "`Submonoid.closure_le : closure s \u2264 S \u2194 s \u2286 \u2191S` is stated for `\u2264` on `Submonoid`, while the goal at line 218-219 is `\u2191(Submonoid.closure \u2191(kostantForm e h)) \u2286 \u2191(kostantForm e h)` on `Set U`; `S` appears nowhere in the term.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/Form.lean",
+   "fix": "Make the submonoid explicit: `exact (Submonoid.closure_le (S := (kostantForm e h).toSubmonoid)).2 (by rw [Subring.coe_toSubmonoid])` (or `Submonoid.closure_eq` on `(kostantForm e h).toSubmonoid`), so no metavariable is solved by unfolding coercions.",
+   "issue": "`exact Submonoid.closure_le.2 fun _ hx => hx` proves a `Set` inclusion goal from a `Submonoid` `\u2264` statement, with the target submonoid `S` left to be assigned by defeq-matching `x \u2208 S` against `x \u2208 \u2191(kostantForm e h)` and the payload an identity function transporting membership between two SetLike coercions.",
+   "line": 219
+  }
+ ],
+ "head_sha": "675e3200dca4ec07152cd31d5edf2912b38b5b91",
+ "merge_base_sha": "35069a2f2bdc585a7e2db0df423b6b8fad919ac1",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3059,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e5c967f8af3f180e11d1f08f3f1189fef95aaa6e589654a2c0e1ede53d7610ae",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T111844Z-3059-proof-quality-b0e5a8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T11:18:44Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are short and mostly readable, but several steps close syntactic gaps by bare definitional equality across wrappers (`Subring \u2192 AddSubgroup \u2192 toIntSubmodule`, `restrictScalars \u2124` vs `\u211a`), and the new `comapSubalgebra` re-derives Mathlib's `lieSubalgebraOfSubalgebra \u2218 LieSubalgebra.comap` with a `change`. Each has a lemma-supported rewrite available.",
+ "transcript_blob": "852fee59363c5fe4e2adce7a25f686154de62ee48669776e0c01fa531c6f7658",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64890,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64890,
+  "cache_read_input_tokens": 715145,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 686,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 686,
+    "cache_read_input_tokens": 80703,
+    "input_tokens": 2,
+    "output_tokens": 4638,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21820,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
