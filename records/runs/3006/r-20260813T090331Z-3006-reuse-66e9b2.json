@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.031944,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 146.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40010,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40010,
+    "cache_read_input_tokens": 715128,
+    "inference_geo": "not_available",
+    "input_tokens": 32,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1175,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1175,
+      "cache_read_input_tokens": 55334,
+      "input_tokens": 2,
+      "output_tokens": 1276,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10577,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "86cc55d9192fc3f094f293ead6f2e7a153c79d17",
+ "cost_usd": 1.031944,
+ "dedupe_key": "TauCetiProject/TauCeti|3006|1257edfdc8f670eec68d5046bdd7ecb371ed21eb|reuse|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "121dfc67c8174017a25b9cd9631451d6d54bc48fa5fb45a56713068d3cd3d817",
+ "diff_sha256": "121dfc67c8174017a25b9cd9631451d6d54bc48fa5fb45a56713068d3cd3d817",
+ "duration_s": 146.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `TauCeti/Probability/Exchangeability/PathSpace/Law/Basic.lean:80:theorem map_reindex_prefixProj (\u03c1 : Measure (\u2115 \u2192 \u03b1)) (\u03c6 : \u2115 \u2192 \u2115) (n : \u2115)`; `ContractableLaw.lean:92: rw [map_reindex_prefixProj] at hmap`; `exists_strictMono_nat_extending_fin_eventually_add` supplies `\u2200 i : Fin m, \u03c6 i.val = k i` (PermutationExtension.lean:50), which is what `hidx` needs.",
+   "file": "TauCeti/Probability/Exchangeability/PathSpace/Invariant/BlockTransport.lean",
+   "fix": "Replace `hcomp` and the final `rw` with the combinator: `have hidx : (fun x : \u2115 \u2192 \u03b1 => fun i : Fin m => x (k i)) = fun x : \u2115 \u2192 \u03b1 => fun i : Fin m => x (\u03c6 i.val) := by funext x i; rw [h\u03c6_eq]` then `rw [hidx, \u2190 map_reindex_prefixProj, hmp.map_eq]`. This also makes the proof structurally identical to `map_prefixProj_of_strictMono`, so the two can optionally be factored through a shared `MeasurePreserving (reindex \u03c6) \u03bd \u03bd \u2192 (\u2200 i : Fin m, \u03c6 i = k i) \u2192 \u03bd.map (block k) = \u03bd.map (prefixProj \u03b1 m)`.",
+   "issue": "The proof re-derives `map_reindex_prefixProj` (TauCeti/Probability/Exchangeability/PathSpace/Law/Basic.lean:80, publicly reachable via ContractableLaw) by hand with `Measure.map_map (measurable_prefixProj m) hmp.measurable` plus the `hcomp` composition step. That lemma states exactly `(\u03bd.map (fun x k => x (\u03c6 k))).map (prefixProj \u03b1 n) = \u03bd.map (fun x i => x (\u03c6 i.val))`, and the sibling `ContractableLaw.map_prefixProj_of_strictMono` (ContractableLaw.lean:92) already uses it for the unrestricted case.",
+   "line": 117
+  }
+ ],
+ "head_sha": "1257edfdc8f670eec68d5046bdd7ecb371ed21eb",
+ "merge_base_sha": "86cc55d9192fc3f094f293ead6f2e7a153c79d17",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3006,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0cee5b3c93b3283c141f79adbe94ecf090cdcc93d5097ada24a81b82b58e0e13",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T090331Z-3006-reuse-66e9b2",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T09:03:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The two remaining declarations are genuinely new: neither Mathlib nor TauCeti has a named fixed-set restricted MeasurePreserving, and the restricted block/prefix map equality has no in-repo counterpart. One proof re-derives the in-repo combinator `map_reindex_prefixProj`.",
+ "transcript_blob": "86569aefa8ae2b241635ac468438b5c634c8cd923bdaca261aeb23c992e53d15",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40010,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40010,
+  "cache_read_input_tokens": 715128,
+  "inference_geo": "not_available",
+  "input_tokens": 32,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1175,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1175,
+    "cache_read_input_tokens": 55334,
+    "input_tokens": 2,
+    "output_tokens": 1276,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10577,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
