@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.478986000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 421.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 86280,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 86280,
+    "cache_read_input_tokens": 1624569,
+    "inference_geo": "not_available",
+    "input_tokens": 50,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2619,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2619,
+      "cache_read_input_tokens": 100160,
+      "input_tokens": 2,
+      "output_tokens": 2628,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 23037,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1cfee904658705edb04f0a62adafae7ed02056a5",
+ "cost_usd": 3.478986,
+ "dedupe_key": "TauCetiProject/TauCeti|3099|777e8ed3fe9646cb9d92a789e730147d5956380e|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f8733b203d2e2dfab57094476f24a620a9be3e566bd2ffdb9a04ef19f682a738",
+ "diff_sha256": "f8733b203d2e2dfab57094476f24a620a9be3e566bd2ffdb9a04ef19f682a738",
+ "duration_s": 421.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Topology/UniformSpace/Cauchy.lean:456-474: `namespace DiscreteUniformity` / `variable [DiscreteUniformity \u03b1]` / `theorem eq_pure_of_cauchy` / `instance : CompleteSpace \u03b1 where complete {f} hf := by obtain \u27e8x, rfl\u27e9 := eq_pure_of_cauchy hf; exact \u27e8x, pure_le_nhds x\u27e9`. Mathlib's `DiscreteUniformity.lean` module docstring likewise states \"It is complete.\"",
+   "file": "TauCeti/Topology/UniformSpace/DiscreteUniformity.lean",
+   "fix": "Delete the instance and its docstring bullet (line 22); downstream `CompleteSpace` for the discrete weighted subring is supplied by Mathlib's instance. If `of_discreteTopology` remains the file's only content, drop the now-unused `Mathlib.Topology.UniformSpace.Cauchy` import and retitle the module docstring, which currently claims \"Two complements to Mathlib's `DiscreteUniformity`\".",
+   "issue": "`TauCeti.DiscreteUniformity.completeSpace` duplicates Mathlib's instance: `Mathlib/Topology/UniformSpace/Cauchy.lean:471` declares `/-- The discrete uniformity makes a space complete. -/ instance : CompleteSpace \u03b1` inside `namespace DiscreteUniformity` with `variable [DiscreteUniformity \u03b1]` (line 458), i.e. identical hypotheses. Its proof (`obtain ... Filter.mem_prod_iff ...`) also re-derives `DiscreteUniformity.eq_pure_of_cauchy` (`Cauchy.lean:462`). The instance is in scope here: this file `public import`s `Mathlib.Topology.UniformSpace.Cauchy` (line 9).",
+   "line": 36
+  },
+  {
+   "evidence": "grep of the pinned Mathlib: `completeEquivSelf` is defined at Completion.lean:372 and referenced nowhere else; no `Completion S \u2243+* S` exists, so only the bijectivity \u2014 not the ring structure \u2014 is the duplicated part.",
+   "file": "TauCeti/Topology/Algebra/UniformRing.lean",
+   "fix": "Define `selfRingEquiv := RingEquiv.ofBijective (extensionHom (RingHom.id S) continuous_id) (UniformCompletion.completeEquivSelf (\u03b1 := S)).bijective`, keeping only `selfRingEquiv_coe` (which is `extensionHom_coe`) as the simp lemma; the hand-rolled `RingEquiv.ofRingHom` proof of the second composite then goes away.",
+   "issue": "The bijectivity content of `selfRingEquiv` is already in Mathlib: `UniformCompletion.completeEquivSelf [CompleteSpace \u03b1] [T0Space \u03b1] : Completion \u03b1 \u2243\u1d64 \u03b1` (`Mathlib/Topology/UniformSpace/Completion.lean:371-373`). The PR instead reproves both composites by hand with `Completion.ext`/density. The underlying maps coincide: `Completion.extension f = cPkg.extend f` (`Completion.lean:429-430`), `AbstractCompletion.compare pkg pkg' = pkg.extend pkg'.coe` (`AbstractCompletion.lean:258-259`), and `ofComplete` is `mk \u03b1 id ...` (`AbstractCompletion.lean:88`), while `extensionHom f hf` has `toFun := Completion.extension f` (`Mathlib/Topology/Algebra/UniformRing.lean:129-134`).",
+   "line": 31
+  }
+ ],
+ "head_sha": "777e8ed3fe9646cb9d92a789e730147d5956380e",
+ "merge_base_sha": "1cfee904658705edb04f0a62adafae7ed02056a5",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3099,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "707b0ae244e12fa87c860e76196ee2b5beefdcc854efb893f5e91ae4dad92eb6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T161527Z-3099-reuse-08464b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T16:15:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `CompleteSpace` instance for discrete uniformities is a verbatim duplicate of Mathlib's instance in `Mathlib/Topology/UniformSpace/Cauchy.lean:471`, which the file already imports; its proof also re-derives Mathlib's `DiscreteUniformity.eq_pure_of_cauchy`. Secondarily, `selfRingEquiv`'s bijectivity argument reproves `UniformCompletion.completeEquivSelf`. The rest of the PR is new and reuses existing API.",
+ "transcript_blob": "91f4ec7fafd60ba2b97ac7a9fbdf405a9981b13ac013e3a249f8fa0ad00cc0fe",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 86280,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 86280,
+  "cache_read_input_tokens": 1624569,
+  "inference_geo": "not_available",
+  "input_tokens": 50,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2619,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2619,
+    "cache_read_input_tokens": 100160,
+    "input_tokens": 2,
+    "output_tokens": 2628,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 23037,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
