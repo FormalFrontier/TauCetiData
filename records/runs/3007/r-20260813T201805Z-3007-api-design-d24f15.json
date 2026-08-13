@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6253140000000004,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 273.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 65519,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 65519,
+    "cache_read_input_tokens": 856042,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 989,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 989,
+      "cache_read_input_tokens": 81029,
+      "input_tokens": 2,
+      "output_tokens": 4359,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21362,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d90e6c9946f0f4a1155024c33edd5b6651e5790f",
+ "cost_usd": 1.625314,
+ "dedupe_key": "TauCetiProject/TauCeti|3007|ac891ea4246aa4fb94e88c544cc034ad35761151|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9bc4725c25b3eb02348d49bf562f9a766851bc66d53204ee567b9a5eb9f65764",
+ "diff_sha256": "9bc4725c25b3eb02348d49bf562f9a766851bc66d53204ee567b9a5eb9f65764",
+ "duration_s": 273.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib marks every analogous bridge `@[simp]`: `HopfAlgebra/Basic.lean:145` `antipode_eq_id := rfl`, `HopfAlgebra/TensorProduct.lean:53` `antipode_def := rfl`, `HopfAlgebra/Quotient.lean:104` `antipode_mk`, `HopfAlgebra/MonoidAlgebra.lean:45` `antipode_single`; in-repo `TauCeti/Algebra/HopfAlgebra/SymmetricAlgebra/Basic.lean:80` `@[simp] antipode_\u03b9` does the same right after its Hopf instance. The instance body is unexposed, so nothing else lets simp see through `HopfAlgebra.antipode`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/HopfAlgebra.lean",
+   "fix": "Add `@[simp]` to the lemma.",
+   "issue": "`hopfAlgebraStructAntipode_eq_antipode` is not `@[simp]`, so `HopfAlgebra.antipode R (A := U)` never rewrites to `TauCeti.UniversalEnvelopingAlgebra.antipode R` and none of the existing `@[simp]` antipode lemmas (`antipode_mkAlgHom_\u03b9`, `antipode_one`, `antipode_algebraMap`, `antipode_mul_antidistrib`, `antipode_antipode`) fire for consumers of the new Hopf instance \u2014 the Kostant Hopf-subring work this PR exists to enable.",
+   "line": 212
+  },
+  {
+   "evidence": "`Mathlib/RingTheory/HopfAlgebra/Basic.lean:121` `@[simp] lemma counit_antipode (a : A) : counit (R := R) (antipode R a) = counit a`; `Antipode.lean` does not import `Bialgebra.lean` and declares no counit lemma (grep of its declarations shows only antipode/antipodeOp/antipodeEquiv/antipodeComap material).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/HopfAlgebra.lean",
+   "fix": "Add `@[simp] theorem counit_antipode (a : U) : Coalgebra.counit (R := R) (antipode R a) = Coalgebra.counit (R := R) a`, one line from `HopfAlgebra.counit_antipode` plus `hopfAlgebraStructAntipode_eq_antipode`.",
+   "issue": "This is the first module where the antipode and the bialgebra operations are both in scope, yet it states no interaction lemma. Mathlib's `@[simp] HopfAlgebra.counit_antipode` is keyed on head `HopfAlgebra.antipode`, so once the bridge above rewrites a term to `TauCeti.\u2026antipode`, `Coalgebra.counit (antipode R a)` is stuck with no lemma in either form.",
+   "line": 214
+  }
+ ],
+ "head_sha": "ac891ea4246aa4fb94e88c544cc034ad35761151",
+ "merge_base_sha": "d90e6c9946f0f4a1155024c33edd5b6651e5790f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3007,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cdd574237fc955c71a9de2c722c1a9b0ad5f60e8219f73602dd92789fc33ea4c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T201805Z-3007-api-design-d24f15",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T20:18:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is minimal and helper-private with no compatibility artifacts, but the sole bridge lemma linking Mathlib's `HopfAlgebra.antipode` to the existing universal-enveloping antipode is unannotated, leaving the whole antipode simp set unreachable through the Hopf interface, and the module supplies no antipode/bialgebra interaction lemma.",
+ "transcript_blob": "d5c34b1d51f27a2632e0ca26075bb6cc8781f124f78289b9d5469216cdac1ed6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 65519,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 65519,
+  "cache_read_input_tokens": 856042,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 989,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 989,
+    "cache_read_input_tokens": 81029,
+    "input_tokens": 2,
+    "output_tokens": 4359,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21362,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
