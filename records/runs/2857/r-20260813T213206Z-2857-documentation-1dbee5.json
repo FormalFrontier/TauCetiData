@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.859225,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 175.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 113493,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 113493,
+    "cache_read_input_tokens": 714806,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6957,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6957,
+      "cache_read_input_tokens": 123035,
+      "input_tokens": 2,
+      "output_tokens": 3180,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13012,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 1.859225,
+ "dedupe_key": "TauCetiProject/TauCeti|2857|29e51575c0ed1ba80faf85711ea2ab4ca630c3ab|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "diff_sha256": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "duration_s": 175.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 62-63 vs. theorem signature at lines 786-792 (binders: `hf`, `hH`, `hSfd`, `hcomp`, `hHgt`, `hgz` \u2014 no `hoff`, no `hga`) and its docstring at line 773.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Replace with \"Only the cusp-function non-vanishing `hgz` is still a hypothesis at this fixed height `H`; `hoff` and `hga` are constructed internally.\"",
+   "issue": "Module docstring says of `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`: \"The analytic inputs `hoff`/`hga`/`hgz` are still hypotheses at this fixed height `H`.\" The statement (lines 785-792) has only `hgz`; `hoff` is built at lines 808-813 and `hga` at 814-815. The theorem's own docstring (line 773) says the opposite: \"Only the cusp-function non-vanishing `hgz` remains an analytic hypothesis\".",
+   "line": 62
+  },
+  {
+   "evidence": "Docstring lines 756-758 and 838-840 vs. binders `hSfd`/`hcomp` at lines 788-789 and 849-850; `hSfd` is used substantively at line 610 via `windingNumber_coe_eq_neg_half hH (hSfd p hpS hpne) ...`, whose `hp : p \u2208 \ud835\udc9f` is what forces the `-1/2` weight.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "State both directions wherever `S` is described, e.g. \"complete for `\ud835\udc9f` and confined to it: every point of `\ud835\udc9f` of nonzero order lies in `S` (`hcomp`), and every point of `S` of nonzero order lies in `\ud835\udc9f` (`hSfd`)\".",
+   "issue": "The docstring characterises `S` as exactly the completeness condition \u2014 \"*complete* for the closed fundamental domain: every point of `\ud835\udc9f` of nonzero order belongs to it\" \u2014 which is `hcomp` alone. The second capture condition `hSfd : \u2200 p \u2208 S, orderOfVanishingAt \u21d1f p \u2260 0 \u2192 p \u2208 \ud835\udc9f` (line 788) is never mentioned, so the docstring reads as if any complete superset works; a set containing a nonzero-order point outside `\ud835\udc9f` (e.g. a translate on `re = 1/2` with `\u2016\u00b7\u2016 = 1`) is excluded by `hSfd` and would be picked up by the boundary filters. Same omission at line 839 (\"Only nonvanishing and completeness of the divisor set remain\"), at module-docstring lines 60 and 65, and in the orbit theorem's docstring (lines 866-878), which describes no divisor condition at all.",
+   "line": 757
+  },
+  {
+   "evidence": "`grep -rn rung TauCeti` matches only ValencePV.lean:701 and :718 (plus unrelated `PathHomotopyDiscreteness.lean` \"rung paths\"); `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero` at lines 847-859 has no existential in its statement.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Drop the step labels and the `\u2203 H\u2080` claim; state what the lemma gives \u2014 non-vanishing of `cuspFunction 1 \u21d1f` on the closed `q`-disk for all `H` above a threshold \u2014 and note that the threshold is consumed internally by `..._eq_of_ne_zero`. Same for the `Step 4` label at line 701.",
+   "issue": "Comment on `exists_threshold_cuspFunction_ne_zero` reads \"Step 5b of the rung-1 bridge: this is where the `\u2203 H\u2080` of the final statement comes from.\" The final statement `..._eq_of_ne_zero` (line 847) has no `\u2203 H\u2080` \u2014 the height is chosen internally at lines 860-864. \"rung-1 bridge\" and its step numbering appear nowhere else in the repo (grep: only here and line 701, `hoff_of_zeros_confined`), so both labels are unadapted text from an external plan.",
+   "line": 718
+  },
+  {
+   "evidence": "BoundaryPairing.lean:72 `lemma vadd_mem_fd_of_re_eq` (no longer `private`); consumed at ValencePV.lean:470; Main results list at BoundaryPairing.lean:25-35 unchanged in the diff, versus the added Rho.lean:33-36 bullets.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/BoundaryPairing.lean",
+   "fix": "Add a bullet for `TauCeti.ModularForm.vadd_mem_fd_of_re_eq` to the Main results list.",
+   "issue": "`vadd_mem_fd_of_re_eq` became public in this PR and is now used cross-file (`ValencePV.lean:470`), but the module's \"Main results\" list was not updated, so the new public surface is undiscoverable from the module docstring. The PR did make the corresponding update in `Rho.lean` for its newly public lemmas.",
+   "line": 25
+  }
+ ],
+ "head_sha": "29e51575c0ed1ba80faf85711ea2ab4ca630c3ab",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2857,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4b982294ab60b49ceb96ea3a5b02a32e742653ec90d9614f75e58c86f50f7642",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T213206Z-2857-documentation-1dbee5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T21:32:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The module docstring's entry for `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` claims `hoff`/`hga` are still hypotheses when the proof constructs both, contradicting the theorem's own docstring; and every prose description of the divisor set names only the completeness condition `hcomp`, silently dropping the equally restrictive `hSfd`. Two new private helpers also carry stale step-numbering comments referring to a non-existent `\u2203 H\u2080` in the final statement.",
+ "transcript_blob": "b29cb9b686f88855151cb2e42d7d0dffef379c035911218bc822929bc62adbaf",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 113493,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 113493,
+  "cache_read_input_tokens": 714806,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6957,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6957,
+    "cache_read_input_tokens": 123035,
+    "input_tokens": 2,
+    "output_tokens": 3180,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13012,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

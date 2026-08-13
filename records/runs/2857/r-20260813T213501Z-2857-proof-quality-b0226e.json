@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8005645000000006,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 324.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 138690,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 138690,
+    "cache_read_input_tokens": 1460675,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4207,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4207,
+      "cache_read_input_tokens": 150982,
+      "input_tokens": 2,
+      "output_tokens": 4169,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25659,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 2.800565,
+ "dedupe_key": "TauCetiProject/TauCeti|2857|29e51575c0ed1ba80faf85711ea2ab4ca630c3ab|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "diff_sha256": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "duration_s": 324.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep over code/ for `corner_notMem` returns only ValencePV.lean:450 (definition); `coe_rho_im` returns only :446 (definition) and :454 (inside `corner_notMem`). Nothing in the file or repo calls either.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Delete both private lemmas.",
+   "issue": "`corner_notMem` (line 450) and `coe_rho_im` (line 446) are dead after this PR: their only consumer was the deleted `sum_corner_windingNumber_mul_order`, and the replacement `sum_filter_corner_windingNumber_mul_order` discharges the same `Finset.sum_insert` side goals with `by simp` (line 524). `coe_rho_im` is used only inside `corner_notMem`.",
+   "line": 450
+  },
+  {
+   "evidence": "Rho.lean:120 `lemma norm_eq_one_of_mem_ellipticPoints {z : \u2102} (hz : z \u2208 ({Complex.I, (\u03c1 : \u2102), (\u03c1 : \u2102) + 1} : Finset \u2102)) : \u2016z\u2016 = 1` \u2014 same statement, same three-case proof; ValencePV.lean:14 imports Rho, line 85 opens `UpperHalfPlane`. grep shows the lemma is otherwise unused.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Replace the `h1` block with `have h1 := norm_eq_one_of_mem_ellipticPoints hmem`. Same duplication in kind: the `\u2016s\u2016 = 1 \u2192 s.im < H` step of the new `im_lt_of_mem_union` (lines 196-198) repeats the inline argument already at lines 412-415; extract it as one small lemma and use it in both.",
+   "issue": "`notMem_corner_of_interior` re-proves `UpperHalfPlane.norm_eq_one_of_mem_ellipticPoints` inline (the `h1 : \u2016(p : \u2102)\u2016 = 1` block, lines 584-589, is a verbatim copy of Rho.lean:120-126), even though Rho.lean is imported and `UpperHalfPlane` is open \u2014 and that lemma currently has no other user in the repo.",
+   "line": 584
+  },
+  {
+   "evidence": "grep -ri 'rung' over code/ and roadmap/ matches only these two comments and unrelated ladder-homotopy code in AlgebraicTopology/UniversalCover/PathHomotopyDiscreteness.lean.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Convert both to docstrings and drop the step numbering, keeping the substantive explanation (zeros-confinement; why the `q`-disk only fits above a height threshold).",
+   "issue": "`hoff_of_zeros_confined` (line 701) and `exists_threshold_cuspFunction_ne_zero` (line 718) are introduced by `--` comments reading \"Step 4 of the rung-1 bridge\" / \"Step 5b of the rung-1 bridge\", referring to a plan that exists nowhere in the repo or roadmap; every other private lemma in the file carries a `/-- -/` docstring.",
+   "line": 701
+  }
+ ],
+ "head_sha": "29e51575c0ed1ba80faf85711ea2ab4ca630c3ab",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2857,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d3cb36472cacf6c804bc92b7d27b021b53420e27559ebdb8f6f51b4f471100b6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T213501Z-2857-proof-quality-b0226e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T21:35:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactor is a net improvement (the `show`-based defeq restatements are gone, the integrability wrapper removes three copied subinterval blocks), but it leaves dead proof scaffolding behind and re-proves an existing lemma inline.",
+ "transcript_blob": "b74794f7c387bb979de5e48f4e88a5bf2f5417fd28fa72c3e21f2b0c7e6db86c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 138690,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 138690,
+  "cache_read_input_tokens": 1460675,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4207,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4207,
+    "cache_read_input_tokens": 150982,
+    "input_tokens": 2,
+    "output_tokens": 4169,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25659,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

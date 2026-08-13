@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 4.112528,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 338.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 179628,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 179628,
+    "cache_read_input_tokens": 3315230,
+    "inference_geo": "not_available",
+    "input_tokens": 46,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4424,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4424,
+      "cache_read_input_tokens": 191703,
+      "input_tokens": 2,
+      "output_tokens": 3002,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24653,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 4.112528,
+ "dedupe_key": "TauCetiProject/TauCeti|2857|29e51575c0ed1ba80faf85711ea2ab4ca630c3ab|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "diff_sha256": "96323be5d9fb158399daedf48e1bdd24b71d13c49fd4c030cd27641f7f0be34b",
+ "duration_s": 338.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "ValencePV.lean:175-188 vs 265-278, and 137-141 vs 223-230 \u2014 the only differences are `S`/`arcSingularSet S \u222a verticalSingularSet S` and the `eventually_intervalIntegral_excised_eq`/`eventually_intervalIntegral_union_excised_eq` call.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Factor a private `hasCauchyPVWith_of_eventually {Sx : Finset \u2102} (hoff\u03b3 \u2026) (heq : \u2200\u1da0 \u03b5 in \ud835\udcdd[>] 0, \u222b \u2026 = 2\u03c0i\u00b7ord_\u221e \u2212 (k/2)\u00b7\u222b\u2081\u00b3 \u2026) : Contour.HasCauchyPVWith (fdBoundary H) 0 5 \u2026 Sx \u2026`, and a private `Sx`-generic version of `hside`; then both public theorems are one application each.",
+   "issue": "`hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingularSet` (265-278) and `hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` (175-188) have byte-identical proof bodies (integrability clause via `intervalIntegrable_excised_of_subset h\u03b5 le_rfl _ le_rfl hoff\u03b3`, the same `hval` push_cast/ring, the same `tendsto_const_nhds.sub ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H _).const_mul _)`), differing only in which eventual-identity lemma is fed in; the `hside` blocks at 137-141 and 223-230 are likewise identical modulo the excision set.",
+   "line": 251
+  },
+  {
+   "evidence": "Rho.lean:120-126 `lemma norm_eq_one_of_mem_ellipticPoints {z : \u2102} (hz : z \u2208 ({Complex.I, (\u03c1 : \u2102), (\u03c1 : \u2102) + 1} : Finset \u2102)) : \u2016z\u2016 = 1` \u2014 same three-case proof as ValencePV.lean:584-589.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Replace lines 584-589 with `have h1 : \u2016(p : \u2102)\u2016 = 1 := norm_eq_one_of_mem_ellipticPoints hmem` (the file imports `TauCeti.Analysis.Complex.UpperHalfPlane.Rho` at line 14 and opens `UpperHalfPlane`).",
+   "issue": "`notMem_corner_of_interior` re-derives `\u2016(p : \u2102)\u2016 = 1` from corner membership by rcases over `Complex.norm_I`/`norm_\u03c1`/`norm_\u03c1_add_one` \u2014 that is exactly `UpperHalfPlane.norm_eq_one_of_mem_ellipticPoints`, already public in the imported `Rho.lean`.",
+   "line": 584
+  },
+  {
+   "evidence": "BoundaryPairing.lean:287-301 `half_edge_of_boundary` and 305-313 `mem_boundary_iff` vs ValencePV.lean:538-549; ValencePV already imports BoundaryPairing (line 16).",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Make `mem_boundary_iff` (BoundaryPairing.lean:305) public and rcases its four half-edge cases here: the two vertical cases feed `windingNumber_fdBoundary_vertical` directly, and the two arc cases need only `coe_eq_\u03c1_of_re`/`coe_eq_\u03c1_add_one_of_re` to upgrade `|re| \u2264 1/2` to the strict bound `windingNumber_fdBoundary_arc` wants.",
+   "issue": "`windingNumber_coe_eq_neg_half` re-proves the `p \u2208 \ud835\udc9f`, non-corner, non-interior classification that `BoundaryPairing.mem_boundary_iff` / `half_edge_of_boundary` already prove \u2014 same `rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1)` split and the verbatim line `have habs : |(p : \u2102).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h \u21a6 hint \u27e8hgt, h\u27e9)` plus the same `abs_eq` step.",
+   "line": 533
+  },
+  {
+   "evidence": "ValencePV.lean:785-801 vs 847-859: identical conclusions; the only in-repo use of `_eq` is line 862 inside `_eq_of_ne_zero`.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Mark the fixed-height version `private` (it is used only at line 862) and drop it from the module docstring's main-results list, keeping `..._eq_of_ne_zero` as the public interface.",
+   "issue": "Public `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` has exactly the same (H-free) conclusion as `..._eq_of_ne_zero` but strictly more hypotheses (`hH`, `hHgt`, `hgz`), so no consumer can ever prefer it \u2014 two public names for one statement.",
+   "line": 785
+  },
+  {
+   "evidence": "grep of `corner_notMem` in ValencePV.lean returns only the definition at 450; `coe_rho_im` appears only at 446 and inside `corner_notMem` at 454.",
+   "file": "TauCeti/NumberTheory/ModularForms/LevelOne/FundamentalDomainBoundary/ValencePV.lean",
+   "fix": "Delete `corner_notMem` and `coe_rho_im`.",
+   "issue": "`corner_notMem` is dead after this refactor \u2014 its only consumer, the deleted `sum_corner_windingNumber_mul_order`, is gone; the replacement `sum_filter_corner_windingNumber_mul_order` discharges its `Finset.sum_insert` side goals with `by simp` over `Finset \u210d`. `coe_rho_im` (446) then has no user either.",
+   "line": 450
+  },
+  {
+   "evidence": "grep for `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit` across the tree hits only Orbits.lean:32, 114, 123, 150 (docstrings and its own definition); ValencePV.lean:902 now uses `sum_orderOfVanishingAt_eq_finsum_orbit f (fun p : \u210d \u21a6 p)`.",
+   "file": "TauCeti/NumberTheory/ModularForms/Order/Orbits.lean",
+   "fix": "Delete `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit` and the docstring references at Orbits.lean:32-34 and 150, in this PR, per the no-obsolete-surface policy.",
+   "issue": "`sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit` is a thin `ofComplex` specialization of `sum_orderOfVanishingAt_eq_finsum_orbit`; this PR removes its last consumer (the `finsum_...` theorem now calls the general lemma with the identity map), leaving an unused parallel API.",
+   "line": 123
+  }
+ ],
+ "head_sha": "29e51575c0ed1ba80faf85711ea2ab4ca630c3ab",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2857,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "54b088b224337e49f24a890457116a27033b389e970c68ac5560cec8055b7d00",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T210507Z-2857-reuse-88a3e8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T21:05:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The corner dedup into `Rho.lean` is a genuine consolidation, but the new material re-derives several things this repo already provides: the elliptic-point norm lemma, BoundaryPairing's boundary classification, and the whole PV-from-eventual-identity proof (duplicated verbatim between the unit-norm and union assemblies). Two declarations are also left orphaned or fully subsumed.",
+ "transcript_blob": "ed17a393a79a9515c2e35986e315bb78dad959907cbfd19488d1dd696b608d59",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 179628,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 179628,
+  "cache_read_input_tokens": 3315230,
+  "inference_geo": "not_available",
+  "input_tokens": 46,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4424,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4424,
+    "cache_read_input_tokens": 191703,
+    "input_tokens": 2,
+    "output_tokens": 3002,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24653,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
