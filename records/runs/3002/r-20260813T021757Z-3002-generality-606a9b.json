@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.283816,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 246.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 55724,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 55724,
+    "cache_read_input_tokens": 431402,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2029,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2029,
+      "cache_read_input_tokens": 70194,
+      "input_tokens": 2,
+      "output_tokens": 6506,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19902,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c707d4cf4885b73396b7dbbd6d9514d1d53f3a92",
+ "cost_usd": 1.283816,
+ "dedupe_key": "TauCetiProject/TauCeti|3002|36ae41d216b85fc25065f4c5ce4e72c450b8d26d|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "diff_sha256": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "duration_s": 246.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 243-244 `h_mul_f_pow (\u03b9_h_mul_\u03b9_f_sub_mul R t) n`; line 227 shows `\u03b9_h_mul_\u03b9_f_sub_mul` uses only `t.lie_h_f_nsmul`. `e` occurs nowhere in the statement of `\u03b9_h_mul_\u03b9_f_pow`.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Replace `(t : IsSl2Triple h e f)` by the single hypothesis actually used, e.g. `(hhf : \u2045h, f\u2046 = -(2 \u2022 f))` for the `f` versions and `(hhe : \u2045h, e\u2046 = 2 \u2022 e)` for the `e` versions; a consumer holding a triple still applies them as `... t.lie_h_f_nsmul`.",
+   "issue": "`\u03b9_h_mul_\u03b9_f_pow` (242), `\u03b9_h_mul_\u03b9_e_pow` (247), `\u03b9_h_mul_dividedPower_\u03b9_f` (275) and `\u03b9_h_mul_dividedPower_\u03b9_e` (280) state facts about `h` and a single other element, but require a full `IsSl2Triple h e f`: the third element and two of the three bracket relations play no role in statement or proof (each goes through `\u03b9_h_mul_\u03b9_f_sub_mul`/`\u03b9_h_mul_\u03b9_e_sub_mul`, which use only `t.lie_h_f_nsmul` / `t.lie_h_e_nsmul`).",
+   "line": 242
+  },
+  {
+   "evidence": "`grep -n \"t\\.\" TauCeti/Algebra/Lie/Sl2/Associative.lean` yields only `t.lie_e_f` (216), `t.lie_h_e_nsmul` (221), `t.lie_h_f_nsmul` (227); `mathlib/Mathlib/Algebra/Lie/Sl2.lean:42` shows `h_ne_zero : h \u2260 0` is a field of the structure being demanded.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "State the three bridge lemmas from the single bracket hypothesis (`(hef : \u2045e, f\u2046 = h)`, `(hhe : \u2045h, e\u2046 = 2 \u2022 e)`, `(hhf : \u2045h, f\u2046 = -(2 \u2022 f))`) \u2014 each is then `rw [\u03b9_mul_sub_mul, h\u2026]` \u2014 and propagate the two needed bracket hypotheses to `\u03b9_e_mul_\u03b9_f_pow` (231), `\u03b9_f_mul_\u03b9_e_pow` (237), `\u03b9_e_mul_dividedPower_\u03b9_f` (262) and `\u03b9_f_mul_dividedPower_\u03b9_e` (269), matching the file's own stated design principle.",
+   "issue": "`h_ne_zero` is unused by all ten theorems of the `UniversalEnveloping`/`UniversalEnvelopingRat` sections, so the whole user-facing surface is inapplicable exactly where the module doc (lines 39-43) says it must be: images of a triple under a Lie hom, in a quotient, or after base change, where the Cartan image is not known nonzero but the three bracket relations still hold. The three bridge lemmas `\u03b9_e_mul_\u03b9_f_sub_mul` (214), `\u03b9_h_mul_\u03b9_e_sub_mul` (219), `\u03b9_h_mul_\u03b9_f_sub_mul` (224) each project exactly one field.",
+   "line": 214
+  }
+ ],
+ "head_sha": "36ae41d216b85fc25065f4c5ce4e72c450b8d26d",
+ "merge_base_sha": "1b82a1d75bec5cb389c44b61d8ecd50f603a1900",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3002,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c9524e4a36bbffb7761c4f79cfd03554b465c4ae046f82210618d29245d74c5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T021757Z-3002-generality-606a9b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T02:17:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The associative-algebra core sits at the right level, but every theorem in the two universal-enveloping sections demands a bundled `IsSl2Triple` while using at most two of its four fields; `h_ne_zero` is never used, and four `h`-only lemmas force an irrelevant third element to exist.",
+ "transcript_blob": "f294805edb1f9ec4cbf8fb52d882322bd484b3b20b07575135c6a5756729ce46",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 55724,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 55724,
+  "cache_read_input_tokens": 431402,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2029,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2029,
+    "cache_read_input_tokens": 70194,
+    "input_tokens": 2,
+    "output_tokens": 6506,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19902,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

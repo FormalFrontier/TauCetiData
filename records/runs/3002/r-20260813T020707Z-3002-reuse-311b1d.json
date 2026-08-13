@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6647414999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 249.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79079,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79079,
+    "cache_read_input_tokens": 741197,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3302,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3302,
+      "cache_read_input_tokens": 92276,
+      "input_tokens": 2,
+      "output_tokens": 5327,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19579,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c707d4cf4885b73396b7dbbd6d9514d1d53f3a92",
+ "cost_usd": 1.664741,
+ "dedupe_key": "TauCetiProject/TauCeti|3002|36ae41d216b85fc25065f4c5ce4e72c450b8d26d|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "diff_sha256": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "duration_s": 249.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `mul_dividedPower_of_commutator_eq_zsmul` hits only its definition (TauCeti/RingTheory/DividedPowers/Associative.lean:225) and lines 167 and 176 of the new file; `dividedPower n F = (n !: \u211a)\u207b\u00b9 \u2022 F ^ n` (dividedPower_def), and `mul_smul_comm`/`smul_mul_assoc` move that scalar out of both sides.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Prove them from the power versions: `rw [dividedPower_def, mul_smul_comm, h_mul_f_pow hhf, smul_mul_assoc]` (resp. `h_mul_e_pow hhe`). Since these are the only two consumers of the new `TauCeti.Associative.mul_dividedPower_of_commutator_eq_zsmul` (grep shows no other use), drop that lemma too or give it a real consumer.",
+   "issue": "`h_mul_f_dividedPower` (163-169) and `h_mul_e_dividedPower` (172-176) repeat verbatim the `hhf'`/`hhe'` + `hc` cast juggling and rewrite chain of `h_mul_f_pow` (l. 100-107) and `h_mul_e_pow` (l. 110-114), instead of transporting the already-proved power identity across the scalar `(n!)\u207b\u00b9`.",
+   "line": 163
+  },
+  {
+   "evidence": "TauCeti/RingTheory/DividedPowers/Associative.lean:147-151: `inv_factorial_mul_inv_factorial (m n) : (m ! : \u211a)\u207b\u00b9 * (n ! : \u211a)\u207b\u00b9 = (Nat.choose (m+n) m : \u211a) * ((m+n)! : \u211a)\u207b\u00b9`; at `m = 1` this is `(n !)\u207b\u00b9 = (n+1) * ((n+1)!)\u207b\u00b9`.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Make the arithmetic live once in `TauCeti/RingTheory/DividedPowers/Associative.lean` \u2014 e.g. state `inv_factorial_succ_nsmul` there as public divided-power arithmetic, proved from `inv_factorial_mul_inv_factorial 1 n` (`Nat.choose_one_right`) \u2014 and use it from `Sl2/Associative.lean`.",
+   "issue": "The private `inv_factorial_succ_nsmul` re-proves the rational identity `((n+1)!)\u207b\u00b9 * (n+1) = (n!)\u207b\u00b9`, which is the `m = 1` case of the existing private `TauCeti.Associative.inv_factorial_mul_inv_factorial` in the file this PR already edits.",
+   "line": 180
+  },
+  {
+   "evidence": "Bodies at lines 231-249 and 275-282 are literally `e_mul_f_pow (\u03b9_e_mul_\u03b9_f_sub_mul R t) (\u03b9_h_mul_\u03b9_f_sub_mul R t) n` etc.; the Main results block (lines 47-63) names only `\u03b9_e_mul_dividedPower_\u03b9_f` and `\u03b9_f_mul_dividedPower_\u03b9_e`; grep for these six names across `TauCeti/` finds no use outside their declarations.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Delete those six; keep the three hypothesis-supplying lemmas (`\u03b9_e_mul_\u03b9_f_sub_mul`, `\u03b9_h_mul_\u03b9_e_sub_mul`, `\u03b9_h_mul_\u03b9_f_sub_mul`) and the two documented roadmap-facing statements `\u03b9_e_mul_dividedPower_\u03b9_f` / `\u03b9_f_mul_dividedPower_\u03b9_e`. Future callers write `h_mul_f_pow (\u03b9_h_mul_\u03b9_f_sub_mul R t) n` directly.",
+   "issue": "Six of the eight `\u03b9`-level statements (`\u03b9_e_mul_\u03b9_f_pow`, `\u03b9_f_mul_\u03b9_e_pow`, `\u03b9_h_mul_\u03b9_f_pow`, `\u03b9_h_mul_\u03b9_e_pow`, `\u03b9_h_mul_dividedPower_\u03b9_f`, `\u03b9_h_mul_dividedPower_\u03b9_e`) are one-line applications of the ring-level theorems to the three hypothesis lemmas, have no in-repository consumer, and are not listed in the module's own Main results \u2014 a parallel enveloping-algebra API shadowing the general one.",
+   "line": 231
+  }
+ ],
+ "head_sha": "36ae41d216b85fc25065f4c5ce4e72c450b8d26d",
+ "merge_base_sha": "1b82a1d75bec5cb389c44b61d8ecd50f603a1900",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3002,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "db39bd25ddda56a8366775e1094db289c904339b94989716139fbe0ec935c613",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T020707Z-3002-reuse-311b1d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T02:07:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The core relations are genuinely new (no Mathlib or TauCeti equivalent found), but the divided-power Cartan lemmas re-derive the cast bookkeeping of their power versions, the factorial identity restates an existing private lemma, and the enveloping-algebra section adds six unused one-line restatements.",
+ "transcript_blob": "c2127168c973a7c7c6969199e0e57d142321b78d8f0b132affc67d1d4739a2f8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79079,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79079,
+  "cache_read_input_tokens": 741197,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3302,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3302,
+    "cache_read_input_tokens": 92276,
+    "input_tokens": 2,
+    "output_tokens": 5327,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19579,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

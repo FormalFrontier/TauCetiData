@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.532495,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 234.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73544,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73544,
+    "cache_read_input_tokens": 566088,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7538,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7538,
+      "cache_read_input_tokens": 82505,
+      "input_tokens": 2,
+      "output_tokens": 3420,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19716,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c707d4cf4885b73396b7dbbd6d9514d1d53f3a92",
+ "cost_usd": 1.532495,
+ "dedupe_key": "TauCetiProject/TauCeti|3002|36ae41d216b85fc25065f4c5ce4e72c450b8d26d|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "diff_sha256": "4309ca2052f3ab634f00f266aecb9f918f406a3b7ecec28b2b87c354c124df34",
+ "duration_s": 234.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Algebra/Lie/Sl2.lean:160 `lemma lie_h_pow_toEnd_f (n : \u2115)` (all `n`) vs :170 `lemma lie_e_pow_succ_toEnd_f (n : \u2115) : \u2045e, \u03c8 (n + 1)\u2046 = \u2026` \u2014 the same distinction, in the same subject area, and the module doc of this PR cites both.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Add `_succ` to the eight successor-only names: `e_mul_f_pow_succ`, `f_mul_e_pow_succ`, `e_mul_f_dividedPower_succ`, `f_mul_e_dividedPower_succ`, `\u03b9_e_mul_\u03b9_f_pow_succ`, `\u03b9_f_mul_\u03b9_e_pow_succ`, `\u03b9_e_mul_dividedPower_succ_\u03b9_f`, `\u03b9_f_mul_dividedPower_succ_\u03b9_e`.",
+   "issue": "`e_mul_f_pow`, `f_mul_e_pow` (l.148), `e_mul_f_dividedPower` (l.192), `f_mul_e_dividedPower` (l.198), `\u03b9_e_mul_\u03b9_f_pow` (l.231), `\u03b9_f_mul_\u03b9_e_pow` (l.237), `\u03b9_e_mul_dividedPower_\u03b9_f` (l.262) and `\u03b9_f_mul_dividedPower_\u03b9_e` (l.269) are all stated only at index `n + 1`, but carry the same name shape as the siblings `h_mul_f_pow`/`h_mul_e_pow`/`h_mul_f_dividedPower`/`h_mul_e_dividedPower`/`\u03b9_h_mul_\u03b9_f_pow`/`\u03b9_h_mul_dividedPower_\u03b9_f`, which genuinely hold for every `n`. The name advertises a stronger indexing than the statement has.",
+   "line": 114
+  },
+  {
+   "evidence": "Mathlib/Algebra/Group/Basic.lean:219 `lemma mul_pow (a b : M) : \u2200 n, (a * b) ^ n = a ^ n * b ^ n`; Mathlib/Algebra/Group/Commute/Defs.lean:167 `lemma mul_pow (h : Commute a b)`; TauCeti/RingTheory/DividedPowers/Associative.lean:155 `theorem mul_dividedPower (m n : \u2115) (x : A)`.",
+   "file": "TauCeti/RingTheory/DividedPowers/Associative.lean",
+   "fix": "Spell the conclusion out so the prefix cannot be misread, e.g. `mul_pow_eq_pow_mul_add_zsmul` and `mul_dividedPower_eq_dividedPower_mul_add_zsmul` (keeping an `_of_commutator_eq_zsmul` clause only if still needed for disambiguation).",
+   "issue": "`mul_pow_of_commutator_eq_zsmul` reads as a hypothesised form of the root lemma `mul_pow : (a * b) ^ n = a ^ n * b ^ n` \u2014 exactly the shape `Commute.mul_pow` already occupies \u2014 but proves `x * y ^ n = y ^ n * x + (n * c) \u2022 y ^ n`. Same problem at l.225: `mul_dividedPower_of_commutator_eq_zsmul` reuses the prefix `mul_dividedPower`, which at l.155 of this same file already means `dividedPower m x * dividedPower n x = choose (m+n) m \u2022 dividedPower (m+n) x`.",
+   "line": 63
+  },
+  {
+   "evidence": "All eight statements have the form `_ * dividedPower n _ = \u2026`; compare l.164 `H * dividedPower n F = \u2026` with l.276 `\u03b9 \u211a h * dividedPower n (\u03b9 \u211a f) = \u2026`.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Use the term order throughout: `h_mul_dividedPower_f`, `h_mul_dividedPower_e`, `e_mul_dividedPower_f`, `f_mul_dividedPower_e`, matching the `\u03b9_` group.",
+   "issue": "Two word orders for the identical term shape `X * dividedPower n Y` in one file: `h_mul_f_dividedPower` (l.163), `h_mul_e_dividedPower` (l.172), `e_mul_f_dividedPower` (l.192), `f_mul_e_dividedPower` (l.198) suffix the operation, while `\u03b9_h_mul_dividedPower_\u03b9_f` (l.275), `\u03b9_h_mul_dividedPower_\u03b9_e` (l.280), `\u03b9_e_mul_dividedPower_\u03b9_f` (l.262), `\u03b9_f_mul_dividedPower_\u03b9_e` (l.269) infix it. The names are not guessable from either half of the file.",
+   "line": 163
+  }
+ ],
+ "head_sha": "36ae41d216b85fc25065f4c5ce4e72c450b8d26d",
+ "merge_base_sha": "1b82a1d75bec5cb389c44b61d8ecd50f603a1900",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3002,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5c3b7fb6804c676805edb2b211ac8020d7e4bd69b22f7b0e2f09cfa40c19ae0c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T022504Z-3002-naming-4d3f89",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T02:25:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The successor-indexed relations are named as if they held for every exponent, contrary to the `pow_succ` convention Mathlib's own sl\u2082 file uses (`lie_e_pow_succ_toEnd_f` vs `lie_h_pow_toEnd_f`); and two new general lemmas reuse the prefixes `mul_pow` and `mul_dividedPower`, which already denote different statements in Mathlib root and in the same TauCeti namespace.",
+ "transcript_blob": "4260959795a8c266e8230a3371f5570f4b74e5e4957798d2c9511b4767a5a314",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73544,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73544,
+  "cache_read_input_tokens": 566088,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7538,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7538,
+    "cache_read_input_tokens": 82505,
+    "input_tokens": 2,
+    "output_tokens": 3420,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19716,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
