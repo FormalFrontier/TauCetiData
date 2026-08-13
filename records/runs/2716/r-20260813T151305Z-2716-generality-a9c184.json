@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8759374999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 323.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 82593,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 82593,
+    "cache_read_input_tokens": 847727,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3735,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3735,
+      "cache_read_input_tokens": 95357,
+      "input_tokens": 2,
+      "output_tokens": 1960,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24413,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dabf6a40d6801d22c3ff53eed7ba507573c1b4df",
+ "cost_usd": 1.875937,
+ "dedupe_key": "TauCetiProject/TauCeti|2716|c8be7d697afd8451be6f6d7e2a4c5cdf5157d33a|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "b2d0af970f9bcd3a4c43488c451c6f0f46485874ba4e74c17d6c5e5b454b59da",
+ "diff_sha256": "b2d0af970f9bcd3a4c43488c451c6f0f46485874ba4e74c17d6c5e5b454b59da",
+ "duration_s": 323.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Morse.lean:193-198 uses only `isDiscrete_iff_nhdsNE`, `inf_principal_eq_bot` and the isolation lemma; Morse.lean:209-215 uses only `ContinuousOn.preimage_isClosed_of_isClosed`, `IsCompact.of_isClosed_subset` and `IsCompact.finite`. The isolation lemma itself (Morse.lean:184-188) is `HasFDerivAt.eventually_ne` (Mathlib/Analysis/Calculus/FDeriv/Equiv.lean:355), which is stated for an arbitrary map. Mathlib has no such zero-set lemma (grep for `IsDiscrete` under Mathlib/Analysis/Calculus returns nothing).",
+   "file": "TauCeti/Analysis/Calculus/Morse.lean",
+   "fix": "Prove the general statements for `g : E \u2192 F` over a nontrivially normed field in a generic file (next to `SecondDerivative.lean`/`Bilinear.lean`, which the PR already split off for exactly this reason), e.g. `theorem isDiscrete_setOf_eq_zero {g : E \u2192 F} {s : Set E} (h : \u2200 x \u2208 s, g x = 0 \u2192 \u2203 L : E \u2243L[\ud835\udd5c] F, HasFDerivAt g L x) : IsDiscrete {x \u2208 s | g x = 0}` and `theorem IsCompact.finite_setOf_eq_zero (hK : IsCompact K) (hcont : ContinuousOn g K) (h : ...) : {x \u2208 K | g x = 0}.Finite`, then derive the two Morse corollaries from them in three lines each via `IsNondegenerateCriticalPoint.eventually_fderiv_ne_zero`.",
+   "issue": "`HasNondegenerateCriticalPointsOn.isDiscrete_setOf_fderiv_eq_zero` (191) and `.finite_setOf_fderiv_eq_zero` (205) are stated only for the map `fderiv \u211d f`, but their proofs use nothing about second derivatives, about `f` being real-valued, or about `\u211d`: the only analytic input is `HasFDerivAt.eventually_ne` applied to the map whose zero set is in question. This is the general fact 'the zero set of a map that has an invertible (indeed merely antilipschitz) derivative at each of its zeros is discrete, hence finite on a compact set where the map is continuous', under-generalized to one instance.",
+   "line": 191
+  },
+  {
+   "evidence": "ParametricFDeriv.lean:137-138,147-148 `((hF.fderiv_right (m := 1) le_minSmoothness).differentiableAt one_ne_zero).hasFDerivAt` is verbatim the body of `ContDiffAt.hasFDerivAt_fderiv` (SecondDerivative.lean:44-47); `le_minSmoothness` is Mathlib/Analysis/Calculus/FDeriv/Symmetric.lean:499.",
+   "file": "TauCeti/Analysis/Calculus/ParametricFDeriv.lean",
+   "fix": "Replace ParametricFDeriv.lean:137-138, 147-148 and 160-161 with `ContDiffAt.hasFDerivAt_fderiv hF le_minSmoothness` (and `.differentiableAt` for line 160); `le_minSmoothness : n \u2264 minSmoothness \ud835\udd5c n` supplies the new lemma's `hn : 2 \u2264 n`.",
+   "issue": "`SecondDerivative.lean` states its purpose as making the `ContDiffAt \u2192 HasFDerivAt (fderiv \ud835\udd5c g)` identification 'once rather than at each use', but the three existing in-repo copies of that exact one-liner are left inlined, so the general lemma has no user and the special-case derivation is duplicated.",
+   "line": 137
+  }
+ ],
+ "head_sha": "c8be7d697afd8451be6f6d7e2a4c5cdf5157d33a",
+ "merge_base_sha": "dabf6a40d6801d22c3ff53eed7ba507573c1b4df",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2716,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "492ffcd6fe5f22942942f0bd40c4a20fd07163c54d1223a1f69352e539b56dd5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T151305Z-2716-generality-a9c184",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T15:13:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The Banach-generality nondegeneracy definition and its consequences sit at the right level, but the discreteness/finiteness pair is stated only for `g = fderiv \u211d f` although its proof uses nothing about derivatives or real-valuedness, and the new general `ContDiffAt.hasFDerivAt_fderiv` is not adopted at the three existing in-repo sites that inline exactly it.",
+ "transcript_blob": "c4d2ce4efa0af3b82f82cb93efa5e3c3ed587ccd12c968663790d8f4beea8c77",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 82593,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 82593,
+  "cache_read_input_tokens": 847727,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3735,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3735,
+    "cache_read_input_tokens": 95357,
+    "input_tokens": 2,
+    "output_tokens": 1960,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24413,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
