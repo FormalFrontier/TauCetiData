@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5027710000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 224.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 61688,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 61688,
+    "cache_read_input_tokens": 904666,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 208,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 208,
+      "cache_read_input_tokens": 77979,
+      "input_tokens": 2,
+      "output_tokens": 1620,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17026,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dabf6a40d6801d22c3ff53eed7ba507573c1b4df",
+ "cost_usd": 1.502771,
+ "dedupe_key": "TauCetiProject/TauCeti|3098|1b3fea1d7d57362da625f2acfbfde5f8e1003cea|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "42df3835a0c6d14d32f7e701a19c6df83935f8fa7ea8c0ed8caa63f6443602c4",
+ "diff_sha256": "42df3835a0c6d14d32f7e701a19c6df83935f8fa7ea8c0ed8caa63f6443602c4",
+ "duration_s": 224.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"pbwMonomial_mem_span_basisPBWMonomials\" .` in the code checkout returns only the declaration at line 64; no other occurrence in the repo.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Ordered.lean",
+   "fix": "Delete the lemma; the one call site pattern it would serve already writes `Submodule.subset_span` directly (line 78).",
+   "issue": "`pbwMonomial_mem_span_basisPBWMonomials` is unused and is just an inlined `Submodule.subset_span \u27e8word, le_rfl, rfl\u27e9`.",
+   "line": 64
+  },
+  {
+   "evidence": "TauCeti's own `TauCeti/Algebra/WordFiltration.lean:113` uses `p.comap (LinearMap.mulLeft R (f m))` for exactly this step; `Submodule.mul_mem_mul` is Mathlib/Algebra/Algebra/Operations.lean:219 and `Submodule.span_mul_span` is :442.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Ordered.lean",
+   "fix": "Either use the `comap (LinearMap.mulLeft R (\u03b9 (b i)))` idiom \u2014 `Submodule.span_le.mpr` on `basisPBWMonomials R L b word.length \u2286 \u2191((span R (basisPBWMonomials R L b (word.length+1))).comap (LinearMap.mulLeft R _))`, applied to `ih` \u2014 or `Submodule.mul_mem_mul (Submodule.subset_span rfl) ih` followed by `Submodule.span_mul_span` and `Submodule.span_mono`.",
+   "issue": "The 14-line `Submodule.span_induction` over `ih` hand-rolls \"multiply a span membership by a fixed element\", which named API already gives.",
+   "line": 86
+  },
+  {
+   "evidence": "`pbwFiltration_zero : pbwFiltration R L 0 = 1` at TauCeti/Algebra/Lie/UniversalEnveloping/Filtration.lean:124; `Submodule.one_le : (1 : Submodule R A) \u2264 P \u2194 (1 : A) \u2208 P` at Mathlib/Algebra/Algebra/Operations.lean:99; `pbwMonomial_nil` at PBW/LeadingTerm.lean:104.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Ordered.lean",
+   "fix": "Replace with `rw [pbwFiltration_zero, Submodule.one_le]` and close by `Submodule.subset_span` on `pbwMonomial_mem_orderedPBWMonomials R L b (by simp) le_rfl` rewritten by `pbwMonomial_nil`.",
+   "issue": "The `zero` case routes through `span_basisPBWMonomials_eq_pbwFiltration \u2026 0` and re-derives `word = []`, duplicating work that the located degree-zero lemma settles directly (and repeating the empty-word argument already done at lines 189-193).",
+   "line": 168
+  }
+ ],
+ "head_sha": "1b3fea1d7d57362da625f2acfbfde5f8e1003cea",
+ "merge_base_sha": "dabf6a40d6801d22c3ff53eed7ba507573c1b4df",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3098,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4661b4f988eaa1acf6e92212839ee9ac35b1ff84c0bc85e8cc170e23fc4c8bd7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T142701Z-3098-reuse-e68805",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T14:27:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The main theorem is new \u2014 no PBW spanning result exists in Mathlib or TauCeti \u2014 but the file carries a dead private lemma and two proof blocks that re-derive located library idioms.",
+ "transcript_blob": "5902b69986313f812586cc00d4bc5ef919292561a01464ec48b3fb9b45a04d68",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61688,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 61688,
+  "cache_read_input_tokens": 904666,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 208,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 208,
+    "cache_read_input_tokens": 77979,
+    "input_tokens": 2,
+    "output_tokens": 1620,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17026,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
