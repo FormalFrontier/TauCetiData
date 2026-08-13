@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4229129999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 230.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69653,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69653,
+    "cache_read_input_tokens": 518224,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5889,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5889,
+      "cache_read_input_tokens": 80263,
+      "input_tokens": 2,
+      "output_tokens": 5499,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18138,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "cost_usd": 1.422913,
+ "dedupe_key": "TauCetiProject/TauCeti|3005|6881efa738f0cf51acd5e6cc68d51a0036707fae|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "29161ef3faff788d72f683cb9310b7a34662947682d01e338ff13a3449253289",
+ "diff_sha256": "29161ef3faff788d72f683cb9310b7a34662947682d01e338ff13a3449253289",
+ "duration_s": 230.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 138 `have hCM : \u2200 i j, CM (\u03c3 i) (\u03c3 j) = CM i j := fun i j => congrFun\u2082 h\u03c3 i j` is the only use of `h\u03c3`; it feeds the `simpa only [Function.comp_apply, hCM]` at lines 144-150, which without it would land on `CM.submatrix \u03c3 \u03c3 i j` by `rfl`. In-repo precedent for the general shape: `TauCeti/LinearAlgebra/RootSystem/FiniteType/Basic.lean:201` `theorem submatrix {C : Type*} [Fintype C] (h : IsFiniteType A) {e : C \u2192 B} (he : Function.Injective e) : IsFiniteType (A.submatrix e e)`.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Automorphism.lean",
+   "fix": "State `theorem IsSerreSystem.submatrix {B' : Type*} [DecidableEq B'] {f : B' \u2192 B} (hf : Function.Injective f) (h : IsSerreSystem R CM H E F) : IsSerreSystem R (CM.submatrix f f) (H \u2218 f) (E \u2218 f) (F \u2218 f)` \u2014 the current proof body with `hCM` deleted, `lie_E_F_of_ne` using `hf` \u2014 and keep `perm h h\u03c3 := h\u03c3 \u25b8 h.submatrix \u03c3.injective` as the one-line corollary. Nothing at the use sites changes: in `IsSerreSystem R CM ...` the matrix is a parameter, not a type index, so `h\u03c3 \u25b8` rewrites only the Prop and `serreDiagramHom`/`serreLift_comp_serreDiagramAut` still typecheck unchanged.",
+   "issue": "`IsSerreSystem.perm` assumes `CM.submatrix \u03c3 \u03c3 = CM` and restricts to `\u03c3 : Equiv.Perm B`, but the hypothesis is used only to rewrite the conclusion's matrix back to `CM`. The natural statement needs neither: any injective reindexing `f : B' \u2192 B` sends a Serre system for `CM` to one for `CM.submatrix f f`. As stated, a downstream comparison of presentations for `CM` and `CM.submatrix e e` (relabelled Dynkin diagrams, the Layer 9 isomorphism theorem) cannot reuse this lemma and must re-prove all seven fields.",
+   "line": 136
+  }
+ ],
+ "head_sha": "6881efa738f0cf51acd5e6cc68d51a0036707fae",
+ "merge_base_sha": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3005,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "647cf116d5c0b708f2e99919fb68edb10de16ab3e15b21e3f4c20bc3ebbda162",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T043115Z-3005-generality-dfb783",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T04:31:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The Serre-system stability lemma `IsSerreSystem.perm` carries an invariance hypothesis that is used only to rewrite the conclusion, and is restricted to `Equiv.Perm B`; the hypothesis-free `submatrix` form is strictly more general with the same proof and matches the repo's own `IsFiniteType.submatrix`. Everything else (the `negSwap` symmetry, the matrix helper lemmas, the automorphism constructions and their group law) sits at the right level.",
+ "transcript_blob": "9e0d2dfd553d7165cc6406c1aae19cb585ca62934a1b8c2d223531811df54c7f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69653,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69653,
+  "cache_read_input_tokens": 518224,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5889,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5889,
+    "cache_read_input_tokens": 80263,
+    "input_tokens": 2,
+    "output_tokens": 5499,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18138,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

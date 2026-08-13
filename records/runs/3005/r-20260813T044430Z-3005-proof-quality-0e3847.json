@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.210905,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 171.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62226,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62226,
+    "cache_read_input_tokens": 472036,
+    "inference_geo": "not_available",
+    "input_tokens": 17,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3807,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3807,
+      "cache_read_input_tokens": 74918,
+      "input_tokens": 2,
+      "output_tokens": 3690,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13544,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "cost_usd": 1.210905,
+ "dedupe_key": "TauCetiProject/TauCeti|3005|6881efa738f0cf51acd5e6cc68d51a0036707fae|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "29161ef3faff788d72f683cb9310b7a34662947682d01e338ff13a3449253289",
+ "diff_sha256": "29161ef3faff788d72f683cb9310b7a34662947682d01e338ff13a3449253289",
+ "duration_s": 171.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n 'congrArg (fun f' gives 218, 221, 260, 270, 283, 320, 323, 377, 389; `grep -c 'refine LieEquiv.ext fun x => ?_'` gives 5. `LieEquiv.ext` and `LieEquiv.coe_coe` exist at Mathlib/Algebra/Lie/Basic.lean:574 and :550; `DFunLike.congr_fun` is used in Mathlib/Algebra/Lie/Derivation/Basic.lean:98.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Automorphism.lean",
+   "fix": "Add one private lemma `serre_equiv_ext {e\u2081 e\u2082 : Matrix.ToLieAlgebra R CM \u2243\u2097\u2045R\u2046 L} (hH hE hF) : e\u2081 = e\u2082 := LieEquiv.ext fun x => DFunLike.congr_fun (serre_hom_ext (g\u2081 := e\u2081.toLieHom) (g\u2082 := e\u2082.toLieHom) hH hE hF) x` (`LieEquiv.coe_coe` is `rfl` and `@[simp]`, Mathlib/Algebra/Lie/Basic.lean:550), then each of the five theorems becomes one line `serre_equiv_ext (fun i => by simp) (fun i => by simp) fun i => by simp`. Also replace the explicitly type-ascribed `congrArg (fun f : \u2026 => f x)` by `DFunLike.congr_fun \u2026 x` throughout.",
+   "issue": "The same argument \u2014 `LieEquiv.ext fun x => ?_`, then a `have h : _.toLieHom = _.toLieHom := serre_hom_ext \u2026`, then `congrArg (fun f : Matrix.ToLieAlgebra R CM \u2192\u2097\u2045R\u2046 Matrix.ToLieAlgebra R CM => f x) h` \u2014 is written out verbatim at lines 255-260, 266-270, 277-283, 370-377 and 385-389, with the same `congrArg` idiom again at 218, 221, 320, 323 (9 hits of `congrArg (fun f`). The reusable fact it hides is that two `LieEquiv`s of the presented algebra agreeing on the generators are equal.",
+   "line": 255
+  },
+  {
+   "evidence": "`Equiv.symm_symm (e) : e.symm.symm = e := rfl` and the `EquivLike` instance setting `inv f := f.invFun` are at Mathlib/Algebra/Lie/Basic.lean:604 and :538; `serreDiagramAut` is defined by the structure literal at Automorphism.lean:213-222 with `invFun := serreDiagramHom R CM (submatrix_perm_symm h\u03c3)`.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Automorphism.lean",
+   "fix": "For (a), state the composite in both orders as its own private lemma proved directly by `serre_hom_ext` (`serreDiagramHom_symm_comp : (serreDiagramHom R CM h\u03c3).comp (serreDiagramHom R CM (submatrix_perm_symm h\u03c3)) = LieHom.id`) so `right_inv` never needs `\u03c3.symm.symm \u2261 \u03c3`. For (b), derive it from `serreChevalleyHom_comp` (or from `serreChevalleyInvolution_symm` plus `LieEquiv.symm_apply_apply`) instead of the `left_inv` field. For (c), keep the one-line proofs but add a short comment noting they hold because `serreDiagramAut`/`serreChevalleyInvolution` are structure literals whose `toLieHom` is the `serreLift`.",
+   "issue": "Undocumented reliance on definitional equality across wrappers. (a) Line 222 applies `serreDiagramHom_comp R CM (submatrix_perm_symm h\u03c3) h\u03c3`, whose second argument is expected at type `CM.submatrix \u03c3.symm.symm \u03c3.symm.symm = CM`; this only elaborates because `Equiv.symm_symm` is `rfl`, and the resulting `serreDiagramHom` at index `\u03c3.symm.symm` must then be defeq to the one at `\u03c3`. (b) Line 358, `serreChevalleyInvolution_involutive := fun x => (\u2026).left_inv x`, reaches into the raw `left_inv` structure field and needs `invFun` to be defeq to `\u21d1toLieHom`. (c) The six generator-value lemmas (227, 233, 239, 329, 335, 341) are `serreLift_serreH _ i` etc., which typecheck only by unfolding the structure literal through the `LieEquiv \u2192 LieHom \u2192 FunLike` coercions. None carries a comment.",
+   "line": 220
+  }
+ ],
+ "head_sha": "6881efa738f0cf51acd5e6cc68d51a0036707fae",
+ "merge_base_sha": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3005,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2ce86fc8f870323bb148902699e7366d44f926245e30547cab33cd8bd9fee564",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T044430Z-3005-proof-quality-0e3847",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T04:44:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematical proofs (`IsSerreSystem.perm`, `.negSwap`, the `submatrix_perm_*` lemmas) are robust and readable, but the equivalence-level results hand-roll the same nine-line extensionality argument nine times instead of factoring it into one lemma, and several steps close only through undocumented definitional equalities across the `LieEquiv`/`LieHom` wrappers.",
+ "transcript_blob": "3ae95e747eb1b93e68448bda00c4e7f59a5011a0e8b4e5cb626b8e33ae1131ae",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62226,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62226,
+  "cache_read_input_tokens": 472036,
+  "inference_geo": "not_available",
+  "input_tokens": 17,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3807,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3807,
+    "cache_read_input_tokens": 74918,
+    "input_tokens": 2,
+    "output_tokens": 3690,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13544,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
