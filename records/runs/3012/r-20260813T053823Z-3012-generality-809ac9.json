@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6736815,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 284.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 74304,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 74304,
+    "cache_read_input_tokens": 720909,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2296,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2296,
+      "cache_read_input_tokens": 88507,
+      "input_tokens": 2,
+      "output_tokens": 3477,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22483,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08789e55dff0e4587be5c3eba7fbfaaaecd06f06",
+ "cost_usd": 1.673682,
+ "dedupe_key": "TauCetiProject/TauCeti|3012|93ff551c59f49ef9b038923a1b736107d467e382|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "diff_sha256": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "duration_s": 284.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Algebra/Coalgebra/Comodule/PointsAction.lean:57 `variable ... [Semiring H] [Algebra R H] [Coalgebra R H]` and :66 `noncomputable def endOfPoint (g : H \u2192\u2090[R] A)`; :88 `lemma rTensor_comp_endOfPoint (\u03c6 : A \u2192\u2090[R] A') (g : H \u2192\u2090[R] A)` and :119 `lemma baseChange_comp_endOfPoint (f : Hom R H V W) (g : H \u2192\u2090[R] A)` both use bare `AlgHom`s. The new lemma at PointsAction.lean:80-83 instead takes `g : WithConv (H\u2082 \u2192\u2090[R] A)` and writes `g.ofConv` / `(AlgHom.mapDomain \u03c6 g).ofConv` on the two sides.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/PointsAction.lean",
+   "fix": "State it for a bare point: `theorem endOfPoint_corestrict (\u03c6 : H\u2081 \u2192\u2090c[R] H\u2082) (g : H\u2082 \u2192\u2090[R] A) : (letI : Comodule R H\u2082 V := Corestrict \u03c6.toCoalgHom; endOfPoint V g) = endOfPoint V (g.comp (\u03c6 : H\u2081 \u2192\u2090[R] H\u2082))`, and let `pointsAction_corestrict` chain through it (`(AlgHom.mapDomain \u03c6 g).ofConv` is defeq to `g.ofConv.comp \u03c6`, since `mapDomain` is `@[expose]` with `toFun f := toConv (f.ofConv.comp \u03c6)`). In that form it belongs next to the other `endOfPoint` functoriality lemmas in TauCeti/Algebra/Coalgebra/Comodule/PointsAction.lean, which needs no Hopf structure.",
+   "issue": "`endOfPoint_corestrict` is a statement about `Comodule.endOfPoint`, which takes a bare point `g : H \u2192\u2090[R] A` and needs only `[Algebra R H] [Coalgebra R H]`; the existing `endOfPoint` functoriality API (`rTensor_comp_endOfPoint`, `baseChange_comp_endOfPoint` in TauCeti/Algebra/Coalgebra/Comodule/PointsAction.lean) is uniformly stated with bare `AlgHom`s. Phrasing it via `WithConv`/`AlgHom.mapDomain` states a coalgebra-level fact at the convolution-group layer, so a caller holding a plain `H\u2082 \u2192\u2090[R] A` must round-trip through `toConv`/`ofConv` to use it.",
+   "line": 80
+  }
+ ],
+ "head_sha": "93ff551c59f49ef9b038923a1b736107d467e382",
+ "merge_base_sha": "8bd44eb529b0360d05dc00de982873dda8077197",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3012,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "21e49e03a6f1cc5b90b38a8ee2631d8658b96f19be334c298262b180b6af3184",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T053823Z-3012-generality-809ac9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T05:38:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The Jordan-decomposition naturality statements and IsSemisimplePoint.mapDomain sit at the natural level, with no unused or over-strong assumptions. Only endOfPoint_corestrict is stated one layer too high: it is a fact about endOfPoint (bare AlgHom, coalgebra-level) but is phrased through WithConv/mapDomain.",
+ "transcript_blob": "288002983152c7d57d41bdf8f1e760c6f6bf27b9a88e1bd6bd71295323cc0d74",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 74304,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 74304,
+  "cache_read_input_tokens": 720909,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2296,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2296,
+    "cache_read_input_tokens": 88507,
+    "input_tokens": 2,
+    "output_tokens": 3477,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22483,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

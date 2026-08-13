@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.0746995,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 162.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 60090,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 60090,
+    "cache_read_input_tokens": 275255,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4783,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4783,
+      "cache_read_input_tokens": 71806,
+      "input_tokens": 1,
+      "output_tokens": 4815,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13117,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08789e55dff0e4587be5c3eba7fbfaaaecd06f06",
+ "cost_usd": 1.074699,
+ "dedupe_key": "TauCetiProject/TauCeti|3012|93ff551c59f49ef9b038923a1b736107d467e382|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "diff_sha256": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "duration_s": 162.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Corestrict.lean`: `corestrictCoact f := TensorProduct.map LinearMap.id f.toLinearMap \u2218\u2097 coact`; `Hopf/Map.lean:79-80`: `mapDomain_apply ... = toConv (f.ofConv.comp (\u03c6 : H\u2081 \u2192\u2090[R] H\u2082))`; `PointsAction.lean:86-90` leaves exactly that goal after `rw [LinearMap.lTensor_comp, LinearMap.comp_apply]`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/PointsAction.lean",
+   "fix": "Rewrite explicitly instead: add/use a lemma identifying `(\u03c6 : H\u2081 \u2192\u2090[R] H\u2082).toLinearMap` with `\u03c6.toCoalgHom.toLinearMap`, and turn `lTensor` into `TensorProduct.map LinearMap.id` (or vice versa) by a named rewrite, so no step depends on unfolding. If a `rfl` is genuinely unavoidable, document exactly which defeq it uses.",
+   "issue": "`endOfPoint_corestrict` closes with a bare, uncommented `rfl`. The residual goal is `TensorProduct.map LinearMap.id \u03c6.toCoalgHom.toLinearMap x = LinearMap.lTensor V (\u2191\u03c6 : H\u2081 \u2192\u2090[R] H\u2082).toLinearMap x`: it holds only by delta-unfolding `LinearMap.lTensor` to `TensorProduct.map LinearMap.id` and by the accidental agreement of two coercion paths out of the same `BialgHom` (`toCoalgHom.toLinearMap` vs `toAlgHom.toLinearMap`), plus a `toConv`/`ofConv` round trip.",
+   "line": 90
+  },
+  {
+   "evidence": "`SemisimplePoint.lean:95-97` and `Naturality.lean:74-77`; the `letI`-in-statement form is `PointsAction.lean:101-104`. `Finite/Corestrict.lean` already provides explicit bridging lemmas (`corestrict_obj_coact`, `corestrict_obj_coe`), so the pattern of naming these identifications is established.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/SemisimplePoint.lean",
+   "fix": "Add a bundled-object form of the compatibility next to the FG corestriction API, e.g. `Comodule.pointsAction ((FGComoduleCat.corestrict f).obj M) g = Comodule.pointsAction M (AlgHom.mapDomain \u03c6 g)`, and rewrite with that at both sites instead of relying on `exact`-level defeq through the `letI` statement.",
+   "issue": "After `rw [\u2190 Comodule.pointsAction_corestrict (V := M) \u03c6 g]` the goal carries the `letI`-bound `Comodule.Corestrict \u03c6.toCoalgHom` instance on the bare carrier `\u2191M`, while `hg ((FGComoduleCat.corestrict \u03c6.toCoalgHom).obj M)` supplies the instance packaged inside the bundled object; `exact` silently identifies them by defeq, with no lemma and no comment. Same pattern at `JordanDecomposition/Naturality.lean:75-77` (`isUnipotent_pointsAction_unipotentPart ... ((FGComoduleCat.corestrict \u03c6.toCoalgHom).obj M)`).",
+   "line": 97
+  },
+  {
+   "evidence": "`Naturality.lean:85-88, 94-97`; `AlgHom.mapDomain_apply` is `rfl` (`Hopf/Map.lean:79-80`), so the two forms are the same term written unfolded.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition/Naturality.lean",
+   "fix": "State both with `AlgHom.mapDomain \u03c6 g` / `AlgHom.mapDomain \u03c6 (semisimplePart k H\u2082 K g)`; the proof then reduces to `congrArg Prod.fst (jordanDecomposition_mapDomain \u03c6 g)` (resp. `Prod.snd`) modulo `jordanDecomposition_fst`/`_snd`, with no unfolding step.",
+   "issue": "`semisimplePart_mapDomain` and `unipotentPart_mapDomain` (line 94) state the point as `toConv (g.ofConv.comp (\u03c6 : H\u2081 \u2192\u2090[k] H\u2082))` rather than `AlgHom.mapDomain \u03c6 g`, so the proofs need `simpa only [..., AlgHom.mapDomain_apply]` purely to unfold the definition the lemma names.",
+   "line": 85
+  }
+ ],
+ "head_sha": "93ff551c59f49ef9b038923a1b736107d467e382",
+ "merge_base_sha": "8bd44eb529b0360d05dc00de982873dda8077197",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3012,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9e16c9a63ad8c080297214a1e86b6efb4bcc18b758c2f3a112afe82cd70f3f85",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T055033Z-3012-proof-quality-5a8749",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T05:50:33Z",
+ "submitted_by": "kim-em",
+ "summary": "Three of the new proofs are closed by undocumented definitional equality across coercion paths and comodule-instance wrappers: a bare `rfl` in `endOfPoint_corestrict`, and two `exact`s that silently identify a `letI`-bound `Corestrict` instance with the instance carried by the bundled `FGComoduleCat` object. The two component lemmas also state `mapDomain` in unfolded form, forcing a `simpa only` bridge.",
+ "transcript_blob": "d56daea6327b8996248709d8a283de9f00fbda5fa99e39d4a01134938946c6e4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 60090,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 60090,
+  "cache_read_input_tokens": 275255,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4783,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4783,
+    "cache_read_input_tokens": 71806,
+    "input_tokens": 1,
+    "output_tokens": 4815,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13117,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

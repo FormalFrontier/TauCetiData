@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0654274999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 266.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85086,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85086,
+    "cache_read_input_tokens": 1381583,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 522,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 522,
+      "cache_read_input_tokens": 101063,
+      "input_tokens": 2,
+      "output_tokens": 1808,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20605,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "08789e55dff0e4587be5c3eba7fbfaaaecd06f06",
+ "cost_usd": 2.065427,
+ "dedupe_key": "TauCetiProject/TauCeti|3012|93ff551c59f49ef9b038923a1b736107d467e382|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "diff_sha256": "37e3fc6469a07a3e0afe8d8723fe2b6c544a2cbfde45e151fd51c1d753024162",
+ "duration_s": 266.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Repo convention: `TauCeti/Algebra/AlgebraicGroup/Trivial.lean:116-121` has `@[simp] theorem pointsMulEquiv_mapValue ... (AlgHom.mapValue (H := R) \u03c6 f) = ...` stated in bundled form even though `AlgHom.mapValue_apply` is `@[simp]` (`FunctorOfPoints.lean:149`); likewise `AdditiveGroup/Frobenius.lean:155`, `BaseChange/Naturality.lean:62`, `Hopf/Map.lean:110` (`mapDomain_comp`) and `:169` (`mapValue_mapDomain`). Only these two new lemmas unfold the functorial map away.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition/Naturality.lean",
+   "fix": "Restate both sides with `AlgHom.mapDomain \u03c6`, matching `jordanDecomposition_mapDomain` (line 64) and `IsSemisimplePoint.mapDomain`; keep `@[simp]` as the repo does for `pointsMulEquiv_mapValue`.",
+   "issue": "`semisimplePart_mapDomain` never mentions `AlgHom.mapDomain`: its statement is `semisimplePart k H\u2081 K (toConv (g.ofConv.comp \u2191\u03c6)) = toConv ((semisimplePart k H\u2082 K g).ofConv.comp \u2191\u03c6)`. The canonical form `semisimplePart k H\u2081 K (AlgHom.mapDomain \u03c6 g) = AlgHom.mapDomain \u03c6 (semisimplePart k H\u2082 K g)` is absent, so `rw [semisimplePart_mapDomain]` fails against the form every producer of these terms writes, and the docs show raw composition instead of naturality.",
+   "line": 85
+  },
+  {
+   "evidence": "Naturality.lean:92-97; contrast the same PR's `jordanDecomposition_mapDomain` (lines 62-66) and `IsSemisimplePoint.mapDomain` (SemisimplePoint.lean:92-94), both of which use `AlgHom.mapDomain` directly.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition/Naturality.lean",
+   "fix": "Restate as `unipotentPart k H\u2081 K (AlgHom.mapDomain \u03c6 g) = AlgHom.mapDomain \u03c6 (unipotentPart k H\u2082 K g)`.",
+   "issue": "Same defect in `unipotentPart_mapDomain`: stated as `unipotentPart k H\u2081 K (toConv (g.ofConv.comp \u2191\u03c6)) = toConv ((unipotentPart k H\u2082 K g).ofConv.comp \u2191\u03c6)`, with `AlgHom.mapDomain` absent from a lemma named `_mapDomain` and documented as 'preserved by homomorphisms of affine groups'.",
+   "line": 94
+  }
+ ],
+ "head_sha": "93ff551c59f49ef9b038923a1b736107d467e382",
+ "merge_base_sha": "8bd44eb529b0360d05dc00de982873dda8077197",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3012,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "479c59b906bd53893cfcf681c5885632e04222e279eac1afd6d9d7830b11dea6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T053356Z-3012-api-design-07f26d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T05:33:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The naturality API is complete and free of compatibility artifacts, but the two component lemmas are stated in the unfolded `toConv (\u00b7.ofConv.comp \u2191\u03c6)` form rather than in terms of `AlgHom.mapDomain`, contradicting their own names, docstrings, module Main-declarations text, and the repo's established convention for `mapDomain`/`mapValue` naturality lemmas.",
+ "transcript_blob": "854385a6de5a902482645811bb341c87ecd63af67b17c3d35b63b18ebc591c47",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85086,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85086,
+  "cache_read_input_tokens": 1381583,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 522,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 522,
+    "cache_read_input_tokens": 101063,
+    "input_tokens": 2,
+    "output_tokens": 1808,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20605,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
