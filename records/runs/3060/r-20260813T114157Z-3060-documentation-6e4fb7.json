@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7618115000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 117.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 41554,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 41554,
+    "cache_read_input_tokens": 196651,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 14098,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 14098,
+      "cache_read_input_tokens": 43955,
+      "input_tokens": 2,
+      "output_tokens": 5371,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9699,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5dce5c2e019b92ec0d7868ea7ccfbb5fab7ba89e",
+ "cost_usd": 0.761812,
+ "dedupe_key": "TauCetiProject/TauCeti|3060|9d936bc5c3e9663c59d211fa5d85fd2e4715f7f0|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e921232d3559e552d3be20cb13785de27fa2a1fd6a4c7941adb6479f995984de",
+ "diff_sha256": "e921232d3559e552d3be20cb13785de27fa2a1fd6a4c7941adb6479f995984de",
+ "duration_s": 117.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "ValuationSpectrum.lean:528-537 documents `basicOpenFinset_inter` with exactly that explanation (\"Writing `U\u1d62 = insert s\u1d62 T\u1d62` for the numerator set augmented by its own denominator\"); the statement here at line 110 is `insert s\u2081 T\u2081 * insert s\u2082 T\u2082`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset.lean",
+   "fix": "Mirror the `Spv`-level docstring: introduce `U\u1d62 = insert s\u1d62 T\u1d62` (\"the numerator set augmented by its own denominator\") and display `R(T\u2081/s\u2081) \u2229 R(T\u2082/s\u2082) = R(U\u2081U\u2082/s\u2081s\u2082)`; fix the module bullet likewise.",
+   "issue": "The docstring (and the module bullet at lines 49-51) describes the right-hand side as \"the numerator products over the denominator product\", omitting that each numerator set is first augmented with its own denominator (`insert s\u2081 T\u2081 * insert s\u2082 T\u2082`, not `T\u2081 * T\u2082`). The literal reading is a different and false statement: for `T\u2081 = {t}`, `T\u2082 = \u2205`, `R({t}/s\u2081) \u2229 R(\u2205/s\u2082) \u2260 R(\u2205/(s\u2081s\u2082))`, since the condition `v t \u2264 v s\u2081` is lost.",
+   "line": 104
+  },
+  {
+   "evidence": "roadmap/TauCetiRoadmap/AdicSpaces/README.md:382-383 \u2014 \"Prove the five parts of Remark 7.30 \u2014 including part (5) ... \u2014 using Lemma 6.6 for the open-ideal criterion.\" The repo already has the admissibility half separately: `IsAdmissible.mul` in AdicSpace/SpvOfIdeal/Spectral.lean:46.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset.lean",
+   "fix": "State that this is the set-level half of Remark 7.30(5), and that the open-ideal/admissibility half (the `IsAdmissible.mul`-style step, per the roadmap via Lemma 6.6) is not established here.",
+   "issue": "Overclaim: the docstring bolds \"**Wedhorn Remark 7.30(5)**\" and asserts \"rational subsets are stable under finite intersection\", but the statement delivers only the set equality. In Wedhorn's sense the conclusion also requires the product pair to be admissible \u2014 that `(insert s\u2081 T\u2081 * insert s\u2082 T\u2082) \u00b7 A` is open \u2014 which is not proved anywhere in this file.",
+   "line": 104
+  },
+  {
+   "evidence": "Lines 30-36 list two bullets; lines 93-101 define `isOpen_val_preimage_rationalSubset`, which the Main results section (lines 45-46) does list.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset.lean",
+   "fix": "Add a third bullet (or a sentence) for the relative openness of `R(T/s)` in `spa A\u207a`, and drop the implication that only Remark 7.30 material is present.",
+   "issue": "Stale module prose: \"What is here is the part of Remark 7.30 that holds with no hypotheses at all\" is followed by exactly two bullets, but the file also contains `isOpen_val_preimage_rationalSubset` (added in round 1), a topological result not inherited from Remark 7.30. The overview no longer describes the file's contents.",
+   "line": 30
+  },
+  {
+   "evidence": "Spa/Basic.lean:45-47 and :72-75 do exactly this; the PR description calls `rationalSubset_def` \"the exported set-level equation, `(rfl)` over the unexposed definition\".",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset.lean",
+   "fix": "List both in Main results as the exported interface, as Spa/Basic.lean does for `spa_def`/`mem_spa_iff`, and state in `rationalSubset_def`'s docstring that the definition is not exposed so this equation is how consumers apply set-level results.",
+   "issue": "The module index omits `rationalSubset_def` and `mem_rationalSubset_iff`, which are the only exported way to unfold the definition (the body is not exposed across the module boundary); `rationalSubset_def`'s own docstring (line 71) says only \"mirroring `spa_def`\" without saying why it exists.",
+   "line": 43
+  }
+ ],
+ "head_sha": "9d936bc5c3e9663c59d211fa5d85fd2e4715f7f0",
+ "merge_base_sha": "4f4ab8a97b89fe4c5cdc0b98d1062b77442d7da9",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3060,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "679a1811ea4b16759750ab775b85967c2eacf4c0b336a8988501700ace6d9e37",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T114157Z-3060-documentation-6e4fb7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T11:41:57Z",
+ "submitted_by": "kim-em",
+ "summary": "Every declaration carries a docstring, but the intersection lemma's documentation misdescribes the numerator set (the literal reading is false) and claims Wedhorn Remark 7.30(5) while delivering only its set-level half; the module prose is also stale with respect to the round-1 openness lemma and omits the exported characterization lemmas.",
+ "transcript_blob": "042d9b27b06bbff4995d3295681480c7fe49d9c4d31c304a9e1b84a98e30d93b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 41554,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 41554,
+  "cache_read_input_tokens": 196651,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 14098,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 14098,
+    "cache_read_input_tokens": 43955,
+    "input_tokens": 2,
+    "output_tokens": 5371,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9699,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
