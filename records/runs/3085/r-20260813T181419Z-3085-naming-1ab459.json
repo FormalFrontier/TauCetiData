@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9397419999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 110.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 54183,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 54183,
+    "cache_read_input_tokens": 299928,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3993,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3993,
+      "cache_read_input_tokens": 66689,
+      "input_tokens": 1,
+      "output_tokens": 1709,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9323,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9105d9e6de3faba54a3a93c5ed451042e8fe73c9",
+ "cost_usd": 0.939742,
+ "dedupe_key": "TauCetiProject/TauCeti|3085|abd31bfc6fb7cfb5f6d0626cfc36c07977761866|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8b2e638158a3b099699722258a37ff4c192918613ff18aa27e2968e9fce726bc",
+ "diff_sha256": "8b2e638158a3b099699722258a37ff4c192918613ff18aa27e2968e9fce726bc",
+ "duration_s": 110.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Basic.lean:132-135 states `... \u2194 ContDiffOn \u211d \u221e f s \u2227 \u2200 n : \u2115, \u2200 x \u2208 s, 0 \u2264 (-1) ^ n * iteratedDerivWithin n f s x`. Repo-wide convention for exactly this conclusion is `neg_one_pow_mul_iteratedDeriv[Within]_nonneg`: Basic.lean:121, Basic.lean:216, Basic.lean:342, Closure.lean:105, OpenClosure.lean:101. Mathlib's `AbsolutelyMonotoneOn.iff_iteratedDerivWithin_nonneg` (Mathlib/Analysis/Calculus/AbsolutelyMonotone.lean:90) has no `(-1)^n` factor.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Rename to `iff_neg_one_pow_mul_iteratedDerivWithin_nonneg`, matching the sibling `CompletelyMonotoneOn.neg_one_pow_mul_iteratedDerivWithin_nonneg` (line 121) and update the two uses at lines 141 and 191.",
+   "issue": "`CompletelyMonotoneOn.iff_iteratedDerivWithin_nonneg` advertises `0 \u2264 iteratedDerivWithin n f s x`, but the statement is `0 \u2264 (-1) ^ n * iteratedDerivWithin n f s x` \u2014 for a completely monotone function the plain iterated derivatives are *not* nonnegative for odd `n`, so the name asserts a false property. The name was copied from Mathlib's `AbsolutelyMonotoneOn.iff_iteratedDerivWithin_nonneg`, where it is accurate, but the sign factor makes it wrong here.",
+   "line": 132
+  },
+  {
+   "evidence": "Basic.lean:432 `def IsCompletelyMonotoneOnIci (f : \u211d \u2192 \u211d) : Prop := ContinuousOn f (Ici 0) \u2227 IsCompletelyMonotoneOnIoi f`; its own docstring at line 431 says \"It is weaker at the endpoint than the existing `IsCompletelyMonotone`\", and Basic.lean:189-193 identifies `CompletelyMonotoneOn f (Ici 0)` with `IsCompletelyMonotone f`. `grep -rn IsCompletelyMonotoneOnIci TauCeti | wc -l` \u2192 54.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Rename `IsCompletelyMonotoneOnIci` so it no longer reads as \"completely monotone on `Ici 0`\" \u2014 e.g. `IsContinuousCompletelyMonotoneOnIoi`, naming its actual content (continuous on `[0, \u221e)`, completely monotone on `(0, \u221e)`) \u2014 and update the 54 in-repo occurrences (no compatibility alias needed per project policy).",
+   "issue": "The new `CompletelyMonotoneOn f (Ici 0)` and the existing `IsCompletelyMonotoneOnIci f` read as the same English phrase but are different predicates: the PR proves `CompletelyMonotoneOn f (Ici 0) \u2194 IsCompletelyMonotone f` (line 189), while `IsCompletelyMonotoneOnIci` is strictly weaker (only `ContinuousOn f (Ici 0) \u2227 IsCompletelyMonotoneOnIoi f`, one-way implication at line 456). A reader picking `IsCompletelyMonotoneOnIci` expecting the Ici-instance of the new general predicate gets the wrong hypothesis strength.",
+   "line": 88
+  }
+ ],
+ "head_sha": "abd31bfc6fb7cfb5f6d0626cfc36c07977761866",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3085,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f38759ab78adbcc322b94f9bba81e393efdff746c37c2cf05bf055046db499ee",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T181419Z-3085-naming-1ab459",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T18:14:19Z",
+ "submitted_by": "kim-em",
+ "summary": "`CompletelyMonotoneOn.iff_iteratedDerivWithin_nonneg` names a conclusion (`0 \u2264 iteratedDerivWithin`) that its statement does not prove \u2014 the statement is the alternating-sign condition, which the file otherwise spells `neg_one_pow_mul_iteratedDerivWithin_nonneg`. Separately, `CompletelyMonotoneOn f (Ici 0)` and the pre-existing `IsCompletelyMonotoneOnIci` now read identically but denote different (non-equivalent) predicates.",
+ "transcript_blob": "09b487b02fe5e4d83da2281e071b99121a1588c58db93bf1a4da249e2b8a2ab9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 54183,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 54183,
+  "cache_read_input_tokens": 299928,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3993,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3993,
+    "cache_read_input_tokens": 66689,
+    "input_tokens": 1,
+    "output_tokens": 1709,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9323,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

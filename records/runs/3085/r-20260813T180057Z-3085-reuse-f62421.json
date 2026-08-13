@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8232749999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 227.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 67024,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 67024,
+    "cache_read_input_tokens": 1389696,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2548,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2548,
+      "cache_read_input_tokens": 80975,
+      "input_tokens": 2,
+      "output_tokens": 3508,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18017,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9105d9e6de3faba54a3a93c5ed451042e8fe73c9",
+ "cost_usd": 1.823275,
+ "dedupe_key": "TauCetiProject/TauCeti|3085|abd31bfc6fb7cfb5f6d0626cfc36c07977761866|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8b2e638158a3b099699722258a37ff4c192918613ff18aa27e2968e9fce726bc",
+ "diff_sha256": "8b2e638158a3b099699722258a37ff4c192918613ff18aa27e2968e9fce726bc",
+ "duration_s": 227.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `isCompletelyMonotone_iff_absolutelyMonotoneOn_comp_neg` in TauCeti hits only Basic.lean:197,199 (its own statement/proof). `Set.neg_Ici` is the to_additive simp lemma from Mathlib/Algebra/Order/Group/Pointwise/Interval.lean:157 (`inv_Ici`).",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Delete it; the connection to Mathlib is already the definition of `CompletelyMonotoneOn` plus `Set.neg_Ici` (`rw [Set.neg_Ici, neg_zero]` at any use site).",
+   "issue": "`isCompletelyMonotone_iff_absolutelyMonotoneOn_comp_neg` now restates `isCompletelyMonotone_iff_completelyMonotoneOn` up to unfolding `CompletelyMonotoneOn` and `Set.neg_Ici`; its two former users (`IsCompletelyMonotone.add`/`.smul`) were rewritten in this PR, so it has zero call sites and is not in the module's Main declarations list.",
+   "line": 197
+  },
+  {
+   "evidence": "Mathlib/Analysis/Calculus/ContDiff/Basic.lean:506 `ContinuousLinearEquiv.contDiffOn_comp_iff (e : G \u2243L[\ud835\udd5c] E) : ContDiffOn \ud835\udd5c n (f \u2218 e) (e \u207b\u00b9' s) \u2194 ContDiffOn \ud835\udd5c n f s`; Mathlib/Topology/Algebra/Module/Equiv.lean:974 `ContinuousLinearEquiv.neg`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Add one private lemma `contDiffOn_comp_neg_iff : ContDiffOn \u211d \u221e (fun u => f (-u)) (-s) \u2194 ContDiffOn \u211d \u221e f s := by simpa [Function.comp_def, Set.neg_preimage] using (ContinuousLinearEquiv.neg \u211d).contDiffOn_comp_iff (f := f) (s := s)` and use it in both places (the file already uses `ContinuousLinearEquiv.neg \u211d` at line 97).",
+   "issue": "The `(-ContinuousLinearMap.id \u211d \u211d) \u207b\u00b9'` smoothness-transport block is written twice, once per direction (lines 102\u2013107 in `contDiffOn`, lines 143\u2013148 in `iff_iteratedDerivWithin_nonneg`); Mathlib already provides both directions in one iff.",
+   "line": 102
+  },
+  {
+   "evidence": "`Set.neg_Ici` (to_additive of `inv_Ici`, Mathlib/Algebra/Order/Group/Pointwise/Interval.lean:157, `@[simp]`); `Set.neg_preimage` (to_additive of `inv_preimage`, Mathlib/Algebra/Group/Pointwise/Set/Basic.lean:173).",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Replace the `have hset ... ext x; simp` with `rw [Set.neg_Ici, neg_zero]`, and drop the `hpre` haves in favour of `Set.neg_preimage` inside the shared lemma from the previous finding.",
+   "issue": "Set identities are re-derived by `ext x; simp` instead of the named pointwise lemmas: line 200 `-(Ici 0) = Iic 0` (= `Set.neg_Ici` + `neg_zero`), lines 102\u2013104 and 143\u2013145 the negation-preimage computations (= `Set.neg_preimage`).",
+   "line": 200
+  },
+  {
+   "evidence": "grep `of_contDiff` in TauCeti hits only Basic.lean:111 (declaration). `hcd : ContDiff \u211d \u221e (fun t => Real.exp (-x * t))` is already available at line 311, and `iteratedDeriv_exp_const_mul` (Mathlib/Analysis/SpecialFunctions/ExpDeriv.lean:391) supplies the ordinary-derivative sign directly, making lines 313\u2013317's `ContDiffAt`/`iteratedDerivWithin_eq_iteratedDeriv` scaffolding unnecessary.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/Basic.lean",
+   "fix": "Prove it as `isCompletelyMonotone_iff_completelyMonotoneOn.mpr (CompletelyMonotoneOn.of_contDiff hcd (fun n t _ => ...))`, keeping only the `iteratedDeriv_exp_const_mul` sign computation; `isCompletelyMonotone_const` (line 286) can likewise go through `of_contDiff` with `contDiff_const`/`iteratedDeriv_const`.",
+   "issue": "`CompletelyMonotoneOn.of_contDiff` is added with no call site, while `isCompletelyMonotone_exp_neg_mul` (lines 311\u2013323) hand-rolls exactly what it provides: the `iteratedDerivWithin_eq_iteratedDeriv` transfer from a globally `ContDiff` function.",
+   "line": 311
+  }
+ ],
+ "head_sha": "abd31bfc6fb7cfb5f6d0626cfc36c07977761866",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3085,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6f4ba47f12dcb015f8344cc5acea8a17be724a6228ebdf9eac2c2f918013737f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T180057Z-3085-reuse-f62421",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T18:00:57Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `CompletelyMonotoneOn` layer is genuine new material (Mathlib has no completely-monotone predicate), but it leaves a now-redundant bridging lemma with no consumers, duplicates the same reflection plumbing twice where Mathlib has a ready iff, and adds an `of_contDiff` constructor that the file's own hand-rolled proof re-derives.",
+ "transcript_blob": "7389866d74376b6990247176e1599c4a4132a34ae04b7f4058d02e69b78d2a4c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 67024,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 67024,
+  "cache_read_input_tokens": 1389696,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2548,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2548,
+    "cache_read_input_tokens": 80975,
+    "input_tokens": 2,
+    "output_tokens": 3508,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18017,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
