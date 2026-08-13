@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.44817,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 225.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69542,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69542,
+    "cache_read_input_tokens": 617560,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1590,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1590,
+      "cache_read_input_tokens": 84451,
+      "input_tokens": 2,
+      "output_tokens": 5765,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17246,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "34254d443abf2bd7ad3750b6961c939e8d3fd358",
+ "cost_usd": 1.44817,
+ "dedupe_key": "TauCetiProject/TauCeti|3004|9eba1bb808966fc4e8c39b71302575069bb6ca1d|documentation|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "034573c8b3e031d0842a60325fb2abd949ffd2a3bd1530db6d3293c177fc5d14",
+ "diff_sha256": "034573c8b3e031d0842a60325fb2abd949ffd2a3bd1530db6d3293c177fc5d14",
+ "duration_s": 225.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 27-46 vs. declarations at lines 82, 97, 129, 155, 170; only `comparison` has both `_tmul_tmul` (142) and `_symm_tmul` (149), `map` has only `map_tmul` (164) plus `map_injective` (170).",
+   "file": "TauCeti/Algebra/TensorProduct/BaseChange.lean",
+   "fix": "Rewrite the lead sentence (line 27, \"distributes ... commutes ... composes in stages\", which does not describe the fourth bullet), the \"None is reproved from scratch\" sentence, and the \"All three\" note so they cover the common-overfield section and its actual public interface.",
+   "issue": "Implementation notes say \"All three equivalences are opaque ... the `_tmul` and `_symm_tmul` simp lemmas below are the whole public interface, in both directions\", and line 38 says \"None is reproved from scratch: the first and third ... the second ...\". Both are stale: the file now also exports `CommonOverfield`, `commonOverfield`, `comparison`, `map`, `map_injective` (lines 82-175), and `map` has no `_symm_tmul` lemma while `map_injective` is part of its interface.",
+   "line": 45
+  },
+  {
+   "evidence": "Lines 14-22 (imports `Tower`, `Flat.Basic`, `ResidueField.Ideal`, `TensorProduct.Nontrivial`, `Maps`) vs. uses at lines 102-107 and 174.",
+   "file": "TauCeti/Algebra/TensorProduct/BaseChange.lean",
+   "fix": "Change \"neither\" to cover all five imports and add the newly used Mathlib API (`Ideal.ResidueField`/`Ideal.exists_maximal`, `Algebra.TensorProduct.nontrivial_of_algebraMap_injective_of_isDomain`, `Module.Flat.lTensor_preserves_injective_linearMap`) to the list.",
+   "issue": "The import comment \"Non-public: neither appears in the type of an exported declaration. Mathlib's `distribBaseChange`, `cancelBaseChange`, `algEquivOfLinearEquivTensorProduct`, `LinearMap.map_mul_of_map_mul_tmul` and `congr` are used only inside definition bodies and proofs\" now sits above five non-public imports, three of them added by this PR, and its list omits the new lemmas used.",
+   "line": 14
+  },
+  {
+   "evidence": "Lines 53-63 vs. `import TauCeti.Algebra.TensorProduct.BaseChange` at Connected/BaseChange.lean:9 and GeometricallyReduced/BaseChange.lean:9, used at Connected/BaseChange.lean:88 and GeometricallyReduced/BaseChange.lean:76.",
+   "file": "TauCeti/Algebra/TensorProduct/BaseChange.lean",
+   "fix": "Scope the existing paragraph to the three base-change equivalences and add one sentence naming the common-overfield section's consumers (`Connected/BaseChange.lean`, `GeometricallyReduced/BaseChange.lean`) and its roadmap attribution.",
+   "issue": "The provenance paragraph and References still describe the whole file as central-simple-algebra infrastructure: \"Their first consumer is `TauCeti/Algebra/CentralSimple/BaseChange.lean`\" and \"These are the compatibilities asked for by the **Base change preserves central simplicity ...** bullet of Layer 6 of the semisimple algebras roadmap. See Gille, Szamuely, Section 2.2.\" That is false for the new common-overfield material, whose consumers are the Hopf-algebra descent theorems and which the PR attributes to ReductiveGroups.",
+   "line": 53
+  }
+ ],
+ "head_sha": "9eba1bb808966fc4e8c39b71302575069bb6ca1d",
+ "merge_base_sha": "34254d443abf2bd7ad3750b6961c939e8d3fd358",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3004,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "de31214758e404326717b21591a64b79a92fa16630503d3aae532d737e13fe68",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T174802Z-3004-documentation-bb2fd5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T17:48:02Z",
+ "submitted_by": "kim-em",
+ "summary": "The new torus and descent declarations are documented accurately, but the module docstring and import comment of `TauCeti/Algebra/TensorProduct/BaseChange.lean` were not adapted when the common-overfield section was grafted in: they still count three equivalences, two non-public imports, and attribute all content to the semisimple-algebras roadmap.",
+ "transcript_blob": "841c45a804053fd670c5c455bd7ff997f5ea6953d5c9586417aa863acb4c85f9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69542,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69542,
+  "cache_read_input_tokens": 617560,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1590,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1590,
+    "cache_read_input_tokens": 84451,
+    "input_tokens": 2,
+    "output_tokens": 5765,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17246,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
