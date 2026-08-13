@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7257555000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 280.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 66977,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 66977,
+    "cache_read_input_tokens": 1011445,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 783,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 783,
+      "cache_read_input_tokens": 82693,
+      "input_tokens": 2,
+      "output_tokens": 3890,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21562,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.725756,
+ "dedupe_key": "TauCetiProject/TauCeti|3015|fe6abbadb3f99b76e4f6865c667a5d91e2ca0cd3|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "51dc2775db33fbaabdcfe308d7dec75475193656daf91392a743b219a0dd2540",
+ "diff_sha256": "51dc2775db33fbaabdcfe308d7dec75475193656daf91392a743b219a0dd2540",
+ "duration_s": 280.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/RingTheory/Binomial.lean:277 `noncomputable instance {R} [AddCommMonoid R] [Module \u211a\u22650 R] [Pow R \u2115] : BinomialRing R`; Semiconj.lean:138/168 take `[BinomialRing A]` while Commutation.lean:52/61 do not; Kostant/Commutation.lean:59 has to declare a third copy of the same instance to use them.",
+   "file": "TauCeti/RingTheory/DividedPowers/Commutation.lean",
+   "fix": "Add `variable [BinomialRing A]` and delete the local `moduleNNRat` instance, exactly as `TauCeti.ringChoose_mul_pow_eq` (Semiconj.lean:138) already does; consumers then supply their own instance.",
+   "issue": "`ringChoose_mul_dividedPower_eq` and `dividedPower_mul_ringChoose_eq` take no `[BinomialRing A]` parameter; their `Ring.choose` is elaborated at the `BinomialRing` derived from the file-local `moduleNNRat`. Downstream a consumer with `[Ring A] [Algebra \u211a A]` cannot even state `Ring.choose`, and a consumer whose `BinomialRing A` comes from any other route gets a lemma that does not apply.",
+   "line": 47
+  },
+  {
+   "evidence": "Kostant/Commutation.lean:63 `private theorem mul_\u03b9_eq_\u03b9_mul_add_zsmul_one`; the RHS argument at line 97 is `\u03b9 \u211a h + n \u2022 (z \u2022 (1 : U))`, which does not match the LHS pattern `Ring.choose (\u03b9 \u211a h) m` of either theorem.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/Commutation.lean",
+   "fix": "Expose the \u03b9-level relation publicly (e.g. `\u03b9_mul_\u03b9_eq_\u03b9_mul_add_zsmul_one`), or add a central shift parameter `s` with `Commute s (\u03b9 \u211a x)` to both theorems so `Ring.choose (\u03b9 \u211a h + s) m` is covered.",
+   "issue": "The two exported theorems fix the Cartan argument as literally `\u03b9 \u211a h`, so they cannot be iterated: after one reordering the argument is `\u03b9 \u211a h + n \u2022 (z \u2022 1)`, which is not in the image of `\u03b9`, and the relation needed to continue (`mul_\u03b9_eq_\u03b9_mul_add_zsmul_one`) is `private`. PBW normal ordering past several root vectors \u2014 the PR's stated consumer use \u2014 therefore cannot be done with this API.",
+   "line": 91
+  },
+  {
+   "evidence": "Mathlib/Algebra/Ring/Defs.lean:188 `@[simp] lemma nsmul_eq_mul (n : \u2115) (a : \u03b1) : n \u2022 a = n * a`; module docstring line 28 says \"an integer such as `n z` denotes that integer times the unit of the enveloping algebra\".",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/Commutation.lean",
+   "fix": "State the shift as the integer cast the docstring itself describes: `Ring.choose (\u03b9 \u211a h + ((n * z : \u2124) : U)) m` (and `- ((n * z : \u2124) : U)` in the dual), at lines 97 and 108.",
+   "issue": "The weight shift is spelled `n \u2022 (z \u2022 (1 : U))` (\u2115-smul of a \u2124-smul of `1`), which is not a normal form: `simp` rewrites it to `\u2191n * \u2191z` via `nsmul_eq_mul`/`zsmul_eq_mul`, so a consumer who simps a goal can no longer match the lemma, and iterated shifts never collect.",
+   "line": 97
+  },
+  {
+   "evidence": "Semiconj.lean:47-49 declares the general `R` hypotheses for `smeval_right`; lines 112 and 123 then hard-code `_root_.Polynomial \u2124`, and the proofs (117-119, 128-130) invoke only `smeval_right` and the \u2124-free private shift lemmas.",
+   "file": "TauCeti/Algebra/Polynomial/Semiconj.lean",
+   "fix": "Generalize both to `{R} [Semiring R] [Module R A] [IsScalarTower R A A] [SMulCommClass R A A] (p : Polynomial R)`; the \u2124 instantiation used by `ringChoose_mul_pow_eq` is unaffected.",
+   "issue": "`smeval_mul_pow_eq` and `pow_mul_smeval_eq` are exported only for `p : Polynomial \u2124`, although the mechanism they wrap (`SemiconjBy.smeval_right`, line 55) is stated for an arbitrary coefficient semiring; nothing in the proofs uses \u2124. A consumer with `Polynomial \u211a` over the same \u211a-algebras this file targets is locked out.",
+   "line": 112
+  }
+ ],
+ "head_sha": "fe6abbadb3f99b76e4f6865c667a5d91e2ca0cd3",
+ "merge_base_sha": "bcfbae9e2dd6f132f6ee5d6d5f099a4a5b703a9e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3015,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8392a32495d5355f039f6c767694a1256f08c15ae15c99663d1aa4b4cd924da5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T014042Z-3015-api-design-5e6711",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T01:40:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The generic divided-power/binomial lemmas bake their `BinomialRing` instance into the statement via a file-local `Module \u211a\u22650 A`, so consumers cannot use them without replicating that instance; and the Kostant-level lemmas cannot be chained past a second root vector because the \u03b9-level relation they need is private.",
+ "transcript_blob": "8a78ec954ae61014071d2cad4a1cc390f12a00cfef657d2b73d28f315d1234bb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 66977,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 66977,
+  "cache_read_input_tokens": 1011445,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 783,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 783,
+    "cache_read_input_tokens": 82693,
+    "input_tokens": 2,
+    "output_tokens": 3890,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21562,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.739445,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 252.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75136,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75136,
+    "cache_read_input_tokens": 894412,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4258,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4258,
+      "cache_read_input_tokens": 87377,
+      "input_tokens": 2,
+      "output_tokens": 2464,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20896,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.739445,
+ "dedupe_key": "TauCetiProject/TauCeti|3015|fe6abbadb3f99b76e4f6865c667a5d91e2ca0cd3|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "51dc2775db33fbaabdcfe308d7dec75475193656daf91392a743b219a0dd2540",
+ "diff_sha256": "51dc2775db33fbaabdcfe308d7dec75475193656daf91392a743b219a0dd2540",
+ "duration_s": 252.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Associative.lean:49 `namespace TauCeti.Associative`, containing `dividedPower_mul_left` (:97), `mul_dividedPower` (:124), `dividedPower_mul_self` (:132), `self_mul_dividedPower` (:137); the new lemmas are under `namespace TauCeti` (Commutation.lean:37).",
+   "file": "TauCeti/RingTheory/DividedPowers/Commutation.lean",
+   "fix": "Declare both inside `namespace TauCeti.Associative` (dropping the `Associative.` prefixes in the statements) and update the two call sites in `Kostant/Commutation.lean`.",
+   "issue": "`ringChoose_mul_dividedPower_eq` (and `dividedPower_mul_ringChoose_eq`, line 61) are declared in bare `TauCeti`, while the entire divided-power API they extend lives in `TauCeti.Associative` \u2014 hence the `Associative.dividedPower` qualifiers in their own statements. They will not surface under `open TauCeti.Associative` alongside the lemmas they belong with.",
+   "line": 52
+  },
+  {
+   "evidence": "Semiconj.lean:93\u201396; companion `mul_pow_eq_pow_mul_add_nsmul` (:75) is the one that moves `a` right.",
+   "file": "TauCeti/Algebra/Polynomial/Semiconj.lean",
+   "fix": "Change to \"Moving `a` to the left across `x ^ n` \u2026\", matching `pow_mul_smeval_eq` (:121) and `pow_mul_ringChoose_eq` (:166).",
+   "issue": "Docstring of `pow_mul_eq_sub_nsmul_mul_pow` says \"Moving `a` to the right across `x ^ n`\", but the statement `x ^ n * a = (a - n \u2022 c) * x ^ n` moves `a` from the right to the left. Direction is inverted relative to every sibling lemma.",
+   "line": 93
+  },
+  {
+   "evidence": "RingTheory/DividedPowers/Commutation.lean:47 `noncomputable local instance moduleNNRat : Module \u211a\u22650 A`; Kostant/Form.lean:70 `noncomputable local instance moduleNNRat`; both imported at Kostant/Commutation.lean:8\u20139.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/Commutation.lean",
+   "fix": "Delete the declaration and write `attribute [local instance] TauCeti.moduleNNRat` before opening the namespace; that instance (`{A} [Ring A] [Algebra \u211a A]`) already applies to `U`.",
+   "issue": "`moduleNNRatCommutation` disambiguates by module file name, not by anything about the object; it is a third copy of the same `Module.compHom` instance, needed only because `TauCeti.moduleNNRat` and `TauCeti.UniversalEnvelopingAlgebra.moduleNNRat` are both in scope here.",
+   "line": 59
+  },
+  {
+   "evidence": "Associative.lean uses `mul_dividedPower` (:124), `dividedPower_mul_self` (:132), `self_mul_dividedPower` (:137) with no suffix, and `factorial_smul_dividedPower_eq_pow` (:81) with the informative `_eq_pow`.",
+   "file": "TauCeti/Algebra/Polynomial/Semiconj.lean",
+   "fix": "Drop the trailing `_eq` from all six: `ringChoose_mul_pow`, `pow_mul_ringChoose`, `smeval_mul_pow`, `pow_mul_smeval`, `ringChoose_mul_dividedPower`, `dividedPower_mul_ringChoose`.",
+   "issue": "Trailing bare `_eq` conveys nothing (the name already ends at the LHS description) and contradicts the sibling API, which uses `_eq_` only between an LHS and an RHS description. Affects `ringChoose_mul_pow_eq` (:138), `pow_mul_ringChoose_eq` (:168), `smeval_mul_pow_eq` (:112), `pow_mul_smeval_eq` (:123), and `ringChoose_mul_dividedPower_eq` / `dividedPower_mul_ringChoose_eq` (DividedPowers/Commutation.lean:52,61) \u2014 while the PR's own specializations `ringChoose_\u03b9_mul_dividedPower_\u03b9` / `dividedPower_\u03b9_mul_ringChoose_\u03b9` correctly omit it.",
+   "line": 138
+  }
+ ],
+ "head_sha": "fe6abbadb3f99b76e4f6865c667a5d91e2ca0cd3",
+ "merge_base_sha": "bcfbae9e2dd6f132f6ee5d6d5f099a4a5b703a9e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3015,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8f825a58c8178193befa9fcad5f02b724dd52d96652b4142f3e72d0c437047cb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T015142Z-3015-naming-3784df",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T01:51:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The new divided-power lemmas are placed in the bare `TauCeti` namespace instead of `TauCeti.Associative` where the rest of the divided-power API lives, one docstring states the wrong direction, an instance is disambiguated by file name, and the `_eq` suffix contradicts the sibling convention.",
+ "transcript_blob": "e83ff4b9bd62fd73f10472014dd8daf49126ce6c8860e646e03045b275e1973f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75136,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75136,
+  "cache_read_input_tokens": 894412,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4258,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4258,
+    "cache_read_input_tokens": 87377,
+    "input_tokens": 2,
+    "output_tokens": 2464,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20896,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
