@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.1791489999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 149.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 53753,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 53753,
+    "cache_read_input_tokens": 641718,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 683,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 683,
+      "cache_read_input_tokens": 69569,
+      "input_tokens": 2,
+      "output_tokens": 3132,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12330,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 1.179149,
+ "dedupe_key": "TauCetiProject/TauCeti|3127|9b6baa22012494f1d05122c8df8233ff716f9125|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "58bca407a71a9d30fd16b557f2f090a9090b7e3f8331243e5cb689370404a09b",
+ "diff_sha256": "58bca407a71a9d30fd16b557f2f090a9090b7e3f8331243e5cb689370404a09b",
+ "duration_s": 149.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Statements at lines 167-172 (`\u2200 B` outside `\u2200\u1d50 \u03c9` via the `{B}` binder) and 185-191; the file's own docstring at 182-184 says the interchange \"is not cosmetic\" and is only available for a countable family.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/StrongLaw.lean",
+   "fix": "Reword to the delivered order: \"for each measurable set, the empirical frequency converges to the directing measure's mass almost surely (and simultaneously for any countable family of sets).\"",
+   "issue": "Module docstring: \"Equivalently, the empirical measures converge to the directing measure, setwise and almost surely.\" Setwise convergence a.s. means \u2200\u1d50 \u03c9, \u2200 B, which is not what any theorem here delivers (each is \u2200 B, \u2200\u1d50 \u03c9) and is false in general: for atomless \u03bd(\u03c9), take B = the countable set of sampled points \u2014 empirical mass 1, \u03bd-mass 0, for every \u03c9.",
+   "line": 22
+  },
+  {
+   "evidence": "Line 203: `\u2200 B : Set \u03b1, MeasurableSet B \u2192 \u2200\u1d50 \u03c9 \u2202\u03bc, Tendsto \u2026` \u2014 the null set depends on `B`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/StrongLaw.lean",
+   "fix": "State the actual order in both places: \"for every measurable set `B`, almost surely, the empirical mass of `B` converges to `\u03bd \u03c9 B`.\"",
+   "issue": "Same overclaim in the Main results bullet: `deFinetti_tendsto_empiricalMeasure_apply` is described as giving \"a directing measure that is recovered as the almost-sure setwise limit of the empirical measures\", and the theorem docstring (lines 193-195) says \"recovered, almost surely and on every measurable set\" \u2014 both read as one null set for all measurable sets.",
+   "line": 38
+  },
+  {
+   "evidence": "Re-exported theorem at StrongLaw.lean:200-205 quantifies `\u2200 B` outside `\u2200\u1d50 \u03c9`.",
+   "file": "TauCeti/Probability/DeFinetti.lean",
+   "fix": "Rewrite the bullet to the per-set form, matching `deFinetti_tendsto_empiricalMeasure_apply`'s actual statement.",
+   "issue": "The facade repeats the overclaim: \"the directing measure of an exchangeable process is the almost-sure setwise limit of the empirical measures\".",
+   "line": 43
+  },
+  {
+   "evidence": "Statement limit is `\u222b y, f y \u2202(\u03bd \u03c9)` (line 102), which depends on `\u03bd \u03c9` only through `f`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/StrongLaw.lean",
+   "fix": "Drop the iff: \"the limit reduces to a constant when the directing measure is a.e. constant.\"",
+   "issue": "`tendsto_average_ae` docstring claims the limit \"reduces to a constant exactly when the directing measure is\". The \"exactly when\" is false in one direction: for `f = 0` (or any `f` whose integral is a.e. constant in `\u03bd \u03c9`) the limit is constant while `\u03bd` is random.",
+   "line": 96
+  },
+  {
+   "evidence": "ConditionallyIID/EmpiricalMeasure.lean:41-49 gives the exact `((n+1)\u207b\u00b9 * (\u2026))` identity; lines 65-72 give only `Tendsto \u2026 (nhds 0)`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/StrongLaw.lean",
+   "fix": "Cite `ConditionallyIIDWith.integral_empiricalMeasure_apply_sub_sq` for the exact finite-sample error (and keep `tendsto_\u2026_sub_sq` for the convergence).",
+   "issue": "Cross-reference is wrong: \"The mean-square form of the same convergence, with its exact finite-sample error, is `ConditionallyIIDWith.tendsto_integral_empiricalMeasure_apply_sub_sq`\" \u2014 that lemma only states convergence of the mean-square error to 0; the exact error is a different declaration.",
+   "line": 165
+  },
+  {
+   "evidence": "Line 187: `{B : \u03b9 \u2192 Set \u03b1} (hB : \u2200 j, MeasurableSet (B j))`.",
+   "file": "TauCeti/Probability/Exchangeability/ConditionallyIID/StrongLaw.lean",
+   "fix": "Say \"from a single measurable set to a countable family of sets under one null set\".",
+   "issue": "Module docstring says what is new includes \"the strengthening from a single observable to a whole countable family\"; the countable-family result is indexed by measurable *sets*, not observables \u2014 no countable-family-of-observables lemma is proved.",
+   "line": 26
+  }
+ ],
+ "head_sha": "9b6baa22012494f1d05122c8df8233ff716f9125",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3127,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ee18bfcf3e537c453ae40279ffd2ddad2287f260ed0c63ac9d0eb0310efa2957",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T234138Z-3127-documentation-695117",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T23:41:38Z",
+ "submitted_by": "kim-em",
+ "summary": "Cited declarations and imports check out and every new file and declaration is documented, but the summary prose repeatedly asserts almost-sure *setwise* convergence \u2014 the quantifier order the file's own `_ae_forall` docstring says must not be interchanged, and which is false for an atomless directing measure. Two smaller inaccuracies: a false \"exactly when\" in `tendsto_average_ae` and a cross-reference pointing at the wrong lemma.",
+ "transcript_blob": "fa86fb1b4196245a19005c57f865205dc3d66b9d6324be413cf58bd57189d8d3",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53753,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 53753,
+  "cache_read_input_tokens": 641718,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 683,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 683,
+    "cache_read_input_tokens": 69569,
+    "input_tokens": 2,
+    "output_tokens": 3132,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12330,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
