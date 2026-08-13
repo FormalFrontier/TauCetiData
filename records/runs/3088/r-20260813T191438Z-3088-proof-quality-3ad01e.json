@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2181085,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 249.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 77120,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 77120,
+    "cache_read_input_tokens": 1966501,
+    "inference_geo": "not_available",
+    "input_tokens": 56,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3939,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3939,
+      "cache_read_input_tokens": 89680,
+      "input_tokens": 2,
+      "output_tokens": 2960,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18224,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "cost_usd": 2.218109,
+ "dedupe_key": "TauCetiProject/TauCeti|3088|6ace26aca4d74fdc2dffda21e2c8e0a29a768fed|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "diff_sha256": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "duration_s": 249.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`FGComoduleCat.corestrict` exists at TauCeti/Algebra/Coalgebra/Comodule/Finite/Corestrict.lean:56 with `corestrict_obj_coact_apply` at :85; the same compatibility statement already appears specialized at TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/Weight.lean:125 (`endOfPoint_tmul_comp`), and no `endOfPoint`/corestrict lemma exists in `Comodule/PointsAction.lean` (grep `corestrict` there: no hits).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "State `Comodule.endOfPoint_corestrict` in `TauCeti/Algebra/Coalgebra/Comodule/Corestrict.lean` (or `Finite/Corestrict.lean`), use `(FGComoduleCat.corestrict f).obj M` with its `corestrict_obj_coact_apply` simp lemmas instead of the local instance, and lift the whole transport to `HopfAlgebra.IsUnipotentPoint` along a bialgebra iso in `Representation/UnipotentPoint.lean`; the instance then becomes a one-liner.",
+   "issue": "`end_eq` (lines 94\u2013112) is a general fact \u2014 acting by `g` on a comodule corestricted along a coalgebra map equals acting by `g \u2218 f` \u2014 buried inside the `IsClosedUnderIsomorphisms` instance, together with a hand-built `let _ : Comodule k H M := Comodule.Corestrict f` (line 91) that duplicates the existing FG corestriction functor. Its proof is correspondingly fragile: `congr 2` after `simp only`, then `simpa only [LinearMap.id_comp, f]` that must unfold the local `let f`.",
+   "line": 94
+  },
+  {
+   "evidence": "`CoalgHom.toLinearMap_eq_coe` at mathlib/Mathlib/RingTheory/Coalgebra/Hom.lean:140; `BialgHom.toAlgHom_toLinearMap` at Bialgebra/Hom.lean:182; `ObjectProperty.prop_inf_iff` at CategoryTheory/ObjectProperty/CompleteLattice.lean:31 and `prop_inverseImage_iff` at ObjectProperty/Basic.lean:155; `FiniteTypeCommHopfAlgCat.forget\u2082_commHopfAlgCat_obj` at TauCeti/Algebra/AlgebraicGroup/FiniteType/CommHopfAlgCat.lean:140.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Line 106: `rw [CoalgHom.toLinearMap_eq_coe]; exact BialgHom.toAlgHom_toLinearMap _`, as done in Weight.lean:134\u2013136. Line 130: follow `apply Units.ext` with `Comodule.pointsAction_toLinearMap \u2026 |>.trans \u2026` as in JordanDecomposition.lean:151\u2013153. Line 157: `rw [smoothUnipotentCommHopfAlgProperty, ObjectProperty.prop_inf_iff, ObjectProperty.prop_inverseImage_iff, FiniteTypeCommHopfAlgCat.forget\u2082_commHopfAlgCat_obj, \u2026]`.",
+   "issue": "Three undocumented `change` steps rely on definitional equality across coercions and category wrappers: line 106 (BialgHom \u2192 AlgHom \u2192 LinearMap vs. CoalgHom \u2192 LinearMap), line 130 (`Units` coe vs. `LinearEquiv.toLinearMap`), line 157 (`ObjectProperty.inverseImage`/`\u2293` and `(forget\u2082 \u2026).obj H` vs. `H.obj`). Named lemmas for all three already exist.",
+   "line": 106
+  },
+  {
+   "evidence": "JordanDecomposition.lean has only the forward lemmas `semisimplePart_eq_one_of_isUnipotent` (:319) and `unipotentPart_eq_self` (:327); grep shows no `isUnipotentPoint_iff_*Part` lemma anywhere in TauCeti.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Add `HopfAlgebra.Point.isUnipotentPoint_iff_unipotentPart_eq_self` and `\u2026_iff_semisimplePart_eq_one` to `Representation/JordanDecomposition.lean` next to the existing forward directions, then prove both theorems here by `rw [smoothUnipotentCommHopfAlgProperty_iff]; exact and_congr_right fun _ \u21a6 forall_congr' \u2026`.",
+   "issue": "The mpr branches of `..._iff_unipotentPart_eq_self` (194\u2013199) and `..._iff_semisimplePart_eq_one` (215\u2013229) re-prove the same point-level converse inline (`unipotentPart g = g \u2192 IsUnipotentPoint g`, with the second first deriving `g = unipotentPart g` from `semisimplePart g = 1`). This hides reusable point-level facts inside object-property theorems and repeats the argument twice.",
+   "line": 194
+  }
+ ],
+ "head_sha": "6ace26aca4d74fdc2dffda21e2c8e0a29a768fed",
+ "merge_base_sha": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3088,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f14ef43148237e6049c479950316916219adfd52188fa276f844974ad2b60512",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T191438Z-3088-proof-quality-3ad01e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T19:14:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The isomorphism-invariance instance inlines a general corestriction/point-action lemma and hand-rolls a comodule instance instead of using the existing FG corestriction functor, and the two Jordan characterizations duplicate an unstated point-level converse. Three undocumented `change` steps carry defeq across coercions and category wrappers where named lemmas already exist.",
+ "transcript_blob": "f5f6e8eacdd81892dbd5759e4b2ff5ebb40222dc69b84791c643ce667e85f3d0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 77120,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 77120,
+  "cache_read_input_tokens": 1966501,
+  "inference_geo": "not_available",
+  "input_tokens": 56,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3939,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3939,
+    "cache_read_input_tokens": 89680,
+    "input_tokens": 2,
+    "output_tokens": 2960,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18224,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

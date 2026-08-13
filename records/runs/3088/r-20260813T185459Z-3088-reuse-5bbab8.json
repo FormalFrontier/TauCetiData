@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9382789999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 236.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85218,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85218,
+    "cache_read_input_tokens": 1263410,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2985,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2985,
+      "cache_read_input_tokens": 98732,
+      "input_tokens": 2,
+      "output_tokens": 3974,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17845,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "cost_usd": 1.938279,
+ "dedupe_key": "TauCetiProject/TauCeti|3088|6ace26aca4d74fdc2dffda21e2c8e0a29a768fed|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "diff_sha256": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "duration_s": 236.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/Weight.lean:126-139 vs Unipotent/Basic.lean:94-112 (both rewrite `Comodule.endOfPoint_tmul` then reconcile `map id \u03c0` with `lTensor` using `BialgHom.toAlgHom_toLinearMap`).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Add the general lemma `Comodule.endOfPoint_corestrict : Comodule.endOfPoint (Corestrict f M) g = Comodule.endOfPoint M (g.comp f)` to `TauCeti/Algebra/Coalgebra/Comodule/Corestrict.lean` (or `Comodule/PointsAction.lean`), use it here in place of lines 94-112, and reprove `DiagonalizableGroup.endOfPoint_tmul_comp` from it.",
+   "issue": "The `end_eq` computation (lines 94-112) re-derives the general fact that acting through a composite point equals acting on the comodule corestricted along the coalgebra map; this is already derived, in specialized form and with the same proof steps (`Comodule.endOfPoint_tmul`, `BialgHom.toAlgHom_toLinearMap`, `TensorProduct.map`/`lTensor` juggling), at `DiagonalizableGroup.endOfPoint_tmul_comp`.",
+   "line": 94
+  },
+  {
+   "evidence": "TauCeti/Algebra/Coalgebra/Comodule/Finite/Corestrict.lean:56 `def corestrict (f : C \u2192\u2097c[R] D) : FGComoduleCat R C \u2964 FGComoduleCat R D`, with `corestrict_obj_coact_apply` at :85.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Use `(FGComoduleCat.corestrict (R := k) (C := K) (D := H) f).obj M`; its simp lemmas `FGComoduleCat.corestrict_obj_coact_apply` and `corestrict_obj_coe` then supply the coaction rewrite currently done by hand via `Comodule.corestrict_coact_apply`.",
+   "issue": "Lines 91 and 93/128 hand-assemble the corestricted finite comodule (`let _ : Comodule k H M := Comodule.Corestrict f` plus `FGComoduleCat.of (R := k) (C := H) M`), duplicating the existing corestriction combinator on finitely generated comodules.",
+   "line": 91
+  },
+  {
+   "evidence": "TauCeti/Algebra/AlgebraicGroup/Hopf/Map.lean:96 `mapDomain_id`, :113 `mapDomain_comp`, :140-144 the identical argument inside `mapDomainMulEquiv`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Derive `hg` from `AlgHom.mapDomain_comp` + `AlgHom.mapDomain_id` (with `FiniteTypeCommHopfAlgCat.toBialgHom_comp`, `e.inv_hom_id`, `toBialgHom_id`), as `AlgHom.mapDomainMulEquiv.left_inv` already does.",
+   "issue": "`hg` (lines 113-123) proves `mapDomain e.inv (mapDomain e.hom g) = g` from scratch by `ext`/`DFunLike.congr_fun` on composed bialgebra homs; the functoriality lemmas already give it.",
+   "line": 113
+  },
+  {
+   "evidence": "Unipotent/Basic.lean:191-201 vs :216-232; existing one-directional lemmas at Representation/JordanDecomposition.lean:319,327 and the existing pointwise iff at Representation/UnipotentPoint.lean:89.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Add pointwise iffs `HopfAlgebra.isUnipotentPoint_iff_unipotentPart_eq_self` and `..._iff_semisimplePart_eq_one` in `Representation/JordanDecomposition.lean` beside `Point.unipotentPart_eq_self` and `semisimplePart_eq_one_of_isUnipotent`, deriving the semisimple one from the unipotent one via `Point.semisimplePart_mul_unipotentPart`; then all three theorems here become `rw [smoothUnipotentCommHopfAlgProperty_iff]; exact and_congr_right fun _ \u21a6 forall_congr' ...` as `_iff_forall_isNilpotent` already is over `HopfAlgebra.isUnipotentPoint_iff_forall_isNilpotent_endOfPoint_sub_one`.",
+   "issue": "The mpr of `smoothUnipotentCommHopfAlgProperty_iff_semisimplePart_eq_one` (lines 216-232) re-derives the mpr of `smoothUnipotentCommHopfAlgProperty_iff_unipotentPart_eq_self` (lines 191-201): both unfold `isUnipotentPoint_def` and apply `Point.isUnipotent_pointsAction_unipotentPart`. Relatedly, all three `_iff_*` theorems (169, 183, 203) re-bundle the smoothness conjunct around pointwise statements whose content belongs next to the existing Jordan lemmas.",
+   "line": 203
+  }
+ ],
+ "head_sha": "6ace26aca4d74fdc2dffda21e2c8e0a29a768fed",
+ "merge_base_sha": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3088,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "67ac713f11bb7d77f7bb61cf952b0f00affc8c36f58c17ed99940276f10867e7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T185459Z-3088-reuse-5bbab8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T18:54:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The new object properties are not duplicated anywhere in TauCeti or Mathlib, but the isomorphism-invariance proof re-derives corestriction and mapDomain plumbing that named API already provides, and the Jordan-criterion theorems re-derive each other.",
+ "transcript_blob": "ec7e7d93aef4d90643dc632f362f82ebe30846420cec19ed3e1a587425222dec",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85218,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85218,
+  "cache_read_input_tokens": 1263410,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2985,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2985,
+    "cache_read_input_tokens": 98732,
+    "input_tokens": 2,
+    "output_tokens": 3974,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17845,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

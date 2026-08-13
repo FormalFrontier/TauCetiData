@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.038738,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 156.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48928,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48928,
+    "cache_read_input_tokens": 485506,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4104,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4104,
+      "cache_read_input_tokens": 61323,
+      "input_tokens": 2,
+      "output_tokens": 3020,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11961,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "cost_usd": 1.038738,
+ "dedupe_key": "TauCetiProject/TauCeti|3088|6ace26aca4d74fdc2dffda21e2c8e0a29a768fed|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "diff_sha256": "c42ef4279ec1b0f2e76ca72a78521fde2299429b985415c07cd229ef386aa482",
+ "duration_s": 156.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 176-179, 189-190, 209-210: `refine and_congr_right fun _ \u21a6 ?_` discards the smoothness hypothesis in all three proofs.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "State the three criteria on `unipotentCommHopfAlgProperty k H` (no smoothness), e.g. `unipotentCommHopfAlgProperty_iff_forall_isNilpotent`, and derive the smooth forms by `smoothUnipotentCommHopfAlgProperty_iff` + `and_congr_right` \u2014 or drop the smooth-bundled versions, since they are one-line corollaries.",
+   "issue": "`smoothUnipotentCommHopfAlgProperty_iff_forall_isNilpotent` (169), `..._iff_unipotentPart_eq_self` (183) and `..._iff_semisimplePart_eq_one` (203) all bundle an `Algebra.Smooth k H` conjunct that is unused: every proof begins `rw [smoothUnipotentCommHopfAlgProperty_iff]; refine and_congr_right fun _ \u21a6 ?_`. The content is a criterion for `unipotentCommHopfAlgProperty` alone, so the standalone property (defined at line 67 and documented as the reusable API component) has no characterization lemma.",
+   "line": 169
+  },
+  {
+   "evidence": "`JordanDecomposition.lean:59` `variable (k H K : Type u) [Field k] \u2026 [Field K] [Algebra k K] [PerfectField K]`; `:178 isUnipotent_pointsAction_unipotentPart`, `:199 semisimplePart_mul_unipotentPart`, `:319/:327` give only the forward directions.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Unipotent/Basic.lean",
+   "fix": "Add `HopfAlgebra.isUnipotentPoint_iff_unipotentPart_eq_self` and `HopfAlgebra.isUnipotentPoint_iff_semisimplePart_eq_one` in `Representation/JordanDecomposition.lean` under its existing `[Field K] [Algebra k K] [PerfectField K]` variables (pairing with the already-present `unipotentPart_eq_self`/`semisimplePart_eq_one_of_isUnipotent`), and make the group-level theorems `forall_congr'` applications of them.",
+   "issue": "The genuinely new content in lines 194-199 and 215-229 is the pointwise converse of the Jordan lemmas (`unipotentPart g = g \u2192 IsUnipotentPoint g`, `semisimplePart g = 1 \u2192 IsUnipotentPoint g`), proved inline only for `K = AlgebraicClosure k` even though the argument uses only `Point.isUnipotent_pointsAction_unipotentPart` and `Point.semisimplePart_mul_unipotentPart`, both stated for an arbitrary perfect extension field.",
+   "line": 194
+  }
+ ],
+ "head_sha": "6ace26aca4d74fdc2dffda21e2c8e0a29a768fed",
+ "merge_base_sha": "8fe0c6bfc1862b8da7ea0489e7960e4abadd9404",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3088,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "08619e2a7669d007d14f1c91f4dc2b0d875f843c044dc4ea2f0ebf5e21107f90",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T190448Z-3088-generality-d6afa7",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T19:04:48Z",
+ "submitted_by": "kim-em",
+ "summary": "The three characterization theorems are stated only for the smoothness-conjoined property, with the smoothness conjunct provably inert (each proof is `and_congr_right fun _ \u21a6 \u2026`), so the standalone `unipotentCommHopfAlgProperty` that the PR advertises as its reusable component gets no criteria at all. The pointwise Jordan converses are also proved inline only for `K = AlgebraicClosure k` although the argument needs only a perfect extension field.",
+ "transcript_blob": "45fe17e1774f395cb96f4405c5e783bd2e4350f044204cea2718e5ef56417ac1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48928,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48928,
+  "cache_read_input_tokens": 485506,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4104,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4104,
+    "cache_read_input_tokens": 61323,
+    "input_tokens": 2,
+    "output_tokens": 3020,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11961,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
