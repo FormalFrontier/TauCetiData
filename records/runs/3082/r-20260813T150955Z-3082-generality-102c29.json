@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.426572,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 51.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 278784,
+    "input_tokens": 325924,
+    "output_tokens": 1716,
+    "reasoning_output_tokens": 459
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_estimated": true,
+ "cost_usd": 0.426572,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|4bd5c6590c0e4dafd459c277899a6be9036a9c8c|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "1458eb9339142d0a2315f58390ff45bc7d3c72ee7f0649b3ea971af51c3850f8",
+ "diff_sha256": "1458eb9339142d0a2315f58390ff45bc7d3c72ee7f0649b3ea971af51c3850f8",
+ "duration_s": 51.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 78\u2013121 end respectively in `hK.submatrix f`, `hK.add hL`, `hK.smul hc`, and `hK.hadamard hL`; Mathlib `PosDef.lean` gives `submatrix` under ring/order/star assumptions and `add` under `[AddLeftMono R]`, while only `hadamard` needs the existing RCLike-level setting.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Kernel/Basic.lean",
+   "fix": "Delete these four wrappers and migrate their 35 in-repository uses to the corresponding `Matrix.PosSemidef` methods (with pointwise `simpa` where needed).",
+   "issue": "`isPositiveDefiniteKernel_comp`, `_add`, `_smul_of_nonneg`, and `_mul` merely forward `PosSemidef.submatrix/add/smul/hadamard` while imposing the file-wide `[RCLike \ud835\udd5c]`, so the direct-Mathlib API remains duplicated at a less general level.",
+   "line": 78
+  }
+ ],
+ "head_sha": "4bd5c6590c0e4dafd459c277899a6be9036a9c8c",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f26c9ca0985ffcdfe2f41d5fa2a8990e96bc23f94e0b79d08d04c4d8e31d1cae",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T150955Z-3082-generality-102c29",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T15:09:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The migration leaves a redundant, over-specialized shadow API for operations already provided by `Matrix.PosSemidef`.",
+ "transcript_blob": "06214e11bead840eea5badae8e90dc32334ee262cff83ae5567883794b7189da",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 278784,
+  "input_tokens": 325924,
+  "output_tokens": 1716,
+  "reasoning_output_tokens": 459
+ },
+ "verdict": "request_changes"
+}
