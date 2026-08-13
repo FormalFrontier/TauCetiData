@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0810855000000004,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 316.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 81769,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 81769,
+    "cache_read_input_tokens": 1271509,
+    "inference_geo": "not_available",
+    "input_tokens": 33,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2451,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2451,
+      "cache_read_input_tokens": 95817,
+      "input_tokens": 2,
+      "output_tokens": 2602,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24434,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_usd": 2.081086,
+ "dedupe_key": "TauCetiProject/TauCeti|3131|692d0fbc4a08f35ed7c6cab937b6bd99dc46a57a|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "87dbc016cd9da29b78a9d99cc0ffe44fb4b82dd7e0a80b0291119b3322385158",
+ "diff_sha256": "87dbc016cd9da29b78a9d99cc0ffe44fb4b82dd7e0a80b0291119b3322385158",
+ "duration_s": 316.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/Topology/JordanCurve/Separation.lean` is about cutting the *curve* by two points (`IsJordanCurve.not_isPreconnected_sdiff_pair`, line 192), not about separating the plane; grep of `./mathlib` finds no Jordan curve theorem, and `grep -rl filledHull TauCeti/` returns only the two files added here. The roadmap's own frontier list confirms it: \"nothing here establishes that a Jordan curve separates the plane\" (ConformalMapping/STATUS.md:82).",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Land plane separation for Jordan curves (`J \u2286 closure (filledHull J \\ J)`, or the component structure of `J\u1d9c`) as its own work first, then state these theorems unconditionally. In the meantime keep only the unconditional material: `FilledHull.lean`, `closure_image_inter_sphere_inter_image_subset`, `disjoint_image_closure_image_inter_sphere`.",
+   "issue": "The missing prerequisite (a Jordan curve is approached from its inside \u2014 plane separation) is assumed rather than proved: `hsep : \u2200 J : Set \u2102, IsJordanCurve J \u2192 J \u2286 closure (filledHull J \\ J)` in `exists_continuousOn_closedBall_eqOn_of_forall_subset_closure_filledHull_sdiff` (line 307), `subsingleton_clusterSetOn_ball_of_forall_subset_closure_filledHull_sdiff` (line 287), `exists_diam_image_ball_inter_ball_le` (line 236), and `hJsep` in `subset_filledHull_or_subset_filledHull` (line 181). No declaration in the repo or in pinned Mathlib can discharge it, so all four are permanently inapplicable \u2014 no downstream consumer can ever use them.",
+   "line": 307
+  },
+  {
+   "evidence": "ConformalMapping/README.md:124-126: \"The concrete L5 milestone is the **Jordan-domain case**: the RMT map of a Jordan domain extends to a homeomorphism of closures.\" The PR description likewise states that \"exactly two things\" remain, separation and injectivity.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Say it becomes the continuity half of L5; note injectivity of the extension remains, as the final theorem's own docstring (lines 300\u2013303) already does.",
+   "issue": "Module docstring overclaims: \"Once it is available, the final theorem below becomes the L5 milestone by discharging a hypothesis, with no further mathematics.\" Discharging `hsep` yields only continuous extension; the L5 milestone is a homeomorphism of closures, which also needs injectivity of the extension.",
+   "line": 39
+  }
+ ],
+ "head_sha": "692d0fbc4a08f35ed7c6cab937b6bd99dc46a57a",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3131,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1e353471a685b415daac9de6501c1217225941d60b7cef42fdafecb634a19a51",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T222927Z-3131-correctness-4e6709",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T22:29:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is sound and non-vacuous, but the plane-separation half of the Jordan curve theorem \u2014 which exists neither in the pinned Mathlib nor in TauCeti \u2014 is bundled as the hypothesis `hsep`/`hJsep`, so the four theorems built on it can never be instantiated. A docstring also claims discharging that hypothesis yields the L5 milestone, which additionally requires injectivity.",
+ "transcript_blob": "104e9a76ca2de147848306c2cc98e823728c1e71af38192c2b609973ab54468d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 81769,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 81769,
+  "cache_read_input_tokens": 1271509,
+  "inference_geo": "not_available",
+  "input_tokens": 33,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2451,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2451,
+    "cache_read_input_tokens": 95817,
+    "input_tokens": 2,
+    "output_tokens": 2602,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24434,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
