@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7578535,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 398.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 108483,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 108483,
+    "cache_read_input_tokens": 2025325,
+    "inference_geo": "not_available",
+    "input_tokens": 49,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 833,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 833,
+      "cache_read_input_tokens": 124149,
+      "input_tokens": 2,
+      "output_tokens": 2110,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25791,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "cost_usd": 2.757853,
+ "dedupe_key": "TauCetiProject/TauCeti|3011|3616d78c78dcc4a1167b771e57f5d8b2a5017b0e|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "diff_sha256": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "duration_s": 398.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Algebra/Lie/Sl2.lean:61 `lie_h_e_smul (t) : \u2045h, e\u2046 = (2 : R) \u2022 e` and :64 `lie_lie_smul_f (t) : \u2045h, f\u2046 = -((2 : R) \u2022 f)` match the hypotheses `\u2045y, e\u2046 = c \u2022 e`, `\u2045y, f\u2046 = -(c \u2022 f)` with `y = h`, `c = (2 : K)`; the conclusion `h - (2 : K) \u2022 h = -h`. The PR already uses both lemmas at lines 213 and 216, and `weylAut_apply_of_lie_eq_smul` does not depend on `weylAut_apply_h` (grep for `weylAut_apply_h` finds only line 57 doc and line 151).",
+   "file": "TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean",
+   "fix": "Move `weylAut_apply_of_lie_eq_smul` above it and prove `weylAut_apply_h` as `by rw [weylAut_apply_of_lie_eq_smul he hf t (t.lie_h_e_smul K) (t.lie_lie_smul_f K)]; module`.",
+   "issue": "`weylAut_apply_h` is the `c = 2` instance of `weylAut_apply_of_lie_eq_smul` (line 190) but gets its own 7-line bespoke proof via `expAd_neg_f_apply_h/e` and `expAd_e_apply_h`. It is used nowhere in the PR, so no ordering constraint forces the duplication.",
+   "line": 151
+  },
+  {
+   "evidence": "Mathlib/Algebra/Lie/AdjointAction/Derivation.lean:58 `@[simp] lemma coe_ad_apply_eq_ad_apply (x : L) : ad R L x = LieAlgebra.ad R L x := by ext; simp`; the coercion is literally `toLinearMap` (Mathlib/Algebra/Lie/Derivation/Basic.lean:78-80 `attribute [coe] toLinearMap`, `instCoeToLinearMap`), so the `show` statement and the lemma are the same proposition.",
+   "file": "TauCeti/Algebra/Lie/InnerAutomorphism.lean",
+   "fix": "Use the located lemma: in `expAd` write `LieDerivation.exp (LieDerivation.ad K L x) (by rwa [LieDerivation.coe_ad_apply_eq_ad_apply])` (or `by simpa using hx`, it is `@[simp]`), and in `expAd_apply` close with `rw [expAd, LieDerivation.exp_map_apply, LieDerivation.coe_ad_apply_eq_ad_apply]`.",
+   "issue": "`show (LieDerivation.ad K L x).toLinearMap = ad K L x from by ext; simp` re-proves Mathlib's `LieDerivation.coe_ad_apply_eq_ad_apply`; the same re-derivation is repeated in `expAd_apply` (lines 90-93: `congr 1; ext; simp`).",
+   "line": 85
+  }
+ ],
+ "head_sha": "3616d78c78dcc4a1167b771e57f5d8b2a5017b0e",
+ "merge_base_sha": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3011,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "526ab9890a918d54452812dee502731392d8a0996251274616ccecd8e39a9603",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T002701Z-3011-reuse-935d9f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T00:27:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The construction and the Killing-setting conclusions are genuinely new (no `exp (ad x)`, Weyl automorphism, or root-space-reflection-by-automorphism exists in Mathlib or TauCeti). Two proofs re-derive material already available: `weylAut_apply_h` restates the `c = 2` case of the PR's own reflection formula, and the `LieDerivation.ad`/`LieAlgebra.ad` comparison is re-proved instead of using Mathlib's simp lemma.",
+ "transcript_blob": "26e91ec65ddba6ce21eb0acec117b1fe4f8c578635553cee40ba011553e5f955",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 108483,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 108483,
+  "cache_read_input_tokens": 2025325,
+  "inference_geo": "not_available",
+  "input_tokens": 49,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 833,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 833,
+    "cache_read_input_tokens": 124149,
+    "input_tokens": 2,
+    "output_tokens": 2110,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25791,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

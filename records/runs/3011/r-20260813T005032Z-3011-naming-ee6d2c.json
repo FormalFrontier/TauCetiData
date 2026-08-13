@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3025215000000006,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 338.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 98201,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 98201,
+    "cache_read_input_tokens": 1236269,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1016,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1016,
+      "cache_read_input_tokens": 113684,
+      "input_tokens": 2,
+      "output_tokens": 3917,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27185,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "cost_usd": 2.302522,
+ "dedupe_key": "TauCetiProject/TauCeti|3011|3616d78c78dcc4a1167b771e57f5d8b2a5017b0e|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "diff_sha256": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "duration_s": 338.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/Algebra/Lie/Sl2/Casimir.lean:81` `def sl2Casimir ... (h e f : L)` and `:194` `sl2CasimirHom`; `TauCeti/Algebra/Lie/Sl2/Basic.lean:345` `namespace IsSl2Triple`, `:396` `linearIndependent_isSl2Triple`, `:415` `basisOfIsSl2Triple`; Mathlib `Mathlib/Algebra/Lie/Sl2.lean:102` `IsSl2Triple.toLieSubalgebra`. Note also that this PR's own `exists_lieEquiv_forall_mem_rootSpace` calls the same object a `lieEquiv`, and `Mathlib/Algebra/Lie` uses no `Aut` name anywhere (grep for `Aut\\b` in `Mathlib/Algebra/Lie`: no matches).",
+   "file": "TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean",
+   "fix": "Put the section in `namespace IsSl2Triple` and use dot notation (`t.weylAut`, `t.weylAut_apply_e`), as `TauCeti/Algebra/Lie/Sl2/Basic.lean:345` and Mathlib's `IsSl2Triple.toLieSubalgebra` do; failing that, mark the names `sl2WeylAut`/`sl2WeylAut_apply_e` in the style of `sl2Casimir`.",
+   "issue": "`TauCeti.weylAut` is a bare, unqualified name for a construction that is only meaningful for an sl\u2082 triple, in a repo that already has Weyl-group material (`TauCeti.weylVector`, `TauCeti/LinearAlgebra/RootSystem/Weyl/Vector.lean:34`). Every adjacent sl\u2082 declaration either carries the marker in the name or lives in the triple's namespace; this one does neither, so `TauCeti.weylAut` reads as \"the Weyl automorphism\" of nothing in particular. The lemma family `weylAut_apply`, `weylAut_apply_h/e/f`, `weylAut_apply_of_lie_eq_zero`, `weylAut_apply_of_lie_eq_smul`, `weylAut_apply_sub_smul`, `lie_weylAut_apply` inherits the same problem.",
+   "line": 91
+  },
+  {
+   "evidence": "General family in `TauCeti/Algebra/Lie/InnerAutomorphism.lean:104,110,114,122` is `TauCeti.expAd_apply_of_lie_eq_zero` etc.; the new lemmas at `WeylAutomorphism.lean:111-146` all take `(t : IsSl2Triple h e f)` yet share that prefix and namespace.",
+   "file": "TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean",
+   "fix": "Move them into `namespace IsSl2Triple` alongside the rest (`t.expAd_e_apply_h`), so the triple context is in the namespace rather than implied by unbound letters.",
+   "issue": "`expAd_e_apply_h`, `expAd_e_apply_f` (:117), `expAd_neg_f_apply_h` (:127), `expAd_neg_f_apply_f` (:134), `expAd_neg_f_apply_e` (:138) are sl\u2082-triple-specific but take the `expAd_` prefix that the general API of `InnerAutomorphism.lean` owns in the same `TauCeti` namespace, and the letters `e`, `f`, `h` denote nothing at the root namespace. A reader browsing `TauCeti.expAd_*` cannot tell that these five silently require `IsSl2Triple h e f`, while `TauCeti.expAd_apply_of_lie_eq_zero` holds for any `x`, `y`.",
+   "line": 111
+  },
+  {
+   "evidence": "`Mathlib/Algebra/Algebra/Rat.lean:58` `instance _root_.DivisionRing.toRatAlgebra : Algebra \u211a R`; also `:36` `DivisionSemiring.toNNRatAlgebra`. Uses of the current name: `InnerAutomorphism.lean:37,42,70` and `WeylAutomorphism.lean:270,274`.",
+   "file": "TauCeti/Algebra/Lie/InnerAutomorphism.lean",
+   "fix": "Rename to `LieAlgebra.toRatLieAlgebra` (or `toRatLieAlgebra` in `TauCeti`), matching `DivisionRing.toRatAlgebra`, and update the two uses in the module docstring and `exists_lieEquiv_forall_mem_rootSpace`.",
+   "issue": "`TauCeti.ratLieAlgebra` names a scalar-restriction structure the way a \u211a-form of a Lie algebra would be named \u2014 a different object this roadmap will actually need (Chevalley \u2124-form, Kostant form). Mathlib names the analogous structure by the `to<Target>` pattern in the source namespace.",
+   "line": 73
+  }
+ ],
+ "head_sha": "3616d78c78dcc4a1167b771e57f5d8b2a5017b0e",
+ "merge_base_sha": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3011,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8b8d864486f0546c9a1e91923fef8e347f66547ecfbe360e30b5cd5ef2a49e6b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T005032Z-3011-naming-ee6d2c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T00:50:32Z",
+ "submitted_by": "kim-em",
+ "summary": "Statement strength matches name strength throughout and no notation is added, but the sl\u2082-triple construction and its lemma family sit in the flat `TauCeti` namespace with no sl\u2082 marker, breaking the convention of the adjacent Sl2 files and colliding with existing Weyl-group material; `ratLieAlgebra` also departs from Mathlib's `toRatAlgebra` naming for the same kind of structure.",
+ "transcript_blob": "d055a1bbab6228e0a31840b23bee96c006d9584f1ff37cecaf33f475b0c7e9d4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 98201,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 98201,
+  "cache_read_input_tokens": 1236269,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1016,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1016,
+    "cache_read_input_tokens": 113684,
+    "input_tokens": 2,
+    "output_tokens": 3917,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27185,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

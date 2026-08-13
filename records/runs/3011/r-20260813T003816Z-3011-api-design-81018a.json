@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5710795,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 297.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69204,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69204,
+    "cache_read_input_tokens": 601491,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 268,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 268,
+      "cache_read_input_tokens": 85435,
+      "input_tokens": 2,
+      "output_tokens": 2042,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22516,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "cost_usd": 1.571079,
+ "dedupe_key": "TauCetiProject/TauCeti|3011|3616d78c78dcc4a1167b771e57f5d8b2a5017b0e|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "diff_sha256": "c2228c6c6b78fe361393c3160b1b3d3e4a605ef63a3da24235e625bb69029de5",
+ "duration_s": 297.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep for `expAd_e_apply|expAd_neg_f_apply` across ./code matches only TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean.",
+   "file": "TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean",
+   "fix": "Mark all five `private` (the repo already uses `private theorem` freely, e.g. TauCeti/Algebra/Lie/Sl2/CompleteReducibility.lean:84). If any is meant to be reusable, restate it generally \u2014 e.g. `expAd_apply_neg_self : expAd x hx (-x) = -x` in InnerAutomorphism.lean subsumes `expAd_neg_f_apply_f`.",
+   "issue": "`expAd_e_apply_h` (111), `expAd_e_apply_f` (117), `expAd_neg_f_apply_h` (127), `expAd_neg_f_apply_f` (134) and `expAd_neg_f_apply_e` (138) are public but are used nowhere outside this file, and their names encode the local variable letters and the `-f` half of the composite rather than a general statement. `expAd_neg_f_apply_f` is additionally just `expAd_apply_self` plus `map_neg`.",
+   "line": 111
+  },
+  {
+   "evidence": "grep -c '@\\[simp\\]' on the two new files returns 0; TauCeti/Algebra/Lie/Sl2/Basic.lean:112,123,132,\u2026 annotate exactly this kind of evaluation lemma.",
+   "file": "TauCeti/Algebra/Lie/InnerAutomorphism.lean",
+   "fix": "Add `@[simp]` to `expAd_apply_self`. It cannot loop (RHS is a subterm-free variable) and is the lemma a consumer needs fired automatically after `map_add`/`map_smul` push `expAd` inwards.",
+   "issue": "`expAd_apply_self : expAd x hx x = x` is the one unconditional normal-form evaluation lemma of the file and carries no `@[simp]`; the PR adds no `@[simp]` anywhere, unlike the sibling sl\u2082 files (TauCeti/Algebra/Lie/Sl2/Basic.lean has 14, Standard.lean 16).",
+   "line": 110
+  },
+  {
+   "evidence": "Lines 271-280 obtain `t`, `he\u03b1`, `hf\u03b1` and discard them; `weylAut_apply_e` (line 161) is proved but reachable in the Killing setting only by re-deriving the \u211a structure via `ratLieAlgebra` (InnerAutomorphism.lean:73).",
+   "file": "TauCeti/Algebra/Lie/Sl2/WeylAutomorphism.lean",
+   "fix": "Strengthen the existential to also produce the triple and its images, e.g. `\u2203 h e f, IsSl2Triple h e f \u2227 e \u2208 rootSpace H \u03b1 \u2227 f \u2208 rootSpace H (-\u03b1) \u2227 \u2203 \u03c4 : L \u2243\u2097\u2045K\u2046 L, \u03c4 h = -h \u2227 \u03c4 e = -f \u2227 \u03c4 f = -e \u2227 \u2200 \u03b2 z, z \u2208 rootSpace H \u03b2 \u2192 \u03c4 z \u2208 rootSpace H (\u03b2 - \u03b2 (coroot \u03b1) \u2022 \u21d1\u03b1)`. All conjuncts are already available in the proof from `weylAut_apply_h/e/f he hf t`.",
+   "issue": "`exists_lieEquiv_forall_mem_rootSpace` is the only \u211a-hypothesis-free statement \u2014 the intended external entry point \u2014 but its existential records nothing about \u03c4 beyond the root-space inclusion. The PR's own declared Layer 9 consumer needs both the root-space matching and `weylAut_apply_e` (the `N(\u03b1,\u03b2) = -N(-\u03b1,-\u03b2)` sign relation); the second is unavailable from this statement, forcing every consumer to redo the `letI := ratLieAlgebra K L` construction by hand.",
+   "line": 271
+  }
+ ],
+ "head_sha": "3616d78c78dcc4a1167b771e57f5d8b2a5017b0e",
+ "merge_base_sha": "f38f26b28ec58a45e4764c07f05002a1efe38183",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3011,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6faf5ff69d73c6b02f27947117d5edc7562fe8183c8f4507a856318a5b335cab",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T003816Z-3011-api-design-81018a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T00:38:16Z",
+ "submitted_by": "kim-em",
+ "summary": "No compatibility surface and no exposed bodies, and the `weylAut` characteristic lemmas (values on h, e, f, centraliser, reflection formula) are complete. But five composite-specific computation lemmas are public with no consumer, the one unconditional normal-form lemma carries no `@[simp]`, and the \u211a-free entry point drops the triple data the declared consumer needs.",
+ "transcript_blob": "a18e11f1944c08beacd2b2d6df0cf60ed279fe6b7de5af9caebf917880deb880",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69204,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69204,
+  "cache_read_input_tokens": 601491,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 268,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 268,
+    "cache_read_input_tokens": 85435,
+    "input_tokens": 2,
+    "output_tokens": 2042,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22516,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
