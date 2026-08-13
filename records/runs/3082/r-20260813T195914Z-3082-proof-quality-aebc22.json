@@ -1,0 +1,127 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.89879,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 278.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 128147,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 128147,
+    "cache_read_input_tokens": 2080162,
+    "inference_geo": "not_available",
+    "input_tokens": 33,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5267,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5267,
+      "cache_read_input_tokens": 139379,
+      "input_tokens": 2,
+      "output_tokens": 2449,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20849,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 2.89879,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|edf55cdfd225bdafa63d83d921ccd8b699db7d2e|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "3bc7b13921854cb7ac25bcbed19213e9f2fe255e600d47db1bf578ba4d30eb35",
+ "diff_prompt_sha256": "9be9b06f9365fc97531a976b7f9fdcfd496da4b67843c13569547c701be734a5",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "3bc7b13921854cb7ac25bcbed19213e9f2fe255e600d47db1bf578ba4d30eb35",
+ "duration_s": 278.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Limits.lean:62` introduces `(Matrix.of L).PosSemidef` only to strip it at 87-90; `Gaussian/Basic.lean:121-131` closes the same `charFun_posSemidef \u2026 |>.submatrix` step with `rw [heq]; exact hscaled`, no peel, versus `Convention.lean:119-138` which spends 20 lines on `heq \u25b8` then `hof \u25b8`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Limits.lean",
+   "fix": "In `Limits.lean` state `have hOf : Matrix.PosSemidef L` directly and drop `hof`. Remove the leftover `Matrix.of` from the statements that force the other two peels \u2014 the private `posSemidef_of_support_posSemidef` (Kernel/Basic.lean:56-59) and `TauCeti.charFun_posSemidef` (Bochner/CharFun/PosDef.lean:124) \u2014 so they match the wrapper-free convention this PR adopts elsewhere.",
+   "issue": "Three copies of an undocumented `Matrix.of f = f` peel proved by `ext; rfl` (`Limits.lean:87-89`, `Fourier/Convention.lean:134-137`, `CharFun/PositiveDefinite.lean:59-62`). `Matrix.of` is `Equiv.refl` (mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean:88), so these transports are defeq no-ops that Mathlib deliberately keeps explicit to avoid Pi-vs-Matrix instance confusion; nothing documents why the crossing is safe.",
+   "line": 87
+  },
+  {
+   "evidence": "`Matrix.hadamard_apply` exists at mathlib/Mathlib/LinearAlgebra/Matrix/Hadamard.lean:49; `SemigroupGroup/Basic.lean:352` is `hF.posSemidef.smul (\u03b1 := \u211d) hr` with no transport while 341-345 builds one for `k \u2022 K`.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Kernel/Closure.lean",
+   "fix": "Prove these with the named lemmas (`Matrix.hadamard_apply`, `Pi.add_apply`, `Pi.smul_apply`) instead of `rfl`, and use one idiom consistently for `add`/`const_mul`/`mul`/`smul_of_nonneg` rather than alternating between a silent `exact` and a 5-line `heq \u25b8` bridge.",
+   "issue": "Equalities between a matrix operation and its pointwise lambda are proved by unfolding the operation definitionally with `ext; rfl`, with no comment: `Closure.lean:82-86` (`Matrix.hadamard`), `SemigroupGroup/Basic.lean:327-332` (`Pi` add), `SemigroupGroup/Basic.lean:360-365` (`Matrix.hadamard`). Meanwhile `SemigroupGroup/Basic.lean:349-352` crosses the same class of defeq silently with `exact`, so adjacent lemmas use opposite conventions.",
+   "line": 85
+  },
+  {
+   "evidence": "Compare `Kernel/Closure.lean:60` (`rwa [heq] at h`) and `:72` (`exact heq \u25b8 h`) with `:100`'s `congrArg` form for the same transport.",
+   "file": "TauCeti/Analysis/Bochner/CharFun/PositiveDefinite.lean",
+   "fix": "Replace both with `rwa [heq] at hpd` / `rwa [heq] at h`.",
+   "issue": "`exact (congrArg (fun K => Matrix.PosSemidef K) heq).mp hpd` (also `Kernel/Closure.lean:100`) is an obfuscated spelling of a rewrite; the same PR uses `heq \u25b8 h` or `rwa [heq] at h` for the identical step in a dozen other places.",
+   "line": 63
+  }
+ ],
+ "head_sha": "edf55cdfd225bdafa63d83d921ccd8b699db7d2e",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a73dbb6fae9f6036681efb027d63738874cb289e78e27adc4a33c5cda963c0aa",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T195914Z-3082-proof-quality-aebc22",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T19:59:14Z",
+ "submitted_by": "kim-em",
+ "summary": "The migration replaces the deleted kernel wrappers with hand-rolled equality transports, several of which are pure `Matrix.of` defeq no-ops, and the same step is spelled three different ways across the PR (silent `exact`, `rw [heq]`, and a 20-line `heq \u25b8`/`hof \u25b8` chain). Fix the wrapper mismatch at its source and settle on one idiom.",
+ "transcript_blob": "d9a6b8b86f20b3fa992d7d9406d9ca6e82d80f786487a9f6e132d317f2b644a7",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 128147,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 128147,
+  "cache_read_input_tokens": 2080162,
+  "inference_geo": "not_available",
+  "input_tokens": 33,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5267,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5267,
+    "cache_read_input_tokens": 139379,
+    "input_tokens": 2,
+    "output_tokens": 2449,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20849,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
