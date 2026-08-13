@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3348935,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 177.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59361,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59361,
+    "cache_read_input_tokens": 711697,
+    "inference_geo": "not_available",
+    "input_tokens": 7794,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1353,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1353,
+      "cache_read_input_tokens": 74507,
+      "input_tokens": 2,
+      "output_tokens": 1207,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13400,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 1.334893,
+ "dedupe_key": "TauCetiProject/TauCeti|3069|54fa44e228891ccd5b35e8c2092ea0b0f7d77342|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "52c722f5639b247bc6ca0e9473ff49826d40e42788afd30c8df6643a1a20fb0d",
+ "diff_sha256": "52c722f5639b247bc6ca0e9473ff49826d40e42788afd30c8df6643a1a20fb0d",
+ "duration_s": 177.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "File read in full; used names resolve to ClosedRange.lean:111/134, Basic.lean:241, ContinuousFamily, RieszTheory, or Mathlib (`Mathlib/Analysis/Normed/Operator/Fredholm/Basic.lean:410` for `IsFredholm.add_hasFiniteRange`).",
+   "file": "TauCeti/Analysis/Fredholm/CompactPerturbation.lean",
+   "fix": "Drop the FiniteRank import; `ClosedRange`, `ContinuousFamily` and `RieszTheory` already supply everything used (`of_finite_ker_coker`, `isFredholm_iff_finite_ker_coker`, `index`/`index_id`, `Continuous.index_eq_of_preconnectedSpace`). Adjust the line-17 docstring cross-reference, which now points at a file holding only the index lemma.",
+   "issue": "`public import TauCeti.Analysis.Fredholm.FiniteRank` is now dead: the two `add_of_finiteDimensional_range` calls this PR rewrites to Mathlib's `add_hasFiniteRange` were the only uses of FiniteRank, and nothing from FiniteRank/Comp/Criteria remains (grep for `index_comp|index_pow|isFredholm_ker_subtypeL|index_of_injective|index_add_hasFiniteRange` in this file returns only Mathlib's `FiniteDimensional.of_surjective` at line 136).",
+   "line": 9
+  },
+  {
+   "evidence": "Grep: `index_add_hasFiniteRange` occurs only in FiniteRank.lean; `index_comp` is defined in Comp.lean:55, `index_of_injective` in Criteria.lean:164.",
+   "file": "TauCeti/Analysis/Fredholm/Restriction.lean",
+   "fix": "Replace `public import TauCeti.Analysis.Fredholm.FiniteRank` with `public import TauCeti.Analysis.Fredholm.Comp` and `public import TauCeti.Analysis.Fredholm.Criteria` (Criteria imports ClosedRange, Comp imports Basic, so neither is implied by the other).",
+   "issue": "Same cause: after routing `of_restrict` to Mathlib's `add_hasFiniteRange`, this file uses nothing from `FiniteRank`; its real dependencies are `Comp` (`index_comp`, lines 133-134) and `Criteria` (`index_of_injective`, lines 136/139), reached only as a conduit through FiniteRank. The import edge now misstates the dependency.",
+   "line": 7
+  }
+ ],
+ "head_sha": "54fa44e228891ccd5b35e8c2092ea0b0f7d77342",
+ "merge_base_sha": "bf0079fcbe86094969f96c09abf4320e85cd5b98",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3069,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c3c5383fbc49d0e9999e0c9f60721830e58713ec5adac65f8f4fb8d89d64c616",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T171558Z-3069-placement-35f74e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T17:15:58Z",
+ "submitted_by": "kim-em",
+ "summary": "Placement of the surviving declarations is correct, but deleting `IsFredholm.add_of_finiteDimensional_range` leaves `CompactPerturbation.lean` and `Restriction.lean` importing `Fredholm.FiniteRank` for content they no longer use.",
+ "transcript_blob": "8b1f184f4fc534e40ea77dbf2bc44571f208e611c39b0dfa57b1e27d22067513",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59361,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59361,
+  "cache_read_input_tokens": 711697,
+  "inference_geo": "not_available",
+  "input_tokens": 7794,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1353,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1353,
+    "cache_read_input_tokens": 74507,
+    "input_tokens": 2,
+    "output_tokens": 1207,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13400,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0595280000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 336.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73170,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73170,
+    "cache_read_input_tokens": 1320282,
+    "inference_geo": "not_available",
+    "input_tokens": 1732,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1112,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1112,
+      "cache_read_input_tokens": 88557,
+      "input_tokens": 2,
+      "output_tokens": 6035,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 25911,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 2.059528,
+ "dedupe_key": "TauCetiProject/TauCeti|3069|54fa44e228891ccd5b35e8c2092ea0b0f7d77342|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "52c722f5639b247bc6ca0e9473ff49826d40e42788afd30c8df6643a1a20fb0d",
+ "diff_sha256": "52c722f5639b247bc6ca0e9473ff49826d40e42788afd30c8df6643a1a20fb0d",
+ "duration_s": 336.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Analysis/Normed/Operator/Banach.lean:445 `theorem coe_ofBijective .. : \u2191(ofBijective f hinj hsurj) = f := by ext; rfl`; Fredholm/Basic.lean:379 `ContinuousLinearEquiv.isFredholm (e) : IsFredholm (e : E \u2192L[\ud835\udd5c] F)`.",
+   "file": "TauCeti/Analysis/Fredholm/Criteria.lean",
+   "fix": "Go through the lemma: `have := ContinuousLinearEquiv.isFredholm (ContinuousLinearEquiv.ofBijective T (LinearMap.ker_eq_bot.mpr hT.injective) (LinearMap.range_eq_top.mpr hT.surjective)); rwa [ContinuousLinearEquiv.coe_ofBijective] at this`.",
+   "issue": "`exact ContinuousLinearEquiv.isFredholm (ContinuousLinearEquiv.ofBijective T ..)` has type `IsFredholm \u2191(ofBijective T _ _)` while the goal is `IsFredholm T`; it typechecks only by unfolding `ofBijective` plus structure eta. Mathlib does not treat that coercion as `rfl` (`ContinuousLinearEquiv.coe_ofBijective` is proved `by ext; rfl`, Mathlib/Analysis/Normed/Operator/Banach.lean:445). The vestigial `:= by exact` compounds it.",
+   "line": 183
+  },
+  {
+   "evidence": "Mathlib/Topology/Algebra/Module/ContinuousLinearMap/Basic.lean:392,472,856 declare `toLinearMap_one`, `toLinearMap_comp`, `toLinearMap_sub`; none is applied at CompactPerturbation.lean:92-95.",
+   "file": "TauCeti/Analysis/Fredholm/CompactPerturbation.lean",
+   "fix": "Bridge with the named lemmas, e.g. `simpa only [ContinuousLinearMap.toLinearMap_sub, ContinuousLinearMap.toLinearMap_comp, ContinuousLinearMap.toLinearMap_one, LinearMap.one_eq_id] using LinearMap.FiniteRangeSetoid.equiv_iff_hasFiniteRange.mp hS.1`, likewise for `hright`.",
+   "issue": "Same pattern, now made explicit by the new type ascriptions: `equiv_iff_hasFiniteRange.mp hS.1` has type `HasFiniteRange (\u2191S \u2218\u2097 \u2191T - LinearMap.id)` (Mathlib/Algebra/Module/LinearMap/FiniteRange.lean:234 states it as `(u - v).HasFiniteRange`), while `hleft` is ascribed `HasFiniteRange ((S.comp T - 1 : E \u2192L[\ud835\udd5c] E) : E \u2192\u2097[\ud835\udd5c] E)`. The two agree only by unfolding `toLinearMap` through `-`, `comp` and `1`. Line 94 (`hright`) is the second instance.",
+   "line": 92
+  }
+ ],
+ "head_sha": "54fa44e228891ccd5b35e8c2092ea0b0f7d77342",
+ "merge_base_sha": "bf0079fcbe86094969f96c09abf4320e85cd5b98",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3069,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "72a8c39933b7cb1760e407019bf26bd40818879f0368c4365b5da5d57c3e60e0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T172243Z-3069-proof-quality-61b02d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T17:22:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The deletions genuinely simplify the proofs (a `change` and two FG\u2194FiniteDimensional conversions go away), but two rewritten lines are accepted only by unfolding coercions definitionally, with no bridging lemma or comment. Explicit Mathlib lemmas exist for both.",
+ "transcript_blob": "b6765b6b402e5850137b0c5527b61a8d9f9df0e266d52cf6a57fc5d35158c0cd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73170,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73170,
+  "cache_read_input_tokens": 1320282,
+  "inference_geo": "not_available",
+  "input_tokens": 1732,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1112,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1112,
+    "cache_read_input_tokens": 88557,
+    "input_tokens": 2,
+    "output_tokens": 6035,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 25911,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
