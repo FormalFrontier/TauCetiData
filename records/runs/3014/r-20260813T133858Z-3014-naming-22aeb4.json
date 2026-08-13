@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0430685,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 267.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 100684,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 100684,
+    "cache_read_input_tokens": 944961,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4917,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4917,
+      "cache_read_input_tokens": 112266,
+      "input_tokens": 2,
+      "output_tokens": 6092,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21610,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 2.043068,
+ "dedupe_key": "TauCetiProject/TauCeti|3014|41ee4bb92bf0bf7a76d0253a293afef15406f39b|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e9a14498088e1772598c236d7b3b9332132b6582d1e43096ddcd0647929ba805",
+ "diff_sha256": "e9a14498088e1772598c236d7b3b9332132b6582d1e43096ddcd0647929ba805",
+ "duration_s": 267.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "CommHopfAlgCat/CharacterLattice.lean:193 `abbrev characterLattice := Additive (geometricCharacterGroup H)` with `variable (H : _root_.CommHopfAlgCat.{u} k)` (line 53, no hypothesis); its own docstring (lines 190-192) says \"for a torus, it is a finite-rank free character lattice\".",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/CharacterLattice.lean",
+   "fix": "Rename the generic abbrev to `additiveCharacterGroup` (and `instCharacterLatticeGaloisAction` to match), reserving the word `lattice` for the torus-level statements in `Torus/CharacterLattice.lean` and `SplitTorus/CharacterLattice.lean`.",
+   "issue": "`characterLattice H` is defined for an arbitrary `H : CommHopfAlgCat k`, but the name asserts a lattice (finite-rank free abelian group), which holds only for tori. The PR's own `DiagonalizableGroup.geometricCharacterGroupEquiv k G : geometricCharacterGroup (coordinateRing k G).obj \u2243* G` for arbitrary `G : FGCommGrpCat` exhibits torsion cases (e.g. `G = Multiplicative (ZMod 2)`), and `exists_characterLattice_addEquiv_of_torus` is precisely the theorem that freeness needs the torus hypothesis.",
+   "line": 193
+  },
+  {
+   "evidence": "grep of `TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/*.lean` under `namespace CommHopfAlgCat`: BaseChange.lean:54 `baseChange`, Basic.lean:141 `pointsFunctor_obj`, SchemePoints.lean:117 `mapMulEquiv_mapValue`; the two new lemmas are the only unqualified `val_`/`smul_` names there.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/CharacterLattice.lean",
+   "fix": "Qualify by the object they are about: `val_smul_geometricCharacterGroup` and `smul_ofMul_characterLattice`, or place them in dedicated `geometricCharacterGroup` / `characterLattice` sub-namespaces.",
+   "issue": "`val_smul` (line 186) and `smul_ofMul` (line 207) claim maximally generic names in `TauCeti.CommHopfAlgCat`, a namespace holding category-level API (`baseChange`, `baseChangeFunctor`, `pointsFunctor`, `mapMulEquiv`, `mapPointsFunctor`\u2026). Neither `.val` nor `\u2022` is an operation on `CommHopfAlgCat` objects, so the names are wrong for their namespace and pre-empt future `val`/`smul` lemmas there.",
+   "line": 186
+  },
+  {
+   "evidence": "SplitTorus/Basic.lean:62, BaseChange.lean:51, Cocharacter.lean:84, Scheme.lean:62 all `namespace SplitTorus`; SplitTorus/CharacterLattice.lean:28 has only `namespace TauCeti`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SplitTorus/CharacterLattice.lean",
+   "fix": "Open `namespace SplitTorus` in this file and rename to `SplitTorus.characterLatticeEquiv`, `\u2026_apply_ofAdd`, `\u2026_apply_eq_iff`, `\u2026_symm_apply_toMul_val`, dropping the redundant `splitTorus` prefix.",
+   "issue": "`splitTorusCharacterLatticeEquiv` (and the three lemmas at lines 46, 58, 74) sits in the root `TauCeti` namespace with the prefix spelled into the name, while every other file in `SplitTorus/` opens `namespace SplitTorus` (`SplitTorus.characterGroup`, `SplitTorus.pointsMulEquiv`, `SplitTorus.baseChange\u2026`).",
+   "line": 34
+  },
+  {
+   "evidence": "Lines 69-70 `galoisScalarMap H 1 x = x` vs line 163 `smul_one \u03c3 := map_one (galoisScalarMap H \u03c3)`; lines 77-79 `galoisScalarMap H (\u03c3 * \u03c4) x = \u2026` vs line 182 `map_mul (galoisScalarMap H \u03c3) x.val y.val`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/CharacterLattice.lean",
+   "fix": "Rename to `galoisScalarMap_one_apply` / `galoisScalarMap_mul_apply`, or state the unapplied forms `galoisScalarMap H 1 = AlgHom.id k _` and `galoisScalarMap H (\u03c3 * \u03c4) = (galoisScalarMap H \u03c3).comp (galoisScalarMap H \u03c4)` under the current names.",
+   "issue": "`galoisScalarMap_one` (line 69) and `galoisScalarMap_mul` (line 77) read as the standard \"preserves 1\" / \"preserves multiplication\" statements for the algebra hom `galoisScalarMap H \u03c3`, but they are about the Galois argument `\u03c3`; the file itself uses `map_one (galoisScalarMap H \u03c3)` and `map_mul (galoisScalarMap H \u03c3)` for the other reading (lines 163-164, 181-182). Both also state applied equations without `_apply`.",
+   "line": 69
+  }
+ ],
+ "head_sha": "41ee4bb92bf0bf7a76d0253a293afef15406f39b",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3014,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cb52bfe2db3455f81e3bc53f22a6a92ee98f7b3c91cc05b42d990c1e49f0f768",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T133858Z-3014-naming-22aeb4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T13:38:58Z",
+ "submitted_by": "kim-em",
+ "summary": "No notation is introduced and most lemma names describe their conclusions correctly, but the central definition `characterLattice` is named for a property (freeness) that only holds for tori, two generic lemma names are parked in the wrong namespace, and the split-torus file abandons the `SplitTorus` namespace used by every other file in its directory.",
+ "transcript_blob": "0dc3a7c7b1c1e0e2143d94308f89eb03e0b8b94efa86340a545918bc4a9399eb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 100684,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 100684,
+  "cache_read_input_tokens": 944961,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4917,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4917,
+    "cache_read_input_tokens": 112266,
+    "input_tokens": 2,
+    "output_tokens": 6092,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21610,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

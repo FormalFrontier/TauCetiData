@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9711190000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 269.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73528,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73528,
+    "cache_read_input_tokens": 1493350,
+    "inference_geo": "not_available",
+    "input_tokens": 45,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4617,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4617,
+      "cache_read_input_tokens": 85410,
+      "input_tokens": 2,
+      "output_tokens": 2801,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18926,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "cost_usd": 1.971119,
+ "dedupe_key": "TauCetiProject/TauCeti|3014|41ee4bb92bf0bf7a76d0253a293afef15406f39b|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e9a14498088e1772598c236d7b3b9332132b6582d1e43096ddcd0647929ba805",
+ "diff_sha256": "e9a14498088e1772598c236d7b3b9332132b6582d1e43096ddcd0647929ba805",
+ "duration_s": 269.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 78-82; the same statement shape is proved without `change` in DiagonalizableGroup/CharacterLattice.lean:62-76 (`geometricCharacterGroupEquiv_symm_apply_val`), which routes through the `_apply_eq_iff` lemma and `TauCeti/Algebra/Bialgebra/MonoidAlgebra/BaseChange.lean:85`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SplitTorus/CharacterLattice.lean",
+   "fix": "Prove it the way the sibling file does: apply `splitTorusCharacterLatticeEquiv_apply_eq_iff` (lines 58-69) to `(splitTorusCharacterLatticeEquiv k \u03c3).symm m` together with `apply_symm_apply`, then `MonoidAlgebra.scalarTensorBialgEquiv_symm_single` \u2014 no `change`. If the `change` is kept, document why the goal is unreachable otherwise.",
+   "issue": "`change ((DiagonalizableGroup.geometricCharacterGroupEquiv ...).symm (Multiplicative.ofAdd m)).val = _` with no comment: the whole content of the lemma is the defeq that `(splitTorusCharacterLatticeEquiv k \u03c3).symm` reduces through `MulEquiv.toAdditive` and `AddEquiv.additiveMultiplicative` to the diagonalizable-group equivalence's inverse.",
+   "line": 78
+  },
+  {
+   "evidence": "Lines 89-91. `Algebra.TensorProduct.algebraMap_apply` is a simp lemma (mathlib Mathlib/RingTheory/TensorProduct/Basic.lean:301, `algebraMap S (A \u2297[R] B) r = algebraMap S A r \u2297\u209c 1`), and `galoisScalarMap_tmul` is already available in this file.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/CharacterLattice.lean",
+   "fix": "Rewrite explicitly: `simp [Algebra.smul_def, Algebra.TensorProduct.algebraMap_apply, galoisScalarMap_tmul]`, i.e. reduce `algebraMap` to `a \u2297\u209c 1` and use the `galoisScalarMap_tmul` simp lemma proved at line 62.",
+   "issue": "`galoisScalarMap_smul` ends with a bare `congr 1`, which discharges the actual content \u2014 `galoisScalarMap H \u03c3 (algebraMap k\u0304 (k\u0304 \u2297[k] H) a) = algebraMap k\u0304 _ (\u03c3 a)` \u2014 by unfolding `Algebra.TensorProduct.map` to a pure tensor. Nothing names the step, and it breaks if `map`/`algebraMap_apply` stop being `rfl`.",
+   "line": 91
+  },
+  {
+   "evidence": "Lines 80-84; `Algebra.TensorProduct.map_comp` (mathlib Mathlib/RingTheory/TensorProduct/Maps.lean:555) demands both arguments be composites, and `map_comp_id` (line 564) fixes the second factor to the codomain of `f\u2082`, so neither applies syntactically here.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/CharacterLattice.lean",
+   "fix": "Either `rw [\u2190 AlgHom.comp_id (AlgHom.id k H)]` before `Algebra.TensorProduct.map_comp` so the rewrite matches syntactically, or prove it by tensor induction (`induction x with | zero => simp | add => simp_all | tmul => simp [galoisScalarMap_tmul]`), matching the style of `counit_galoisScalarMap` in the same file.",
+   "issue": "`galoisScalarMap_mul` uses `convert ... using 1 <;> rfl` only to bridge `Algebra.TensorProduct.map _ ((AlgHom.id k H).comp (AlgHom.id k H))` and `map _ (AlgHom.id k H)`; the side goals are closed by an unstated defeq rather than by `AlgHom.comp_id`.",
+   "line": 82
+  },
+  {
+   "evidence": "Lines 49-56; `FiniteTypeCommHopfAlgCat.baseChange` is `noncomputable abbrev` (TauCeti/Algebra/AlgebraicGroup/FiniteType/BaseChange.lean:56) wrapping `CommHopfAlgCat.baseChange`, itself `noncomputable abbrev` (CommHopfAlgCat/BaseChange.lean:54).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/MultiplicativeType/CharacterLattice.lean",
+   "fix": "State the identification as a `rfl`-lemma next to `geometricCharacterGroup` (e.g. `geometricCharacterGroup H.obj = GroupLike k\u0304 (FiniteTypeCommHopfAlgCat.baseChange H)`) and rewrite with it, or transport `Group.FG` along `GroupLike.mapEquiv`; if `exact` alone suffices, drop the `change`.",
+   "issue": "`change Group.FG (GroupLike k\u0304 (FiniteTypeCommHopfAlgCat.baseChange H))` relies on `baseChange` and `CommHopfAlgCat.baseChange` staying reducible `abbrev`s with carrier `k\u0304 \u2297[k] H.obj`; the comment records what unfolds but not why no lemma is available, and the proof breaks silently if either becomes a `def`.",
+   "line": 51
+  }
+ ],
+ "head_sha": "41ee4bb92bf0bf7a76d0253a293afef15406f39b",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3014,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bb7235f35ee65e8fe06bed5717fdad617a6963f9fa7cd299a11d04d61cd2cd10",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T134840Z-3014-proof-quality-9a1ab6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T13:48:40Z",
+ "submitted_by": "kim-em",
+ "summary": "Three proofs close their essential step by undocumented definitional equality (`change` across `Additive`/`Multiplicative` wrappers, a bare `congr 1` through `Algebra.TensorProduct.map`, and `convert ... <;> rfl` patching `AlgHom.id.comp AlgHom.id`), in each case where an explicit lemma already in the PR or in Mathlib would do the job. A fourth `change` unfolds a reducible-`abbrev` chain and will break silently if `baseChange` stops being an `abbrev`.",
+ "transcript_blob": "a566d66c417a7a76f9f13b3dab5c38020d3ffac193f517ae4f04626d6d76de71",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73528,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73528,
+  "cache_read_input_tokens": 1493350,
+  "inference_geo": "not_available",
+  "input_tokens": 45,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4617,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4617,
+    "cache_read_input_tokens": 85410,
+    "input_tokens": 2,
+    "output_tokens": 2801,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18926,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
