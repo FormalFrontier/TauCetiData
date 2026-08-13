@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.370364,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 357.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 88902,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 88902,
+    "cache_read_input_tokens": 1575280,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 993,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 993,
+      "cache_read_input_tokens": 104408,
+      "input_tokens": 2,
+      "output_tokens": 4231,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27031,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 2.370364,
+ "dedupe_key": "TauCetiProject/TauCeti|3019|1b3680a5305541f6f410b2e3367bdc331a40fa78|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "diff_sha256": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "duration_s": 357.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 279-303 (defs, docstring claim); line 101 `public section` with no `@[expose]` in the file; lines 371-374 and 391-394 (the iff lemmas require `[Fintype \u03b9]` and a `Module.Basis \u03b9 \u2102 W`); line 423 `have : Module.Finite \u2102 W := Module.Finite.of_basis b`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Add `theorem IsPolynomialRep.finite (h : IsPolynomialRep \u03c1) : Module.Finite \u2102 W` and `IsRationalRep.finite`, proved by destructuring and `Module.Finite.of_basis b` \u2014 exactly the step already taken internally at lines 423 and 434.",
+   "issue": "`IsPolynomialRep` (288) and `IsRationalRep` (298) have no finite-dimensionality accessor. The docstring claims \"The carrier is forced to be finite-dimensional\", but the file opens with a plain `public section` (line 101) and no `@[expose]`, so the body is hidden from importers; the only elimination route is `isPolynomialRep_iff_forall_mem_polynomialFunctions` / `isRationalRep_iff_forall_mem_rationalFunctions`, both of which demand a basis indexed by a `Fintype`, which a consumer cannot produce without that very instance. So a downstream `h : IsRationalRep \u03c1` with no independent `FiniteDimensional \u2102 W` hypothesis is unusable.",
+   "line": 288
+  },
+  {
+   "evidence": "Definitions at lines 288-303 use `entryEval`; `roadmap/TauCetiRoadmap/RepresentationTheory/ClassicalGroups/Suggested.lean:61-70` pins the `MvPolynomial.eval` form; README line 187-190 \"expose the coordinate-entry form as a lemma\"; repo convention `lemma isEffective_iff ... := Iff.rfl` at `TauCeti/AlgebraicGeometry/WeilDivisor/Basic.lean:112`. The file supplies `mem_polynomialFunctions` (185) and `mem_rationalFunctions` (190) for the subalgebras but nothing analogous for the two predicates.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Add `isPolynomialRep_iff` and `isRationalRep_iff` restating the definitions (`:= (rfl)` / `Iff.rfl`), stated with `MvPolynomial.eval` in the pinned form, alongside the existing basis-independence lemmas.",
+   "issue": "Neither predicate carries the `*_def`/`*_iff` restatement of its own definition, so with the body hidden the pinned coordinate-entry statement is not available as a lemma. The README asks to \"expose the coordinate-entry form as a lemma\", and `Suggested.lean:61` pins it in terms of `MvPolynomial.eval (fun p => (g : Matrix _ _ \u2102) p.1 p.2) (P i j)`; no lemma in this file states that shape. Reaching it requires composing the basis-independence iff with `mem_rationalFunctions_iff_inv` and then unfolding `entryEval`, which is impossible downstream.",
+   "line": 298
+  },
+  {
+   "evidence": "Lines 117-142; `entryEval` occurs in the statements at 149, 167, 187, 192, 242, 256, 292, 303. Repo convention: `detPowerRep_apply` at `TauCeti/RepresentationTheory/ClassicalGroups/Determinant.lean:59` supplies exactly this lemma for the neighbouring def.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Add `theorem entryEval_apply (g) (P) : entryEval g P = MvPolynomial.eval (fun p => (g : Matrix (Fin n) (Fin n) k) p.1 p.2) P := (rfl)` and `theorem detPoly_eq : detPoly k n = (Matrix.mvPolynomialX (Fin n) (Fin n) k).det := (rfl)` (or a general `eval x (detPoly k n) = _` form). Do not add `@[expose]` instead.",
+   "issue": "`entryEval` (117) has no defining lemma, only `entryEval_X` (121) and `entryEval_C` (126); with the body hidden it can never be identified with `MvPolynomial.eval` downstream, and it appears in the statement of both predicates and both `mem_*` lemmas, so every consumer inherits the opacity. Same defect for `detPoly` (133): `entryEval_detPoly` (139) only pins its values on `GL (Fin n) k`, which do not determine a polynomial (the file's own docstring notes the evaluation map is far from injective over a finite `k`), and there is no lemma relating it to `Matrix.mvPolynomialX`.",
+   "line": 117
+  }
+ ],
+ "head_sha": "1b3680a5305541f6f410b2e3367bdc331a40fa78",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3019,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8579c425f34e45088d3b4fb222102e041415c2ce3dc8c600493c45413bfc847e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T080254Z-3019-api-design-870c3a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:02:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The two headline predicates and the two polynomial-side defs are opaque downstream: with bodies unexposed there is no `_iff`/`_apply` restatement for `IsPolynomialRep`, `IsRationalRep`, `entryEval` or `detPoly`, and no accessor for the finite-dimensionality the predicates are documented to force \u2014 so `h : IsRationalRep \u03c1` cannot be eliminated at all unless the consumer already has a finite basis, and the roadmap-pinned `MvPolynomial.eval` coordinate form is unreachable.",
+ "transcript_blob": "0c8309235dcca7152d1e40b484fa7d42f78e2b858ce1ecaa870239e30738854a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 88902,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 88902,
+  "cache_read_input_tokens": 1575280,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 993,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 993,
+    "cache_read_input_tokens": 104408,
+    "input_tokens": 2,
+    "output_tokens": 4231,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27031,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

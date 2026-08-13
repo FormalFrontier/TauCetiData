@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9692395,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 256.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73658,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73658,
+    "cache_read_input_tokens": 1482217,
+    "inference_geo": "not_available",
+    "input_tokens": 39,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 516,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 516,
+      "cache_read_input_tokens": 89641,
+      "input_tokens": 2,
+      "output_tokens": 2954,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18961,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.96924,
+ "dedupe_key": "TauCetiProject/TauCeti|3019|1b3680a5305541f6f410b2e3367bdc331a40fa78|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "diff_sha256": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "duration_s": 256.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Every ingredient is already generic in the carrier: `Representation.tensorPower` (TauCeti/RepresentationTheory/Tensor/Power.lean:100), `Representation.symmetricPower` (SymmetricPower.lean:46), `Representation.exteriorPower` (ExteriorPower.lean:49), `SymmetricPower.range_mk` (mathlib/Mathlib/LinearAlgebra/TensorPower/Symmetric.lean:132), `exteriorPower.fromTensorPower_surjective` and `exteriorPower.map_comp_fromTensorPower` (TauCeti/LinearAlgebra/ExteriorPower.lean:162,218), `Basis.piTensorProduct_repr_tprod_apply` (mathlib/Mathlib/LinearAlgebra/PiTensorProduct/Basis.lean:42). The general entry computation is also shorter: with a general basis `b` the chain ends at `LinearMap.toMatrix_apply`, dropping the `simp [Matrix.mulVec_single]` step (line 573) that only unfolds `stdRep`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "State `IsPolynomialRep.tensorPower {\u03c1 : Representation \u2102 (GL (Fin n) \u2102) W} (h : IsPolynomialRep \u03c1) (d : \u2115) : IsPolynomialRep (\u03c1.tensorPower d)` and likewise `.symmetricPower`, `.exteriorPower`; then `isPolynomialRep_tensorPowerRep n d := (isPolynomialRep_stdRep n).tensorPower d` and the other two are one-liners.",
+   "issue": "`isPolynomialRep_tensorPowerRep`, `isPolynomialRep_symPowerRep` and `isPolynomialRep_extPowerRep` are stated only for `stdRep`, while the neighbouring closure results (`IsPolynomialRep.tprod`, `IsPolynomialRep.of_surjective`) are for an arbitrary `\u03c1`. The natural level is closure of the property under the functorial powers.",
+   "line": 561
+  },
+  {
+   "evidence": "`TensorProduct.toMatrix_map` is stated over `variable [CommRing R]` (mathlib/Mathlib/LinearAlgebra/TensorProduct/Matrix.lean:29,39); `Representation.tprod` is CommSemiring-level. The sibling section already proves its entry lemma for an arbitrary `Subalgebra k (G \u2192 k)` (lines 317, 352).",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Move it into the `BasisChange` section over `{k : Type u} [CommRing k] {G} [Monoid G]` and state the subalgebra-generic form `toMatrix_tensorProduct_mem (A : Subalgebra k (G \u2192 k)) (b : Basis \u03b9 k W) (c : Basis \u03ba k V) (h\u2081 : \u2200 p l, (fun g => toMatrix b b (\u03c1 g) p l) \u2208 A) (h\u2082 : \u2200 p l, (fun g => toMatrix c c (\u03c3 g) p l) \u2208 A) (i j : \u03b9 \u00d7 \u03ba) : (fun g => toMatrix (b.tensorProduct c) (b.tensorProduct c) ((\u03c1.tprod \u03c3) g) i j) \u2208 A`, mirroring `toMatrix_mem_of_toMatrix_mem_of_surjective`; both `tprod` lemmas then reduce to two lines.",
+   "issue": "`toMatrix_tprod` is fixed to `\u2102` and `GL (Fin n) \u2102` although it is a pure `TensorProduct.toMatrix_map` fact valid over any commutative ring and monoid, and it is not lifted to the subalgebra level, so `IsPolynomialRep.tprod` (519) and `IsRationalRep.tprod` (533) repeat the same `hentry` block verbatim.",
+   "line": 510
+  },
+  {
+   "evidence": "Proof body (lines 257-265): `hne`/`eq_inv_mul_iff_mul_eq\u2080` are only the step converting the multiplicative identity to the inverse form; the substantive rewrite `\u2190 mul_assoc, \u2190 pow_add` plus `omega` from `hle : m i \u2264 Finset.univ.sup m` is field-free, exactly as in `rationalFunctions`' own `add_mem'` (lines 174-179) which is proved over `CommRing`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "State the CommRing form in the `CommRing` section \u2014 `\u2203 (P : \u03b9 \u2192 MvPolynomial (Fin n \u00d7 Fin n) k) (m : \u2115), \u2200 i g, (g : Matrix _ _ k).det ^ m * f i g = entryEval g (P i)` \u2014 and derive the current `\u207b\u00b9` version over a field from it via `mem_rationalFunctions_iff_inv`.",
+   "issue": "`exists_forall_eq_inv_mul_of_forall_mem` sits in the `Field` section, but its content \u2014 the `Finset.univ.sup m` common-denominator trick \u2014 needs no field; the hypothesis is used only to divide back into the `(det ^ m)\u207b\u00b9` presentation. This contradicts the file's own stated rationale for keeping `rationalFunctions` multiplicative over a `CommRing` (lines 47-51).",
+   "line": 252
+  }
+ ],
+ "head_sha": "1b3680a5305541f6f410b2e3367bdc331a40fa78",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3019,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "17e98d583525b00723b72604e5d4a095d59e9469ad9dd6774df44c98af9d0a68",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T080851Z-3019-generality-e6d432",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:08:51Z",
+ "submitted_by": "kim-em",
+ "summary": "The subalgebra-level machinery is at the right level, but the functorial-power results are proved only for stdRep although the file already proves the binary tprod closure for an arbitrary representation, the tensor-product entry lemma is pinned to \u2102 instead of matching its neighbouring subalgebra-generic lemma, and the common-denominator lemma carries a Field hypothesis its content does not use.",
+ "transcript_blob": "4df1f8372f654073ec741ed69576cbcc5f9612bee0a420b6c8e257cc964ff7bb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73658,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73658,
+  "cache_read_input_tokens": 1482217,
+  "inference_geo": "not_available",
+  "input_tokens": 39,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 516,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 516,
+    "cache_read_input_tokens": 89641,
+    "input_tokens": 2,
+    "output_tokens": 2954,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18961,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

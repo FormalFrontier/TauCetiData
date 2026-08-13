@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9006955,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 264.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73366,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73366,
+    "cache_read_input_tokens": 1386123,
+    "inference_geo": "not_available",
+    "input_tokens": 35,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 684,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 684,
+      "cache_read_input_tokens": 89181,
+      "input_tokens": 2,
+      "output_tokens": 7338,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18250,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.900696,
+ "dedupe_key": "TauCetiProject/TauCeti|3019|1b3680a5305541f6f410b2e3367bdc331a40fa78|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "diff_sha256": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "duration_s": 264.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/LinearAlgebra/Matrix/GeneralLinearGroup/Defs.lean:75-84` defines `det` with `@[simps]`, generating `Matrix.GeneralLinearGroup.val_det_apply : ((det A : R\u02e3) : R) = (\u2191A : Matrix n n R).det`; it is used at `Mathlib/.../Defs.lean:206` and in this repo at `TauCeti/RepresentationTheory/ClassicalGroups/Determinant.lean:138`. `Matrix.eval_det_mvPolynomialX` (`Mathlib/LinearAlgebra/Matrix/MvPolynomial.lean:80`) produces `det (Matrix.of fun i j => s (i, j))`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Replace `hval` by `(Matrix.GeneralLinearGroup.val_det_apply g).symm`; with it the following six-step coercion chain (`map_one, \u2190 Units.val_pow_eq_pow_val, \u2190 Units.val_mul, \u2190 zpow_natCast, \u2190 zpow_add`) can largely collapse into one `simp [\u2190 Units.val_mul, \u2190 zpow_add]`. At line 142 close with `simp [Matrix.of_apply]` (or `congr`) rather than `rfl`.",
+   "issue": "`have hval : (g : Matrix (Fin n) (Fin n) k).det = ((Matrix.GeneralLinearGroup.det g : k\u02e3) : k) := rfl` is undocumented defeq across the `Units` coercion. The same class appears at line 141-142, where `rw [entryEval, detPoly, Matrix.eval_det_mvPolynomialX]` is followed by a bare `rfl` closing `det (Matrix.of fun i j => (\u2191g) i j) = det \u2191g` through the `Matrix.of` wrapper and eta.",
+   "line": 225
+  },
+  {
+   "evidence": "`Mathlib/RepresentationTheory/Intertwining.lean:84`: `lemma isIntertwining (f : IntertwiningMap \u03c1 \u03c3) (g : G) (v : V) : f (\u03c1 g v) = \u03c3 g (f v)`. After `rw [\u2190 hw]` the goal is `\u03c3 g (f w) = f (\u03c1 g w)`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Replace the `simpa` line with `exact (f.isIntertwining g w).symm`.",
+   "issue": "`hfg` is proved by `simpa using (LinearMap.congr_fun (f.isIntertwining' g) w).symm`, reaching into the primed structure field (a `\u2218\u2097` equation) and relying on `simp` to unfold the composition, when the public API lemma states the goal verbatim.",
+   "line": 331
+  },
+  {
+   "evidence": "`Mathlib/LinearAlgebra/Matrix/ToLin.lean:671-672`: `theorem LinearMap.toMatrix_mulVec_repr (f : M\u2081 \u2192\u2097[R] M\u2082) (x : M\u2081) : LinearMap.toMatrix v\u2081 v\u2082 f *\u1d65 v\u2081.repr x = v\u2082.repr (f x)`, which entrywise is `b.repr (\u03c1 g w) p = \u2211 l, toMatrix b b (\u03c1 g) p l * b.repr w l`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Derive `hexp` from `LinearMap.toMatrix_mulVec_repr b b (\u03c1 g) w`: take `congr_fun ... p`, unfold `Matrix.mulVec`/`dotProduct` and commute the factors, e.g. `simpa [Matrix.mulVec, dotProduct, mul_comm] using congr_fun (LinearMap.toMatrix_mulVec_repr b b (\u03c1 g) w) p`.",
+   "issue": "`hexp` reproves a Mathlib lemma by hand: `conv_lhs => rw [\u2190 b.sum_repr w]` followed by a seven-lemma `simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finset.sum_apply, Finsupp.coe_smul, Pi.smul_apply, smul_eq_mul, LinearMap.toMatrix_apply]`. This is exactly the brittle unfolding chain the rubric warns about, and it hides that the fact is already available.",
+   "line": 332
+  },
+  {
+   "evidence": "Lines 524-530 and 538-545 differ only in the trailing `mul_mem` witness; `toMatrix_mem_of_toMatrix_mem` (line 352) and `toMatrix_mem_of_toMatrix_mem_of_surjective` (line 317) are already abstracted over `A` for the same reason.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Add a subalgebra-generic companion next to `toMatrix_tprod`, e.g. `theorem toMatrix_tensorProduct_mem (A : Subalgebra k (G \u2192 k)) (hb : \u2200 p l, (fun g => toMatrix b b (\u03c1 g) p l) \u2208 A) (hc : \u2200 p l, (fun g => toMatrix c c (\u03c3 g) p l) \u2208 A) (i j) : (fun g => toMatrix (b.tensorProduct c) (b.tensorProduct c) ((\u03c1.tprod \u03c3) g) i j) \u2208 A`, and have both `tprod` lemmas instantiate it at `polynomialFunctions \u2102 n` / `rationalFunctions \u2102 n`.",
+   "issue": "`IsPolynomialRep.tprod` (lines 524-528) and `IsRationalRep.tprod` (lines 538-542) contain a verbatim-identical `hentry`/`funext` block; only the final membership witness differs. The file already established the right factoring for this \u2014 `toMatrix_mem_of_toMatrix_mem` is stated over an arbitrary `Subalgebra k (G \u2192 k)` precisely so both properties reuse one entry computation \u2014 but the tensor-product case does not follow it.",
+   "line": 524
+  }
+ ],
+ "head_sha": "1b3680a5305541f6f410b2e3367bdc331a40fa78",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3019,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "81a113318163c50687c9a097b00446af88a0a63035784ad86522b04dfd9512e0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T082509Z-3019-proof-quality-832b76",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:25:09Z",
+ "submitted_by": "kim-em",
+ "summary": "Three proofs lean on undocumented definitional equality or bypass existing API: a `rfl` across the `Units` coercion where `Matrix.GeneralLinearGroup.val_det_apply` exists (and is already used in this directory), a `simpa` through the raw `isIntertwining'` field where `IntertwiningMap.isIntertwining` states the goal, and a hand-rolled `simp only` chain reproving `LinearMap.toMatrix_mulVec_repr`. The two `tprod` proofs also duplicate an entry computation the file's own subalgebra-generic pattern would factor out.",
+ "transcript_blob": "c032dbe17c73c35d8d5ba5113a9ead74bb1cf81af82d96b461ee2b2ec69362f6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73366,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73366,
+  "cache_read_input_tokens": 1386123,
+  "inference_geo": "not_available",
+  "input_tokens": 35,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 684,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 684,
+    "cache_read_input_tokens": 89181,
+    "input_tokens": 2,
+    "output_tokens": 7338,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18250,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

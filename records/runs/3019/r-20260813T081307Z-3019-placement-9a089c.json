@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6616615,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 257.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 67376,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 67376,
+    "cache_read_input_tokens": 934871,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1835,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1835,
+      "cache_read_input_tokens": 82040,
+      "input_tokens": 2,
+      "output_tokens": 2775,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20104,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.661661,
+ "dedupe_key": "TauCetiProject/TauCeti|3019|1b3680a5305541f6f410b2e3367bdc331a40fa78|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "diff_sha256": "75d612dd426aed6b944b4193690e1dc33cdc1396039ba274d655eca5669324b0",
+ "duration_s": 257.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Rational.lean:113 `variable {k : Type u} [CommRing k] {n : \u2115}`; :117,:133,:148,:165 definitions; :109 `namespace GeneralLinearGroup` inside `namespace TauCeti` (:107). Existing homes of that namespace: TauCeti/LinearAlgebra/GeneralLinearGroup/Intertwining.lean:29, Prod.lean:28, TensorProduct.lean:29, TauCeti/LinearAlgebra/JordanChevalley/Multiplicative.lean:54.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Move the block to its own earlier file, e.g. `TauCeti/LinearAlgebra/GeneralLinearGroup/PolynomialFunctions.lean` (or under `TauCeti/Algebra/AlgebraicGroup/GeneralLinear/`, next to the existing coordinate-algebra material), importing only `Mathlib.LinearAlgebra.Matrix.MvPolynomial`, and have Rational.lean import it. No renames needed.",
+   "issue": "Lines 109-269 (`entryEval`, `detPoly`, `polynomialFunctions`, `rationalFunctions`, `mem_rationalFunctions_iff_inv`, `exists_forall_eq_inv_mul_of_forall_mem`) are stated over an arbitrary CommRing/Field, involve no representation, and are namespaced `TauCeti.GeneralLinearGroup` \u2014 the namespace the repo houses under `TauCeti/LinearAlgebra/GeneralLinearGroup/`. Placing them in a \u2102-representation file makes this generic function algebra unusable without importing the whole ClassicalGroups rep stack (Standard, Determinant, TensorPower, SymmetricPower, ExteriorPower).",
+   "line": 109
+  },
+  {
+   "evidence": "Rational.lean:308-309 `variable {k : Type u} [CommRing k] {G : Type z} [Monoid G] ...`; :317 `(A : Subalgebra k (G \u2192 k))`; the statements mention only `Representation k G W`, `Module.Basis`, `LinearMap.toMatrix`. Existing generic file: TauCeti/RepresentationTheory/Intertwining.lean:34 `namespace Representation.IntertwiningMap`.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Move both to a generic representation-theory file (e.g. a new `TauCeti/RepresentationTheory/MatrixCoefficients.lean` next to `TauCeti/RepresentationTheory/Intertwining.lean`, which already carries the `Representation.IntertwiningMap` extensions), and import it here.",
+   "issue": "`toMatrix_mem_of_toMatrix_mem_of_surjective` (:317) and `toMatrix_mem_of_toMatrix_mem` (:352) are root-namespace `TauCeti` lemmas over an arbitrary `CommRing k`, arbitrary `Monoid G`, arbitrary `Subalgebra k (G \u2192 k)` and arbitrary representations \u2014 no GL, no \u2102, no classical group. Generic, broadly useful material trapped behind the classical-groups imports.",
+   "line": 317
+  },
+  {
+   "evidence": "grep for `toMatrix` in the file yields only `LinearMap.toMatrix*`, `TensorProduct.toMatrix_map` and the local `toMatrix_mem_*` names (no `b.toMatrix`/`Basis.toMatrix`); mathlib/Mathlib/LinearAlgebra/TensorProduct/Matrix.lean:8-10 imports `Mathlib.LinearAlgebra.Matrix.ToLin` and `Mathlib.LinearAlgebra.TensorProduct.Basis`, and `LinearMap.toMatrix_singleton` is at mathlib/Mathlib/LinearAlgebra/Matrix/ToLin.lean:647.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Rational.lean",
+   "fix": "Drop the import; `LinearMap.toMatrix`/`toMatrix_apply`/`toMatrix_singleton` and `Basis.tensorProduct` already arrive with `Mathlib.LinearAlgebra.TensorProduct.Matrix`.",
+   "issue": "`public import Mathlib.LinearAlgebra.Matrix.Basis` is unused: none of its API (`Basis.toMatrix`, `Basis.toMatrixEquiv`, `basis_toMatrix_mul_linearMap_toMatrix`) appears in the file.",
+   "line": 9
+  }
+ ],
+ "head_sha": "1b3680a5305541f6f410b2e3367bdc331a40fa78",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3019,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "675eee0ebe7780155eb88887cdd9eee68424bb0cf432b5d6e1fdcec44f6d457e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T081307Z-3019-placement-9a089c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:13:07Z",
+ "submitted_by": "kim-em",
+ "summary": "The representation-level definitions and examples are correctly placed beside stdRep/detPowerRep, but the file also carries two generic blocks that depend on no representation theory and belong in earlier files, plus one unused import.",
+ "transcript_blob": "97e6c703483aab8ec137069fe1c3f507389e023fffeb6546e1f554f9eb933391",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 67376,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 67376,
+  "cache_read_input_tokens": 934871,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1835,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1835,
+    "cache_read_input_tokens": 82040,
+    "input_tokens": 2,
+    "output_tokens": 2775,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20104,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
