@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.301843,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 46.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 130816,
+    "input_tokens": 166277,
+    "output_tokens": 1971,
+    "reasoning_output_tokens": 696
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "104fd08ded559a1adec3abae71dc83592832285d",
+ "cost_estimated": true,
+ "cost_usd": 0.301843,
+ "dedupe_key": "TauCetiProject/TauCeti|3081|933a4ad5cbf1906aed10b11ac70719199af4e6c4|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "48b04c16c41d6a3dd78412522eae53f78cb8a118816e51e4b708f90aee2ca620",
+ "diff_sha256": "48b04c16c41d6a3dd78412522eae53f78cb8a118816e51e4b708f90aee2ca620",
+ "duration_s": 46.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Confirmed `@[expose]` hits at `Partitions.lean:33,87,123,132` and `Conjugate.lean:158`; the corresponding characteristic lemmas occur at lines 39, 94, 137, and 163 respectively.",
+   "file": "TauCeti/Combinatorics/Young/Partitions.lean",
+   "fix": "Remove all five `@[expose]` attributes and use the existing `rowLens_diagramOf`, `parts_toPartition`, `shapePartition_parts`, and `diagramOf_conjugate` APIs; add a specific lemma wherever a consumer still needs an unsupported observation.",
+   "issue": "The bodies of `diagramOf`, `toPartition`, `shapePartition`, and `partitionEquivYoungDiagram`, plus `conjugate` in `Conjugate.lean:158`, are marked `@[expose]` despite public extensional lemmas characterizing their results.",
+   "line": 33
+  },
+  {
+   "evidence": "The definition\u2019s `toFun` and `invFun` are at lines 125\u2013126, while the only nearby inverse lemmas characterize the standalone constructors (`toPartition_diagramOf` and `diagramOf_toPartition`), not applications of the equivalence.",
+   "file": "TauCeti/Combinatorics/Young/Partitions.lean",
+   "fix": "Add `@[simp]` apply and symm-apply lemmas identifying the two directions with `\u27e8diagramOf \u03bc, card_diagramOf \u03bc\u27e9` and `toPartition \u03bc.1 \u03bc.2`, then keep the equivalence body unexposed.",
+   "issue": "`partitionEquivYoungDiagram` has no simp lemmas describing either its forward application or inverse application, so consumers must unfold the exposed equivalence body to connect it with `diagramOf` and `toPartition`.",
+   "line": 123
+  }
+ ],
+ "head_sha": "933a4ad5cbf1906aed10b11ac70719199af4e6c4",
+ "merge_base_sha": "5ca8eb1aba1151924902bdd6d43548399f58c6de",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3081,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6f8041f84b8afae86eaab0bb5c70ffaf29d27a0aa0e035227e60464da03e7c8f",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T160546Z-3081-api-design-6d6c39",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T16:05:46Z",
+ "submitted_by": "kim-em",
+ "summary": "The refactor unnecessarily exposes implementation bodies and leaves the rebuilt equivalence without characteristic application lemmas.",
+ "transcript_blob": "cd156a82c4f0560e3fbdc2d1bf8e6604299aa7abd27a38e95c777c1dff0ef3fa",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 130816,
+  "input_tokens": 166277,
+  "output_tokens": 1971,
+  "reasoning_output_tokens": 696
+ },
+ "verdict": "request_changes"
+}
