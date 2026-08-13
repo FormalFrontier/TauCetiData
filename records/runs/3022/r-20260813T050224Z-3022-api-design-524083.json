@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7920004999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 254.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 80479,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 80479,
+    "cache_read_input_tokens": 942535,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2195,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2195,
+      "cache_read_input_tokens": 94783,
+      "input_tokens": 2,
+      "output_tokens": 3275,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20177,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 1.792,
+ "dedupe_key": "TauCetiProject/TauCeti|3022|ed6f60e5e214fd894902e4af756ace01f96bb499|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "48a007ab773cebfa3379277b87d467e276edc83aea3fda77e54521faeda6e246",
+ "diff_sha256": "48a007ab773cebfa3379277b87d467e276edc83aea3fda77e54521faeda6e246",
+ "duration_s": 254.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Exp.lean:111 `@[expose]`, :133 `:= rfl`; Exponential.lean:102 `rw [coe_expSMulHom]`. The repo's sealing convention `:= (rfl)` is used 400 times across 127 files, e.g. `Associative.lean:66 dividedPower_def ... := (rfl)`.",
+   "file": "TauCeti/RingTheory/Nilpotent/Exp.lean",
+   "fix": "Drop `@[expose]` and prove `coe_expSMulHom := (rfl)`; the `rfl` still elaborates in the defining module.",
+   "issue": "`@[expose]` on `expSMulHom` publishes the body, and `coe_expSMulHom` (line 131) is proved `:= rfl`, so downstream unification can unfold the definition. No consumer needs to unfold it: the only use, `coe_expSMulHom_mem_map_kostantForm`, goes through `rw [coe_expSMulHom]`.",
+   "line": 111
+  },
+  {
+   "evidence": "`Int.cast_smul_eq_zsmul` (Mathlib/Algebra/Module/NatInt.lean:173, `@[norm_cast]`) applies since `A` is `Ring` + `Module \u211a A`; `Int.cast_neg` is `@[simp]` (Mathlib/Data/Int/Cast/Basic.lean:83). The module docstrings themselves write `exp (t \u2022 x)` (Exp.lean:20) and `exp (t \u2022 \u03c1 (e\u1d62))` (Exponential.lean:111), not the spelling actually proved.",
+   "file": "TauCeti/RingTheory/Nilpotent/Exp.lean",
+   "fix": "State all of these with the canonical `\u2124`-action: `exp (t \u2022 x)`, `exp (-(t \u2022 x))` (or `exp ((-t) \u2022 x)`, normalized by `neg_zsmul`), and `\u2211 i \u2208 range k, t ^ i \u2022 Associative.dividedPower i x`; derive from `Int.cast_smul_eq_zsmul` once inside the proofs. Same for `coe_expSMulHom` and all four Kostant-form lemmas.",
+   "issue": "The `zsmul` lemmas state a \u211a-scalar action on an integer cast, `exp ((t : \u211a) \u2022 x)`, while their right sides use genuine `zsmul` (`t ^ i \u2022 dividedPower i x`). Worse, the conjugation lemmas spell the second factor `exp (((-t : \u2124) : \u211a) \u2022 x)`, which is not simp-normal (`Int.cast_neg` is `@[simp]`, rewriting it to `-\u2191t \u2022 x`) and does not match the `exp a * b * exp (-a)` shape produced by `exp_ad_apply`/`exp_mulLeft_sub_mulRight_apply` in the same file, so the two halves of the API do not compose. Instances: Exp.lean:90, 98, 131, 136-138; Exponential.lean:72-79, 83-91 (line 88), 96-103, 116-121.",
+   "line": 90
+  },
+  {
+   "evidence": "Exp.lean:112-133 defines the `inv` field as `exp (-(... \u2022 x))` but only `coe_expSMulHom` is stated; Exponential.lean:109-115 argues about the inverse in prose with no lemma to cite. The repo does supply such lemmas elsewhere, e.g. `charOfPoint_apply_inv_coe` in TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/Basic.lean:106.",
+   "file": "TauCeti/RingTheory/Nilpotent/Exp.lean",
+   "fix": "Add `@[simp] theorem coe_inv_expSMulHom {x : A} (hx : IsNilpotent x) (t : Multiplicative \u2124) : (((expSMulHom hx t)\u207b\u00b9 : A\u02e3) : A) = exp (-((Multiplicative.toAdd t : \u2124) \u2022 x))`, provable from `map_inv` and `coe_expSMulHom` (or `(rfl)` on the `inv` field).",
+   "issue": "`expSMulHom` is `Units`-valued but only the `val` field has a characteristic lemma. There is no lemma computing `((expSMulHom hx t)\u207b\u00b9 : A)`, so `simp` gets stuck on any goal mentioning the inverse of a root subgroup element \u2014 precisely the fact the file's prose relies on (`exp_zsmul_apply_mem` docstring: \"the inverse of `exp (t \u2022 \u03c1 (e\u1d62))` is `exp (-t \u2022 \u03c1 (e\u1d62))`\") and the fact behind `exp_zsmul_conj_mem`.",
+   "line": 130
+  }
+ ],
+ "head_sha": "ed6f60e5e214fd894902e4af756ace01f96bb499",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3022,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "96b6a3caa9ff724993835b1e8d04b1928608415929d2fad7f97e3cfdf00f8ea1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T050224Z-3022-api-design-524083",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T05:02:24Z",
+ "submitted_by": "kim-em",
+ "summary": "The `expSMulHom` body is exposed with no consumer that needs to unfold it, and its `rfl` coercion lemma leaks defeq; the unit's inverse has no characteristic lemma. Separately, every `*_zsmul_*` statement mixes a \u211a-cast smul on the left with genuine `zsmul` on the right and uses the non-simp-normal `((-t : \u2124) : \u211a)` spelling, so the lemmas do not match goals a consumer will actually have.",
+ "transcript_blob": "7fb184e379f20cf5550762ce5d0bbc4de36739328cf4cec1b6626b7bfc6911fc",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 80479,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 80479,
+  "cache_read_input_tokens": 942535,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2195,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2195,
+    "cache_read_input_tokens": 94783,
+    "input_tokens": 2,
+    "output_tokens": 3275,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20177,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
