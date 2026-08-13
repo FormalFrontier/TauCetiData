@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.247295,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 59.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 71680,
+    "input_tokens": 104551,
+    "output_tokens": 1570,
+    "reasoning_output_tokens": 688
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4f4ab8a97b89fe4c5cdc0b98d1062b77442d7da9",
+ "cost_estimated": true,
+ "cost_usd": 0.247295,
+ "dedupe_key": "TauCetiProject/TauCeti|3059|182ac60540d862356e3a248709d4370bcfdf9145|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "96cce6719cf47d9e49225bd4a601b9b4654c9d990b68e959459fd348eb66e634",
+ "diff_sha256": "96cce6719cf47d9e49225bd4a601b9b4654c9d990b68e959459fd348eb66e634",
+ "duration_s": 59.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 92 is `change UniversalEnvelopingAlgebra.\u03b9 \u211a \u2045x, y\u2046 \u2208 A`; the surrounding text explains the bracket argument but not this required definitional reduction.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Use an explicit membership lemma/rewrite, or document why unfolding the structure is necessary here.",
+   "issue": "`comapSubalgebra.lie_mem'` uses an undocumented `change` to unfold membership through the constructed Lie subalgebra.",
+   "line": 92
+  },
+  {
+   "evidence": "The relevant declarations exist in Mathlib; the PR uses `:= rfl` at line 283 and `Submodule.ext fun _ => Iff.rfl` at lines 286 and 295.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/AdmissibleLattice.lean",
+   "fix": "Rewrite with `LinearMap.coe_restrictScalars`, `LinearMap.range_restrictScalars`, and `Submodule.restrictScalars_top` instead of closing these equalities by definitional reduction.",
+   "issue": "`span_admissibleLattice` and `span_admissibleLattice_eq_top` rely on `rfl`/`Iff.rfl` across `LinearMap.restrictScalars`, ranges, and `Submodule.restrictScalars` (lines 282\u2013286 and 295), making the proofs depend on wrapper implementations.",
+   "line": 282
+  }
+ ],
+ "head_sha": "182ac60540d862356e3a248709d4370bcfdf9145",
+ "merge_base_sha": "c2b903a1cc6faaf7792da6b7b4e18b975d4ed2fd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3059,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a13dd764c097db8f42fd7820e630eeb4a8ae9494424e78c395e19a1738564b01",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T095931Z-3059-proof-quality-52b423",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T09:59:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs contain undocumented definitional-equality manipulations across generated structures and scalar-restriction wrappers.",
+ "transcript_blob": "949dcdc7b0223b522f8d8f85b8d830b6c911faefd9ef69d255b8a809739da604",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 71680,
+  "input_tokens": 104551,
+  "output_tokens": 1570,
+  "reasoning_output_tokens": 688
+ },
+ "verdict": "request_changes"
+}
