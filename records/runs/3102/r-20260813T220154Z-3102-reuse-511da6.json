@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.7284240000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 131.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 35489,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 35489,
+    "cache_read_input_tokens": 210206,
+    "inference_geo": "not_available",
+    "input_tokens": 11,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 473,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 473,
+      "cache_read_input_tokens": 51515,
+      "input_tokens": 2,
+      "output_tokens": 2148,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10485,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "34254d443abf2bd7ad3750b6961c939e8d3fd358",
+ "cost_usd": 0.728424,
+ "dedupe_key": "TauCetiProject/TauCeti|3102|115021cad5f9652b139b63eb21c56528e97d58c3|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "72bed282e568a2b1a797dc52a1fb7ef6ed10faf5a6da3a832ae82a8a982615e0",
+ "diff_sha256": "72bed282e568a2b1a797dc52a1fb7ef6ed10faf5a6da3a832ae82a8a982615e0",
+ "duration_s": 131.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 194-198 `theorem e_mul_dividedPower_succ_f ... : E * dividedPower (n + 1) F = dividedPower (n + 1) F * E + dividedPower n F * (H - n)` vs line 221-228 with LHS `E * dividedPower (n + 1) F` and RHS `... + (H + n) * dividedPower n F`; the new proof itself is `noncomm_ring [hs, hmove, hncomm]` with `hs := e_mul_dividedPower_succ_f` and `hmove := h_mul_dividedPower_f`, i.e. the located lemmas supply the whole content.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Delete `e_mul_dividedPower_succ_f_cartan_left` and its bullet at line 58-59; a caller wanting the Cartan factor on the left rewrites with `h_mul_dividedPower_f hhf n` (`H * F\u207d\u207f\u207e = F\u207d\u207f\u207e * (H - 2n)`, whence `(H + n) * F\u207d\u207f\u207e = F\u207d\u207f\u207e * (H - n)`). Note the retained E-side `dividedPower_succ_e_mul_f_cartan_left` is not affected: its LHS `E\u207d\u207f\u207a\u00b9\u207e * F` is a product the existing API does not state.",
+   "issue": "`e_mul_dividedPower_succ_f_cartan_left` has the same hypotheses and the same LHS `E * dividedPower (n+1) F` as the existing `e_mul_dividedPower_succ_f` (line 194); the RHSs differ only by rewriting `dividedPower n F * (H - n)` into `(H + n) * dividedPower n F`, which is exactly the existing `h_mul_dividedPower_f` (line 178). Two public normal forms for one product.",
+   "line": 221
+  },
+  {
+   "evidence": "Line 267-271 and line 294-301 have the same statement of the left-hand side and the same hypothesis list; the latter's proof is `e_mul_dividedPower_succ_f_cartan_left (\u03b9_e_mul_\u03b9_f_sub_mul \u211a hef) (\u03b9_h_mul_\u03b9_f_sub_mul \u211a hhf) n`, the same transport used at line 271.",
+   "file": "TauCeti/Algebra/Lie/Sl2/Associative.lean",
+   "fix": "Delete `\u03b9_e_mul_dividedPower_succ_\u03b9_f_cartan_left` and its bullet at line 63-64. If UEA consumers genuinely need the flip, the right fix is to drop `private` from `\u03b9_h_mul_\u03b9_f_sub_mul` (line 251) so they can apply `h_mul_dividedPower_f` themselves, not to publish a second normal form for the same product.",
+   "issue": "Same defect at the enveloping-algebra level: `\u03b9_e_mul_dividedPower_succ_\u03b9_f_cartan_left` has the identical hypotheses `(hef) (hhf)` and identical LHS `\u03b9 \u211a e * dividedPower (n + 1) (\u03b9 \u211a f)` as the pre-existing `\u03b9_e_mul_dividedPower_succ_\u03b9_f` (line 267), differing only by the same one-step Cartan flip.",
+   "line": 294
+  }
+ ],
+ "head_sha": "115021cad5f9652b139b63eb21c56528e97d58c3",
+ "merge_base_sha": "caa1ef3cab6e020e49bb77bdd12913e99b1d1ec0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3102,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "596d8697c32ebf969051b02eb0d7b8ced33948471ac3fdb47d8433774650ab04",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T220154Z-3102-reuse-511da6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T22:01:54Z",
+ "submitted_by": "kim-em",
+ "summary": "The two E-side Cartan-left theorems state a product the existing API does not and earn their place. The two F-side `_cartan_left` theorems, however, have the same hypotheses and the same left-hand side as the pre-existing `e_mul_dividedPower_succ_f` / `\u03b9_e_mul_dividedPower_succ_\u03b9_f`, differing only by one rewrite with the file's own `h_mul_dividedPower_f`; they are a parallel normal form for the same product and should go.",
+ "transcript_blob": "735f120a734b490c4be2481b9dc7e0aaf98434dd2e20f5fe2da095950b7bf3af",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 35489,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 35489,
+  "cache_read_input_tokens": 210206,
+  "inference_geo": "not_available",
+  "input_tokens": 11,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 473,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 473,
+    "cache_read_input_tokens": 51515,
+    "input_tokens": 2,
+    "output_tokens": 2148,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10485,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
