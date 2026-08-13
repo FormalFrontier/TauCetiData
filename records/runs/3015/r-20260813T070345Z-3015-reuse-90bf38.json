@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2634365,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 305.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 81555,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 81555,
+    "cache_read_input_tokens": 1828121,
+    "inference_geo": "not_available",
+    "input_tokens": 50,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1801,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1801,
+      "cache_read_input_tokens": 96253,
+      "input_tokens": 2,
+      "output_tokens": 2453,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20814,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "cost_usd": 2.263437,
+ "dedupe_key": "TauCetiProject/TauCeti|3015|e259c96cafcb396d94849554209716307aa624b6|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "06393c559c31f2984f89c51b396289d2707961d4bf69d65bf0f424c0c14178ab",
+ "diff_sha256": "06393c559c31f2984f89c51b396289d2707961d4bf69d65bf0f424c0c14178ab",
+ "duration_s": 305.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Data/Int/Cast/Lemmas.lean:108` `lemma _root_.zsmul_eq_mul' (a : \u03b1) (n : \u2124) : n \u2022 a = a * n := by rw [zsmul_eq_mul, (n.cast_commute a).eq]` \u2014 the same `Int.cast_commute` argument the diff repeats; `mathlib/Mathlib/Data/Int/Cast/Basic.lean:127` `@[simp] lemma zsmul_one [AddGroupWithOne R] (n : \u2124) : n \u2022 (1 : R) = n`. `U` is a `Ring`, so both apply.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Commutation.lean",
+   "fix": "Delete `hzmul` and prove the step with the located lemmas, e.g. `rw [mul_add, zsmul_one, \u2190 zsmul_eq_mul', add_comm]` before `exact eq_add_of_sub_eq hmap.symm`.",
+   "issue": "The `hzmul` block (lines 68-72) re-derives `zsmul_eq_mul'` from `Int.cast_commute`: its goal `z \u2022 \u03b9 x = \u03b9 x * (z \u2022 1)` is exactly `zsmul_one` followed by `zsmul_eq_mul'`.",
+   "line": "68"
+  },
+  {
+   "evidence": "Lines 87-93: `(a + n\u2022c) * x = a*x + (n\u2022c)*x = x*(a+c) + x*(n\u2022c) = x*((a+c) + n\u2022c) = x*(a + (n+1)\u2022c)`; lines 121-126: `(a - n\u2022c)*x = a*x - (n\u2022c)*x = x*(a+c) - x*(n\u2022c) = x*((a+c) - n\u2022c) = x*((a - n\u2022c) + c)` \u2014 identical step sequence (`add_mul`/`sub_mul`, `h` + `(hc.smul_left n).eq`, `mul_add`/`mul_sub`, `abel`).",
+   "file": "TauCeti/Algebra/Polynomial/Semiconj.lean",
+   "fix": "Factor one private lemma in the `Semiring` section, `(h : a * x = x * (a + c)) (hd : Commute d x) : (a + d) * x = x * (a + d + c)` (proof: `add_mul`, `h`, `hd.eq`, `mul_add`, `abel`). Then `hshift` is that at `d = n \u2022 c` plus `succ_nsmul`, and `sub_nsmul_mul_eq_mul_add` is that at `d = -(n \u2022 c)` with `hd := (hc.smul_left n).neg_left` plus `sub_eq_add_neg`.",
+   "issue": "The `hshift` calc at 85-93 and `sub_nsmul_mul_eq_mul_add` at 117-126 are the same four-step computation up to the sign of the shift; both prove \"a shift commuting with `x` can be added to `a` in the hypothesis\".",
+   "line": "85"
+  }
+ ],
+ "head_sha": "e259c96cafcb396d94849554209716307aa624b6",
+ "merge_base_sha": "58919e3aa971fa3b53c23e3ae54c2ebc763cd784",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3015,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2d439cbecee52e793718694d068a9fd30a8889c7b8372a2eff982221e3d6d68e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T070345Z-3015-reuse-90bf38",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T07:03:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The new shift/reordering content is genuinely absent from Mathlib and TauCeti, and the earlier duplication (three `moduleNNRat` copies, hand-rolled `smul_mul_assoc`) is fixed. Two smaller reuse defects remain: a re-derivation of `zsmul_eq_mul'` and two near-clone calc blocks proving the same shift step.",
+ "transcript_blob": "d866a767b73f0a4862449595ee6170116dc62f9ca144eb4e04cbfcdeb61220bd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 81555,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 81555,
+  "cache_read_input_tokens": 1828121,
+  "inference_geo": "not_available",
+  "input_tokens": 50,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1801,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1801,
+    "cache_read_input_tokens": 96253,
+    "input_tokens": 2,
+    "output_tokens": 2453,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20814,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
