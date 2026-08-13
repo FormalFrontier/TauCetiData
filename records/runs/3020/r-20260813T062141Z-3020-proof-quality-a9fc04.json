@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9557995,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 192.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 40911,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 40911,
+    "cache_read_input_tokens": 316715,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2091,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2091,
+      "cache_read_input_tokens": 55319,
+      "input_tokens": 2,
+      "output_tokens": 4968,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15221,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_usd": 0.9558,
+ "dedupe_key": "TauCetiProject/TauCeti|3020|4ef684b9516324897e88bd94e250679dd7abf408|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e986448a865613406812f8c94711b6c5b02b54e42eaedf461666bb77e3673450",
+ "diff_sha256": "e986448a865613406812f8c94711b6c5b02b54e42eaedf461666bb77e3673450",
+ "duration_s": 192.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Binomial.lean:131 `one_mem_ringChooseSpan`, :145 `mul_mem_ringChooseSpan`, :168-179 the hand-rolled `Subring.closure_induction` whose `one`/`mul` cases are precisely those two lemmas; the PR description itself lists `ringChooseSubring` and `ringChooseSubring_le_kostantForm`, and the module doc (:21-22) asserts the span \"is already a subring\" \u2014 neither exists in the code.",
+   "file": "TauCeti/RingTheory/Binomial.lean",
+   "fix": "Define `ringChooseSubring (r : R) : Subring R` with carrier `ringChooseSpan r` (fields: `one_mem_ringChooseSpan`, `mul_mem_ringChooseSpan`, and the `AddSubgroup` closure properties). Then the forward inclusion is `Subring.closure_le.2 (Set.range_subset_iff.2 (ringChoose_mem_ringChooseSpan r))` instead of the 9-line induction, and KostantForm can state `ringChooseSubring (\u03b9 \u211a (h i)) \u2264 kostantForm e h` directly via `kostantForm_le_iff`/`Subring.closure_le`.",
+   "issue": "`one_mem_ringChooseSpan` and `mul_mem_ringChooseSpan` are exactly the extra `Subring` fields over `ringChooseSpan`, but no `Subring` is assembled; consequently lines 168-178 re-prove \"the span is a subring\" inline via `Subring.closure_induction` (mem/zero/one/add/neg/mul cases), and downstream statements are forced to the subgroup level (`ringChooseSpan_le_kostantForm : \u2026 \u2264 (kostantForm e h).toAddSubgroup`, KostantForm.lean:175).",
+   "line": 166
+  }
+ ],
+ "head_sha": "4ef684b9516324897e88bd94e250679dd7abf408",
+ "merge_base_sha": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3020,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "aedec368d805ec5c3eaa2e43b06339c61ba1157e30c3cd8a03252bbd15896d48",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T062141Z-3020-proof-quality-a9fc04",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T06:21:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The calc proof of `choose_mul_choose` and the closure inductions are sound and readable, but the subring content is never bundled, so `toAddSubgroup_subringClosure_range_ringChoose` re-derives it by hand with a `Subring.closure_induction` that a bundled `Subring` makes unnecessary.",
+ "transcript_blob": "c6ee98eca4bac1d5116421ef459237ee221f388e6b10a21b47c920b2487af55c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 40911,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 40911,
+  "cache_read_input_tokens": 316715,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2091,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2091,
+    "cache_read_input_tokens": 55319,
+    "input_tokens": 2,
+    "output_tokens": 4968,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15221,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
