@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.42251,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 46.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 227840,
+    "input_tokens": 278890,
+    "output_tokens": 1778,
+    "reasoning_output_tokens": 454
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_estimated": true,
+ "cost_usd": 0.42251,
+ "dedupe_key": "TauCetiProject/TauCeti|3135|1eed5d1395ea67d0cf192afd3b5b53ce4f84ddee|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "65771b1cccfa129bd55778551cc8d21df70470fe4fef3facd498f35bb3899ff7",
+ "diff_sha256": "65771b1cccfa129bd55778551cc8d21df70470fe4fef3facd498f35bb3899ff7",
+ "duration_s": 46.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only body-dependent hits are `simp [fullyBlockedRectangles]` at lines 72 and 131; the public membership theorem is at lines 69\u201372.",
+   "file": "TauCeti/KnotTheory/Grid/BlockedRectangle.lean",
+   "fix": "Remove `@[expose]` and rewrite the two local unfolding proofs through `mem_fullyBlockedRectangles` or a private implementation lemma.",
+   "issue": "`fullyBlockedRectangles` remains `@[expose]` even though `mem_fullyBlockedRectangles` completely characterizes it, making downstream proofs depend on its filter implementation.",
+   "line": 62
+  },
+  {
+   "evidence": "Lines 131\u2013171 provide only self, membership, endpoint, and subset lemmas, while the same file provides `disjoint_cIoo_swap` and `cIoo_union_swap` for open intervals; grep finds no `cIco` swap/disjoint/union theorem or `squares_symm`/`squares_swapSides` theorem.",
+   "file": "TauCeti/KnotTheory/Grid/CyclicInterval.lean",
+   "fix": "Add and appropriately annotate `disjoint_cIco_swap` and `cIco_union_swap` (or an equivalent complement characterization), then expose the corresponding covered-square behavior for the rectangle operations where needed.",
+   "issue": "`cIco` lacks the defining interaction between opposite orientations: for distinct endpoints, `cIco a b` and `cIco b a` are disjoint and cover `univ`. This leaves the complementary regions used by `GridRectangle.symm`/`swapSides` inaccessible without unfolding into `cIoo`.",
+   "line": 131
+  }
+ ],
+ "head_sha": "1eed5d1395ea67d0cf192afd3b5b53ce4f84ddee",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3135,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "85ee6446534b439f32e4c2e729d7daa07a5b523b7db9eebb733eabe5b93fb0cc",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T232803Z-3135-api-design-4b5faa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T23:28:03Z",
+ "submitted_by": "kim-em",
+ "summary": "The new covered-region API exposes an implementation body unnecessarily and omits the complementary-arc laws needed to reason about opposite toroidal regions without unfolding.",
+ "transcript_blob": "7fff3a322de0be832a6592fe3f598d588cca0213a4dba0a7069cdef74faee7c0",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 227840,
+  "input_tokens": 278890,
+  "output_tokens": 1778,
+  "reasoning_output_tokens": 454
+ },
+ "verdict": "request_changes"
+}
