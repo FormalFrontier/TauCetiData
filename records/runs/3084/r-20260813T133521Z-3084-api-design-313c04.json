@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.381895,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 68.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 151040,
+    "input_tokens": 198197,
+    "output_tokens": 2353,
+    "reasoning_output_tokens": 868
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9105d9e6de3faba54a3a93c5ed451042e8fe73c9",
+ "cost_estimated": true,
+ "cost_usd": 0.381895,
+ "dedupe_key": "TauCetiProject/TauCeti|3084|c937fbef856b68f92212e34d9f96a99e0def0706|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "f79bd77695d135a2dd2d00f77022e8900c369933233b239d9197853f33801dc3",
+ "diff_sha256": "f79bd77695d135a2dd2d00f77022e8900c369933233b239d9197853f33801dc3",
+ "duration_s": 68.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Repository grep finds `Isotopy.totalMap` only at its definition/application lemma; all other `.totalMap` uses concern `AmbientIsotopy`, where the total map remains part of the defining law.",
+   "file": "TauCeti/Topology/Homotopy/Isotopy/Basic.lean",
+   "fix": "Delete both declarations (and the now-unused `isEmbedding_const_prod` helper); consumers needing this generic map can construct it directly.",
+   "issue": "`Isotopy.totalMap` and `totalMap_apply` survive from the former total-embedding formulation but have no remaining isotopy semantics or consumers, leaving a compatibility-only public surface.",
+   "line": 102
+  },
+  {
+   "evidence": "Hits are Basic.lean:298/306, Comp.lean:59/65 and 71/77, and Prod.lean:95/101; every exposed definition is immediately followed by its application lemma.",
+   "file": "TauCeti/Topology/Homotopy/Isotopy/Basic.lean",
+   "fix": "Remove `@[expose]` from these four definitions and use `isotopy_apply`, `postcomp_apply`, `precomp_apply`, and `prodMap_apply` as their characteristic API.",
+   "issue": "The changed constructors `AmbientIsotopy.isotopy`, `Isotopy.postcomp`, `Isotopy.precomp`, and `Isotopy.prodMap` remain `@[expose]` even though each has a public `@[simp]` application theorem, unnecessarily making representation bodies available downstream.",
+   "line": 298
+  }
+ ],
+ "head_sha": "c937fbef856b68f92212e34d9f96a99e0def0706",
+ "merge_base_sha": "6ff6c825bc074f98bc001430bd6d690ea52e6b6c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3084,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c86689cf035e0ec9f211344a6061fdc83179ef01bc944bd9750e06d0bd660015",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T133521Z-3084-api-design-313c04",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T13:35:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The slice-wise API retains an obsolete total-map surface and unnecessarily exposes implementation bodies despite having application lemmas.",
+ "transcript_blob": "ab7d57df57d4e14226f8348ac171a49d8bb9e8a9a04b9e9668b5da17d38b34a0",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 151040,
+  "input_tokens": 198197,
+  "output_tokens": 2353,
+  "reasoning_output_tokens": 868
+ },
+ "verdict": "request_changes"
+}
