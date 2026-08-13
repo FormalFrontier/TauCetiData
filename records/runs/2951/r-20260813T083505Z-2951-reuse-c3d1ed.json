@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3491305,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 202.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 66810,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 66810,
+    "cache_read_input_tokens": 590451,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1902,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1902,
+      "cache_read_input_tokens": 81407,
+      "input_tokens": 2,
+      "output_tokens": 1632,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14984,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "cost_usd": 1.349131,
+ "dedupe_key": "TauCetiProject/TauCeti|2951|91de1b832ea448c81f3bd590d676b701c2515f51|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "diff_sha256": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "duration_s": 202.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Coxeter.lean:154-161 vs 193-200 (identical text); 165-179 vs 218-230 (identical apart from `.reverse`). `map_list_prod` and `LinearEquiv.automorphismGroup.toLinearMapMonoidHom` are Mathlib (Mathlib/Algebra/Module/Equiv/Basic.lean:114), so the shared step is a two-line private lemma.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Factor both out as private lemmas above the two theorems: `private theorem map_toLinearMap_attach {l} (hl) : l.attach.map (fun i : {i // i \u2208 l} \u21a6 (vertexReflection Q (hl i.1 i.2)).toLinearMap) = l.map (vertexPreReflection Q)` (the current `hlist` proof verbatim), and `private theorem toLinearMap_list_prod (L : List ((Q \u2192 \u2124) \u2243\u2097[\u2124] (Q \u2192 \u2124))) : (L.prod).toLinearMap = (L.map LinearEquiv.toLinearMap).prod` from `map_list_prod LinearEquiv.automorphismGroup.toLinearMapMonoidHom L` plus `LinearEquiv.automorphismGroup.toLinearMapMonoidHom_apply`. Both theorems then reduce to `rw [toLinearMap_list_prod, List.map_reverse, map_toLinearMap_attach]`-style one-liners, and the only content unique to the `symm` version stays the `hinv` step.",
+   "issue": "`coe_vertexReflectionProd` and `coe_vertexReflectionProd_symm` repeat the same proof twice: the `hlist` block at lines 154-161 is byte-identical to lines 193-200, and the `map_list_prod` calc step at 165-179 is identical to 218-230 up to the presence of `.reverse`.",
+   "line": 193
+  },
+  {
+   "evidence": "The dependency file states every such result only in pre-reflection form \u2014 `titsForm_vertexPreReflection` (DimensionVector.lean:150), `titsPolarForm_vertexPreReflection` (161), `bijOn_vertexPreReflection` (172) \u2014 with no `vertexReflection` mirror; `coe_vertexReflection` (135) is the `@[simp]` bridge, and `bijOn_vertexPreReflection`'s own proof (180) uses it that way.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Delete both `vertexReflectionProd_*_eq_self_iff` declarations (and drop them from the module docstring at lines 49-54); a user holding the automorphism reaches the pre-reflection statement by `simp` via `coe_vertexReflectionProd`, exactly as DimensionVector.lean intends for `vertexReflection`.",
+   "issue": "`vertexReflectionProd_eq_self_iff` (305) and `vertexReflectionProd_eq_self_iff_of_anisotropic` (327) add no content over `vertexPreReflectionProd_eq_self_iff` (296) and `vertexPreReflectionProd_eq_self_iff_of_anisotropic` (317): each proof is `simp only [coe_vertexReflectionProd]; exact <pre version>`, i.e. the statements coincide under the `@[simp]` lemma `coe_vertexReflectionProd` (151).",
+   "line": 305
+  }
+ ],
+ "head_sha": "91de1b832ea448c81f3bd590d676b701c2515f51",
+ "merge_base_sha": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2951,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b7abc78ce2ea892c06a1016103ce89a84f4b2f40b896a50e370f33600ddbd5e7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T083505Z-2951-reuse-c3d1ed",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:35:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The mathematics is new \u2014 no Coxeter transformation on dimension vectors exists in TauCeti or Mathlib, and the inductions reuse the single-vertex lemmas of DimensionVector.lean correctly. Two duplications remain: a verbatim-repeated proof block across the two coercion lemmas, and a pair of automorphism-packaged theorems that restate their pre-reflection counterparts modulo an existing @[simp] lemma.",
+ "transcript_blob": "7429abb078fa98858982c30489da76d39aa1daa70751acc1ab26d2647cb14097",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 66810,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 66810,
+  "cache_read_input_tokens": 590451,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1902,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1902,
+    "cache_read_input_tokens": 81407,
+    "input_tokens": 2,
+    "output_tokens": 1632,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14984,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

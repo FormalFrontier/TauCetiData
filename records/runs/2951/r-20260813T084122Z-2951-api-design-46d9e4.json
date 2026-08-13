@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6835419999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 270.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 71233,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 71233,
+    "cache_read_input_tokens": 900332,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2641,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2641,
+      "cache_read_input_tokens": 85091,
+      "input_tokens": 2,
+      "output_tokens": 5104,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20394,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "cost_usd": 1.683542,
+ "dedupe_key": "TauCetiProject/TauCeti|2951|91de1b832ea448c81f3bd590d676b701c2515f51|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "diff_sha256": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "duration_s": 270.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`DimensionVector.lean:150-181` sets the precedent this file departs from: `titsForm_vertexPreReflection`, `titsPolarForm_vertexPreReflection` and `bijOn_vertexPreReflection` are stated for the pre-form only, with `coe_vertexReflection` (`@[simp]`, line 134) and `vertexReflection_symm` (line 142) the sole equiv-level lemmas \u2014 no theorem is restated in both packagings.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Delete both `vertexReflectionProd_eq_self_iff` and `vertexReflectionProd_eq_self_iff_of_anisotropic` and the corresponding module-docstring bullets (lines 49-54); keep only the `vertexPreReflectionProd_*` forms, which `coe_vertexReflectionProd` bridges.",
+   "issue": "`vertexReflectionProd_eq_self_iff` (line 305) and `vertexReflectionProd_eq_self_iff_of_anisotropic` (line 327) duplicate `vertexPreReflectionProd_eq_self_iff` / `_of_anisotropic` in the equiv packaging, each with the proof `simp only [coe_vertexReflectionProd]; exact <pre-version>`. Since `coe_vertexReflectionProd` is `@[simp]` (line 151), a user holding the automorphism reaches the pre-version in one simp step. Worse, both carry the extra hypothesis `hl : \u2200 i \u2208 l, IsEmpty (i \u27f6 i)`, which the fixed-point theorem does not need, so the duplicate advertises looplessness as a hypothesis of a result that holds without it.",
+   "line": 305
+  },
+  {
+   "evidence": "The file already provides the unbundled shadow of the other equiv fact \u2014 `vertexPreReflectionProd_bijective` (line 184) derived from `(vertexReflectionProd Q hl).bijective` \u2014 so the inverse identity is the one derived fact left only in bundled form.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Add the unbundled companion, e.g. `theorem vertexPreReflectionProd_reverse_mul {l : List Q} (hl : \u2200 i \u2208 l, IsEmpty (i \u27f6 i)) : vertexPreReflectionProd Q l.reverse * vertexPreReflectionProd Q l = 1`, proved from `coe_vertexReflectionProd_symm`.",
+   "issue": "The inverse is exposed only bundled (`coe_vertexReflectionProd_symm`, line 191), whose `@[simp]` direction rewrites `\u21d1(vertexReflectionProd Q hl).symm` *into* `\u21d1(vertexPreReflectionProd Q l.reverse)`. A consumer wanting `vertexPreReflectionProd Q l.reverse (vertexPreReflectionProd Q l d) = d` \u2014 the form needed to invert `c d = e` in the `Module.End` setting the rest of the file works in \u2014 cannot get it from the simp set and must rewrite backwards through both coe lemmas plus `LinearEquiv.symm_apply_apply`.",
+   "line": 191
+  }
+ ],
+ "head_sha": "91de1b832ea448c81f3bd590d676b701c2515f51",
+ "merge_base_sha": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2951,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a5c1cfaefdd859c6af2922509fda7afa220c5a3aceff089055531000c163956a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T084122Z-2951-api-design-46d9e4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:41:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API for `vertexPreReflectionProd` (nil/cons/append/notMem, form invariance, level-set bijection, fixed points) is complete and correctly annotated, but the equiv packaging duplicates the headline theorem with a mathematically inert extra hypothesis, and the unbundled inverse identity the file's own `vertexReflectionProd` justifies is missing.",
+ "transcript_blob": "4587540bad28aaf47ddc82ec9800888945da6d9288921baf335ce1229b610ace",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71233,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 71233,
+  "cache_read_input_tokens": 900332,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2641,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2641,
+    "cache_read_input_tokens": 85091,
+    "input_tokens": 2,
+    "output_tokens": 5104,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20394,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

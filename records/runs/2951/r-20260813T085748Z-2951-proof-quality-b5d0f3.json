@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9712150000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 148.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46971,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46971,
+    "cache_read_input_tokens": 370910,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1194,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1194,
+      "cache_read_input_tokens": 62276,
+      "input_tokens": 2,
+      "output_tokens": 3494,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12208,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "cost_usd": 0.971215,
+ "dedupe_key": "TauCetiProject/TauCeti|2951|91de1b832ea448c81f3bd590d676b701c2515f51|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "diff_sha256": "d2d18df8f3d4bc74d134fea6e2a9931e271748b0ea904c353194791af7480d71",
+ "duration_s": 148.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 154-161 and 193-200 are character-identical; lines 165-180 and 218-231 differ only in the `.reverse` on the mapped list and the final `rw [hlist, \u2190 List.map_reverse]` vs `rw [hlist]`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Factor out one lemma, e.g. `(l.attach.map fun i \u21a6 vertexReflection Q (hl i.1 i.2)).prod).toLinearMap = (l.map (vertexPreReflection Q)).prod`, and derive both `coe_vertexReflectionProd` and `coe_vertexReflectionProd_symm` from it (the reversed case by applying it after `hinv`). Alternatively define `vertexReflectionProd` by recursion on the word instead of via `List.attach`, which reduces both proofs to a two-case induction.",
+   "issue": "The `hlist` block (lines 193-200) is verbatim identical to lines 154-161 in `coe_vertexReflectionProd`, and the following `calc` (218-231) repeats the `map_list_prod` + `List.map_congr_left`/`toLinearMapMonoidHom_apply` argument of 165-180 modulo an inserted `.reverse`. ~25 lines of substantial reasoning duplicated between the two proofs.",
+   "line": 193
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Module/Equiv/Defs.lean:202 `theorem coe_coe : \u21d1(e : M \u2192\u209b\u2097[\u03c3] M\u2082) = e`; Coxeter.lean:162 states `h` about `.toLinearMap` while line 153 states the goal in the `LinearEquiv` coercion.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Use the explicit lemma: `rw [\u2190 LinearEquiv.coe_coe]; exact congrArg _ h` (or `simp only [\u2190 LinearEquiv.coe_coe, h]`) at both sites.",
+   "issue": "`exact congrArg (fun f : Module.End \u2124 (Q \u2192 \u2124) \u21a6 (f : (Q \u2192 \u2124) \u2192 (Q \u2192 \u2124))) h` produces `\u21d1(e.toLinearMap) = \u21d1(vertexPreReflectionProd Q l)` while the goal is `\u21d1e = ...` for the `LinearEquiv` coercion; it closes only by unfolding the `LinearEquiv`/`LinearMap` `FunLike` instances and `Module.End`. Same undocumented defeq reliance at line 232.",
+   "line": 181
+  },
+  {
+   "evidence": "No such lemma exists: `grep -n 'titsPolarForm' TauCeti/RepresentationTheory/Quiver/EulerForm.lean` yields only `_def`, `_comm`, `_single_left/right/single`, `_single_self_of_isEmpty`.",
+   "file": "TauCeti/RepresentationTheory/Quiver/Reflection/Coxeter.lean",
+   "fix": "Add `titsPolarForm_self : titsPolarForm Q d d = 2 * titsForm Q d` to `TauCeti/RepresentationTheory/Quiver/EulerForm.lean` (a two-line consequence of `QuadraticMap.polar_self` / `titsPolarForm_def`) and use it here.",
+   "issue": "`have h := hw w; rw [titsPolarForm_def, \u2190 titsForm_def] at h; omega` inlines the reusable identity `titsPolarForm Q d d = 2 * titsForm Q d` (the fact the docstring at line 313 names as `\u27e8v, v\u27e9 = 2 q(v)`) by unfolding both forms down to `eulerForm`, one layer below the abstraction being used.",
+   "line": 321
+  }
+ ],
+ "head_sha": "91de1b832ea448c81f3bd590d676b701c2515f51",
+ "merge_base_sha": "2e90a54977e10cec73ef1c4ce5e7f238d01e9157",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2951,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "56713932bd14f0e929bdfecd7fe5c6bab6c077187e895ad88cc744ea19f4edca",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T085748Z-2951-proof-quality-b5d0f3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T08:57:48Z",
+ "submitted_by": "kim-em",
+ "summary": "Two automorphism-coercion lemmas duplicate ~25 lines of the same list-product manipulation and both close by relying on undocumented definitional equality between the LinearEquiv and LinearMap coercions. A reusable polar-form-diagonal fact is inlined rather than extracted.",
+ "transcript_blob": "8ff342a948c2adfc1a530f7aba77f00d45b80f476fe94f87ebb8ef146af1d36f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46971,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46971,
+  "cache_read_input_tokens": 370910,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1194,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1194,
+    "cache_read_input_tokens": 62276,
+    "input_tokens": 2,
+    "output_tokens": 3494,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12208,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
