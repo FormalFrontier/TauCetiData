@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.234101,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 47.3,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 90112,
+    "input_tokens": 118093,
+    "output_tokens": 1638,
+    "reasoning_output_tokens": 625
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5eebe1083d830cb452e872f85814f1cfd4fcde97",
+ "cost_estimated": true,
+ "cost_usd": 0.234101,
+ "dedupe_key": "TauCetiProject/TauCeti|3016|0e6f56623e221bd43b6f1e83a8aad4bb0368f2e4|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "666ac082fae7133d8369d456d5f6b2537d0d84b0ff78643a848a15b094092650",
+ "diff_sha256": "666ac082fae7133d8369d456d5f6b2537d0d84b0ff78643a848a15b094092650",
+ "duration_s": 47.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 151\u2013157 define `transvectionUnit` as exactly `SpecialLinearGroup.toGL (SpecialLinearGroup.transvection hij c)` and immediately repeat that equation.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Delete the theorem and unfold `transvectionUnit` directly in `transvectionUnit_zero`, `transvectionUnit_add`, and `transvectionUnit_inv`.",
+   "issue": "`transvectionUnit_eq_toGL` merely restates the definition of `transvectionUnit` by `rfl`; its only uses are internal unfolding in the next three proofs.",
+   "line": "155"
+  },
+  {
+   "evidence": "Mathlib/Data/Matrix/Mul.lean:370 and :375 provide `Matrix.diagonal_mul` and `Matrix.mul_diagonal`; the new lemma is used only at line 137.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Delete it and prove line 131 directly using `Matrix.diagonal_mul` and `Matrix.mul_diagonal` (plus `Matrix.single_apply` where needed).",
+   "issue": "`diagonal_mul_single_mul_diagonal` is single-use scaffolding recomposing Mathlib\u2019s existing entrywise diagonal multiplication API.",
+   "line": "118"
+  },
+  {
+   "evidence": "Mathlib\u2019s `SpecialLinearGroup.coeToGL_det` proves the result for every special-linear element; line 186 is exactly `SpecialLinearGroup.coeToGL_det _`, and grep finds no consumer of `det_transvectionUnit`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Delete the specialization and use `SpecialLinearGroup.coeToGL_det` directly wherever determinant-one is required.",
+   "issue": "`det_transvectionUnit` is an unused specialization of the generic existing theorem `SpecialLinearGroup.coeToGL_det`.",
+   "line": "184"
+  }
+ ],
+ "head_sha": "0e6f56623e221bd43b6f1e83a8aad4bb0368f2e4",
+ "merge_base_sha": "bcfbae9e2dd6f132f6ee5d6d5f099a4a5b703a9e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3016,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "64d53a058148b1e440a8b81e149f479fe57dd9b10764afb5f83a5d951b56af6d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T054945Z-3016-reuse-9b2024",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T05:49:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The core root-subgroup API is new, but the PR adds redundant wrapper lemmas and single-use matrix scaffolding already covered by existing definitions and Mathlib lemmas.",
+ "transcript_blob": "222064a7d6f4c1bb7ad53a550906eff5f08c8d5da664bce72b6ff9cbd6ac37a2",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 90112,
+  "input_tokens": 118093,
+  "output_tokens": 1638,
+  "reasoning_output_tokens": 625
+ },
+ "verdict": "request_changes"
+}
