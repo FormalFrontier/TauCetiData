@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8044474999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 218.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 89655,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 89655,
+    "cache_read_input_tokens": 946867,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 230,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 230,
+      "cache_read_input_tokens": 105924,
+      "input_tokens": 2,
+      "output_tokens": 3174,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16997,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c2b903a1cc6faaf7792da6b7b4e18b975d4ed2fd",
+ "cost_usd": 1.804447,
+ "dedupe_key": "TauCetiProject/TauCeti|3049|7f04c6e1dff208f6a949604a4404b5b47f931c71|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d0daf76c40fe9eaf36ed13d654076190d2d8453c97b7becfd161f2b00025d075",
+ "diff_sha256": "d0daf76c40fe9eaf36ed13d654076190d2d8453c97b7becfd161f2b00025d075",
+ "duration_s": 218.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Repo convention states every def's defining equation publicly with `(rfl)`: `wordFiltration_eq_pow ... := (rfl)` (TauCeti/Algebra/WordFiltration.lean:59), `filtrationGradedOne_def` (TauCeti/LinearAlgebra/CliffordAlgebra/AssociatedGraded.lean:201). `pbwMonomial` has none, and the file itself must unfold it (`rw [pbwMonomial]`, lines 121, 130).",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/LeadingTerm.lean",
+   "fix": "Add `theorem pbwMonomial_def (e : \u03b9Index \u2192 L) (word : List \u03b9Index) : pbwMonomial R L e word = ((word.map e).map \u21d1\u03b9).prod := (rfl)` and use it for the internal `rw [pbwMonomial]` steps at lines 121 and 130.",
+   "issue": "`pbwMonomial` is a public `def` whose body is not exposed (no `@[expose]`), and no defining equation is stated. Only `_nil`/`_cons`/`_append` are given, so nothing publicly connects `pbwMonomial R L e word` to `((word.map e).map \u21d1\u03b9).prod`. A consumer holding `prod_map_\u03b9_mem_pbwFiltration`, `prod_map_\u03b9_sub_prod_map_\u03b9_mem_pbwFiltrationPrevious_of_perm`, or `pbwFiltration_le_iff` (all phrased with `(l.map \u21d1\u03b9).prod`, Filtration.lean:104,112) must re-derive the bridge by list induction.",
+   "line": 99
+  },
+  {
+   "evidence": "Its only use is line 89, `| swap x y l => exact prod_map_\u03b9_sub_swap_mem_pbwFiltrationPrevious R L y x l`, i.e. exactly the `List.Perm.swap` constructor case.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/LeadingTerm.lean",
+   "fix": "Mark it `private`. Consumers wanting the adjacent case write `prod_map_\u03b9_sub_prod_map_\u03b9_mem_pbwFiltrationPrevious_of_perm R L (List.Perm.swap ..)`.",
+   "issue": "`prod_map_\u03b9_sub_swap_mem_pbwFiltrationPrevious` is public but is a strictly weaker instance of `prod_map_\u03b9_sub_prod_map_\u03b9_mem_pbwFiltrationPrevious_of_perm` declared 10 lines below it: it equals that theorem applied to the `List.Perm.swap` constructor. It has no use outside the perm proof, so it duplicates the general public result.",
+   "line": 66
+  },
+  {
+   "evidence": "`filtration Q k := TauCeti.Algebra.wordFiltration (\u03b9 Q) k` (Filtration.lean:116) and `filtrationPrevious Q := TauCeti.Algebra.wordFiltrationPrevious (\u03b9 Q)` (line 129); every other generic lemma already has a public Clifford specialization (lines 184-273). The new bridges are `private` at AssociatedGraded.lean:71 and 75, used only at lines 113-116 and 131-134.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Add public `mul_mem_filtrationPrevious_left` and `mul_mem_filtrationPrevious_right` in `TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean` as one-line specializations (`TauCeti.Algebra.mul_mem_wordFiltrationPrevious_left (\u03b9 Q) hx hy`, mirroring `mul_mem_filtration` at line 238), then call them directly in `filtrationGradedPreMul_mem_ker_left/right` and delete the private `filtration_eq_wordFiltration` / `filtrationPrevious_eq_wordFiltrationPrevious` bridges.",
+   "issue": "The PR factors `mul_mem_wordFiltrationPrevious_left/right` into the shared API and specializes them for the PBW filtration (Filtration.lean:157-167), but the Clifford filtration gets no such specialization: `TauCeti.CliffordAlgebra.filtrationPrevious` publicly offers only `_zero`/`_succ`, so no consumer of the Clifford filtration can multiply modulo lower degree. AssociatedGraded.lean instead reaches the fact through two `private` bridge lemmas plus four rewrites at each use site.",
+   "line": 139
+  },
+  {
+   "evidence": "Mathlib supplies only `LieHom.map_lie` on `UniversalEnvelopingAlgebra.\u03b9` (Mathlib/Algebra/Lie/UniversalEnveloping.lean:79-86), whose bracket on `U(L)` is available only under the local instance at line 76; no associative-form restatement exists in Mathlib or this repo.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/LeadingTerm.lean",
+   "fix": "Expose `theorem \u03b9_mul_\u03b9_sub_\u03b9_mul_\u03b9 (x y : L) : \u03b9 x * \u03b9 y - \u03b9 y * \u03b9 x = \u03b9 \u2045x, y\u2046 := by rw [\u2190 LieRing.of_associative_ring_bracket, \u2190 LieHom.map_lie]` and use it in `prod_map_\u03b9_sub_swap_mem_pbwFiltrationPrevious`.",
+   "issue": "The commutator identity the module docstring headlines (`\u03b9(x) * \u03b9(y) - \u03b9(y) * \u03b9(x) = \u03b9([x,y])`, lines 19-23) and that the PR description claims the module \"supplies\" is not a declaration; it is inlined as `rw [\u2190 LieRing.of_associative_ring_bracket, \u2190 LieHom.map_lie]`. Every downstream PBW consumer needs it and must re-enable `attribute [local instance 100] LieRing.ofAssociativeRing` to reproduce it, even though the statement itself is purely associative.",
+   "line": 70
+  }
+ ],
+ "head_sha": "7f04c6e1dff208f6a949604a4404b5b47f931c71",
+ "merge_base_sha": "c2b903a1cc6faaf7792da6b7b4e18b975d4ed2fd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3049,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3c987e6d3fca5fcf5d7759204ca3afbfd3546d0fdf8569df665797a578091aaf",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T095221Z-3049-api-design-34ed3a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T09:52:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `pbwMonomial` definition ships without its defining equation, so its public API is disconnected from the `prod_map_\u03b9` half of the same file and from `pbwFiltration_le_iff`. Additionally an adjacent-swap helper is public although the general permutation theorem in the same file subsumes it, the headline commutator identity is only inlined in a proof, and the Clifford side keeps the new filtration-product lemmas behind private bridge declarations instead of specializing them the way the PBW file does.",
+ "transcript_blob": "4f99ca283ef86f2a377983ff0ce8e01c344a6ca2b07fcff37947edd3f2a596c9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 89655,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 89655,
+  "cache_read_input_tokens": 946867,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 230,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 230,
+    "cache_read_input_tokens": 105924,
+    "input_tokens": 2,
+    "output_tokens": 3174,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16997,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

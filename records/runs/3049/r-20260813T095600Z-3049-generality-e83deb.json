@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3693660000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 205.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 57634,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 57634,
+    "cache_read_input_tokens": 791912,
+    "inference_geo": "not_available",
+    "input_tokens": 70,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 848,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 848,
+      "cache_read_input_tokens": 73285,
+      "input_tokens": 2,
+      "output_tokens": 3760,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15510,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c2b903a1cc6faaf7792da6b7b4e18b975d4ed2fd",
+ "cost_usd": 1.369366,
+ "dedupe_key": "TauCetiProject/TauCeti|3049|7f04c6e1dff208f6a949604a4404b5b47f931c71|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d0daf76c40fe9eaf36ed13d654076190d2d8453c97b7becfd161f2b00025d075",
+ "diff_sha256": "d0daf76c40fe9eaf36ed13d654076190d2d8453c97b7becfd161f2b00025d075",
+ "duration_s": 205.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib states this API for a bare relation: `mathlib/Mathlib/Data/List/Sort.lean:31-33` (`variable (r : \u03b1 \u2192 \u03b1 \u2192 Prop)`, `[DecidableRel r]`) and `:114` `theorem perm_insertionSort (l : List \u03b1) : insertionSort r l ~ l`. Nothing in the PR's statement or proof uses reflexivity, transitivity, antisymmetry or totality.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/LeadingTerm.lean",
+   "fix": "State it for an arbitrary relation: `theorem ... (r : \u03b9Index \u2192 \u03b9Index \u2192 Prop) [DecidableRel r] (e : \u03b9Index \u2192 L) (word : List \u03b9Index) : pbwMonomial R L e word - pbwMonomial R L e (word.insertionSort r) \u2208 pbwFiltrationPrevious R L word.length`, proved by `... (List.perm_insertionSort r word).symm`. The proof text is otherwise unchanged.",
+   "issue": "`pbwMonomial_sub_insertionSort_mem_pbwFiltrationPrevious` assumes `[LinearOrder \u03b9Index]`, but the conclusion asserts nothing about sortedness; the only use of the order is to name a decidable relation for `insertionSort`. That excludes sorting by a non-antisymmetric decidable relation (e.g. the n\u207b/H/n\u207a block ordering needed for the roadmap's triangular decomposition).",
+   "line": 136
+  },
+  {
+   "evidence": "`Filtration.lean:116-117` `def filtration (Q) (k) := TauCeti.Algebra.wordFiltration (\u03b9 Q) k`; `:129-130` `def filtrationPrevious (Q) := TauCeti.Algebra.wordFiltrationPrevious (\u03b9 Q)`; `:240` `mul_mem_filtration ... := TauCeti.Algebra.mul_mem_wordFiltration (\u03b9 Q) hx hy` is the file's established wrapper convention. `grep -rn mul_mem_pbwFiltrationPrevious_left TauCeti` matches only its own definition (`UniversalEnveloping/Filtration.lean:158`).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/AssociatedGraded.lean",
+   "fix": "Delete both private bridge lemmas; add public `mul_mem_filtrationPrevious_left` / `mul_mem_filtrationPrevious_right` to `TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean` beside `mul_mem_filtration` (`:= TauCeti.Algebra.mul_mem_wordFiltrationPrevious_left (\u03b9 Q) hx hy`) and close the two kernel lemmas with `exact mul_mem_filtrationPrevious_left Q hprevious y.property` / `exact mul_mem_filtrationPrevious_right Q x.property hprevious`.",
+   "issue": "The removed private `mul_mem_filtrationPrevious_left/right` are replaced by two private `rfl` bridge lemmas plus rewrites, leaving the Clifford proofs working at the generic word-filtration level. `filtration Q k` is *definitionally* `wordFiltration (\u03b9 Q) k` and `filtrationPrevious Q` is `wordFiltrationPrevious (\u03b9 Q)`, so `filtration_eq_wordFiltration` / `filtrationPrevious_eq_wordFiltrationPrevious` restate the definitions and the four `rw`s at :113-117 and :131-135 do nothing. Meanwhile the PBW side got Clifford-style wrappers, one of which (`mul_mem_pbwFiltrationPrevious_left`) has no user \u2014 the specialization is applied to the file that does not need it and withheld from the file that does.",
+   "line": 70
+  }
+ ],
+ "head_sha": "7f04c6e1dff208f6a949604a4404b5b47f931c71",
+ "merge_base_sha": "c2b903a1cc6faaf7792da6b7b4e18b975d4ed2fd",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3049,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cadef01c71952fa616ca330841ece38bbfd5d8854f5cf88750780b44b0806c0f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T095600Z-3049-generality-e83deb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T09:56:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The permutation results sit at the right level (general list statement first, indexed corollary derived), but the insertion-sort corollary assumes a full LinearOrder where any decidable relation suffices, and the Clifford refactor leaves the strict-drop lemmas at the generic level instead of specializing them the way the sibling PBW file does.",
+ "transcript_blob": "6df87c2e234d4b0f2ca07bb03c1531e17a33ad0e4cc3c55662a2ffab6b9a5688",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 57634,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 57634,
+  "cache_read_input_tokens": 791912,
+  "inference_geo": "not_available",
+  "input_tokens": 70,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 848,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 848,
+    "cache_read_input_tokens": 73285,
+    "input_tokens": 2,
+    "output_tokens": 3760,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15510,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
