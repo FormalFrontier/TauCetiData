@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9221519999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 295.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 63053,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 63053,
+    "cache_read_input_tokens": 1542120,
+    "inference_geo": "not_available",
+    "input_tokens": 51,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1594,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1594,
+      "cache_read_input_tokens": 77958,
+      "input_tokens": 2,
+      "output_tokens": 2593,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20420,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5dce5c2e019b92ec0d7868ea7ccfbb5fab7ba89e",
+ "cost_usd": 1.922152,
+ "dedupe_key": "TauCetiProject/TauCeti|3020|a32692f38df392572a3b87f78f7f66ef38790f12|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "0a759ce002680171019834bdd352236b0204f5b8baa3c0e1d41bd156e764f7bc",
+ "diff_sha256": "0a759ce002680171019834bdd352236b0204f5b8baa3c0e1d41bd156e764f7bc",
+ "duration_s": 295.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -rn \"closure_induction\u2082\" TauCeti/ \u2192 TauCeti/RepresentationTheory/CharacterTable/VirtualCharacter.lean:129, TauCeti/RingTheory/Huber/RingOfDefinition.lean:89, TauCeti/RingTheory/Binomial.lean:107. Mathlib has no such lemma: Mathlib/Algebra/Ring/Subgroup.lean defines only pointwise `AddSubgroup.mul`, and `AddSubmonoid.closure_mul_closure` (Mathlib/Algebra/Ring/Submonoid/Pointwise.lean:151) is at submonoid level, so the helper belongs in TauCeti \u2014 but in a reusable location.",
+   "file": "TauCeti/RingTheory/Binomial.lean",
+   "fix": "Move `AddSubgroup.mul_mem_closure` (and `Subring.toAddSubgroup_closure`) into a general module importable by all three sites (e.g. a `TauCeti/Algebra/Ring/Subgroup.lean`), then rewrite the two existing proofs as `AddSubgroup.mul_mem_closure ?_ hx hy` with only their `mem` case surviving, deleting the five boilerplate cases at each site.",
+   "issue": "`AddSubgroup.mul_mem_closure` is the set-generic form of scaffolding that already exists verbatim twice in TauCeti, but it is declared inside a binomial-coefficient file, so neither clone can use it and the repo ends with three copies. `TauCeti/RingTheory/Huber/RingOfDefinition.lean:89-102` (`mul_mem_addSubgroupClosure_mul_range_pow`) is character-for-character identical in its five non-`mem` cases, and `TauCeti/RepresentationTheory/CharacterTable/VirtualCharacter.lean:129-141` (`mul_mem_virtualCharacters`) is the same proof with `rw` in place of `simpa`.",
+   "line": 103
+  },
+  {
+   "evidence": "grep -rn \"ringChooseSpan_induction\" TauCeti/ \u2192 only its declaration at TauCeti/RingTheory/Binomial.lean:165; body at lines 168-176 is `rw [ringChooseSpan_def]; induction hx using AddSubgroup.closure_induction` with each case discharged by the corresponding hypothesis.",
+   "file": "TauCeti/RingTheory/Binomial.lean",
+   "fix": "Delete `ringChooseSpan_induction`; consumers use `rw [ringChooseSpan_def]` (already public) and `AddSubgroup.closure_induction`. Unlike `ringChooseSpan_def`/`ringChooseSpan_le_iff`, this lemma was not part of the api-design-mandated barrier, so removing it conflicts with nothing.",
+   "issue": "`ringChooseSpan_induction` restates Mathlib's `AddSubgroup.closure_induction` for `ringChooseSpan` and has no consumer anywhere in the repo; its own proof is just `rw [ringChooseSpan_def]` followed by that Mathlib lemma, so any caller can do the same in one line. This is a parallel induction API for the same subgroup with no earning use.",
+   "line": 165
+  }
+ ],
+ "head_sha": "a32692f38df392572a3b87f78f7f66ef38790f12",
+ "merge_base_sha": "5dce5c2e019b92ec0d7868ea7ccfbb5fab7ba89e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3020,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "167519fce15695dab35e62a240203ea6810af3643d49a3894c78dc6b7defb336",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T101341Z-3020-reuse-a06fe1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T10:13:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The product formula and the span-is-a-subring identification are genuinely new; Mathlib has no Ring.choose product lemma and no such closure statement. Two duplication defects remain: the new generic closure helper is buried where the two existing clones of it cannot use it, and ringChooseSpan_induction is an unused restatement of AddSubgroup.closure_induction.",
+ "transcript_blob": "f553cc72eaa40476e831a30f786da388b1f9744990bc806a646bb1de34af116d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 63053,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 63053,
+  "cache_read_input_tokens": 1542120,
+  "inference_geo": "not_available",
+  "input_tokens": 51,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1594,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1594,
+    "cache_read_input_tokens": 77958,
+    "input_tokens": 2,
+    "output_tokens": 2593,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20420,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
