@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2733950000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 177.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64787,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64787,
+    "cache_read_input_tokens": 552042,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1452,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1452,
+      "cache_read_input_tokens": 79834,
+      "input_tokens": 2,
+      "output_tokens": 3865,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13578,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "737de14b6f8e76b545e6715d24cb653859d296e0",
+ "cost_usd": 1.273395,
+ "dedupe_key": "TauCetiProject/TauCeti|3055|6fb38444019dc7d9a71d253ad539cfcce0066033|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d9f2ca3bd74efe4a7211ffcd7a6689c6bd7438a0d0ed85935a0ee2d2c27c2989",
+ "diff_sha256": "d9f2ca3bd74efe4a7211ffcd7a6689c6bd7438a0d0ed85935a0ee2d2c27c2989",
+ "duration_s": 177.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "ConjugacyClasses.lean:137 `exists_isConj_torusExp_mem_Icc (g : SU2) : \u2203 \u03b8 \u2208 Set.Icc (0 : \u211d) Real.pi, IsConj g (torusExp \u03b8)`; for `\u03b8 \u2208 [0, \u03c0]`, `Real.sin \u03b8 = 0` iff `\u03b8 = 0` or `\u03b8 = \u03c0`. Every angle-coordinate result in the file (lines 190, 200, 225) carries `h\u03b8 : Real.sin \u03b8 \u2260 0`.",
+   "file": "TauCeti/RepresentationTheory/SU2/WeylCharacter.lean",
+   "fix": "Add the missing case, e.g. `theorem character_symPower_torusExp_of_sin_eq_zero {\u03b8 : \u211d} (h\u03b8 : Real.sin \u03b8 = 0) : (symPower d).character (torusExp \u03b8) = ((d : \u2102) + 1) * (Real.cos \u03b8 : \u2102) ^ d`, deriving `(Circle.exp \u03b8 : \u2102) ^ 2 = 1` from `h\u03b8` and applying `character_symPower_torusHom_of_sq_eq_one`. With it, strengthen `exists_mem_Icc_character_symPower_eq` to actually deliver the value on the chamber rather than only the existence of a conjugate angle.",
+   "issue": "The angle parametrisation exports only the `Real.sin \u03b8 \u2260 0` case, while the `torusHom` coordinate gets both (`character_symPower_torusHom_eq_div` and `character_symPower_torusHom_of_sq_eq_one`). Since `exists_mem_Icc_character_symPower_eq` (line 234) reduces every `g` to a `\u03b8 \u2208 [0, \u03c0]`, and the two endpoints `\u03b8 = 0, \u03c0` are exactly where `sin \u03b8 = 0`, a consumer cannot evaluate the character everywhere from the exported closed forms: they must convert `torusExp \u03b8` back to `torusHom (Circle.exp \u03b8)` and reprove `(Circle.exp \u03b8 : \u2102) ^ 2 = 1` from `sin \u03b8 = 0` themselves. The module docstring's claim that \"the description of the character on the torus is complete\" (lines 28-29) therefore does not hold in the coordinate the roadmap and the downstream chamber lemma use.",
+   "line": 190
+  },
+  {
+   "evidence": "WeylCharacter.lean:217-220 proof body is `obtain \u27e8c, hc\u27e9 := isConj_iff.mp hg; rw [\u2190 hc, Representation.char_conj]` \u2014 no `torusExp` lemma is invoked. `Representation.char_conj` is generic (mathlib/Mathlib/RepresentationTheory/Character.lean:90); the only `IsConj` form in-repo is `ClassFunction.eq_of_isConj` (TauCeti/RepresentationTheory/CharacterTable/ClassFunction.lean:67), which requires the bundle.",
+   "file": "TauCeti/RepresentationTheory/SU2/WeylCharacter.lean",
+   "fix": "State it for arbitrary conjugates: `theorem character_symPower_eq_of_isConj {g h : SU2} (hgh : IsConj g h) : (symPower d).character g = (symPower d).character h`; the uses at lines 228 and 237 are then instances. (The general `Representation`-level version would be better still; only the bundled `ClassFunction.eq_of_isConj` exists today.)",
+   "issue": "`character_symPower_eq_of_isConj` bakes `torusExp \u03b8` into the conclusion, but its proof (`isConj_iff.mp` then `Representation.char_conj`) uses nothing about the target: the statement holds for any pair of conjugate elements of `SU(2)`. As exported, a consumer with `IsConj g h` for a non-torus `h` cannot use it and must reprove the two-line fact.",
+   "line": 217
+  }
+ ],
+ "head_sha": "6fb38444019dc7d9a71d253ad539cfcce0066033",
+ "merge_base_sha": "737de14b6f8e76b545e6715d24cb653859d296e0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3055,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7d57a19cd67cee54f64634b694e288e2d1c14250077ea99b38cf8e7853e123a0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260813T115552Z-3055-api-design-96c07c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-13T11:55:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The torus surface is complete in the `torusHom` coordinate but not in the angle coordinate: nothing covers `sin \u03b8 = 0`, which is precisely both endpoints of the Weyl chamber the file's own reduction lands in. One exported lemma is also stated at needlessly narrow generality.",
+ "transcript_blob": "e1b95c6c75d34cccf4f0168a529c06750e647d519122b6530098277f284762ce",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64787,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64787,
+  "cache_read_input_tokens": 552042,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1452,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1452,
+    "cache_read_input_tokens": 79834,
+    "input_tokens": 2,
+    "output_tokens": 3865,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13578,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
