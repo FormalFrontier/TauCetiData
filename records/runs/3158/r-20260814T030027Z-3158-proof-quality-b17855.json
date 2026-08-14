@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.8961835,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 177.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 37813,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 37813,
+    "cache_read_input_tokens": 312905,
+    "inference_geo": "not_available",
+    "input_tokens": 619,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2765,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2765,
+      "cache_read_input_tokens": 51547,
+      "input_tokens": 2,
+      "output_tokens": 3714,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14046,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "070ccfe93b3346f8e3d89b61689f3281fc616ac1",
+ "cost_usd": 0.896184,
+ "dedupe_key": "TauCetiProject/TauCeti|3158|1090c30aeb36d410e7a23c055d57019dc4a298e6|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a3641af738cc87a58730c08abd1f6f42a6c3c10db87a851302295f13d3e08b0d",
+ "diff_sha256": "a3641af738cc87a58730c08abd1f6f42a6c3c10db87a851302295f13d3e08b0d",
+ "duration_s": 177.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/RingTheory/Huber/WeightedRestrictedSeries.lean:994` defines `weightedRestrictedSubring_ringHom_ext_of_continuous` under only `[Semiring B] [TopologicalSpace B] [T2Space B]`; `WeightedEval/UniversalProperty.lean:80` uses it rather than reproving it inside the `\u2203!`. `Mathlib/Topology/UniformSpace/Completion.lean:414` shows `Completion.ext` needs only `[T2Space Y]`. The PR description names `A\u27e8X\u27e9\u27e8Y\u27e9 \u2245 A\u27e8X,Y\u27e9` as the next consumer, which needs ext, not `\u2203!.unique` (using `.unique` forces re-deriving continuity and both value clauses for each of the two maps).",
+   "file": "TauCeti/RingTheory/Huber/WeightedEval/Completion.lean",
+   "fix": "Extract `completion_weightedRestrictedSubring_ringHom_ext_of_continuous {f g : Completion (weightedRestrictedSubring T hT) \u2192+* B} (hf : Continuous f) (hg : Continuous g) (hC : \u2200 a, f \u2191(weightedC T hT a) = g \u2191(weightedC T hT a)) (hX : \u2200 i, f \u2191(weightedX T hT i) = g \u2191(weightedX T hT i)) : f = g`, proved by `weightedRestrictedSubring_ringHom_ext_of_continuous` on the restrictions along `coeRingHom` followed by `Completion.ext`, then make the `\u2203!` uniqueness clause a one-line application of it. This mirrors how the uncompleted file is organised.",
+   "issue": "The extensionality content (`two continuous ring homs out of Completion (weightedRestrictedSubring T hT) agreeing on `\u2191(weightedC \u00b7)` and `\u2191(weightedX \u00b7)` are equal`) is inlined in the `\u2203!` proof, so it is unavailable to consumers. It is also strictly more general than the form it is used at here: the argument needs neither `\u03c6`, `h\u03c6`, `hb`, `CompleteSpace B` nor `T3Space B`, only `[Semiring B] [TopologicalSpace B] [T2Space B]`.",
+   "line": 117
+  },
+  {
+   "evidence": "`Mathlib/Topology/Algebra/UniformRing.lean:115` defines `coeRingHom` with `toFun := (\u2191)` and has no `coeRingHom_apply` lemma (grep for `coeRingHom_apply` in ./mathlib matches only `Mathlib/Order/Filter/Germ/Basic.lean:605`); `Mathlib/Algebra/Ring/Hom/Defs.lean:551` is `RingHom.coe_comp`, and `Mathlib/Topology/Algebra/UniformRing.lean:122` is `continuous_coeRingHom`, already used in this repo at `TauCeti/RingTheory/Huber/Completion.lean:455`.",
+   "file": "TauCeti/RingTheory/Huber/WeightedEval/Completion.lean",
+   "fix": "Use `Completion.continuous_coeRingHom` in place of `Completion.continuous_coe _`, insert an explicit `simp only [RingHom.coe_comp, Function.comp_apply]` (or `RingHom.comp_apply` rewrites) where the composed hom's application is needed, and \u2014 since Mathlib has no `coeRingHom_apply` lemma \u2014 add a one-line comment stating that `\u21d1Completion.coeRingHom = ((\u2191) : _ \u2192 Completion _)` is `rfl` by the definition of `coeRingHom`, which is what carries `h\u03c8C`/`h\u03c8X` and line 129.",
+   "issue": "Three undocumented defeq bridges across the `RingHom.comp`/`Completion.coeRingHom` wrappers: line 122 offers `h\u03c8c.comp (Completion.continuous_coe _) : Continuous (\u21d1\u03c8 \u2218 (\u2191))` where `Continuous \u21d1(\u03c8.comp Completion.coeRingHom)` is expected; lines 122\u2013124 reuse `h\u03c8C`/`h\u03c8X`, stated about `\u03c8 \u2191(weightedC \u2026)`, at `(\u03c8.comp Completion.coeRingHom) (weightedC \u2026)`; line 129's `congrArg (fun g \u21a6 g f) key` crosses the same bridge back. Nothing in the proof records that these hold only by unfolding `RingHom.comp` and the `coeRingHom` structure projection.",
+   "line": 122
+  }
+ ],
+ "head_sha": "1090c30aeb36d410e7a23c055d57019dc4a298e6",
+ "merge_base_sha": "070ccfe93b3346f8e3d89b61689f3281fc616ac1",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3158,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fabe13def4f56a3b4ef578d6c95ccda603857c650b607bb4698c9307dfab817d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T030027Z-3158-proof-quality-b17855",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T03:00:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The uniqueness half of `existsUnique_continuous_ringHom_completion` hides a reusable, strictly more general extensionality lemma inside the `\u2203!` proof, and it moves hypotheses across `RingHom.comp`/`coeRingHom` wrapper defeq three times with no lemma or comment. The rest of the file's proofs are short, robust, and free of `change`/`show`.",
+ "transcript_blob": "1f0739a325b2a0c3a1aedab1a58cd893743414c2859aaa241c2ae31f43646cae",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 37813,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 37813,
+  "cache_read_input_tokens": 312905,
+  "inference_geo": "not_available",
+  "input_tokens": 619,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2765,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2765,
+    "cache_read_input_tokens": 51547,
+    "input_tokens": 2,
+    "output_tokens": 3714,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14046,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
