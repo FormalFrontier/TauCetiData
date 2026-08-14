@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.1728069999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 396.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 107348,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 107348,
+    "cache_read_input_tokens": 2601554,
+    "inference_geo": "not_available",
+    "input_tokens": 62,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1143,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1143,
+      "cache_read_input_tokens": 122704,
+      "input_tokens": 2,
+      "output_tokens": 3178,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 31505,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "777432e574920440c001eac904a823a74cfab9a1",
+ "cost_usd": 3.172807,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "diff_sha256": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "duration_s": 396.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Determinant.lean:539 `noncomputable def LinearMap.equivOfIsUnitDet [Module.Free R M] [Module.Finite R M] {f : M \u2192\u2097[R] M} (h : IsUnit f.det) : M \u2243\u2097[R] M`; :552 `LinearMap.equivOfIsUnitDet_apply \u2026 = f x`; :560 `LinearMap.coe_equivOfIsUnitDet \u2026 = f`. Also :327 `LinearMap.isUnit_iff_isUnit_det`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Delete the three declarations. Inside the `Matrix` section write `haveI := Module.Free.of_basis b; haveI := Module.Finite.of_basis b` and use `LinearMap.equivOfIsUnitDet (hf.isUnit_det b hG)`; `toLinearEquiv_mem_formIsometryGroup` and `bijective` then follow from `LinearMap.coe_equivOfIsUnitDet` / `LinearMap.equivOfIsUnitDet_apply`, dropping the `funext`/`show \u21d1\u2026 = \u21d1f` scaffolding at line 264.",
+   "issue": "`IsFormIsometry.toLinearEquiv` (233), `coe_toLinearEquiv` (240) and `toLinearEquiv_apply` (246) rebuild Mathlib's promotion of a det-unit endomorphism to an automorphism. Once `isUnit_det` (225) is available, `LinearMap.equivOfIsUnitDet` and its two `@[simp]` lemmas give exactly these three declarations, basis-free.",
+   "line": 233
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean:118 `def orthogonalGroup (Q : QuadraticMap R M N) : Subgroup (M \u2243\u2097[R] M)`; :129 `mem_orthogonalGroup_iff`; :149 `orthogonalGroupEquivIsometryEquiv`; :206 `orthogonalGroupCongr`; :247 `mem_orthogonalGroup_iff_polar (h2 : IsSMulRegular N (2 : R)) : f \u2208 orthogonalGroup Q \u2194 \u2200 x y, polar Q (f x) (f y) = polar Q x y`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add the bridge `TauCeti.QuadraticMap.orthogonalGroup Q = formIsometryGroup Q.polarBilin` for `Q : QuadraticForm R M` under `IsSMulRegular R (2 : R)`; it is immediate from `mem_orthogonalGroup_iff_polar` plus `mem_formIsometryGroup_iff` and `QuadraticMap.polarBilin_apply_apply`. Cross-reference the two module docstrings.",
+   "issue": "Parallel API: TauCeti already has this exact packaging for quadratic maps \u2014 `formIsometryGroup`/`orthogonalGroup`, `mem_formIsometryGroup_iff`/`mem_orthogonalGroup_iff`, `formIsometryGroupEquivIsometryEquiv`/`orthogonalGroupEquivIsometryEquiv`, `formIsometryGroupCongr`/`orthogonalGroupCongr`, with near-verbatim docstrings. No lemma connects the two groups, so a consumer of a symmetric integral form has two unrelated entry points.",
+   "line": 149
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean:177 `private def congrAut (e : M\u2081 \u2243\u2097[R] M\u2082) : (M\u2081 \u2243\u2097[R] M\u2081) \u2243* (M\u2082 \u2243\u2097[R] M\u2082)`; :208 `orthogonalGroupCongr := ((congrAut e.toLinearEquiv).subgroupMap _).trans (MulEquiv.subgroupCongr \u2026)`. mathlib/Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:110 `def congrLinearEquiv`, :83 `def generalLinearEquiv`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Promote `TauCeti.QuadraticMap.congrAut` out of `private` into a shared location (it is `((generalLinearEquiv R M).symm.trans (congrLinearEquiv e)).trans (generalLinearEquiv R M')`) and define `formIsometryGroupCongr` as `((congrAut e).subgroupMap _).trans (MulEquiv.subgroupCongr h)`, mirroring `orthogonalGroupCongr`.",
+   "issue": "`formIsometryGroupCongr` hand-rolls the conjugation isomorphism `(M \u2243\u2097[R] M) \u2243* (M' \u2243\u2097[R] M')` (toFun/invFun/left_inv/right_inv/map_mul' via `Subtype.ext`), which already exists as `congrAut` in the quadratic file and, underneath it, as Mathlib's `LinearMap.GeneralLinearGroup.congrLinearEquiv`.",
+   "line": 178
+  },
+  {
+   "evidence": "TauCeti/RepresentationTheory/InvariantForm.lean:138 `def IsInvariantForm (\u03c1) (B) : Prop := \u2200 (g : G) (x y : V), B (\u03c1 g x) (\u03c1 g y) = B x y`; TauCeti/Geometry/Symplectic/SymplecticTransport.lean:116 `def IsSymplectomorphism (\u03c9\u2081) (\u03c9\u2082) (e) : Prop := \u2200 v w, \u03c9\u2082 (e v) (e w) = \u03c9\u2081 v w`; TauCeti/Geometry/Symplectic/AlmostComplex.lean:342-344 `structure SymplecticForm \u2026 toBilinForm : LinearMap.BilinForm \u211d V`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Restate `IsInvariantForm \u03c1 B := \u2200 g, IsFormIsometry B (\u03c1 g)` (definitional, so the file's existing lemmas keep their proofs). For the symplectic case, state `IsFormIsometry` in the two-form form `IsFormIsometry B\u2081 B\u2082 f := \u2200 x y, B\u2082 (f x) (f y) = B\u2081 x y` so `IsSymplectomorphism \u03c9\u2081 \u03c9\u2082 e` is its specialisation, and redefine it there.",
+   "issue": "`IsFormIsometry` is the third copy in-repo of the unbundled \"preserves the bilinear form\" predicate, and it is left unrelated to the other two. `Representation.IsInvariantForm \u03c1 B` is literally `\u2200 g, IsFormIsometry B (\u03c1 g)` (`rfl`), and `SymplecticForm.IsSymplectomorphism \u03c9 \u03c9 e` is `IsFormIsometry \u03c9.toBilinForm e` (`SymplecticForm` wraps a `BilinForm \u211d V`).",
+   "line": 82
+  },
+  {
+   "evidence": "Lines 162-165 of the new file: body is exactly `IsFormIsometry.map_orthogonal he e.surjective N`, with `map_orthogonal` public at line 130 and `mem_formIsometryGroup_iff \u2026 := Iff.rfl` at line 157.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Delete it; callers write `IsFormIsometry.map_orthogonal he e.surjective N` directly.",
+   "issue": "`map_orthogonal_of_mem_formIsometryGroup` is a thin wrapper whose entire proof is `IsFormIsometry.map_orthogonal he e.surjective N`; since `mem_formIsometryGroup_iff` is `Iff.rfl`, `he` already is the `IsFormIsometry` hypothesis. It has no in-repo consumer.",
+   "line": 162
+  }
+ ],
+ "head_sha": "cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "87c58a22e28c677d7589bde27c37c06139e4ad26da03690b958b45654ff36bdb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T005727Z-3148-reuse-5062da",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T00:57:27Z",
+ "submitted_by": "kim-em",
+ "summary": "The group packaging is genuinely absent from Mathlib, but the PR re-derives Mathlib's `LinearMap.equivOfIsUnitDet` API and ignores TauCeti's existing `QuadraticMap.orthogonalGroup` file, which already carries the identical subgroup design, the conjugation combinator, and an unbundled \"preserves the form\" predicate that recurs twice more in the repo.",
+ "transcript_blob": "1df1aaf247466d23bc03eb76000cf38909584c0b5b2ac70df6ad2c920177f365",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 107348,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 107348,
+  "cache_read_input_tokens": 2601554,
+  "inference_geo": "not_available",
+  "input_tokens": 62,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1143,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1143,
+    "cache_read_input_tokens": 122704,
+    "input_tokens": 2,
+    "output_tokens": 3178,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 31505,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

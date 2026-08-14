@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.039432,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 182.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46973,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46973,
+    "cache_read_input_tokens": 375572,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1427,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1427,
+      "cache_read_input_tokens": 62045,
+      "input_tokens": 2,
+      "output_tokens": 4127,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14870,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "777432e574920440c001eac904a823a74cfab9a1",
+ "cost_usd": 1.039432,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "diff_sha256": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "duration_s": 182.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 82: `def IsFormIsometry (B : BilinForm R M) (f : M \u2192\u2097[R] M) : Prop := \u2200 x y, B (f x) (f y) = B x y` \u2014 no invertibility and no nondegeneracy; line 258 `theorem bijective ... (hB : B.Nondegenerate)` shows the group claim needs `Nondegenerate`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Qualify it: \"for a finite free `\u2124`-module `V` and a *nondegenerate* integral `Q`, an isometric endomorphism is automatically invertible (`TauCeti.IsFormIsometry.bijective`), and the resulting automorphisms form `Aut(V, Q)`; see `TauCeti.formIsometryGroup`.\"",
+   "issue": "The `IsFormIsometry` docstring claims \"Specialised to a finite free `\u2124`-module `V` and an integral form `Q`, the isometries form the arithmetic group `Aut(V, Q)`\". This is false for a degenerate `Q`: for `Q = 0` on `\u2124\u00b2` every endomorphism (e.g. `2 \u2022 id`) satisfies the predicate, so the isometric endomorphisms form a monoid, not a group. The predicate ranges over `M \u2192\u2097[R] M`, whereas `formIsometryGroup` is a subgroup of `M \u2243\u2097[R] M`.",
+   "line": 80
+  },
+  {
+   "evidence": "Lines 233-235: `noncomputable def toLinearEquiv (b : Basis \u03b9 R M) (hG : (LinearMap.BilinForm.toMatrix b B).det \u2208 nonZeroDivisors R) ...`; line 230 already says \"non-zero-divisor\".",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Change to \"an isometry of a form whose Gram determinant is a non-zero-divisor, as a linear automorphism\", matching the declaration's own docstring at line 230.",
+   "issue": "The Main-definitions entry describes `IsFormIsometry.toLinearEquiv` as \"an isometry with invertible Gram determinant\", but the actual hypothesis is `(BilinForm.toMatrix b B).det \u2208 nonZeroDivisors R`, which is strictly weaker (over `\u2124`, `det G = 2` qualifies but is not a unit). The index misreports the applicability of a main definition.",
+   "line": 50
+  },
+  {
+   "evidence": "Docstring lines 14-64 contain no mention of `IsLatticeIsometry`, the roadmap, or placement. Roadmap: `TauCetiRoadmap/HodgeStructures/Suggested.lean:872 def IsLatticeIsometry (Qint : LinearMap.BilinForm \u2124 V) (e : V \u2243\u2097[\u2124] V) : Prop`. Convention: `TauCeti/Algebra/AlgebraicGroup/AdditiveGroup/Basic.lean:20-21` cites `ReductiveGroups/README.md in TauCetiRoadmap` in its module docstring.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add a short paragraph to the module docstring recording that this is the roadmap's `IsLatticeIsometry` generalised from `\u2124`-automorphisms to endomorphisms over any commutative ring, with `R = \u2124` the intended specialisation; repo convention already puts such roadmap pointers in module docstrings.",
+   "issue": "The PR description states \"Two deliberate departures from the roadmap text, both stated in the module docstring\" (generality/naming `IsFormIsometry` vs the roadmap's `IsLatticeIsometry`, and placement outside `Geometry/Hodge/`). The module docstring states neither, so a reader arriving from the roadmap finds no pointer connecting `IsLatticeIsometry Qint` (defined there on `e : V \u2243\u2097[\u2124] V`) to this file's endomorphism-level predicate over a general `R`.",
+   "line": 14
+  }
+ ],
+ "head_sha": "cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bcab8f535b80bc8855977c3eecef3f1fcb0efbc23a90f43988588f1775cd11bc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T012623Z-3148-documentation-f4988c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:26:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The module header and most docstrings are accurate, but the `IsFormIsometry` docstring overclaims that form-preserving endomorphisms form `Aut(V, Q)` (false without nondegeneracy), the Main-definitions entry for `toLinearEquiv` misstates its hypothesis, and the generality/naming departure the PR says is recorded in the module docstring is absent.",
+ "transcript_blob": "c51c60f63fcb1ab5b2955a192396d3f0812757d1979166b95d45ee00c12f1bd4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46973,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46973,
+  "cache_read_input_tokens": 375572,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1427,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1427,
+    "cache_read_input_tokens": 62045,
+    "input_tokens": 2,
+    "output_tokens": 4127,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14870,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

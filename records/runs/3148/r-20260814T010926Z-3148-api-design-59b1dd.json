@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9751514999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 338.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 80873,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 80873,
+    "cache_read_input_tokens": 971241,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2656,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2656,
+      "cache_read_input_tokens": 94716,
+      "input_tokens": 2,
+      "output_tokens": 3315,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26804,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "777432e574920440c001eac904a823a74cfab9a1",
+ "cost_usd": 1.975151,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "diff_sha256": "1e12adb96f751215adf314618a29f0cb858fe436df496eb0b12ac1d05c9fde3d",
+ "duration_s": 338.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 66 `public section` (not `@[expose] public section`; 2057 repo files use this form with selective `@[expose]`), so def bodies are hidden. Mathlib has `LinearEquiv.baseChange_tmul` at Mathlib/LinearAlgebra/TensorProduct/Tower.lean:740.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add `@[simp] theorem coe_formIsometryGroupBaseChange (e : formIsometryGroup B) : (formIsometryGroupBaseChange A B e : A \u2297[R] M \u2243\u2097[A] A \u2297[R] M) = LinearEquiv.baseChange R A M M (e : M \u2243\u2097[R] M) := rfl`, plus a tmul lemma `formIsometryGroupBaseChange A B e (a \u2297\u209c m) = a \u2297\u209c (e : M \u2243\u2097[R] M) m` (from `LinearEquiv.baseChange_tmul`).",
+   "issue": "`formIsometryGroupBaseChange` is the PR's flagship product (the monodromy action on the complexification) but has no application lemma, and its body is not exposed (file opens with plain `public section` at line 66; only `IsFormIsometry` and `toIsometry` carry `@[expose]`). Downstream the value of `formIsometryGroupBaseChange A B e` is opaque.",
+   "line": "291"
+  },
+  {
+   "evidence": "The repo already does this for the quadratic analogue: `coe_orthogonalGroupCongr_apply` and `coe_orthogonalGroupCongr_symm_apply` at TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean:211 and :217.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add `@[simp] coe_formIsometryGroupCongr_apply : (formIsometryGroupCongr B e a : M' \u2243\u2097[R] M') x = e ((a : M \u2243\u2097[R] M) (e.symm x))` and the corresponding `_symm_apply`.",
+   "issue": "`formIsometryGroupCongr` has no `coe_..._apply` / `coe_..._symm_apply` lemmas and an unexposed body, so a consumer cannot evaluate the transported automorphism at a point.",
+   "line": "178"
+  },
+  {
+   "evidence": "Same pattern is supplied for the quadratic group at TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean:157 and :163.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add `@[simp] coe_formIsometryGroupEquivIsometryEquiv (e : formIsometryGroup B) : \u21d1(formIsometryGroupEquivIsometryEquiv B e) = \u21d1(e : M \u2243\u2097[R] M)` and the `_symm` version.",
+   "issue": "`formIsometryGroupEquivIsometryEquiv` has no coe lemma in either direction, so the advertised bridge to Mathlib's `B.IsometryEquiv B` is unusable: nothing lets a consumer prove the underlying maps agree.",
+   "line": "170"
+  },
+  {
+   "evidence": "Lines 260-264 compute `hG` internally with `mem_nonZeroDivisors_of_ne_zero ((nondegenerate_iff_det_ne_zero b).mp hB)`; no declaration in the file states it, and no declaration produces group membership from `Nondegenerate`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Expose the derivation as `theorem Nondegenerate.det_toMatrix_mem_nonZeroDivisors [IsDomain R] (b : Basis \u03b9 R M) (hB : B.Nondegenerate)`, and add a capstone under `[IsDomain R] [Module.Free R M] [Module.Finite R M]` producing an element of `formIsometryGroup B` from `hB` and `hf` (via `toLinearEquiv` + `toLinearEquiv_mem_formIsometryGroup`).",
+   "issue": "The nondegenerate case never reaches the group: `bijective` returns only `Function.Bijective f`, and the step `Nondegenerate \u2192 det (toMatrix b B) \u2208 nonZeroDivisors R` is buried in its proof (lines 261-262). A consumer with `B.Nondegenerate` who wants an element of `formIsometryGroup B` \u2014 the PR's stated use case \u2014 must redo that derivation and rebuild the equiv.",
+   "line": "258"
+  },
+  {
+   "evidence": "Line 96 `@[expose] def toIsometry (hf : IsFormIsometry B f) : B \u2192b\u1d62 B := \u27e8f, hf\u27e9`; line 99 already gives `toIsometry_apply`, so no consumer needs the body except for the missing `toLinearMap` restatement.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Drop `@[expose]` and add `@[simp] theorem toIsometry_toLinearMap (hf : IsFormIsometry B f) : hf.toIsometry.toLinearMap = f := rfl` alongside the existing `toIsometry_apply`.",
+   "issue": "`@[expose]` on `IsFormIsometry.toIsometry` is unnecessary exposure of a body: the only reason to unfold it is to see `hf.toIsometry.toLinearMap = f`, which should be a lemma.",
+   "line": "96"
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean:247 `mem_orthogonalGroup_iff_polar (h2 : IsSMulRegular N (2 : R)) : f \u2208 orthogonalGroup Q \u2194 \u2200 x y, polar Q (f x) (f y) = polar Q x y`, which is `IsFormIsometry Q.polarBilin \u2191f` after `polarBilin_apply_apply` (Mathlib/LinearAlgebra/QuadraticForm/Basic.lean:320).",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Add the bridge (in QuadraticForm/OrthogonalGroup.lean, which can import this file): `QuadraticMap.orthogonalGroup Q \u2264 formIsometryGroup Q.polarBilin`, with equality under `IsSMulRegular R (2 : R)`.",
+   "issue": "The repo now carries two unrelated group packagings of 'preserves the form' with no connecting lemma: `formIsometryGroup B` here and `TauCeti.QuadraticMap.orthogonalGroup Q`, whose `mem_orthogonalGroup_iff_polar` states this file's predicate verbatim for `polar Q`. Nothing lets an orthogonal-group element reuse `det_sq_eq_one`, `toLinearEquiv`, or base change.",
+   "line": "149"
+  }
+ ],
+ "head_sha": "cabaf50f8fd6c52cfccd8c0545fd2c3f04c5a0d7",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "62016fabb555e92cb49284754149fede4139403b6638ebbec7f14c5e1a2b322e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T010926Z-3148-api-design-59b1dd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:09:26Z",
+ "submitted_by": "kim-em",
+ "summary": "Three of the file's bundled definitions (the base-change homomorphism, the congr isomorphism, and the equivalence with Mathlib's IsometryEquiv) have unexposed bodies and no application lemmas, so a consumer cannot compute them at all; the nondegenerate path also stops at Function.Bijective instead of reaching the group. The repo's own QuadraticMap.orthogonalGroup supplies exactly the missing lemmas for the quadratic analogue.",
+ "transcript_blob": "da6d8ef08c6debd8d0504b27567d08dacccf36912f3469e1f4dcf77d894c1a51",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 80873,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 80873,
+  "cache_read_input_tokens": 971241,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2656,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2656,
+    "cache_read_input_tokens": 94716,
+    "input_tokens": 2,
+    "output_tokens": 3315,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26804,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
