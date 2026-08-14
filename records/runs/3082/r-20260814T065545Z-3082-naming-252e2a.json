@@ -1,0 +1,76 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.545281,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 62.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 328192,
+    "input_tokens": 391451,
+    "output_tokens": 2163,
+    "reasoning_output_tokens": 814
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_estimated": true,
+ "cost_usd": 0.545281,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|2e9b0bfa6b5944516af008cf6ab3f300d3e3711a|naming|gpt-5.6-sol|8e496a4454cfbac9|production|1",
+ "diff_blob": "6a6ab840c59275b321b01254222ae9c2e9a36f92b156ed6cd8ec8fb0306abfd6",
+ "diff_prompt_sha256": "77973c4849886d205c03433485a5b56c72c04f3db0f1ae0c7bb762cb448be1a3",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "6a6ab840c59275b321b01254222ae9c2e9a36f92b156ed6cd8ec8fb0306abfd6",
+ "duration_s": 62.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declarations occur at lines 123\u2013296 under `namespace TauCeti`; Mathlib/LinearAlgebra/Matrix/PosDef.lean:75 places receiver lemmas such as `isHermitian` and `submatrix` in `namespace PosSemidef`, matching the naming guide\u2019s rule that dots should be used where projection notation is useful.",
+   "file": "TauCeti/Analysis/PositiveDefinite/Kernel/Kolmogorov.lean",
+   "fix": "Put these declarations in `namespace Matrix.PosSemidef`, retaining their short names so users can write `hK.KolmogorovSpace`, `hK.kolmogorovFeature`, etc.",
+   "issue": "`KolmogorovSpace`, `kolmogorovFeature`, `inner_kolmogorovFeature`, `norm_kolmogorovFeature_sq`, `norm_kolmogorovFeature_sub_sq`, `kolmogorovFeature_dense`, `kolmogorovIsometry*`, and `kolmogorovEquiv*` are top-level despite taking `hK : Matrix.PosSemidef K` as their primary receiver; this loses the prior proof-dot API and is wrong for their namespace.",
+   "line": "123"
+  },
+  {
+   "evidence": "Lines 55, 83, 93, and 105 all take `hK : Matrix.PosSemidef K`; adjacent Mathlib receiver lemmas use names such as `Matrix.PosSemidef.det_nonneg` and `Matrix.PosSemidef.submatrix`, while the naming guide requires theorem names to describe conclusions outward and uses namespaces for projection notation.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Move them into `namespace Matrix.PosSemidef` and name them `normSq_le`, `eq_zero_of_apply_self_eq_zero_left/right`, and `norm_le_one_of_apply_self_eq_one`.",
+   "issue": "The generic consequences `normSq_le_of_posSemidef`, both `eq_zero_of_apply_self_eq_zero_*_of_posSemidef`, and `norm_le_one_of_apply_self_eq_one_of_posSemidef` encode their receiver as an `_of_posSemidef` suffix instead of using the existing `Matrix.PosSemidef` namespace.",
+   "line": "55"
+  }
+ ],
+ "head_sha": "2e9b0bfa6b5944516af008cf6ab3f300d3e3711a",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3082,
+ "prices_sha": "9c4184d30902",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c3f6c2b8b3307418d532b288d050fbd69a853aabf7606b5c94c5ee5b06032190",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "136d1bf1f45262fc8acaba601a7c1123e4aaa592",
+ "rubrics_version": "8e496a4454cfbac9",
+ "run_id": "r-20260814T065545Z-3082-naming-252e2a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T06:55:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The migration places proof-dependent positive-semidefinite APIs in the top-level TauCeti namespace, breaking the established receiver namespace and dot-notation convention.",
+ "transcript_blob": "6151547ed9c2a0a2840c8cbb22a8c412799db83b3b94321ecbfa11df0954caa8",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 328192,
+  "input_tokens": 391451,
+  "output_tokens": 2163,
+  "reasoning_output_tokens": 814
+ },
+ "verdict": "request_changes"
+}
