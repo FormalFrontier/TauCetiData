@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.1151784999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 227.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 49741,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 49741,
+    "cache_read_input_tokens": 310519,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2147,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2147,
+      "cache_read_input_tokens": 64093,
+      "input_tokens": 2,
+      "output_tokens": 6534,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18232,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "cost_usd": 1.115178,
+ "dedupe_key": "TauCetiProject/TauCeti|3197|790905b0210c14480ebde33792e9a4a0c22ef296|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "971a0969d141e11523a1f6814688e8fcf9ab8d90afb8d74e12209dd7077f2e7f",
+ "diff_sha256": "971a0969d141e11523a1f6814688e8fcf9ab8d90afb8d74e12209dd7077f2e7f",
+ "duration_s": 227.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "GLn/CosetDecomposition.lean:128-132 (`def unitriSL`, no `@[expose]`; `coe_unitriSL ... := (rfl)`) and :136-142 (`upperTriGL` / `upperTriGL_def := (rfl)`); StabConjugation.lean:52-74 is the same shape for an `Equiv`-valued def, with the comment \"`(rfl)` rather than `rfl`: the equivalences are not `@[expose]`, so the parentheses opt out of exporting the definitional equality that this lemma exists to replace.\"; PolynomialRing/Basic.lean:98-100 repeats it.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/CosetDecomposition.lean",
+   "fix": "Drop both `@[expose]` attributes and prove the four/five characteristic lemmas with `:= (rfl)` instead of `:= rfl` (lines 56, 72, 76, 87, 91), matching the idiom the repo already uses.",
+   "issue": "`@[expose]` on `upperTriEntriesEquiv` (line 66) and `upperTriEntriesEquivFin` (line 81) over-exposes both bodies. The stated reason \u2014 \"the characteristic simp lemmas above cannot be proved without it\" \u2014 is false: the lemmas are in the same module, where the body is visible regardless of `@[expose]`.",
+   "line": 66
+  },
+  {
+   "evidence": "GLn/CosetDecomposition.lean:106-108 `unitriMat_apply_lt ... : unitriMat B i j = (B \u27e8(i, j), h\u27e9 : \u2115)` and :152-156 `upperTriGL_apply_lt ... = (a i : \u211a) * (B \u27e8(i, j), h\u27e9 : \u2115)` \u2014 anonymous constructor, not `default`. Mathlib's `Unique.eq_default` (Mathlib/Logic/Unique.lean:110) is not `@[simp]`, so nothing joins the two normal forms automatically.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/CosetDecomposition.lean",
+   "fix": "Quantify the `.val` forms over an arbitrary index, e.g. `@[simp] lemma upperTriEntriesEquiv_symm_apply_val (b) (q : {ij : Fin 2 \u00d7 Fin 2 // ij.1 < ij.2}) : (((upperTriEntriesEquiv a).symm b q : Fin _) : \u2115) = (b : \u2115) := by rw [Subsingleton.elim q default]; rfl`, and likewise for `upperTriEntriesEquivFin_symm_val`. Staying at `\u2115` avoids the dependent-index rewrite, and `default_indexPair_val` can then be dropped.",
+   "issue": "`upperTriEntriesEquiv_symm_apply_default` (76) and `upperTriEntriesEquivFin_symm_val` (91) are stated only at the literal argument `default`, so they never fire on `(equiv.symm b) \u27e8(0,1), h\u27e9` \u2014 the spelling produced by `unitriMat_apply_lt` and `upperTriGL_apply_lt`, the only consumers this file exists to feed. `default_indexPair_val` (56) does not bridge them either: it is a `.val` equation whose LHS occurs only inside the dependent fibre index `Fin (a q.val.2 / a q.val.1)`, where rewriting fails the motive check.",
+   "line": 90
+  },
+  {
+   "evidence": "grep for `!![1,` across TauCeti/NumberTheory/HeckeRing returns only the two docstring occurrences in this file (lines 19, 80); no declaration produces the matrix.",
+   "file": "TauCeti/NumberTheory/HeckeRing/GL2/CosetDecomposition.lean",
+   "fix": "Add the interaction lemma, e.g. `lemma coe_upperTriGL_symm (hp : 0 < p) (b : Fin p) : (upperTriGL ((upperTriEntriesEquivFin p).symm b) : Matrix (Fin 2) (Fin 2) \u211a) = !![1, (b : \u211a); 0, (p : \u211a)]`; otherwise remove the claim from both docstrings.",
+   "issue": "The module docstring (19) and `upperTriEntriesEquivFin`'s docstring (79-80) both assert that `upperTriGL` at these entries \"runs over the classical `!![1, b; 0, p]`\", and the PR calls this \"the only adapter the level-N Hecke port still needs\", but no lemma states it. A consumer matching AINTLIB's `T_p_upper p hp b = !![1, b; 0, p]` must re-derive the matrix from `upperTriGL_apply_lt`/`_diag`/`_eq_zero_of_lt` plus a positivity side condition `\u2200 i, 0 < ![1, p] i`.",
+   "line": 19
+  }
+ ],
+ "head_sha": "790905b0210c14480ebde33792e9a4a0c22ef296",
+ "merge_base_sha": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3197,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e3ab82811363ad9118b53777cd9e9ab33af5767089e35c2771c5f032756c4d37",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T104126Z-3197-api-design-535aa9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T10:41:26Z",
+ "submitted_by": "kim-em",
+ "summary": "Both new defs carry @[expose] on a justification the repo's own idiom contradicts, and all five characteristic lemmas use bare `rfl` instead of `(rfl)`, exporting the defeq the lemmas exist to replace. The symm/val lemmas are stated only at `default`, so they do not fire on the `B \u27e8(0,1), h\u27e9` spelling that every entrywise lemma in the imported file produces, and the advertised `!![1, b; 0, p]` identification has no lemma.",
+ "transcript_blob": "d08d4e0573e78467f1eae49cf6a236b741ffa1e42b4ce0153bbd248e2e1d22d5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 49741,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 49741,
+  "cache_read_input_tokens": 310519,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2147,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2147,
+    "cache_read_input_tokens": 64093,
+    "input_tokens": 2,
+    "output_tokens": 6534,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18232,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
