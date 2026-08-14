@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.280907,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 44.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 132864,
+    "input_tokens": 165115,
+    "output_tokens": 1774,
+    "reasoning_output_tokens": 721
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "efb56122393cac7935ff146ebe628d54c3b18b7c",
+ "cost_estimated": true,
+ "cost_usd": 0.280907,
+ "dedupe_key": "TauCetiProject/TauCeti|3259|4744dcad551b073b9c035f222c09d5dc4aa7f9b3|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "820df5d85f9ed6cf72ed055e9b26d5ce4f54218cd7b0863069aa481f27879d66",
+ "diff_sha256": "820df5d85f9ed6cf72ed055e9b26d5ce4f54218cd7b0863069aa481f27879d66",
+ "duration_s": 44.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "GraphStep.lean:265-284 provides all three generic results, while W3p.lean:187-217 and W2p.lean:180-199 repeat their `WithLp` proofs.",
+   "file": "TauCeti/Analysis/Sobolev/W3p.lean",
+   "fix": "Keep the order-specific theorem names but prove them by `simpa` from the corresponding `WeakDerivStep` lemmas.",
+   "issue": "The projection bounds and graph-norm identity duplicate `WeakDerivStep.norm_prev_le`, `norm_deriv_le`, and `norm_sq_eq_norm_prev_sq_add_norm_deriv_sq`; the same duplication remains in W2p at lines 180, 191, and 195.",
+   "line": 187
+  },
+  {
+   "evidence": "GraphStep.lean:286 defines `CompleteSpace (WeakDerivStep mu Omega p base)` from the same closed submodule; W2p.lean:69-70 and W3p.lean:68-72 define their submodules as that construction.",
+   "file": "TauCeti/Analysis/Sobolev/W3p.lean",
+   "fix": "Delete both specialized instances and let the instance at `GraphStep.lean:286-288` apply through the definitions of `w2pSubmodule` and `w3pSubmodule`.",
+   "issue": "The explicit W3p completeness instance duplicates the generic `WeakDerivStep` completeness instance; after the refactor, W2p\u2019s instance at line 211 does likewise.",
+   "line": 234
+  }
+ ],
+ "head_sha": "4744dcad551b073b9c035f222c09d5dc4aa7f9b3",
+ "merge_base_sha": "d7301fadd73683fda84317d74e76e0617281f2f2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3259,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "45f3d7e6326ebb99f81257b6eec6510cf9d2a1731ca30e6302d1215c49bbc24b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T195750Z-3259-reuse-1678c8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T19:57:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The order-specific APIs are reasonable, but several implementations re-derive the generic GraphStep results introduced by this PR.",
+ "transcript_blob": "30bb453f88153cfafb844d5bea900e901d13b70f36b6a2765f93c51287afa5fb",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 132864,
+  "input_tokens": 165115,
+  "output_tokens": 1774,
+  "reasoning_output_tokens": 721
+ },
+ "verdict": "request_changes"
+}
