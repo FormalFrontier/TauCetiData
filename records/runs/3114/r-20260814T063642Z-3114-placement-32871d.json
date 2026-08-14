@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3033415,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 151.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 63066,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 63066,
+    "cache_read_input_tokens": 734305,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1851,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1851,
+      "cache_read_input_tokens": 77714,
+      "input_tokens": 2,
+      "output_tokens": 2502,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11428,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "cost_usd": 1.303341,
+ "dedupe_key": "TauCetiProject/TauCeti|3114|2933c0398a428b2c2b24aeb3b395b52bdeff1b51|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "diff_sha256": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "duration_s": 151.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "SchemePoints.lean:251-276 \u2014 signature is `{P Q S T X Y : Type*} [Group P] ... (sourcePresentation : Q \u2243* P) ...`; the proof body uses only `MulEquiv.surjective`, `symm_apply_apply`, and `injective`. Contrast the neighbouring `pointMulEquivOfPresentation_mapDomain` (line 211), which genuinely mentions `hopfSpec`, `Spec.map`, and `CommHopfAlgCat`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/SchemePoints.lean",
+   "fix": "Move it to a generic group file under `TauCeti/Algebra/Group/` (that directory already holds cross-cutting `MulEquiv`/`MonoidHom` material such as `PowMonoidHom.lean`), rename its arguments to non-scheme names, and import it from `SchemePoints.lean`.",
+   "issue": "`transportPointwiseFormula` is stated entirely in `{P Q S T X Y : Type*} [Group ...]` with `MulEquiv`s \u2014 it uses no Hopf algebra, no `Spec`, no `hopfSpec`, nothing from this file's imports. Placing it in `CommHopfAlgCat/SchemePoints.lean` (which imports `Mathlib.AlgebraicGeometry.Group.Affine`) hides a generic group lemma behind the affine-group-scheme stack; only its argument names (`sourceSchemePoints`, `targetPresentation`) suggest a scheme topic.",
+   "line": 251
+  },
+  {
+   "evidence": "`ls TauCeti/Algebra/AlgebraicGroup/{AdditiveGroup,GeneralLinear}` shows `Basic.lean` + `Scheme.lean` in each; `GeneralLinear/Scheme.lean:106` and `AdditiveGroup/Scheme.lean:150` contain the exact analogues (`groupScheme_X_left` via `hopfSpec_obj_X_left`) plus the `groupSchemePointMulEquiv`/`schemePointsMulEquiv` pair. `grep '^public import' TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Determinant.lean TauCeti/Algebra/AlgebraicGroup/HopfIdeal/{Scheme/Kernel,Points/Kernel,Points/Naturality}.lean` shows none reaches `GeneralLinear.Scheme`, so the diff's added import is a new dependency edge, not a transitive one. `grep -rn 'SpecialLinear.Basic' TauCeti` returns only Tangent.lean:10 and RootSubgroup.lean:10.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Create `TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Scheme.lean` holding the named `groupScheme`/`groupScheme\u03b9`/`groupScheme\u03b9GeneralLinear` block, the closed-immersion and finite-type instances, and the `SchemePoints` section; leave the Hopf ideal, quotient Hopf algebra, and algebra-valued points in Basic.lean, and drop the `GeneralLinear.Scheme` import from it. Only `SpecialLinear/Tangent.lean` and the new `SpecialLinear/RootSubgroup.lean` import Basic.lean, so the retargeting is two import lines.",
+   "issue": "The PR turns SL's thin kernel-spectrum abbrevs into a full named scheme layer inside Basic.lean: `groupScheme`, `groupScheme_def`, `groupScheme_X_left`, `groupScheme\u03b9`, `groupScheme\u03b9GeneralLinear`, both closed-immersion instances, and a new `### Scheme-valued points` section (`groupSchemePointMulEquiv`, `schemePointsMulEquiv`). Both sibling group directories keep exactly this material in a separate `Scheme.lean` (`AdditiveGroup/Scheme.lean`, `GeneralLinear/Scheme.lean`), and the new content is what forces `public import TauCeti.Algebra.AlgebraicGroup.GeneralLinear.Scheme` onto Basic.lean, so every consumer of the SL coordinate algebra and algebra-valued points now depends on GL's whole scheme presentation.",
+   "line": 246
+  }
+ ],
+ "head_sha": "2933c0398a428b2c2b24aeb3b395b52bdeff1b51",
+ "merge_base_sha": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3114,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "475e8ef39159fd687375a4236e394d39e37ef1b302136323833c68a688b7ad11",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T063642Z-3114-placement-32871d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T06:36:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The new root-subgroup file is correctly placed in SpecialLinear/ and its imports are used, but two pieces of new material live above their natural level: a pure group-theory transport lemma sits in the Hopf-scheme-points file, and the special-linear scheme/scheme-points interface is appended to Basic.lean instead of a SpecialLinear/Scheme.lean matching the sibling directories.",
+ "transcript_blob": "270ff71548e015fc64a7b7a761a7f9b7528c531d65793baea0169a49eeee5e98",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 63066,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 63066,
+  "cache_read_input_tokens": 734305,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1851,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1851,
+    "cache_read_input_tokens": 77714,
+    "input_tokens": 2,
+    "output_tokens": 2502,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11428,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.935574,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 259.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 107969,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 107969,
+    "cache_read_input_tokens": 629336,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3860,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3860,
+      "cache_read_input_tokens": 120608,
+      "input_tokens": 2,
+      "output_tokens": 5857,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20853,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "cost_usd": 1.935574,
+ "dedupe_key": "TauCetiProject/TauCeti|3114|2933c0398a428b2c2b24aeb3b395b52bdeff1b51|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "diff_sha256": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "duration_s": 259.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Basic.lean:603-616 defines `schemePointsMulEquiv` and only `schemePointsMulEquiv_symm_apply`; grep for `SpecialLinear.*schemePointsMulEquiv_apply` returns nothing, while `GeneralLinear/Scheme.lean:359` has a forward `schemePointsMulEquiv_apply` and `AdditiveGroup/Scheme.lean:319` has `toAdd_schemePointsMulEquiv`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Add the forward characteristic lemmas, e.g. `@[simp] theorem schemePointsMulEquiv_apply (p) : schemePointsMulEquiv R n A p = pointsMulEquiv n ((groupSchemePointMulEquiv R n A).symm p)` and the round-trip `schemePointsMulEquiv R n A (groupSchemePointMulEquiv R n A q) = pointsMulEquiv n q` (one line from `MulEquiv.symm_apply_apply`); add the matching round-trip for `GeneralLinear` and `AdditiveGroup`.",
+   "issue": "`schemePointsMulEquiv` is new public API whose only characterization is `schemePointsMulEquiv_symm_apply` (line 612). There is no forward lemma: a consumer cannot compute `schemePointsMulEquiv R n A p` or `schemePointsMulEquiv R n A (groupSchemePointMulEquiv R n A q)` without unfolding the (unexposed) body.",
+   "line": 603
+  },
+  {
+   "evidence": "Statement at SchemePoints.lean:251-276 has no `CommHopfAlgCat`/`Spec`/`points` in its type; grep shows its only uses are `GeneralLinear/RootSubgroup.lean:241` and `SpecialLinear/RootSubgroup.lean:301`, replacing the `hGL`/`hGa` `have`s deleted at GeneralLinear/RootSubgroup.lean in this diff.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/SchemePoints.lean",
+   "fix": "Add the `schemePointsMulEquiv \u2218 groupSchemePointMulEquiv = pointsMulEquiv` lemmas for `AdditiveGroup`, `GeneralLinear`, and `SpecialLinear`, prove `schemePointsMulEquiv_rootSubgroup` in both files by `obtain \u27e8q, rfl\u27e9 := surjective p` plus those rewrites (the shape the GL proof had before this PR), and delete `transportPointwiseFormula`.",
+   "issue": "`transportPointwiseFormula` is public in namespace `TauCeti.CommHopfAlgCat` but mentions no Hopf algebra, scheme, or point: it is six anonymous groups, six `MulEquiv`s and five hypothesis arguments of pure equivalence-chasing. It advertises a mathematical interface that does not exist, and it is used only inside two proofs whose real need is the missing round-trip lemma from the previous finding.",
+   "line": 251
+  },
+  {
+   "evidence": "`isPullback_kernelSpec` is stated at HopfIdeal/Scheme/Kernel.lean:220-225 in terms of `kernelSpec\u03b9 f` and `kernelSpec f`; the diff replaces `noncomputable abbrev groupScheme := CommHopfAlgCat.kernelSpec ...` with a `def` and `groupScheme\u03b9 := eqToHom (groupScheme_def R n) \u226b kernelSpec\u03b9 ...` (Basic.lean:247, 269-274).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Add `theorem isPullback_groupScheme\u03b9` (and the `groupScheme\u03b9GeneralLinear` form) restating `CommHopfAlgCat.isPullback_kernelSpec (GeneralLinear.determinantCoordinateMap R n)` for the named `groupScheme R n`, via `groupScheme\u03b9_def` and `eqToHom` cancellation.",
+   "issue": "`groupScheme` and `groupScheme\u03b9` changed from `abbrev`s over `CommHopfAlgCat.kernelSpec`/`kernelSpec\u03b9` to opaque `def`s, so `CommHopfAlgCat.isPullback_kernelSpec` no longer applies to the named objects; the kernel/fibre-over-identity universal property of `SL\u2099` is now unreachable without hand `eqToHom` transport. No replacement statement is added.",
+   "line": 247
+  },
+  {
+   "evidence": "Basic.lean:269-297 defines both maps plus `groupScheme\u03b9_def`/`groupScheme\u03b9GeneralLinear_def`; Basic.lean:301 and 322 give two `IsClosedImmersion` instances; `GeneralLinear/Determinant.lean` has no scheme-level determinant morphism (only `determinantCoordinateMap`, line 82).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Expose one canonical inclusion into the named `GeneralLinear.groupScheme R n` and keep a single `IsClosedImmersion` instance; state `groupScheme\u03b9_comp_determinant` through it (composing with `eqToHom (GeneralLinear.groupScheme_def R n)`), or give `GeneralLinear` a named determinant morphism out of `groupScheme` so the triangle needs no raw-presentation variant.",
+   "issue": "Two public inclusions of the same closed subgroup now coexist, differing only by `eqToHom (GeneralLinear.groupScheme_def R n).symm`: `groupScheme\u03b9` (raw `hopfSpec` target) and `groupScheme\u03b9GeneralLinear` (named target), each with its own `IsClosedImmersion` instance. Downstream lemmas about `SL\u2099 \u2282 GL\u2099` will fragment across the two names, and the determinant triangle already leaks a presentation `eqToHom` into its right-hand side (line 344).",
+   "line": 287
+  }
+ ],
+ "head_sha": "2933c0398a428b2c2b24aeb3b395b52bdeff1b51",
+ "merge_base_sha": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3114,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c90c25cc63eec2f4e921dd84a315f9a924c4672df984ca775c1020b146418278",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T062443Z-3114-api-design-6b2830",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T06:24:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `SpecialLinear.schemePointsMulEquiv` exposes only a `symm` computation, and the missing forward lemma is compensated by `CommHopfAlgCat.transportPointwiseFormula`, a public 13-argument pure-`MulEquiv` scaffold in a Hopf-algebra namespace. Opacifying `groupScheme`/`groupScheme\u03b9` also removed the kernel universal property from the named surface without restating it, and leaves two public inclusions of the same subgroup.",
+ "transcript_blob": "cb31a2a733db3931c0a881ed4dba66433d40cec13b8de069b705d07f34d4a1d9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 107969,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 107969,
+  "cache_read_input_tokens": 629336,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3860,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3860,
+    "cache_read_input_tokens": 120608,
+    "input_tokens": 2,
+    "output_tokens": 5857,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20853,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

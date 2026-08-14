@@ -1,0 +1,157 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.019327999999999998,
+   "error_kind": "overloaded",
+   "model": "claude-opus-5",
+   "returncode": 1,
+   "secs": 222.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 0,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0,
+    "inference_geo": "",
+    "input_tokens": 0,
+    "iterations": [],
+    "output_tokens": 0,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  },
+  {
+   "cost_usd": 1.7607979999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 237.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85102,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85102,
+    "cache_read_input_tokens": 861860,
+    "inference_geo": "not_available",
+    "input_tokens": 6249,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 612,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 612,
+      "cache_read_input_tokens": 100989,
+      "input_tokens": 2,
+      "output_tokens": 2430,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17131,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "cost_usd": 1.780126,
+ "dedupe_key": "TauCetiProject/TauCeti|3114|2933c0398a428b2c2b24aeb3b395b52bdeff1b51|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "diff_sha256": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "duration_s": 459.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/LinearAlgebra/Matrix/SpecialLinearGroup.lean:225 `def map (f : R \u2192+* S) : SpecialLinearGroup n R \u2192* SpecialLinearGroup n S`; the transvection section there is `variable {\u03b9 F : Type*} [DecidableEq \u03b9] [Fintype \u03b9] [CommRing F]`. The proof body here is `simp only [... map_add]; split_ifs <;> simp_all` \u2014 no `Algebra` use. Compare `TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean:242 map_transvectionUnit (f : A \u2192+* B)`, which already has the general signature.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "State it at the natural level next to the existing `TauCeti.map_transvectionUnit`: `theorem map_transvection {n} [DecidableEq n] [Fintype n] (f : A \u2192+* B) (hij : i \u2260 j) (c : A) : SpecialLinearGroup.map f (transvection hij c) = transvection hij (f c)`, and apply it here as `map_transvection \u03c6.toRingHom`.",
+   "issue": "`map_transvection` assumes `\u03c6 : A \u2192\u2090[R] B` and fixes the index type to `Fin N`, but the proof uses only `map_add` and passes `\u03c6.toRingHom` to `Matrix.SpecialLinearGroup.map`, which takes a `R \u2192+* S`. The `R`-algebra structure and the `Fin N` restriction are unused.",
+   "line": 119
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean:178 `def transvectionHom (hij : i \u2260 j) : Multiplicative A \u2192* GL n A` with `variable {n : Type*} [DecidableEq n] [Fintype n]`; line 141 `def transvectionUnit hij c := SpecialLinearGroup.toGL (SpecialLinearGroup.transvection hij c)`; Mathlib states `SpecialLinearGroup.transvection` for arbitrary `[DecidableEq \u03b9] [Fintype \u03b9]`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Hoist it to the matrix level with `{n} [DecidableEq n] [Fintype n]` as a public `Matrix.SpecialLinearGroup`-valued one-parameter subgroup, and redefine `TauCeti.transvectionHom` (and its `map_one'`/`map_mul'` proofs) as its composite with `SpecialLinearGroup.toGL`.",
+   "issue": "`transvectionHom : Multiplicative A \u2192* SL (Fin N) A` is a special case (index type `Fin N`, private) of a fact already proved publicly at arbitrary index type for `GL n A`, and the general SL statement is what the GL one should be derived from: `TauCeti.transvectionHom = SpecialLinearGroup.toGL \u2218 (SL transvectionHom)` definitionally, since `transvectionUnit hij c = toGL (SpecialLinearGroup.transvection hij c)`.",
+   "line": 75
+  },
+  {
+   "evidence": "This file lines 113-114 `simpa [Matrix.SpecialLinearGroup.transvection_coe, Matrix.one_apply, Matrix.single_apply, hij] using hentry` versus TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean:191-195 `transvectionUnit_injective ... simpa [transvection, Matrix.one_apply, Matrix.single_apply, hij] using congrFun\u2082 h' i j`, which GeneralLinear/RootSubgroup.lean:116 uses directly.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Add `SpecialLinearGroup.transvection` injectivity at the matrix level (general index type) next to `transvectionUnit_injective`, derive `transvectionUnit_injective` from it via injectivity of `toGL`, and use it here in place of the inline `simpa [transvection_coe, one_apply, single_apply, hij]`.",
+   "issue": "`rootSubgroupPoints_injective` re-proves the `(i,j)`-entry extraction for `SpecialLinearGroup.transvection` inline, duplicating the same computation already proved at arbitrary index type in `transvectionUnit_injective`; the GL analogue of this theorem just cites that lemma.",
+   "line": 110
+  },
+  {
+   "evidence": "Proof body lines 268-278: `sourcePresentation.surjective`, `sourceSchemePoints.symm.injective`, `symm_apply_apply` \u2014 all available for `Equiv`. Its only users are GeneralLinear/RootSubgroup.lean:241 and SpecialLinear/RootSubgroup.lean:301.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/SchemePoints.lean",
+   "fix": "State it with `\u2243` (`Equiv`) throughout and drop the six `Group` instances; the two call sites pass `MulEquiv` arguments via `.toEquiv`.",
+   "issue": "`transportPointwiseFormula` requires `[Group P] [Group Q] [Group S] [Group T] [Group X] [Group Y]` and six `\u2243*`, but its proof uses only `surjective`, `symm_apply_apply` and `injective`; multiplicativity is never used (the three maps `mapPresentation`/`mapPoints`/`mapConcrete` are already bare functions). The group hypotheses are visibly unused and make the interface look like a homomorphism-transport lemma when it is pure bijection bookkeeping.",
+   "line": 251
+  }
+ ],
+ "head_sha": "2933c0398a428b2c2b24aeb3b395b52bdeff1b51",
+ "merge_base_sha": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3114,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9e882c540ea66075ad7433cfdc6f066919317fac65227256cecdf60e3afef004",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T062903Z-3114-generality-8f81fc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T06:29:03Z",
+ "submitted_by": "kim-em",
+ "summary": "Three matrix-level facts about `Matrix.SpecialLinearGroup.transvection` are proved inside the `Fin N` group-scheme file with hypotheses stronger than their proofs need (`A \u2192\u2090[R] B` instead of `A \u2192+* B`, `Fin N` instead of an arbitrary index type), duplicating the existing general-index GL transvection API; and `transportPointwiseFormula` carries six unused `Group` instances and six `\u2243*` where the proof only uses `Equiv`.",
+ "transcript_blob": "783b96d2a7a5bdcd523fb25c1f868018312a49f2cfd4597a194d770117411c4d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85102,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85102,
+  "cache_read_input_tokens": 861860,
+  "inference_geo": "not_available",
+  "input_tokens": 6249,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 612,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 612,
+    "cache_read_input_tokens": 100989,
+    "input_tokens": 2,
+    "output_tokens": 2430,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17131,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

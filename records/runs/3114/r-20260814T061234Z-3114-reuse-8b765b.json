@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.763911,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 387.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 103194,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 103194,
+    "cache_read_input_tokens": 1888772,
+    "inference_geo": "not_available",
+    "input_tokens": 40,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3010,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3010,
+      "cache_read_input_tokens": 116683,
+      "input_tokens": 2,
+      "output_tokens": 6130,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 30702,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "cost_usd": 2.763911,
+ "dedupe_key": "TauCetiProject/TauCeti|3114|2933c0398a428b2c2b24aeb3b395b52bdeff1b51|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "diff_sha256": "f8b48a258693398db6eba68992d51dc062d97ead7b662ca05658872dbf0ccb69",
+ "duration_s": 387.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n '.preimage' TauCeti/Algebra/AlgebraicGroup` returns the `pointsFunctor.{u,u,u}.preimage` + `Functor.map_preimage` idiom in exactly two places: GeneralLinear/RootSubgroup.lean:162,177 and SpecialLinear/RootSubgroup.lean:179,193, with identical surrounding text.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Factor it into one combinator in CommHopfAlgCat/SchemePoints.lean (the file this PR already extends), parameterized by `H K : CommHopfAlgCat R`, a natural points map `\u03c4 : pointsFunctor (H := K) \u27f6 pointsFunctor (H := H)` and the two named presentations: `coordinateMapOfPointsMap \u03c4 := (pointsFunctor.preimage \u03c4).unop`, its two `mapPointsFunctor` lemmas, `groupSchemeMapOfPointsMap`/`_def`, and the scheme-points formula. Then GL and SL `rootSubgroup*` are one-line instantiations.",
+   "issue": "The whole scheme-level tower is copied verbatim from GeneralLinear/RootSubgroup.lean: SL 154-168 = GL 137-151 (`rootSubgroupPointsMap` + `_app`), SL 176-207 = GL 159-191 (`rootSubgroupCoordinateMap`, `mapPointsFunctor_rootSubgroupCoordinateMap`, `_app`), SL 256-272 = GL 195-211 (`rootSubgroup`, `rootSubgroup_def`), SL 278-290 = GL 217-229, SL 295-313 = GL 235-253 \u2014 identical character-for-character except for the final matrix expression and one explicit `R`. Nothing in that code depends on which Hopf algebra it is.",
+   "line": 176
+  },
+  {
+   "evidence": "GeneralLinear/Scheme.lean:88 `noncomputable def groupScheme := (hopfSpec (CommRingCat.of R)).obj (Opposite.op (coordinateHopfAlgebra R n))`; SpecialLinear/Basic.lean:269-273 states `groupScheme\u03b9`'s target as the same expression; line 289 `groupScheme\u03b9 R n \u226b eqToHom (GeneralLinear.groupScheme_def R n).symm`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Keep one inclusion: give `groupScheme\u03b9` the target `GeneralLinear.groupScheme R n` and delete `groupScheme\u03b9GeneralLinear`, `groupScheme\u03b9GeneralLinear_def`, and `isClosedImmersion_groupScheme\u03b9GeneralLinear`; rename the use in `rootSubgroup_comp_groupScheme\u03b9GeneralLinear` accordingly.",
+   "issue": "`groupScheme\u03b9GeneralLinear` is a wrapper duplicating `groupScheme\u03b9`: its target `GeneralLinear.groupScheme R n` is *defined* (Scheme.lean:88-91) as `hopfSpec.obj (op (GeneralLinear.coordinateHopfAlgebra R n))`, which is exactly `groupScheme\u03b9`'s stated target, so the two differ only by `eqToHom (GeneralLinear.groupScheme_def R n).symm`, an `eqToHom` of a `rfl`-proof. Both are public, both are in the module docstring, and both carry a closed-immersion instance whose proofs (lines 301-320 vs 322-337) are clones of one another.",
+   "line": 287
+  },
+  {
+   "evidence": "HopfIdeal/Scheme/Basic.lean:67-70 `quotientSpec` is an `abbrev` for `hopfSpec.obj (op (quotient H I))` and Kernel.lean:60-62 `kernelSpec f := quotientSpec K (kernelHopfIdeal f)`; SpecialLinear/Basic.lean:190 `coordinateHopfAlgebra := CommHopfAlgCat.quotient ... (definingHopfIdeal R n)` with `definingHopfIdeal := kernelHopfIdeal (determinantCoordinateMap R n)` (line 114-116), so the new `groupScheme` is reducibly the old `kernelSpec`. Basic.lean:88-91 (pre-PR diff context) shows the old 4-line instance.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Basic.lean",
+   "fix": "Drop the identity `eqToHom` from `groupScheme\u03b9` (define it as `CommHopfAlgCat.kernelSpec\u03b9 (GeneralLinear.determinantCoordinateMap R n)` retyped at the named target) and restore `rw [kernelSpec\u03b9_def]; infer_instance`; `groupScheme\u03b9_comp_determinant` then reverts to `CommHopfAlgCat.kernelSpec\u03b9_comp` without the extra `eqToHom` on the right-hand side.",
+   "issue": "`groupScheme\u03b9` is now `eqToHom (groupScheme_def R n) \u226b kernelSpec\u03b9 ...` where `groupScheme_def` is `rfl`-provable, and the closed-immersion instance grew from 4 lines to 15 (`MorphismProperty.cancel_left_of_respectsIso` on that identity `eqToHom`). The scaffolding re-derives what the existing instance `CommHopfAlgCat.isClosedImmersion_quotientSpec\u03b9` already gives through `kernelSpec\u03b9_def`, which is how the pre-PR proof discharged it.",
+   "line": 301
+  },
+  {
+   "evidence": "Transvection.lean:178-181 `def transvectionHom (hij) : Multiplicative A \u2192* GL n A where toFun c := transvectionUnit hij (Multiplicative.toAdd c); map_one' := transvectionUnit_zero hij; map_mul' _ _ := transvectionUnit_add hij _ _` \u2014 the same three fields, with `transvectionUnit_zero`/`_add` themselves proved from `SpecialLinearGroup.transvection_coeff_zero`/`transvection_add` (lines 156, 162).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Make the `SpecialLinearGroup`-valued hom public in TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean next to `transvectionUnit`, and redefine `TauCeti.transvectionHom := (SpecialLinearGroup.toGL).comp` of it; use the shared declaration here instead of a private copy.",
+   "issue": "The private `transvectionHom : Multiplicative A \u2192* Matrix.SpecialLinearGroup (Fin N) A` duplicates `TauCeti.transvectionHom` (Transvection.lean:178), which is literally this hom composed with `Matrix.SpecialLinearGroup.toGL`: `transvectionUnit hij c := SpecialLinearGroup.toGL (SpecialLinearGroup.transvection hij c)` (Transvection.lean:144-145), and its `map_one'`/`map_mul'` come from the same `transvection_coeff_zero`/`transvection_add`.",
+   "line": 75
+  },
+  {
+   "evidence": "Transvection.lean:241-245 `@[simp] theorem map_transvectionUnit (f : A \u2192+* B) ... : GeneralLinearGroup.map f (transvectionUnit hij c) = transvectionUnit hij (f c) := by ext a b; simp [GeneralLinearGroup.map, transvection, Matrix.one_apply, single, apply_ite f]`. No `SpecialLinearGroup.map`-of-transvection lemma exists in Mathlib (`Mathlib/LinearAlgebra/Matrix/SpecialLinearGroup.lean` lines 490-582 list only `transvection_coe/_coeff_zero/_smul_single_*/_mul_neg/_inv/_add/_mem_center_iff`).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "State it once at the `SpecialLinearGroup` level in Transvection.lean \u2014 `Matrix.SpecialLinearGroup.map f (SpecialLinearGroup.transvection hij c) = SpecialLinearGroup.transvection hij (f c)` \u2014 and derive `map_transvectionUnit` from it via `SpecialLinearGroup.toGL`; import it here instead of re-proving.",
+   "issue": "The private `map_transvection` duplicates `TauCeti.map_transvectionUnit` (Transvection.lean:242-245): the same naturality fact, proved by the same entrywise `ext` + `simp [transvection, Matrix.one_apply, single, ...]` argument, one level down the `toGL` coercion.",
+   "line": 119
+  },
+  {
+   "evidence": "Transvection.lean:191-194 `theorem transvectionUnit_injective (hij) : Function.Injective fun c : A => transvectionUnit hij c := fun c d h => by have h' := congrArg Units.val h; simpa [transvection, Matrix.one_apply, Matrix.single_apply, hij] using congrFun\u2082 h' i j` versus SpecialLinear/RootSubgroup.lean:107-114.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Add `SpecialLinearGroup.transvection_injective` in Transvection.lean, derive `transvectionUnit_injective` from it (`transvectionUnit = toGL \u2218 transvection`), and use it here so the entry argument is written once.",
+   "issue": "The `hparameter` step of `rootSubgroupPoints_injective` re-proves `TauCeti.transvectionUnit_injective` (Transvection.lean:191-194) inline with the identical `simpa [... Matrix.one_apply, Matrix.single_apply, hij]` entry extraction at `(i, j)`. The GL analogue (GeneralLinear/RootSubgroup.lean:104-116) correctly calls the shared lemma instead.",
+   "line": 110
+  },
+  {
+   "evidence": "HopfIdeal/Scheme/Kernel.lean:220-230 `theorem isPullback_kernelSpec (f : H \u27f6 K) : IsPullback (kernelSpec\u03b9 f) 0 (hopfSpec.map f.op) 0`. Grepping TauCeti for `isPullback_kernelSpec` returns only its own definition and docstring line \u2014 it currently has no consumers.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/SpecialLinear/RootSubgroup.lean",
+   "fix": "Define `rootSubgroup hij := (CommHopfAlgCat.isPullback_kernelSpec (GeneralLinear.determinantCoordinateMap R N)).lift (GeneralLinear.rootSubgroup hij) 0 h`, with `h` the determinant-triviality square obtained from `det_transvectionUnit` through `pointsFunctor` faithfulness; then `rootSubgroup_comp_groupScheme\u03b9GeneralLinear` is `IsPullback.lift_fst` and the coordinate-level lemma can go.",
+   "issue": "`coordinateMap_comp_rootSubgroupCoordinateMap` (40 lines) exists only to prove `rootSubgroup_comp_groupScheme\u03b9GeneralLinear` (line 319). Both re-derive what the existing universal property `CommHopfAlgCat.isPullback_kernelSpec` provides directly: the kernel spectrum is the fibre of `hopfSpec.map (determinantCoordinateMap R N).op` over the identity section, so the lift out of `\ud835\udd3e\u2090` and its factorization are `IsPullback.lift`/`IsPullback.lift_fst`.",
+   "line": 211
+  }
+ ],
+ "head_sha": "2933c0398a428b2c2b24aeb3b395b52bdeff1b51",
+ "merge_base_sha": "cecf06dad529636b5d793d431f6c3a9c68bb1777",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3114,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ef1b9eef39f616eab8180145e7b9f62ee26e7ea701a8c5ec64bd0fbeb06513a0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T061234Z-3114-reuse-8b765b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T06:12:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The new SpecialLinear/RootSubgroup.lean is a near-verbatim clone of GeneralLinear/RootSubgroup.lean's definitional tower, and privately re-derives three transvection facts already public in TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean. In SpecialLinear/Basic.lean, `groupScheme\u03b9GeneralLinear` is a second public name for `groupScheme\u03b9`, with a cloned closed-immersion proof.",
+ "transcript_blob": "e06cecd54a6e2bc2fb654c8adbf87acd49ff419802edec8aa98febcef5c841f5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 103194,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 103194,
+  "cache_read_input_tokens": 1888772,
+  "inference_geo": "not_available",
+  "input_tokens": 40,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3010,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3010,
+    "cache_read_input_tokens": 116683,
+    "input_tokens": 2,
+    "output_tokens": 6130,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 30702,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
