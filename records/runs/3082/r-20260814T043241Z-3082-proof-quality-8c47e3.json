@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7193855,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 163.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 137909,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 137909,
+    "cache_read_input_tokens": 1920589,
+    "inference_geo": "not_available",
+    "input_tokens": 5970,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1023,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1023,
+      "cache_read_input_tokens": 153385,
+      "input_tokens": 2,
+      "output_tokens": 1657,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11725,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 2.719386,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|fed9cfdf32cf83a3ebcce0c9faebef935366ed1a|proof-quality|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "diff_prompt_sha256": "b722663b2e687e49d40dc8598844f6951718ad5275005e5937cbf41c46add137",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "duration_s": 163.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n \"^+.*change F\" diff.txt` \u2192 2472, 2486, 2799, 2874, 2976 \u2014 all five are added lines; `grep -n \"^-.*change \" diff.txt` returns nothing, so none were removed. `Matrix.submatrix_apply` is at mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean:480 and is already used at code/TauCeti/Analysis/Bochner/Fourier/Convention.lean:129 and Gaussian/Basic.lean:131 on the same `Matrix.submatrix \u2026 a b = \u2026` goal.",
+   "file": "TauCeti/Analysis/PositiveDefinite/SemigroupGroup/Time/Axis.lean",
+   "fix": "Replace each `change` with `rw [Matrix.submatrix_apply]` (plus `BCRPoint.ofProd`/`star`/`add` simp lemmas at Basic.lean:173,184) followed by the substantive rewrite, matching Convention.lean:129; or, if a step is genuinely unreachable that way, add a comment saying so.",
+   "issue": "Five undocumented `change` steps close the `heq` transports by unfolding `Matrix.submatrix`/`Matrix.of` definitionally: Time/Axis.lean:70, Time/Slice.lean:73, SemigroupGroup/Basic.lean:173 and :184-185, Pullback.lean:91. Basic.lean:173 additionally unfolds the `BCRPoint` `star`/`+` instance fields (`(a + star b).point` \u21dd `p.2 + -q.2`). None carries a comment justifying why the goal is unreachable otherwise, and the same PR reaches the identical goal shape via the named lemma at Fourier/Convention.lean:129 and Gaussian/Basic.lean:131.",
+   "line": 70
+  },
+  {
+   "evidence": "`grep -n \"simp \\[Matrix.submatrix\\|simpa \\[Matrix.submatrix\" \u2026` \u2192 Pullback.lean:122, Matrix/PosSemidef.lean:129, Matrix/PosSemidef.lean:183; `Matrix.submatrix_apply` at mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean:480.",
+   "file": "TauCeti/Analysis/PositiveDefinite/SemigroupGroup/Pullback.lean",
+   "fix": "Use `simp [Matrix.submatrix_apply, \u2026]` / `simpa [Matrix.submatrix_apply, Function.comp_def]` at all three sites.",
+   "issue": "Three simp calls unfold `Matrix.submatrix` by passing the definition itself to the simp set instead of its API lemma: Pullback.lean:122 `simp [Matrix.submatrix, hw, \u2026]`, Matrix/PosSemidef.lean:129 and :183 `simpa [Matrix.submatrix, Function.comp_def] \u2026`. Same brittleness class as the `change` steps \u2014 these break if Mathlib restates `submatrix` even though the statements stay true, and they are inconsistent with the two `Matrix.submatrix_apply` sites in the same PR.",
+   "line": 122
+  }
+ ],
+ "head_sha": "fed9cfdf32cf83a3ebcce0c9faebef935366ed1a",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "723c5a66e8a5b14f45ca515d6ded4a9427b7ba09dd1cfdd4147b1f258b411460",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T043241Z-3082-proof-quality-8c47e3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T04:32:41Z",
+ "submitted_by": "kim-em",
+ "summary": "Five undocumented `change` steps added by this PR unfold `Matrix.submatrix`/`Matrix.of` (and the `BCRPoint` star/add instances) by definitional equality, where the named `Matrix.submatrix_apply` \u2014 used by this same PR at two other transport sites \u2014 applies; three further sites unfold `Matrix.submatrix` as a raw `simp` definition argument. The prior finding about factoring the `heq \u25b8` transports is withdrawn as adjudicated by the reuse angle.",
+ "transcript_blob": "6d0a1a1f5e5d1747929601e01185e96ecf30b9eb64392701098d49b2bf539873",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 137909,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 137909,
+  "cache_read_input_tokens": 1920589,
+  "inference_geo": "not_available",
+  "input_tokens": 5970,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1023,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1023,
+    "cache_read_input_tokens": 153385,
+    "input_tokens": 2,
+    "output_tokens": 1657,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11725,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

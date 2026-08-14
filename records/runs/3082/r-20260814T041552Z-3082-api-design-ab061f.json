@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.147715000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 202.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 128704,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 128704,
+    "cache_read_input_tokens": 2875898,
+    "inference_geo": "not_available",
+    "input_tokens": 47,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1564,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1564,
+      "cache_read_input_tokens": 143639,
+      "input_tokens": 2,
+      "output_tokens": 2294,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14628,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 3.147715,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|fed9cfdf32cf83a3ebcce0c9faebef935366ed1a|api-design|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "diff_prompt_sha256": "b722663b2e687e49d40dc8598844f6951718ad5275005e5937cbf41c46add137",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "duration_s": 202.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The body `simpa only [starRingEnd_apply] using hK.isHermitian.apply _ _` (or its `RCLike.star_def` variant) appears at Matrix/PosSemidef.lean:190 and :219 \u2014 inside the file that owns this API \u2014 plus Kernel/Bounds.lean:71, Kernel/Finsupp.lean:250, Kernel/Kolmogorov.lean:82 and :145, Kernel/Radical.lean:127, SemigroupGroup/Basic.lean:229 and :265, Time/Axis.lean:79, Time/Slice.lean:83. Mathlib/LinearAlgebra/Matrix/Hermitian.lean:62 confirms `IsHermitian.apply : star (A j i) = A i j`, i.e. only the star form is available upstream.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Add `theorem conj_apply_of_posSemidef {K : \u03b1 \u2192 \u03b1 \u2192 \ud835\udd5c} (hK : Matrix.PosSemidef K) (a b : \u03b1) : conj (K a b) = K b a := by simpa only [starRingEnd_apply] using hK.isHermitian.apply b a` and use it at all 11 sites.",
+   "issue": "The deleted `isPositiveDefiniteKernel_conj_symm` (`conj (K a b) = K b a`) has no replacement in the new file. Mathlib supplies only the star form, so every consumer re-derives the conj form inline.",
+   "line": 190
+  },
+  {
+   "evidence": "PositiveDefinite/Basic.lean:275-284 (`IsPositiveDefinite.sum`) and SemigroupGroup/Basic.lean:348-358 (`IsSemigroupGroupPD.sum`) each contain the identical four-line `have heq : (\u2211 i \u2208 s, fun a b => ...) = fun a b => \u2211 i \u2208 s, ...` / `exact heq \u25b8 h` block against `Matrix.posSemidef_sum`, while their `prod` counterparts (Basic.lean:286-291, SemigroupGroup/Basic.lean:361-367) are one-liners. Mathlib/LinearAlgebra/Matrix/PosDef.lean:148-150 confirms the matrix-valued conclusion.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Add `theorem posSemidef_finset_sum {\u03b9} {s : Finset \u03b9} {K : \u03b9 \u2192 \u03b1 \u2192 \u03b1 \u2192 \ud835\udd5c} (hK : \u2200 i \u2208 s, Matrix.PosSemidef (K i)) : Matrix.PosSemidef (fun a b => \u2211 i \u2208 s, K i a b)` beside the product lemma, and call it from both sites.",
+   "issue": "`posSemidef_schur_finset_prod` gives the function-form finite product, but there is no function-form finite sum. Mathlib's `Matrix.posSemidef_sum` concludes about the matrix-valued `\u2211 i \u2208 s, x i`, not `fun a b => \u2211 i \u2208 s, K i a b`, so both in-repo sum consumers open-code the same transport.",
+   "line": 157
+  }
+ ],
+ "head_sha": "fed9cfdf32cf83a3ebcce0c9faebef935366ed1a",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e00f03e77579e7a02b41cf1625df6ee72e2e6c06f77dadcfc234cc4a9cbe7609",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T041552Z-3082-api-design-ab061f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T04:15:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The migration is clean \u2014 no compatibility aliases survive, helpers stay private, and the prior name-clash finding is fixed. Two API gaps remain: the replacement file omits the conjugate-symmetry accessor (open-coded at 11 sites, twice inside the owning file) and omits the function-form finite-sum companion to `posSemidef_schur_finset_prod`.",
+ "transcript_blob": "2f49b12a2b7762fac205f4c3092d1763293af51bbbb757183bf87c6f0abdee2b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 128704,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 128704,
+  "cache_read_input_tokens": 2875898,
+  "inference_geo": "not_available",
+  "input_tokens": 47,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1564,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1564,
+    "cache_read_input_tokens": 143639,
+    "input_tokens": 2,
+    "output_tokens": 2294,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14628,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
