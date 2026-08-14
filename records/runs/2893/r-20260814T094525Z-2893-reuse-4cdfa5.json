@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.7533794999999994,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 415.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 142489,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 142489,
+    "cache_read_input_tokens": 3052279,
+    "inference_geo": "not_available",
+    "input_tokens": 53,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 826,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 826,
+      "cache_read_input_tokens": 158162,
+      "input_tokens": 2,
+      "output_tokens": 3111,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 31152,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9b9cb56b0a7154fec4295ac0311486c46baaa202",
+ "cost_usd": 3.753379,
+ "dedupe_key": "TauCetiProject/TauCeti|2893|b383f086a0c4e6cf046b05800c6b551d254fd73d|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c5c38f4a8a59a9280c5589044f072a335b693267871c588e1036fd353866409",
+ "diff_sha256": "4c5c38f4a8a59a9280c5589044f072a335b693267871c588e1036fd353866409",
+ "duration_s": 415.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "ClassicalTypeD.lean:94 `abbrev TypeDRoot (n : \u2115) := {x : Fin n \u2192 \u2124 // x \u2b1d\u1d65 x = 2}`; ClassicalTypeD.lean:319 `noncomputable def typeDRootEquiv (n : \u2115) (hn : 4 \u2264 n) : Fin (2 * n * (n - 1)) \u2243 TypeDRoot n` (public; `hn` holds at `n = 8`). E8/Lattice.lean:91 states the `.inl` shape has `4 * 28 = 112` elements, the same count.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/E8/Lattice.lean",
+   "fix": "Import `TauCeti.LinearAlgebra.RootSystem.ClassicalTypeD` (already a sibling module, imported by `SimplyConnectedRootDatum/D.lean`, so no layer inversion) and build the even half of `T` as `Finset.univ.image fun k : Fin 112 \u21a6 (2 : \u2124) \u2022 (typeDRootEquiv 8 (by norm_num) k).1`, with the odd half as now. The even branch of the classification then reduces to `x = 2 \u2022 y` with `y \u2b1d\u1d65 y = 2`, i.e. `y = typeDRootEquiv 8 _ k` for some `k` by surjectivity of the equiv, deleting `exists_e8DoubledMinimalVector_eq_of_pair` and the support-cardinality argument; the `T.card \u2264 240` bound becomes `Finset.card_union_le` plus `112 + 128`, which also removes the `decide +kernel` in `card_e8DoubledMinimalIndex`.",
+   "issue": "The `\u00b12e\u1d62 \u00b1 2e\u2c7c` half of the enumeration and its classification (`exists_e8DoubledMinimalVector_eq_of_pair`, lines 105-124, plus the even branch of `exists_e8DoubledMinimalVector_eq`, lines 136-162) re-prove that an integral vector of norm two is `\u00b1e\u2090 \u00b1 e_b` \u2014 a vector `x` is all-even with `x \u2b1d\u1d65 x = 8` exactly when `x = 2 \u2022 y` with `y \u2b1d\u1d65 y = 2`. That classification already exists in the repo as `TauCeti.DynkinType.typeDRootEquiv` (ClassicalTypeD.lean:319), an `Equiv` `Fin (2 * n * (n - 1)) \u2243 TypeDRoot n` with `TypeDRoot n := {x : Fin n \u2192 \u2124 // x \u2b1d\u1d65 x = 2}` (ClassicalTypeD.lean:94); at `n = 8` it gives exactly the `2 * 8 * 7 = 112 = 4 * 28` vectors this file enumerates by hand. The private `abs_le_two_of_dotProduct_self` likewise duplicates the shape of `typeDRoot_sq_le_two` (ClassicalTypeD.lean:150).",
+   "line": 105
+  },
+  {
+   "evidence": "ClassicalTypeD.lean:654-660 vs Dual.lean:64-69: same statement modulo `M = 1` (`(v \u1d65* 1) \u2b1d\u1d65 w = v \u2b1d\u1d65 w`), same `simp only` set, same closing `ring`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Dual.lean",
+   "fix": "Rewrite ClassicalTypeD.lean:654 to consume the new lemma: `simpa [typeDAmbientReflection_apply, Matrix.one_vecMul] using (reflect_vecMul_dotProduct_self Matrix.isSymm_one (u := u.1) (by simpa using u.2) v).trans hv` (`Matrix.isSymm_one` is Mathlib, Matrix/Symmetric.lean:74).",
+   "issue": "`reflect_vecMul_dotProduct_self` is added as the general statement, but its `M = 1` instance is already hand-rolled on `main` as `typeDAmbientReflection_dotProduct_self` (ClassicalTypeD.lean:654) with the identical proof (`simp only [sub_dotProduct, dotProduct_sub, smul_dotProduct, dotProduct_smul, smul_eq_mul]` then `ring`). The PR leaves the duplicate in place, so the same fact is proved twice in the repo.",
+   "line": 64
+  },
+  {
+   "evidence": "A.lean:484-490, B/Datum.lean:516-522, D.lean:366-372, F4.lean:352-357 are the same five-line `rw [.., mem_simpleSupport]; constructor; rintro \u27e8i, rfl\u27e9; simpa only [.._val] using i.isLt; exact fun hk => \u27e8\u27e8k, hk\u27e9, Fin.ext rfl\u27e9`; E6.lean:434-440 is the same statement via `Finset.mem_map`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Basic.lean",
+   "fix": "Replace each with a one-line application: A.lean:484 (`mem_simpleSupport_iff_lt _ typeASimpleIndex_val`), B/Datum.lean:516 (`typeBSimpleIndex_val`), D.lean:366 (`typeDSimpleIndex_val`), F4.lean:352 (`fun _ \u21a6 Fin.val_castAdd ..`), and E6.lean:434, which does not even go through `mem_simpleSupport` but unfolds `Finset.mem_map` directly \u2014 E6.lean is already touched by this PR.",
+   "issue": "`mem_simpleSupport_iff_lt` is added to the shared file but used only by the new `E8/Datum.lean`; five pre-existing near-identical proofs of the same fact remain in the siblings, so the shared home and the copies coexist.",
+   "line": 90
+  }
+ ],
+ "head_sha": "b383f086a0c4e6cf046b05800c6b551d254fd73d",
+ "merge_base_sha": "9b9cb56b0a7154fec4295ac0311486c46baaa202",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2893,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "147965515bfcf18c9c029b6b99589fc1abc8fd5261003f1849205e2507002341",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T094525Z-2893-reuse-4cdfa5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T09:45:25Z",
+ "submitted_by": "kim-em",
+ "summary": "The doubled-lattice classification re-derives the norm-two vector classification that `ClassicalTypeD.lean` already provides publicly via `typeDRootEquiv`, and the two new shared lemmas (`reflect_vecMul_dotProduct_self`, `mem_simpleSupport_iff_lt`) leave their pre-existing hand-rolled instances in the repo unconverted. Everything else (the datum, the completeness statement, the shared `E\u2088` table) is new and reuses Mathlib properly.",
+ "transcript_blob": "9ea210e633a30479a870ca168ab31d9309d9e0596263c6a55256f42ccc1dcf91",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 142489,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 142489,
+  "cache_read_input_tokens": 3052279,
+  "inference_geo": "not_available",
+  "input_tokens": 53,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 826,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 826,
+    "cache_read_input_tokens": 158162,
+    "input_tokens": 2,
+    "output_tokens": 3111,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 31152,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

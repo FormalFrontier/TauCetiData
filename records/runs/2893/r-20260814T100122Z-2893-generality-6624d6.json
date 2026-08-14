@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7751325,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 222.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 93186,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 93186,
+    "cache_read_input_tokens": 801845,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2858,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2858,
+      "cache_read_input_tokens": 106827,
+      "input_tokens": 2,
+      "output_tokens": 2453,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16779,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9b9cb56b0a7154fec4295ac0311486c46baaa202",
+ "cost_usd": 1.775133,
+ "dedupe_key": "TauCetiProject/TauCeti|2893|b383f086a0c4e6cf046b05800c6b551d254fd73d|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c5c38f4a8a59a9280c5589044f072a335b693267871c588e1036fd353866409",
+ "diff_sha256": "4c5c38f4a8a59a9280c5589044f072a335b693267871c588e1036fd353866409",
+ "duration_s": 222.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: A.lean:485 `k \u2208 typeASimpleSupport n \u2194 (k : \u2115) < n`, B/Datum.lean:517 and D.lean:367 the same statement with the same `rw [.., mem_simpleSupport]; constructor; rintro \u27e8i, rfl\u27e9; simpa only [.._val] using i.isLt; exact fun hk => \u27e8\u27e8k, hk\u27e9, Fin.ext ..\u27e9` proof; E6.lean:434 and C/Datum.lean:748 the same statement over `Finset.univ.map \u27e8e, he\u27e9`, which is the body of `simpleSupport` (Basic.lean:60-61).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Basic.lean",
+   "fix": "Replace the five bodies with the general lemma, e.g. `private lemma mem_typeASimpleSupport {k} : k \u2208 typeASimpleSupport n \u2194 (k : \u2115) < n := mem_simpleSupport_iff_lt typeASimpleIndex_injective typeASimpleIndex_val`, and likewise for B, D (passing `hn`), E6 and C (the last two after spelling their support as `simpleSupport _`).",
+   "issue": "`mem_simpleSupport_iff_lt` is added to the shared home but derives only the E\u2088 special case (E8/Datum.lean:226); the identical fact is still hand-proved in the siblings, whose hypotheses already match: A.lean:484-490 (`typeASimpleIndex_injective`, `typeASimpleIndex_val` at A.lean:351), B/Datum.lean:516-522 (`typeBSimpleIndex_val` at B/Datum.lean:255), D.lean:366-372 (`typeDSimpleIndex_val`), and, via the defeq `Finset.univ.map \u27e8e, he\u27e9` spelling of `simpleSupport`, E6.lean:434-441 and C/Datum.lean:748-755. A general lemma with one consumer and five surviving copies of its proof is the wrong level in the shared file.",
+   "line": 90
+  },
+  {
+   "evidence": "Dual.lean:53 `variable {n R : Type*} [Fintype n] [CommRing R]`; mathlib/Mathlib/Data/Matrix/Mul.lean:84 `dotProduct_comm [AddCommMonoid \u03b1] [CommMagma \u03b1]`, :761 `dotProduct_mulVec [Fintype n] [Fintype m] [NonUnitalSemiring R]`, :1089 `mulVec_transpose`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/Dual.lean",
+   "fix": "Split the `variable` block: state `vecMul_dotProduct_comm` with `[NonUnitalCommSemiring R]` (keep `[CommRing R]` for `reflect_vecMul_dotProduct_self`, which genuinely subtracts).",
+   "issue": "`vecMul_dotProduct_comm` is stated under the section's `[CommRing R]`, but its proof uses only `dotProduct_mulVec` (`[NonUnitalSemiring]`), `dotProduct_comm` (`[AddCommMonoid] [CommMagma]`) and `mulVec_transpose`; nothing needs negation or a unit. In a general-purpose matrix file this blocks the semiring uses Mathlib's own dot-product API supports.",
+   "line": 56
+  }
+ ],
+ "head_sha": "b383f086a0c4e6cf046b05800c6b551d254fd73d",
+ "merge_base_sha": "9b9cb56b0a7154fec4295ac0311486c46baaa202",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 2893,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "720ae8dddd7f6e95c3a44c7cb8009f6cd6f7f99cfab05f1fb3f163d5d53c27e2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T100122Z-2893-generality-6624d6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T10:01:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The E\u2088 material sits at the right level and the shared reflection/symmetry lemmas are genuinely type-independent, but the new general `mem_simpleSupport_iff_lt` is applied only to E\u2088 while five identical special-case proofs remain in the sibling files, and `vecMul_dotProduct_comm` is stated over `CommRing` where only a non-unital commutative semiring is used.",
+ "transcript_blob": "cbcaee58d3f3c7ec3a7092e1f18d77ffdf6153fb0c90a3cdbad9fd747c329340",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 93186,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 93186,
+  "cache_read_input_tokens": 801845,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2858,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2858,
+    "cache_read_input_tokens": 106827,
+    "input_tokens": 2,
+    "output_tokens": 2453,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16779,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
