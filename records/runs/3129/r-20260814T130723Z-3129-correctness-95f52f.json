@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8392775,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 346.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 69218,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 69218,
+    "cache_read_input_tokens": 947999,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2017,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2017,
+      "cache_read_input_tokens": 83700,
+      "input_tokens": 1,
+      "output_tokens": 5389,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26437,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "68a13d0b5707b1776c66745732960c956c2eaf23",
+ "cost_usd": 1.839277,
+ "dedupe_key": "TauCetiProject/TauCeti|3129|c8cfa9fb925532fc459852d589c8a1e6372fc597|correctness|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "9e13a836e0e67b722dc950ef3f63c446bcefbe214fe1968e9ba4c8acc321c481",
+ "diff_sha256": "9e13a836e0e67b722dc950ef3f63c446bcefbe214fe1968e9ba4c8acc321c481",
+ "duration_s": 346.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 268-277 (`SameNormalFraming` is an `mfderiv ... = mfderiv ...` equality); doc at 303-305; roadmap `TauCetiRoadmap/GeometricTopology/README.md` layer 4 (\"framing (a chosen push-off, blackboard or Seifert)\") and the convention table.",
+   "file": "TauCeti/KnotTheory/SmoothLink.lean",
+   "fix": "Quotient by homotopy (through normal trivializations / tubular embeddings with the given core), not by equality of `mfderiv`; equivalently define a framing as a homotopy class of nowhere-zero sections of the normal bundle (a push-off). Note the file already gets this right one section earlier: `Sphere1.NonvanishingTangentField.SameOrientation` uses `SameRay`, not equality.",
+   "issue": "`SameNormalFraming` (and hence `KnotFraming`, line 306) identifies two tubular embeddings only when their normal derivatives at the zero section are *equal*. This is finer than a framing: for a tubular embedding `T`, the reparametrized `T' (x,w) = T (x, 2\u2022w)` is again a smooth embedding of `Sphere1 \u00d7 \u211d\u00b2` with the same image and the same zero section (`zero_section` still holds), but `mfderiv T' (x,0) (0,w) = 2 \u2022 mfderiv T (x,0) (0,w) \u2260 mfderiv T (x,0) (0,w)` since `T` is an immersion, so `T` and `T'` give distinct `KnotFraming` elements while being the same framing (same push-off, same self-linking) in every standard sense. So `KnotFraming K` is an uncountable set where the framings of a knot in a 3-manifold form a \u2124-torsor, and the roadmap's pinned conventions (`README.md` convention table: \"the Seifert (0-)framing is the canonical longitude; the blackboard framing equals the writhe\") cannot be stated for it. `FramedOrientedSmoothKnot` (344) and `FramedOrientedSmoothLink` (405) therefore do not carry a framing in the intended sense.",
+   "line": 268
+  },
+  {
+   "evidence": "No `Nonempty`/example/instance for either structure in the diff; `grep -rln \"Metric.sphere (0\" TauCeti/` returns only this file and `NumberTheory/Modular.lean`; `TauCeti/Geometry/Manifold/VectorField/` contains only `LieBracket.lean` and `Regularity.lean`. The author's earlier contest (`\u27e8SmoothEmbedding.id\u27e9 : Nonempty (SmoothKnot (\ud835\udce1 1) Sphere1)`) witnesses only the unoriented embedding type and says nothing about these two structures.",
+   "file": "TauCeti/KnotTheory/SmoothLink.lean",
+   "fix": "Construct at least one nonvanishing smooth tangent field on `Sphere1` in this PR (giving `Nonempty Sphere1.Orientation`, hence non-vacuity of the oriented layer), and either exhibit one concrete `KnotTubularEmbedding` or defer the framed types until tubular neighbourhoods exist, shipping only the unoriented/oriented presentations now.",
+   "issue": "`Sphere1.NonvanishingTangentField` and `KnotTubularEmbedding` (252) are new bundled structures whose fields carry the real content (a smooth nowhere-zero section of `TangentBundle (\ud835\udce1 1) Sphere1`; a smooth embedding of the solid torus restricting to the core), and no witness for either exists in this PR or in the repo. If `NonvanishingTangentField` is empty, `Sphere1.Orientation` is empty and `OrientedSmoothKnot`, `FramedOrientedSmoothKnot`, `FramedOrientedSmoothLink I M (k\u22651)`, `FramedOrientedSmoothKnot3`, `FramedOrientedSmoothLink3` are all empty, making `neg_neg` (180), `reverseOrientation_reverseOrientation` (239), `ofKnot` (426) and `component_injective` (435) vacuous. The framed layer additionally presumes the tubular-neighbourhood theorem, which does not exist here: `grep -rn 'tubular' TauCeti/` outside this file finds only a comment in `SmoothEmbedding/Basic.lean:22` and an unrelated SLSC structure.",
+   "line": 72
+  }
+ ],
+ "head_sha": "c8cfa9fb925532fc459852d589c8a1e6372fc597",
+ "merge_base_sha": "68a13d0b5707b1776c66745732960c956c2eaf23",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3129,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "df99f6cd1893643764282b9582ae071b370c69dce8baef935dff96a9c33aeb32",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T130723Z-3129-correctness-95f52f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T13:07:23Z",
+ "submitted_by": "kim-em",
+ "summary": "`KnotFraming` quotients tubular embeddings by *equality* of the normal derivative, which is strictly finer than any standard notion of framing (radial rescaling of the same tube gives a different class), so `FramedOrientedSmoothKnot`/`Link` do not present framed knots. Separately, the two new data structures the whole layer depends on (`Sphere1.NonvanishingTangentField`, `KnotTubularEmbedding`) have no witness in this PR or on main, so every type built from them may be empty and every lemma about them vacuous.",
+ "transcript_blob": "d8bd3066296c2f82e8ec28c3fb0601170246871f2bdfd037050c4b0423465690",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 69218,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 69218,
+  "cache_read_input_tokens": 947999,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2017,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2017,
+    "cache_read_input_tokens": 83700,
+    "input_tokens": 1,
+    "output_tokens": 5389,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26437,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
