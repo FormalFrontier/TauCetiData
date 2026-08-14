@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7528985,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 216.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79217,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79217,
+    "cache_read_input_tokens": 1034499,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1796,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1796,
+      "cache_read_input_tokens": 93920,
+      "input_tokens": 2,
+      "output_tokens": 1413,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16925,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4df85e7ab7e69f915232f35501163e59b4e17507",
+ "cost_usd": 1.752898,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|bcc4aac2b747b0eb7790d2bc4da21c71326acb93|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "diff_sha256": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "duration_s": 216.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Isometry.lean:414-418; the only use is line 458. `LinearMap.coe_equivOfIsUnitDet` (Mathlib/LinearAlgebra/Determinant.lean:560) and `LinearMap.isUnit_iff_isUnit_det` (ibid.:327) give bijectivity from `IsUnit f.det` alone under `[Module.Free R M] [Module.Finite R M]`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Drop `hf` and the isometry namespace: state `theorem bijective_of_isUnit_det (hdet : IsUnit (LinearMap.det f)) : Function.Bijective f`, proved by `LinearMap.coe_equivOfIsUnitDet hdet \u25b8 (LinearMap.equivOfIsUnitDet hdet).bijective` (or via Mathlib's `LinearMap.isUnit_iff_isUnit_det`), and have `IsIsometry.bijective` (line 457) call it with `hf.isUnit_det_of_nondegenerate hB`.",
+   "issue": "`IsIsometry.bijective_of_isUnit_det (hf : IsIsometry B f) (hdet : IsUnit (LinearMap.det f)) : Function.Bijective f` has `hf` (and hence `B`) entirely unused: the conclusion never mentions `B`, and the proof only uses `hf` to build `toIsometryGroupOfIsUnitDet`, whose underlying map is `LinearMap.equivOfIsUnitDet hdet`. Its own docstring states the form-free fact (\"An endomorphism of a finite free module with unit determinant is bijective\"). Placing it in the `IsIsometry` namespace makes a general fact look form-dependent.",
+   "line": 414
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:30 (`variable [Semiring R] [AddCommMonoid M] [Module R M]`) covers `generalLinearEquiv` (:83), and `congrLinearEquiv` (:110) sits under `[Semiring R\u2081] [Semiring R\u2082]` (:98-106), even semilinearly.",
+   "file": "TauCeti/LinearAlgebra/GeneralLinearGroup/Congr.lean",
+   "fix": "Weaken the variable line to `[Semiring R] [AddCommMonoid M\u2081] [Module R M\u2081] [AddCommMonoid M\u2082] [Module R M\u2082]`; the existing proofs (`congrLinearEquiv_apply`, `coeFn_generalLinearEquiv`, `coe_ofLinearEquiv`, `apply_symm_apply`) go through unchanged.",
+   "issue": "`TauCeti.LinearEquiv.congrAut` and its two evaluation lemmas assume `[CommSemiring R]`, but nothing in the definition or the proofs uses commutativity; every Mathlib ingredient is stated at `Semiring`. This is a general-purpose GL infrastructure file, so the extra hypothesis blocks non-commutative consumers for no reason.",
+   "line": 33
+  }
+ ],
+ "head_sha": "bcc4aac2b747b0eb7790d2bc4da21c71326acb93",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "9bcd84dfb45a15242b6146f0881e268398c4ad3ef9110e931610acf030353c95",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T052330Z-3148-generality-61bfa3",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T05:23:30Z",
+ "submitted_by": "kim-em",
+ "summary": "Two too-strong hypotheses remain: `IsIsometry.bijective_of_isUnit_det` carries an isometry hypothesis its statement never uses, and the new shared `LinearEquiv.congrAut` demands `CommSemiring R` where Mathlib's ingredients need only `Semiring R`. The prior round's `CommRing`/`AddCommGroup` over-restriction is fixed.",
+ "transcript_blob": "dc411e31219e9fd21ebc3f66c430c25fbb28b3cb89279392581efdcc9fbf28ca",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79217,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79217,
+  "cache_read_input_tokens": 1034499,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1796,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1796,
+    "cache_read_input_tokens": 93920,
+    "input_tokens": 2,
+    "output_tokens": 1413,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16925,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

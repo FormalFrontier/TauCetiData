@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9438810000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 260.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78341,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78341,
+    "cache_read_input_tokens": 1242036,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6578,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6578,
+      "cache_read_input_tokens": 88262,
+      "input_tokens": 2,
+      "output_tokens": 5074,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20746,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4df85e7ab7e69f915232f35501163e59b4e17507",
+ "cost_usd": 1.943881,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|bcc4aac2b747b0eb7790d2bc4da21c71326acb93|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "diff_sha256": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "duration_s": 260.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Determinant.lean:327 `lemma isUnit_iff_isUnit_det [Module.Finite R M] [Module.Free R M] (f : M \u2192\u2097[R] M) : IsUnit f \u2194 IsUnit f.det`; mathlib/Mathlib/Algebra/Module/Equiv/Basic.lean:65 `theorem _root_.Module.End.isUnit_iff (f : Module.End R M) : IsUnit f \u2194 Function.Bijective f`. Neither mentions a form, and `LinearMap.equivOfIsUnitDet` (Determinant.lean:539) likewise needs only `IsUnit f.det`.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Drop `hf` and state it outside the `IsIsometry` namespace, proving it directly: `(Module.End.isUnit_iff f).mp ((LinearMap.isUnit_iff_isUnit_det f).mpr hdet)`. `IsIsometry.bijective` (line 457) then becomes the term `bijective_of_isUnit_det (hf.isUnit_det_of_nondegenerate hB)`, dropping its `by exact` as well.",
+   "issue": "`bijective_of_isUnit_det` takes a redundant hypothesis `hf : IsIsometry B f` \u2014 its own docstring states the isometry-free fact \"an endomorphism of a finite free module with unit determinant is bijective\". `hf` is used only to route through `toIsometryGroupOfIsUnitDet`, forcing callers to produce a bilinear form to get bijectivity, and the proof then transports back with `h \u25b8` on a funext'd `\u21d1`-equation (lines 416-418).",
+   "line": 414
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/GeneralLinearGroup/Basic.lean:83 `def generalLinearEquiv : GeneralLinearGroup R M \u2243* M \u2243\u2097[R] M where toFun := toLinearEquiv`. Diff of TauCeti/LinearAlgebra/QuadraticForm/OrthogonalGroup.lean shows the pre-move versions were `private theorem congrAut_apply ... := rfl` and `congrAut_symm_apply ... := rfl`.",
+   "file": "TauCeti/LinearAlgebra/GeneralLinearGroup/Congr.lean",
+   "fix": "Either restore the one-line `rfl` proofs these lemmas had before the move, or keep the tactic proofs and replace the ascription with a named step (`coeFn_generalLinearEquiv` / `MulEquiv.apply_symm_apply` on the coerced form) and add a comment stating that Mathlib offers no lemma relating `generalLinearEquiv`'s coercion to `.toLinearEquiv` at the `\u2243\u2097` level.",
+   "issue": "`congrAut_apply` and `congrAut_symm_apply` (lines 46-53, 57-65) each use a `change` and then `rw [show ((generalLinearEquiv R M).symm f).toLinearEquiv = f from (generalLinearEquiv R M).apply_symm_apply f]`. The `from` term has type `generalLinearEquiv R M ((generalLinearEquiv R M).symm f) = f`; it typechecks against the `show` only because the `\u21d1`-coercion of `generalLinearEquiv` unfolds to `.toLinearEquiv`. That defeq is undocumented \u2014 the comment above justifies the `change`, not this step \u2014 so the proof is longer than, and no less defeq-dependent than, the `rfl` it replaces.",
+   "line": 52
+  }
+ ],
+ "head_sha": "bcc4aac2b747b0eb7790d2bc4da21c71326acb93",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "a4d3dcb9bc0553f2c673853b0ebdd4afc594e0c4d1a38a477a2fb26c9f772086",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T053341Z-3148-proof-quality-d91adc",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T05:33:41Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are now mostly short and lemma-driven, but `IsIsometry.bijective_of_isUnit_det` carries a redundant isometry hypothesis and reaches its conclusion by a detour through the subgroup plus a `\u25b8` on a funext'd coercion, and the two `congrAut` evaluation lemmas use `change` together with an undocumented `show ... from` defeq bridge.",
+ "transcript_blob": "0e7f848cc68ea14b3aa8db352efde0bd02ea24f48636d8ae3c21cbd0df9f5232",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78341,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78341,
+  "cache_read_input_tokens": 1242036,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6578,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6578,
+    "cache_read_input_tokens": 88262,
+    "input_tokens": 2,
+    "output_tokens": 5074,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20746,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

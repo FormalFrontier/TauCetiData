@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.242865,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 175.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 65693,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 65693,
+    "cache_read_input_tokens": 427760,
+    "inference_geo": "not_available",
+    "input_tokens": 12,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1062,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1062,
+      "cache_read_input_tokens": 81130,
+      "input_tokens": 2,
+      "output_tokens": 2183,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13982,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4df85e7ab7e69f915232f35501163e59b4e17507",
+ "cost_usd": 1.242865,
+ "dedupe_key": "TauCetiProject/TauCeti|3148|bcc4aac2b747b0eb7790d2bc4da21c71326acb93|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "diff_sha256": "53b9daa77d2e2ad380a3a68a1a6fe5561bc2dce3cedd8eae9d3a3f8d8a29f33d",
+ "duration_s": 175.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 413-418: proof is `have h : \u21d1(hf.toIsometryGroupOfIsUnitDet hdet : M \u2243\u2097[R] M) = \u21d1f := funext \u2026; exact h \u25b8 (\u2026).bijective` \u2014 `hf` enters only through the group element. Mathlib already has `LinearMap.isUnit_iff_isUnit_det` (mathlib/Mathlib/LinearAlgebra/Determinant.lean:327) and `LinearMap.coe_equivOfIsUnitDet` (:560) for the hypothesis-free statement.",
+   "file": "TauCeti/LinearAlgebra/BilinearForm/Isometry.lean",
+   "fix": "Drop `hf` and state it outside the `IsIsometry` namespace (e.g. `theorem LinearMap.bijective_of_isUnit_det (hdet : IsUnit (LinearMap.det f)) : Function.Bijective f`, proved by `LinearMap.coe_equivOfIsUnitDet hdet \u25b8 (LinearMap.equivOfIsUnitDet hdet).bijective` or via Mathlib's `LinearMap.isUnit_iff_isUnit_det`), and have `IsIsometry.bijective` call it.",
+   "issue": "`IsIsometry.bijective_of_isUnit_det (hf : IsIsometry B f) (hdet : IsUnit (det f)) : Function.Bijective f` does not use `hf` mathematically \u2014 its own docstring states \"An endomorphism of a finite free module with unit determinant is bijective\", with no isometry involved; `hf` only serves to route the proof through `toIsometryGroupOfIsUnitDet`. The exported interface is therefore inapplicable to any endomorphism that is not an isometry of some form, and its name/namespace misdescribe it.",
+   "line": 414
+  },
+  {
+   "evidence": "grep for `IsIsometry` in TauCeti/RepresentationTheory/InvariantForm.lean returns only the definition (line 142), the docstring (line 78), and in-file proof steps (lines 150-151, 161-165, 174, 187, 193, 283); no exported lemma relates `IsInvariantForm` to `BilinForm.IsIsometry`.",
+   "file": "TauCeti/RepresentationTheory/InvariantForm.lean",
+   "fix": "Add the characteristic bridge in both directions, e.g. `theorem IsInvariantForm.isIsometry (hB : IsInvariantForm \u03c1 B) (g : G) : BilinForm.IsIsometry B (\u03c1 g)` and `theorem isInvariantForm_iff_isIsometry : IsInvariantForm \u03c1 B \u2194 \u2200 g, BilinForm.IsIsometry B (\u03c1 g)`.",
+   "issue": "`IsInvariantForm \u03c1 B` is redefined as `\u2200 g, BilinForm.IsIsometry B (\u03c1 g)`, and the module docstring (line 77-79) advertises that \"the invariant forms of a representation and the isometry group of a form are the same notion read two ways\" \u2014 but no lemma states that. The body is not exposed (plain `public section` at line 125; `isInvariantForm_iff` is no longer `Iff.rfl` but a proved iff into the pointwise form), so a consumer holding `IsInvariantForm \u03c1 B` cannot obtain `BilinForm.IsIsometry B (\u03c1 g)` and apply the new bilinear-form API (`IsIsometry.restrict`, `map_orthogonal`, `baseChange`, `det_sq_eq_one`) to `\u03c1 g` without re-deriving it through `isInvariantForm_iff` and `isIsometry_iff`.",
+   "line": 141
+  }
+ ],
+ "head_sha": "bcc4aac2b747b0eb7790d2bc4da21c71326acb93",
+ "merge_base_sha": "1c0c482f0cad8a03106f68b85654cc1d736df569",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3148,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "9e671f6dcb2135dd47dc8810b42154cc476b07028a7c9caceb0df54e40ead7d6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T052034Z-3148-api-design-93eb8e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T05:20:34Z",
+ "submitted_by": "kim-em",
+ "summary": "Prior findings are addressed, but `IsIsometry.bijective_of_isUnit_det` exports a general linear-algebra fact under a spurious `IsIsometry` hypothesis and namespace, and the redefinition of `IsInvariantForm` in terms of `IsIsometry` ships no bridge lemma, so downstream consumers cannot cross between the two notions the docstring claims are identified.",
+ "transcript_blob": "edd19665f6afd8e15414cd8f068370713d3140a143c2b5596bf8149a2f580c36",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 65693,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 65693,
+  "cache_read_input_tokens": 427760,
+  "inference_geo": "not_available",
+  "input_tokens": 12,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1062,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1062,
+    "cache_read_input_tokens": 81130,
+    "input_tokens": 2,
+    "output_tokens": 2183,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13982,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
