@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.124946,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 20.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 26112,
+    "input_tokens": 44260,
+    "output_tokens": 705,
+    "reasoning_output_tokens": 181
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "68a13d0b5707b1776c66745732960c956c2eaf23",
+ "cost_estimated": true,
+ "cost_usd": 0.124946,
+ "dedupe_key": "TauCetiProject/TauCeti|3120|6bfbac749594a8ee796d9caa31823eab20ada3ea|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "eee77367fa853f42306094da612958507e2d64da8dd3da12f3cc1703b142bc77",
+ "diff_sha256": "eee77367fa853f42306094da612958507e2d64da8dd3da12f3cc1703b142bc77",
+ "duration_s": 20.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Confirmed `change (c \u2022 (X + D)).comp ...` at line 134 and `change (c \u2022 (X - D)).comp ...` at line 182.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Hermite/Function/Operator.lean",
+   "fix": "Replace both `change` steps with explicit rewrites/unfolding lemmas for the named operators, or document why no propositional rewrite is available.",
+   "issue": "The CCR proof uses `change` to unfold all three operator definitions without documenting the required definitional equality; the oscillator proof repeats this at line 182.",
+   "line": "134"
+  },
+  {
+   "evidence": "The proof contains `have hderiv : \u21d1(SchwartzMap.derivCLM \u211d \u211d f) = deriv f := by rfl`; Mathlib provides `SchwartzMap.derivCLM_apply` in `Analysis/Distribution/SchwartzSpace/Deriv.lean:70`.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Hermite/Function/Operator.lean",
+   "fix": "Eliminate `hderiv` using the public `SchwartzMap.derivCLM_apply` theorem pointwise (with extensionality if needed).",
+   "issue": "`hderiv` proves equality across the `derivCLM` function coercion by `rfl`, coupling the oscillator proof to the wrapper's implementation.",
+   "line": "198"
+  }
+ ],
+ "head_sha": "6bfbac749594a8ee796d9caa31823eab20ada3ea",
+ "merge_base_sha": "68a13d0b5707b1776c66745732960c956c2eaf23",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3120,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8daf90bdd8fee36aaf8120e9f5c536f25fb84864e11c9001a726b2878b99eeb9",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T010917Z-3120-proof-quality-a58aeb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:09:17Z",
+ "submitted_by": "kim-em",
+ "summary": "The operator proofs rely on undocumented definitional unfolding and a coercion-level `rfl`, making them fragile under representation changes.",
+ "transcript_blob": "686fa15432ead55dff589accc83a8b5b447d0bb7a3d31a8960c07e7cfd591d88",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 26112,
+  "input_tokens": 44260,
+  "output_tokens": 705,
+  "reasoning_output_tokens": 181
+ },
+ "verdict": "request_changes"
+}
