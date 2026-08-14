@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.884985,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 143.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43995,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43995,
+    "cache_read_input_tokens": 305594,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3164,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3164,
+      "cache_read_input_tokens": 57330,
+      "input_tokens": 2,
+      "output_tokens": 2028,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11328,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "cost_usd": 0.884985,
+ "dedupe_key": "TauCetiProject/TauCeti|3141|9fc030582fd8b66ac10b3c6533b0d69e48113bf4|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a704681b186a5eda7a608c7f88372dc195a666e2acb55a96de7285bcb09e1f7c",
+ "diff_sha256": "a704681b186a5eda7a608c7f88372dc195a666e2acb55a96de7285bcb09e1f7c",
+ "duration_s": 143.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/RingTheory/MvPowerSeries/Basic.lean:86 `def MvPowerSeries (\u03c3 R) := (\u03c3 \u2192\u2080 \u2115) \u2192 R`; :98-117 `instance [Zero R] : Zero (MvPowerSeries \u03c3 R) := inferInstanceAs ...`, likewise AddMonoid/AddGroup/Module. Grep for `(add|zero|neg|smul)_apply` in that file returns nothing \u2014 the only apply-level lemma is `coeff_apply` at `[Semiring R]` (:140).",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Add four documented one-line `rfl` lemmas in this file at the weak binders (`apply_zero`, `apply_add`, `apply_neg`, `apply_smul`, each with a comment that `MvPowerSeries \u03c3 M` is by definition the Pi type and inherits the Pi instances), and route the four proofs through them instead of raw `exact`.",
+   "issue": "`isRestricted_zero` (:129), `IsRestricted.add` (:153), `IsRestricted.neg` (:162) and `IsRestricted.const_smul` (:176) each close with a bare `exact` that holds only by unfolding `MvPowerSeries (Fin k) M` to `(Fin k \u2192\u2080 \u2115) \u2192 M` and its `Zero`/`AddMonoid`/`AddGroup`/`Module` instances to the Pi ones (`(f + g) s \u2261 f s + g s`, `(0 : MvPowerSeries) s \u2261 0`, etc.). Nothing documents this, and no Mathlib lemma states it at these binders \u2014 the `map_add`/`map_neg`/`map_zero` bridging the pre-PR proofs used is gone.",
+   "line": 153
+  },
+  {
+   "evidence": "mathlib/Mathlib/RingTheory/MvPowerSeries/Basic.lean:140 `theorem coeff_apply (f : MvPowerSeries \u03c3 R) (d) : coeff d f = f d := rfl`.",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Prove it from the new unfolding lemma and the named Mathlib lemma: `by simp only [isRestricted_iff_apply, MvPowerSeries.coeff_apply]`.",
+   "issue": "`isRestricted_iff` is still proved `(Iff.rfl)`, but the definition body is no longer stated via `coeff`, so this now rests on the accidental defeq `MvPowerSeries.coeff s f \u2261 f s` rather than being literal `rfl` as before. The explicit lemma for exactly this exists.",
+   "line": 122
+  },
+  {
+   "evidence": "mathlib/Mathlib/Topology/Algebra/ConstMulAction.lean:187-190 `Filter.Tendsto.const_smul_zero (c : M) (hg : Tendsto g l (\ud835\udcdd 0)) : Tendsto (fun x \u21a6 c \u2022 g x) l (\ud835\udcdd 0) := smul_zero c \u25b8 hg.const_smul c`, under `[Zero \u03b1] [SMulZeroClass M \u03b1] [ContinuousConstSMul M \u03b1]` (:185).",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Replace the three-line body with `(isRestricted_iff_apply.mp hf).const_smul_zero c` (after the `rw [isRestricted_iff_apply]`), dropping the manual `smul_zero` rewrite.",
+   "issue": "`IsRestricted.const_smul`'s body (`have h := ...const_smul c; rw [smul_zero] at h; exact h`) re-derives Mathlib's `Filter.Tendsto.const_smul_zero`, which is that exact composition at weaker binders.",
+   "line": 172
+  }
+ ],
+ "head_sha": "9fc030582fd8b66ac10b3c6533b0d69e48113bf4",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3141,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d3ccafcc81695183d04cdcc73443ea66d8d442cc3d24e45358e7d7f4b9600936",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T015934Z-3141-proof-quality-67acbb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:59:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The generalisation to `[Zero M]` moves the closure proofs out of range of Mathlib's `coeff` API, and they now close by bare `exact` on the unfolded Pi instances rather than through named lemmas, with no comment saying so; `.add` and `.neg` previously went through `map_add`/`map_neg`. `IsRestricted.const_smul` also re-derives an existing Mathlib lemma.",
+ "transcript_blob": "d6068f3201db5fd8164587572be49247bc2c31da85290a5005f9841cbbd2fc6b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43995,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43995,
+  "cache_read_input_tokens": 305594,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3164,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3164,
+    "cache_read_input_tokens": 57330,
+    "input_tokens": 2,
+    "output_tokens": 2028,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11328,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
