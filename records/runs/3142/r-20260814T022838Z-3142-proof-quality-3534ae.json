@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.475704,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 221.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 48361,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 48361,
+    "cache_read_input_tokens": 1078848,
+    "inference_geo": "not_available",
+    "input_tokens": 39,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1989,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1989,
+      "cache_read_input_tokens": 62871,
+      "input_tokens": 2,
+      "output_tokens": 7542,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17806,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d7073aab6fcc3f3807b3c87b76bf2eee997ca4e9",
+ "cost_usd": 1.475704,
+ "dedupe_key": "TauCetiProject/TauCeti|3142|816b2fefadb7ddddb3e7202fd9e007b2a24f1569|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c3fe2662479bec273bae4f7209b2141b923612a728133a3df8443802c177d44c",
+ "diff_sha256": "c3fe2662479bec273bae4f7209b2141b923612a728133a3df8443802c177d44c",
+ "duration_s": 221.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`of_isClosedEmbedding (f : R \u27f6 S) (hf : IsClosedEmbedding f) (hS : IsCompleteSeparated S) : IsCompleteSeparated R` at Basic.lean:131 instantiates at `f := e.inv : S \u27f6 R` to give `IsCompleteSeparated S` from `hR`. `Homeomorph.isClosedEmbedding` : Mathlib/Topology/Homeomorph/Defs.lean:297.",
+   "file": "TauCeti/Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean",
+   "fix": "`of_iso e hR := IsCompleteSeparated.of_isClosedEmbedding e.inv \u03c6.isClosedEmbedding hR` (with `\u03c6 : S \u2243\u209c R` the homeomorphism, per finding below). Lines 56-65 all go away.",
+   "issue": "The `IsClosedUnderIsomorphisms` proof duplicates the whole argument of `IsCompleteSeparated.of_isClosedEmbedding` (Basic.lean:131-142): same `let _ : UniformSpace`/`IsUniformAddGroup`/`CompleteSpace` preamble, same `AddMonoidHom.isUniformInducing_of_isInducing`. The iso case is a special case of the closed-embedding case.",
+   "line": 46
+  },
+  {
+   "evidence": "`attribute [elementwise (attr := simp)] Iso.hom_inv_id Iso.inv_hom_id` at Mathlib/CategoryTheory/Elementwise.lean:27 generates `Iso.inv_hom_id_apply`; `TopCat.homeoOfIso` at Mathlib/Topology/Category/TopCat/Basic.lean:203, and `TopCommRingCat.hasForgetToTopCat` exists in Mathlib/Topology/Category/TopCommRingCat.lean.",
+   "file": "TauCeti/Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean",
+   "fix": "Use `e.hom_inv_id_apply` / `e.inv_hom_id_apply` (or `by simp`), or drop the hand-rolled structure entirely: `TopCat.homeoOfIso ((forget\u2082 TopCommRingCat.{u} TopCat.{u}).mapIso e).symm`.",
+   "issue": "`left_inv`/`right_inv` are `congrArg (fun g : S \u27f6 S \u21a6 (g : S \u2192 S) x) e.inv_hom_id`. This typechecks only because `TopCommRingCat`'s `\u226b` and `\ud835\udfd9` unfold definitionally to function composition and `id` through the `{f : R \u2192+* S // Continuous f}` wrapper and the `RingHom` coercion; nothing documents the reliance.",
+   "line": 52
+  },
+  {
+   "evidence": "Basic.lean:108-109, 117-118, 136-139; Limits.lean:59-62 \u2014 identical four lines each time; the analogous instances already exist for the subcategory objects at Basic.lean:187-191.",
+   "file": "TauCeti/Topology/Category/TopCommRingCat/CompleteSeparated/Basic.lean",
+   "fix": "Introduce `scoped instance (R : TopCommRingCat.{u}) : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R` and `scoped instance (R : TopCommRingCat.{u}) : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup` in the `TauCeti.TopCommRingCat` namespace, so every proof drops the preamble.",
+   "issue": "The block `let _ : UniformSpace X := IsTopologicalAddGroup.rightUniformSpace X; have : IsUniformAddGroup X := isUniformAddGroup_of_addCommGroup` is now repeated four times: Basic.lean:108-109 (`t2Space`), 117-118 (`pi`), 136-139 (new, twice in one proof), and Limits.lean:59-62 (new). The PR states \"no helper lemmas were needed\".",
+   "line": 136
+  },
+  {
+   "evidence": "`RingHom.eqLocus` is `{ ... with carrier := { x | f x = g x } }` at Mathlib/Algebra/Ring/Subring/Basic.lean:856-857; the exposed API is `RingHom.mem_eqLocus` at line 860.",
+   "file": "TauCeti/Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean",
+   "fix": "Rewrite through the named API first: `have : ((RingHom.eqLocus f.val g.val : Subring _) : Set _) = {x | f.val x = g.val x} := Set.ext fun _ \u21a6 RingHom.mem_eqLocus` then `rw [this]; exact isClosed_eq f.2 g.2`.",
+   "issue": "`isClosed_eq f.2 g.2` proves `IsClosed {x | f.val x = g.val x}`, but the stated goal is about the `Subring \u2192 Set` coercion of `RingHom.eqLocus f.val g.val`; the two are matched only by unfolding `SetLike.coe` down to `eqLocus`'s `carrier` field, undocumented.",
+   "line": 86
+  }
+ ],
+ "head_sha": "816b2fefadb7ddddb3e7202fd9e007b2a24f1569",
+ "merge_base_sha": "d7073aab6fcc3f3807b3c87b76bf2eee997ca4e9",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3142,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cab894266d7e2a4ae2dca5663394d0aa499bcfae9b9ffb0687318000b41f0053",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T022838Z-3142-proof-quality-3534ae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T02:28:38Z",
+ "submitted_by": "kim-em",
+ "summary": "The iso-closure instance re-proves the substance of the author's own `of_isClosedEmbedding` instead of applying it, and builds its homeomorphism by `congrArg` on `e.inv_hom_id`, relying on undocumented unfolding of categorical composition/identity through the hom subtype. The four-line uniformity preamble is now repeated four times across the two files.",
+ "transcript_blob": "9147c8186efb76718c28bff49fab20bf4810329e65e4017d52d543f9e5bab6e8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 48361,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 48361,
+  "cache_read_input_tokens": 1078848,
+  "inference_geo": "not_available",
+  "input_tokens": 39,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1989,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1989,
+    "cache_read_input_tokens": 62871,
+    "input_tokens": 2,
+    "output_tokens": 7542,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17806,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
