@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.3504895,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 56.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 19382,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 19382,
+    "cache_read_input_tokens": 110181,
+    "inference_geo": "not_available",
+    "input_tokens": 7,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 736,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 736,
+      "cache_read_input_tokens": 35145,
+      "input_tokens": 2,
+      "output_tokens": 1815,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 3886,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "1344dc147031ad19a59a97c6c7dc14710d96d9eb",
+ "cost_usd": 0.35049,
+ "dedupe_key": "TauCetiProject/TauCeti|3189|a1994da0df77c4ac01e3fde23b5749e59987e02f|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "70f9de0183523796ee745c673e93d1cffdade6d8a34a51558bb1be22f662a10e",
+ "diff_sha256": "70f9de0183523796ee745c673e93d1cffdade6d8a34a51558bb1be22f662a10e",
+ "duration_s": 56.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 16-18 unchanged in the diff; new filter added at lines 133-135 (`if has_access(login): continue`), and `already_admitted` lines 100-102 now explicitly state it does not see org members.",
+   "file": "scripts/claims_access.py",
+   "fix": "Amend the `grant` line to include the effective-permission check, e.g. `Invite every merged-PR author who is not already a collaborator, already invited, or already able to push (organization members inherit access the collaborator list does not show).`",
+   "issue": "Module docstring still says `grant  Invite every merged-PR author who is not already a collaborator or already invited.` That predicate is exactly what this PR changes: candidates are now also filtered by effective push permission (`has_access`, line 134), which is the only reason org members stop being re-proposed. The top-of-file summary a reader consults first now describes the pre-PR behaviour.",
+   "line": 16
+  },
+  {
+   "evidence": "Lines 131-155: `invited` is incremented only on the dry-run branch (138) and the success branch (152); the `p.returncode != 0` branch at 145-148 does `continue` after `failures += 1`.",
+   "file": "scripts/claims_access.py",
+   "fix": "Gate on both counters: `if not invited and not failures:`.",
+   "issue": "`if not invited: print(\"grant: every merged-PR author already has the claim namespace\")` fires when every candidate's invitation FAILED, since the failure path (line 145-148) increments `failures` and never `invited`. The run then reports on stdout that everyone has access while stderr says the opposite. Previously the message was only reachable when `missing` was empty.",
+   "line": 153
+  },
+  {
+   "evidence": "Line 123 `return p.returncode == 0 and ...` conflates error with absence; the rationale appears only at test_claims_access.py:56 (\"A redundant invitation is a no-op; a missed one is a fleet that never coordinates.\").",
+   "file": "scripts/claims_access.py",
+   "fix": "Add a clause: an unreadable answer counts as no access, so a candidate is invited rather than silently skipped; a redundant invitation is a no-op.",
+   "issue": "`has_access` docstring poses a yes/no question (\"Can this login already push, however they got it?\") but says nothing about the case where the API call fails, where it answers \"no\" without knowing. That deliberate fail-towards-inviting choice is documented only in a test comment (test_claims_access.py:56), not on the function whose contract it is.",
+   "line": 115
+  }
+ ],
+ "head_sha": "a1994da0df77c4ac01e3fde23b5749e59987e02f",
+ "merge_base_sha": "1344dc147031ad19a59a97c6c7dc14710d96d9eb",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3189,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "64b2e98658cbdbf01faa4f573b869693a65016b3ecd560397f9ea7418424b965",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T082755Z-3189-documentation-abd220",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T08:27:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The module docstring still describes grant's old admission predicate, which this PR's whole point is to change, and grant's success line now prints even when invitations failed. has_access also documents no answer for the API-error case it deliberately handles.",
+ "transcript_blob": "4a57ea1c895f0bbcd8d19afe8386c5e67d4ac9c14d45f81bd6d06130043dd744",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 19382,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 19382,
+  "cache_read_input_tokens": 110181,
+  "inference_geo": "not_available",
+  "input_tokens": 7,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 736,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 736,
+    "cache_read_input_tokens": 35145,
+    "input_tokens": 2,
+    "output_tokens": 1815,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 3886,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
