@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.224021,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 39.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 70912,
+    "input_tokens": 100003,
+    "output_tokens": 1437,
+    "reasoning_output_tokens": 687
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f02f6f6aa1e56a6614ae98b3c618805655df336f",
+ "cost_estimated": true,
+ "cost_usd": 0.224021,
+ "dedupe_key": "TauCetiProject/TauCeti|3202|c0d6799751a9e23ce423f51749d30836911cac4e|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9fea3c858dd5aebe1c8fa7a9b1c388e8b6a8597c5b8c453c0defcd7d9ecd28f1",
+ "diff_sha256": "9fea3c858dd5aebe1c8fa7a9b1c388e8b6a8597c5b8c453c0defcd7d9ecd28f1",
+ "duration_s": 39.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg -n \"exp_add_smul_apply\" code` finds only its declaration at line 120 and its proof use at line 182.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Make `exp_add_smul_apply` private.",
+   "issue": "`exp_add_smul_apply` is public despite being used only inside `yosidaLimit_time_add_of_tendsto`; it exposes a local proof helper already derived directly from Mathlib's `exp_add_of_commute`.",
+   "line": "120"
+  },
+  {
+   "evidence": "Repository-wide `rg` finds the CLM declarations only within `LimitSemigroup.lean`, and `yosidaLimitSemigroupOf` outside that block only at `HilleYosida/Limit.lean:153,163,168`.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Keep this scaffolding private by moving the Hille\u2013Yosida packaging into the same file or into its own private implementation; expose only `hilleYosidaLimitSemigroup` and its characteristic lemmas.",
+   "issue": "The implementation layer `yosidaLimitCLMOf`, `yosidaLimitCLMOf_apply`, `norm_yosidaLimitCLMOf_le`, `yosidaLimitSemigroupOf`, `yosidaLimitSemigroupOf_apply`, and `yosidaLimitSemigroupOf_hasGrowthBound` is public, although the CLM declarations serve only the constructor and the constructor family serves only the new Hille\u2013Yosida definition; the existing Lumer\u2013Phillips semigroup does not consume it.",
+   "line": "240"
+  }
+ ],
+ "head_sha": "c0d6799751a9e23ce423f51749d30836911cac4e",
+ "merge_base_sha": "4321936ad0caa61dcb1ee0f84492ed2fa2358b8a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3202,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9c706dffcd7e4fe9b756398c89505d67df4a95d4f4e0228ad2a53e20b0c03d86",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T110401Z-3202-api-design-b7fc03",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T11:04:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR exposes implementation-only scaffolding that is not part of the canonical semigroup API.",
+ "transcript_blob": "8ac77e155acf17cb1238f774e2234a55bcbb6811637785f25fec502d8ccbd210",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 70912,
+  "input_tokens": 100003,
+  "output_tokens": 1437,
+  "reasoning_output_tokens": 687
+ },
+ "verdict": "request_changes"
+}

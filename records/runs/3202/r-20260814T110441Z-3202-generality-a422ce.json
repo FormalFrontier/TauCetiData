@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.276749,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 42.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 109568,
+    "input_tokens": 144775,
+    "output_tokens": 1531,
+    "reasoning_output_tokens": 643
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f02f6f6aa1e56a6614ae98b3c618805655df336f",
+ "cost_estimated": true,
+ "cost_usd": 0.276749,
+ "dedupe_key": "TauCetiProject/TauCeti|3202|c0d6799751a9e23ce423f51749d30836911cac4e|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "9fea3c858dd5aebe1c8fa7a9b1c388e8b6a8597c5b8c453c0defcd7d9ecd28f1",
+ "diff_sha256": "9fea3c858dd5aebe1c8fa7a9b1c388e8b6a8597c5b8c453c0defcd7d9ecd28f1",
+ "duration_s": 42.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The definition body passes only `M` and `hbound` to `LinearMap.mkContinuous`; the hypothesis is deliberately named `_hM` and has no occurrence.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Remove `_hM` from `yosidaLimitCLMOf` and its application lemma; retain nonnegativity only in `norm_yosidaLimitCLMOf_le`, where `LinearMap.mkContinuous_norm_le` requires it.",
+   "issue": "`yosidaLimitCLMOf` takes `_hM : 0 \u2264 M`, but its body never uses it.",
+   "line": 240
+  },
+  {
+   "evidence": "Mathlib defines `TendstoUniformlyOn.tendsto_at`; `hunif` covers every `Set.Icc 0 T`, so choosing `T = t` yields exactly the `htend` premise used for linearity, bounds, and the semigroup law.",
+   "file": "TauCeti/Analysis/Semigroups/Generation/LimitSemigroup.lean",
+   "fix": "Remove `htend` from the constructor API and derive it as `(hunif x t.coe_nonneg).tendsto_at (Set.right_mem_Icc.mpr t.coe_nonneg)` (and analogously for real nonnegative times).",
+   "issue": "`yosidaLimitSemigroupOf` separately requires `htend`, although `hunif` already implies every required pointwise convergence.",
+   "line": 275
+  }
+ ],
+ "head_sha": "c0d6799751a9e23ce423f51749d30836911cac4e",
+ "merge_base_sha": "4321936ad0caa61dcb1ee0f84492ed2fa2358b8a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3202,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "906cba4147e03561793db6576c6cf7cf4eda3cd77228eec2b03384f95341c97c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T110441Z-3202-generality-a422ce",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T11:04:41Z",
+ "submitted_by": "kim-em",
+ "summary": "The shared construction exposes two redundant hypotheses, making its API stronger than necessary.",
+ "transcript_blob": "ffd55b31788722091e3e32c5fac8c8bc0e76803fa242b483670f044724454157",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 109568,
+  "input_tokens": 144775,
+  "output_tokens": 1531,
+  "reasoning_output_tokens": 643
+ },
+ "verdict": "request_changes"
+}
