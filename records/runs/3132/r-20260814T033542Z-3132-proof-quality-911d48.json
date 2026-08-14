@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2091625000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 162.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 57965,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 57965,
+    "cache_read_input_tokens": 589203,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2309,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2309,
+      "cache_read_input_tokens": 72155,
+      "input_tokens": 2,
+      "output_tokens": 3234,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13011,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_usd": 1.209163,
+ "dedupe_key": "TauCetiProject/TauCeti|3132|a6d6039122cca96572e72e7414f6c2161f67c453|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "diff_sha256": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "duration_s": 162.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/GroupTheory/PresentedGroup.lean:47 `def mk (rels) : FreeGroup \u03b1 \u2192* PresentedGroup rels := \u27e8\u27e8QuotientGroup.mk, rfl\u27e9, fun _ _ => rfl\u27e9`; :78 `lemma mk_eq_mk_of_mul_inv_mem (hx : x * y\u207b\u00b9 \u2208 rels) : mk rels x = mk rels y`.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Keep `PresentedGroup.mk` as a hom: add `theorem sigma_eq_mk (i) : sigma i = PresentedGroup.mk (artinRelations n) (FreeGroup.of i) := rfl`, rewrite with it, and use `map_mul`/`map_inv` on `mk` directly. For `braid_rel` the relator is literally `x * y\u207b\u00b9`, so `PresentedGroup.mk_eq_mk_of_mul_inv_mem (ArtinRelation.braid i j h)` gives the statement after `simp [sigma_eq_mk, map_mul]`; `comm` follows the same way modulo one `mul_assoc`.",
+   "issue": "`comm` (line 107) and `braid_rel` (line 120) both do `dsimp [sigma, PresentedGroup.of, PresentedGroup.mk] at h1 \u22a2`, unfolding the body of Mathlib's `PresentedGroup.mk` (a bundled `MonoidHom`, defined as `\u27e8\u27e8QuotientGroup.mk, rfl\u27e9, fun _ _ => rfl\u27e9`) so that the following `rw [map_mul, \u2026]` chain applies. The proofs then depend on that internal representation rather than on the hom API.",
+   "line": 107
+  },
+  {
+   "evidence": "Lines 203\u2013210 of the new file; rubric flags `change`/`show` without a documenting comment.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Replace the `let`s with `set a : Fin n := \u27e8i.1, hi\u27e9 with ha` (etc.), which abstracts hypotheses and goal together, or state `hab`/`hbc`/`hac` in terms of `a`, `b`, `c` after introducing them. If any `change` survives, add a comment saying why no rewrite reaches the goal.",
+   "issue": "Four undocumented `change` steps: `change Equiv.swap a b * \u2026 = \u2026` (206) and `change a \u2260 b at hab` / `change b \u2260 c at hbc` / `change a \u2260 c at hac` (208\u2013210). They exist only to fold the `let a/b/c` bindings introduced on 203\u2013205, i.e. they rely on the definitional unfolding of the `let`s.",
+   "line": 206
+  },
+  {
+   "evidence": "Mathlib has only `Equiv.swap_mul_swap_mul_swap` (mathlib/Mathlib/Algebra/Group/End.lean:579), not this symmetric form, so the fact is genuinely reusable and currently hidden.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Extract `theorem Equiv.swap_braid {\u03b1} [DecidableEq \u03b1] {a b c : \u03b1} (hab : a \u2260 b) (hbc : b \u2260 c) (hac : a \u2260 c) : swap a b * swap b c * swap a b = swap b c * swap a b * swap b c` (proved by the current calc) and a companion commuting-swaps lemma; `permHom_rel` then reduces to two applications.",
+   "issue": "The `calc` on 211\u2013218 proves a general fact about transpositions \u2014 `swap a b * swap b c * swap a b = swap b c * swap a b * swap b c` for pairwise-distinct `a b c` \u2014 inline inside `permHom_rel`, as does the disjointness argument on 180\u2013188. `permHom_rel` is a 48-line two-branch proof whose structure is entirely obscured by this.",
+   "line": 211
+  },
+  {
+   "evidence": "`Fin.ne_of_val_ne` is in use in Mathlib, e.g. mathlib/Mathlib/RingTheory/Polynomial/Resultant/Basic.lean:101.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Use `Fin.ne_of_val_ne (by omega)` for the disequalities, and factor the bound boilerplate into a `def strand (i : Fin (n - 1)) : Fin n := \u27e8i.1, by omega\u27e9` / `strandSucc` pair (or `Fin.castLE`) used by `permGen`, `permHom_sigma`, `castSuccGen`, and `castSuccHom_sigma`.",
+   "issue": "Seven near-identical `Fin` disequality proofs written as `intro h_eq; injection h_eq with hv; omega` (180, 182, 184, 186 in the comm branch; 194, 196, 198 in the braid branch), plus twelve copies of `by have hlt := i.is_lt; omega` for the `i.1 < n` / `i.1 + 1 < n` bounds (167, 168, 176\u2013179, 191\u2013193, 229, 230, 240, 262).",
+   "line": 180
+  },
+  {
+   "evidence": "mathlib/Mathlib/GroupTheory/FreeGroup/Basic.lean:665 `def Lift.aux : List (\u03b1 \u00d7 Bool) \u2192 \u03b2 := fun L => \u2026` (auxiliary for `lift`, only used internally at :680\u2013684); the public interface is `lift_mk` at :689.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Define `evalWord w : BraidGroup n := FreeGroup.lift sigma (FreeGroup.mk w)`. Then `evalWord_nil` is `simp`, `evalWord_append` follows from `FreeGroup.mul_mk` and `map_mul`, and `evalWord_cons` from `FreeGroup.lift_mk` \u2014 no unfolding of an internal definition.",
+   "issue": "`evalWord` is defined through Mathlib's internal helper `FreeGroup.Lift.aux`, so all three lemmas must unfold it: `evalWord_nil` is `dsimp [evalWord, FreeGroup.Lift.aux]; rfl` (130\u2013131), and `evalWord_cons`/`evalWord_append` `simp [evalWord, FreeGroup.Lift.aux, \u2026]` (136, 141). `Lift.aux` has no lemma API, so these proofs depend on its body and on a bare `rfl`.",
+   "line": 126
+  }
+ ],
+ "head_sha": "a6d6039122cca96572e72e7414f6c2161f67c453",
+ "merge_base_sha": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3132,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a66ec85abc75f8db899a57afd6bb5e3fd94b802eb6124a882d94231a1777cac3",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T033542Z-3132-proof-quality-911d48",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T03:35:42Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs work by unfolding Mathlib internals (`PresentedGroup.mk`, `FreeGroup.Lift.aux`) instead of the available API, and `permHom_rel` carries undocumented `change` steps plus an inline general `Equiv.swap` identity that belongs in its own lemma.",
+ "transcript_blob": "daa78e3b95f9c7077e4beacc5a9f0772e8afb955ecfff3865c9addfb8be75ffb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 57965,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 57965,
+  "cache_read_input_tokens": 589203,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2309,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2309,
+    "cache_read_input_tokens": 72155,
+    "input_tokens": 2,
+    "output_tokens": 3234,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13011,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

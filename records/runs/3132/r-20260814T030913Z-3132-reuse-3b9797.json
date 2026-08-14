@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7536635,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 277.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 68699,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 68699,
+    "cache_read_input_tokens": 971905,
+    "inference_geo": "not_available",
+    "input_tokens": 32,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2715,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2715,
+      "cache_read_input_tokens": 82483,
+      "input_tokens": 2,
+      "output_tokens": 2223,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22828,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_usd": 1.753664,
+ "dedupe_key": "TauCetiProject/TauCeti|3132|a6d6039122cca96572e72e7414f6c2161f67c453|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "diff_sha256": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "duration_s": 277.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Basic.lean:665 `def Lift.aux : List (\u03b1 \u00d7 Bool) \u2192 \u03b2 := fun L => List.prod <| L.map fun x => cond x.2 (f x.1) (f x.1)\u207b\u00b9`; Basic.lean:689 `theorem lift_mk : lift f (mk L) = List.prod (...) := rfl`; Basic.lean:528 `theorem mul_mk : mk L\u2081 * mk L\u2082 = mk (L\u2081 ++ L\u2082)`. `grep -rn evalWord TauCeti/` shows no consumer of the wrapper.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Delete `evalWord`, `evalWord_nil`, `evalWord_cons`, `evalWord_append` and use `(FreeGroup.lift sigma : FreeGroup (Fin (n - 1)) \u2192* BraidGroup n)` (equal to `PresentedGroup.mk (artinRelations n)` by `FreeGroup.lift_unique`, Basic.lean:696). Then `evalWord_nil` is `FreeGroup.one_eq_mk` (line 508) + `map_one`, `evalWord_cons` is `FreeGroup.lift_mk` (line 689), `evalWord_append` is `FreeGroup.mul_mk` (line 528) + `map_mul`, and `map_inv`/`map_pow` come free. The `TauCeti.GroupTheory.Presentation.Relator` import then goes too: it is used only for the `PresentationWord` abbrev (`abbrev PresentationWord (\u03b1) := List (\u03b1 \u00d7 Bool)`, Relator.lean:65).",
+   "issue": "`evalWord w := FreeGroup.Lift.aux sigma w` is a thin wrapper over `FreeGroup.lift sigma (FreeGroup.mk w)` \u2014 `Lift.aux` is Mathlib's private-in-spirit auxiliary for `FreeGroup.lift` (Mathlib/GroupTheory/FreeGroup/Basic.lean:665), and `FreeGroup.lift_mk` (line 689) is `rfl`, so the two are definitionally equal. Wrapping it as a bare function also throws away the `MonoidHom` structure, which is why lines 129/134/139 must restate hom lemmas.",
+   "line": 125
+  },
+  {
+   "evidence": "Mathlib/GroupTheory/PresentedGroup.lean:78 `lemma mk_eq_mk_of_mul_inv_mem (hx : x * y\u207b\u00b9 \u2208 rels) : mk rels x = mk rels y := eq_of_mul_inv_eq_one <| one_of_mem hx`; PresentedGroup.lean:47 `def mk (rels) : FreeGroup \u03b1 \u2192* PresentedGroup rels`; PresentedGroup.lean:55 `def of (x) := mk rels (FreeGroup.of x)`.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "In `braid_rel` use `PresentedGroup.mk_eq_mk_of_mul_inv_mem (ArtinRelation.braid i j h)` and push `PresentedGroup.mk` through the products with `map_mul` (`sigma i = PresentedGroup.of i = mk _ (FreeGroup.of i)` is `rfl` by the definition of `of`). In `comm` drop `dsimp [PresentedGroup.of, PresentedGroup.mk]` and rewrite with `map_mul`/`map_inv` on `PresentedGroup.mk` directly, keeping `commutatorElement_eq_one_iff_mul_comm`.",
+   "issue": "`braid_rel` re-derives `PresentedGroup.mk_eq_mk_of_mul_inv_mem` inline: its proof is `PresentedGroup.one_of_mem hrel` followed by `mul_inv_eq_one.mp`, which is verbatim that lemma's body (`eq_of_mul_inv_eq_one <| one_of_mem hx`). It also `dsimp`-unfolds the bodies of `PresentedGroup.of` and `PresentedGroup.mk` instead of using `mk`'s `MonoidHom` API; `comm` (line 101) unfolds the same internals.",
+   "line": 114
+  },
+  {
+   "evidence": "`Fin.ne_of_val_ne` is used in Mathlib at Mathlib/RingTheory/Polynomial/Resultant/Basic.lean:101 (`Matrix.updateRow_ne (Fin.ne_of_val_ne hi')`) and Mathlib/Data/Fin/Tuple/Take.lean:101; `Fin.val_ne_iff` at Mathlib/Data/Fin/Basic.lean:301.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Replace each with `Fin.ne_of_val_ne (by omega)` (or `by simp [Fin.val_ne_iff]`), collapsing the seven blocks to one-liners.",
+   "issue": "Seven copies of `intro h_eq; injection h_eq with hv; omega` (lines 181, 183, 185, 187, 195, 197, 199) re-derive `Fin.ne_of_val_ne`, which is exactly this step.",
+   "line": 181
+  }
+ ],
+ "head_sha": "a6d6039122cca96572e72e7414f6c2161f67c453",
+ "merge_base_sha": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3132,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "09a20f9910f118fe0f31373b115526c54c940964cc019150bd8b94bfe2b82843",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T030913Z-3132-reuse-3b9797",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T03:09:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The braid group itself is genuinely new (no BraidGroup/Artin presentation exists in Mathlib or TauCeti). But evalWord and its three lemmas are a thin wrapper over FreeGroup.lift \u2218 FreeGroup.mk built on Mathlib's internal Lift.aux, braid_rel inlines the body of PresentedGroup.mk_eq_mk_of_mul_inv_mem, and seven Fin disequalities re-derive Fin.ne_of_val_ne.",
+ "transcript_blob": "569b60e3b406386b36d9f8d7c673763fb786a481d40838d606101cf800ad9d6e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 68699,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 68699,
+  "cache_read_input_tokens": 971905,
+  "inference_geo": "not_available",
+  "input_tokens": 32,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2715,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2715,
+    "cache_read_input_tokens": 82483,
+    "input_tokens": 2,
+    "output_tokens": 2223,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22828,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

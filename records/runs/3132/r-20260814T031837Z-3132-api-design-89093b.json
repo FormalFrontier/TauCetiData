@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4923285,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 245.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 61197,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 61197,
+    "cache_read_input_tokens": 799379,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2932,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2932,
+      "cache_read_input_tokens": 74764,
+      "input_tokens": 2,
+      "output_tokens": 3187,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18829,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_usd": 1.492328,
+ "dedupe_key": "TauCetiProject/TauCeti|3132|a6d6039122cca96572e72e7414f6c2161f67c453|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "diff_sha256": "6f7c5e2a7b65a3fd3f45f27835f7b5a1383cff59e91ddd2dd534ddd62ee18312",
+ "duration_s": 245.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/GroupTheory/PresentedGroup.lean:129 `toGroup`, :151 `@[ext] theorem ext` are stated for `PresentedGroup rels`; the sibling `GroupPresentation.Group` (GroupPresentation.lean:200) is deliberately an `abbrev` for exactly this reason, and GroupPresentation.lean:92 documents that bodies here are sealed.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Re-export the universal property: `def lift (f : Fin (n-1) \u2192 G) (hcomm : \u2200 i j, i.1+2 \u2264 j.1 \u2192 f i * f j = f j * f i) (hbraid : \u2200 i j, i.1+1 = j.1 \u2192 f i * f j * f i = f j * f i * f j) : BraidGroup n \u2192* G`, with `@[simp] lift_sigma`, an `@[ext] hom_ext : (\u2200 i, \u03c6 (sigma i) = \u03c8 (sigma i)) \u2192 \u03c6 = \u03c8`, and `closure_range_sigma : Subgroup.closure (Set.range sigma) = \u22a4` (or an induction principle). Do not fix this with `@[expose]`.",
+   "issue": "`BraidGroup n` is a plain `def` in a non-`@[expose]` `public section`, so its body is sealed downstream. `PresentedGroup.toGroup`, `PresentedGroup.ext`, `induction_on`, `generated_by`, and `closure_range_of` are therefore all unreachable for `BraidGroup n`: no consumer can define a new homomorphism out of B_n (Burau, Temperley\u2013Lieb, the roadmap's `burauAlexander`) or prove two homomorphisms out of B_n are equal. The whole file's own four homs were built inside the module, where the body is visible.",
+   "line": 85
+  },
+  {
+   "evidence": "Same convention as `mem_relatorSet_iff` (GroupPresentation.lean:176) and `mem_coxeterRelatorsOfList_iff` (Coxeter.lean:171), which exist precisely so consumers never unfold a sealed set.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Add `@[simp] theorem mem_artinRelations {r} : r \u2208 artinRelations n \u2194 ArtinRelation n r := Iff.rfl`.",
+   "issue": "`artinRelations n = {r | ArtinRelation n r}` also has a sealed body and no membership lemma, so a downstream user holding `ArtinRelation.comm i j h` cannot conclude `_ \u2208 artinRelations n` (needed for `PresentedGroup.map`, or any relation-level reasoning).",
+   "line": 80
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/Subgroup/Ker.lean:364 `instance (priority := 100) normal_ker (f : G \u2192* M) : f.ker.Normal` \u2014 matches `f.ker`, not the sealed alias.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Add `@[simp] theorem mem_pureBraidGroup {b} : b \u2208 PureBraidGroup n \u2194 permHom n b = 1` and `instance : (PureBraidGroup n).Normal`; rename to `pureBraidGroup` per the lowerCamelCase convention for data-valued defs.",
+   "issue": "`PureBraidGroup n := (permHom n).ker` is sealed, so `MonoidHom.normal_ker` does not apply to it downstream (`BraidGroup n \u29f8 PureBraidGroup n` fails) and there is no membership characterization. The UpperCamelCase name also reads as a `Type`, not a `Subgroup`.",
+   "line": 235
+  },
+  {
+   "evidence": "Mathlib/GroupTheory/PresentedGroup.lean:49 `mk_surjective`, :97 `induction_on` \u2014 both stated for `PresentedGroup rels` and hence unusable through the sealed `BraidGroup`.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Add `theorem evalWord_surjective : Function.Surjective (evalWord (n := n))` (from `PresentedGroup.mk_surjective` and `FreeGroup.Quot.mk`), plus an `induction_on` for `BraidGroup n` stated over `evalWord`.",
+   "issue": "`evalWord` ships introduction lemmas only (`_nil`, `_cons`, `_append`); there is no elimination \u2014 nothing says every braid is `evalWord w`. Combined with the inaccessible `PresentedGroup.induction_on`, the combinatorial layer the roadmap builds on (`closes : BraidWord n \u2192 Diagram`) has no way to reduce a general element of `BraidGroup n` to a word.",
+   "line": 125
+  },
+  {
+   "evidence": "The only uses are `exponentSum` (155), `permHom` (222), `castSuccHom` (257) in this file; `grep -rn \"permGen\\|exponentSumGen\\|castSuccGen\" code/TauCeti` matches nothing else.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Mark all six `private`.",
+   "issue": "Six proof-only helpers are public with sealed bodies, so they are unusable but permanently part of the surface: `exponentSumGen` (144), `exponentSum_rel` (147), `permGen` (166), `permHom_rel` (171), `castSuccGen` (239), `castSucc_rel` (242). Each serves only the `PresentedGroup.toGroup` call two lines below it, and each hom's behaviour is already pinned by its `*_sigma` simp lemma.",
+   "line": 144
+  },
+  {
+   "evidence": "Line 101 `theorem comm (i j : Fin (n - 1)) (h : i.1 + 2 \u2264 j.1) : sigma i * sigma j = sigma j * sigma i`, inside `namespace BraidGroup` (line 90).",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Rename to `sigma_comm`, and `braid_rel` (114) to `sigma_braid` for a parallel `sigma_*` family.",
+   "issue": "`BraidGroup.comm` names the far-commutation relation but reads as \"the braid group is commutative\", which is false for n \u2265 3; under `open BraidGroup` it is a bare `comm`.",
+   "line": 101
+  },
+  {
+   "evidence": "`grep -rn \"BraidWord\" code/TauCeti` returns nothing; roadmap/TauCetiRoadmap/GeometricTopology/README.md:485 `def closes : BraidWord n \u2192 Diagram` and :490 `theorem alexander_eq_burau (\u03b2 : BraidWord n)`.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Add `abbrev BraidWord (n : \u2115) := PresentationWord (Fin (n - 1))` and state `evalWord` over it, or drop the claim from the description.",
+   "issue": "The PR description advertises `BraidWord n` as a key definition, but no such declaration exists; the roadmap names `BraidWord n` as the type later stages consume.",
+   "line": 0
+  }
+ ],
+ "head_sha": "a6d6039122cca96572e72e7414f6c2161f67c453",
+ "merge_base_sha": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3132,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "247d6f72aa1fa4ce51ab7fce05841c5f51c5bea4596084ef5fc2b39d9683b2db",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T031837Z-3132-api-design-89093b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T03:18:37Z",
+ "submitted_by": "kim-em",
+ "summary": "The braid group is a sealed-body `def` over `PresentedGroup` with no re-exported universal property, so downstream can neither build a homomorphism out of `BraidGroup n` (e.g. the Burau representation the roadmap needs) nor prove two such homomorphisms equal; the relation set, `evalWord`, and `PureBraidGroup` are likewise missing their characteristic lemmas, and six proof-only helpers are public.",
+ "transcript_blob": "91b3089b3db52f8bac6236483ef2b707b06b2dba47487c52c972a785c697d1dd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61197,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 61197,
+  "cache_read_input_tokens": 799379,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2932,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2932,
+    "cache_read_input_tokens": 74764,
+    "input_tokens": 2,
+    "output_tokens": 3187,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18829,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
