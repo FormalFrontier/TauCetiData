@@ -1,0 +1,153 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0600349999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 340.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73619,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73619,
+    "cache_read_input_tokens": 1296934,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1543,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1543,
+      "cache_read_input_tokens": 88575,
+      "input_tokens": 2,
+      "output_tokens": 3868,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26434,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "cost_usd": 2.060035,
+ "dedupe_key": "TauCetiProject/TauCeti|3136|75de330eb9edb735635994a1afdb06516a46ee98|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "0510811cbc15670693f7bed5a3f564087cc7637553a68f3612f900a852315461",
+ "diff_sha256": "0510811cbc15670693f7bed5a3f564087cc7637553a68f3612f900a852315461",
+ "duration_s": 340.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/RingTheory/IsTensorProduct.lean:391 `theorem TensorProduct.isBaseChange : IsBaseChange S (TensorProduct.mk R S M 1)`; the file's `complexificationMap := (TensorProduct.mk \u2124 \u2102 V) 1`. Grep for `Rationalification` in ./code returns only its own definition sites. TauCeti/LinearAlgebra/Dual/BaseChange.lean:85 already calls `TensorProduct.isBaseChange R M A` directly without a wrapper.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Delete `Rationalification`, `rationalificationMap`, `rationalificationMap_isBaseChange`. Delete `complexificationMap`/`complexificationMap_isBaseChange` too and write `TensorProduct.isBaseChange \u2124 \u2124 \u2102` at its two use sites (`tate` line 434, `tate_piece_apply` line 480).",
+   "issue": "`rationalificationMap_isBaseChange` is `TensorProduct.isBaseChange \u2124 V \u211a` restated with the map inlined (its proof is literally that term), and `Rationalification`/`rationalificationMap`/`rationalificationMap_isBaseChange` have zero uses anywhere in the repo. `complexificationMap_isBaseChange` (line 69) is the same restatement of `TensorProduct.isBaseChange \u2124 V \u2102`.",
+   "line": "78"
+  },
+  {
+   "evidence": "Grep in the file: `concreteConjugation` occurs only at 177; `concreteLatticeConjEquiv` only at 169 and 179. Line 469/495 use `latticeConjugation (complexificationMap_isBaseChange (V := \u2124))` on the same type.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Delete `concreteConjugation` and `concreteLatticeConjEquiv`; keep only `latticeConjugation`. `concreteLatticeConj` stays since `latticeConj` is built from it.",
+   "issue": "`concreteConjugation` (and `concreteLatticeConjEquiv`, line 169, whose only consumer it is) is a second, unused `Conjugation (Complexification V)` parallel to `latticeConjugation (complexificationMap_isBaseChange)`, which is the one actually used by `tate` and `tate_piece_apply`; the file's own `latticeConj_unique` (line 241) shows the two agree.",
+   "line": "177"
+  },
+  {
+   "evidence": "Mathlib/Algebra/Module/Submodule/Range.lean:305 `theorem map_top (f) : map f \u22a4 = range f`; Mathlib/Algebra/Module/Submodule/Equiv.lean:122 `protected theorem range : LinearMap.range (e : M \u2192\u209b\u2097[\u03c3\u2081\u2082] M\u2082) = \u22a4`. `RingHomSurjective (starRingEnd \u2102)` is available via `RingHomSurjective.invPair` (Algebra/Ring/CompTypeclasses.lean:169) and `instance : RingHomInvPair (starRingEnd R) (starRingEnd R)` (Algebra/Star/Basic.lean:440).",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Replace both by `by rw [Submodule.map_top]; exact LinearEquiv.range _`, and state it once as a lemma in the `Conjugation` namespace (`Conjugation.map_top : (\u22a4 : Submodule \u2102 W).map \u03c9.toEquiv.toLinearMap = \u22a4`).",
+   "issue": "The 8-line `h_top_map` proof that `(\u22a4).map \u03c9.toEquiv.toLinearMap = \u22a4` is duplicated verbatim at lines 468-475 and 494-501, and both re-derive an existing Mathlib lemma pair.",
+   "line": "468"
+  },
+  {
+   "evidence": "Mathlib/Algebra/Module/Submodule/Map.lean:125 `theorem map_inf (f) (hf : Injective f) : (p \u2293 q).map f = p.map f \u2293 q.map f`; :104 `map_comp`; :101 `map_id`.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Prove it as: `map \u03c9 (F p \u2293 map \u03c9 (F (n-p))) = map \u03c9 (F p) \u2293 map \u03c9 (map \u03c9 (F (n-p)))` by `Submodule.map_inf _ \u03c9.toEquiv.injective`, collapse the double map with `\u2190 Submodule.map_comp` plus `\u03c9.involutive` and `Submodule.map_id`, then finish with `show n - (n - p) = p by ring` and `inf_comm`.",
+   "issue": "`map_conj_piece`'s ~28-line `ext`/membership argument re-derives standard `Submodule` plumbing that Mathlib already provides for an injective (here bijective) map.",
+   "line": "309"
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/TensorProduct/Map.lean:110 `map_comp : map (f\u2082 \u2218\u209b\u2097 f\u2081) (g\u2082 \u2218\u209b\u2097 g\u2081) = map f\u2082 g\u2082 \u2218\u209b\u2097 map f\u2081 g\u2081`; :136 `map_id : map id id = .id`; Mathlib/Algebra/Star/Basic.lean:354 `starRingEnd_self_apply`.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Prove `concreteLatticeConjIntLinear \u2218\u2097 concreteLatticeConjIntLinear = LinearMap.id` via `\u2190 TensorProduct.map_comp`, `starRingEnd_self_apply` (to get `conj \u2218\u2097 conj = id` by `LinearMap.ext`), and `TensorProduct.map_id`; then read off involutivity.",
+   "issue": "`concreteLatticeConj_involutive` runs a 25-line `TensorProduct.induction_on` to prove `map conj id \u2218 map conj id = id`, which the tensor-map functoriality lemmas give directly.",
+   "line": "141"
+  },
+  {
+   "evidence": "Lines 341-344 and 416-419 are the same four lines (`have : n + 1 - (p + 1) = n - p := by ring; rw [\u2190 this]; exact hs.opposed (p + 1)`).",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Factor it out once, e.g. `theorem opposed_add_one (p : \u2124) : IsCompl (hs.F (p+1)) ((hs.F (n-p)).map \u03c9.toEquiv.toLinearMap)`, and use it at both sites.",
+   "issue": "The derivation of `IsCompl (hs.F (p + 1)) ((hs.F (n - p)).map \u03c9.toEquiv.toLinearMap)` from `hs.opposed (p+1)` appears twice verbatim: lines 341-344 (`F_eq_F_add_one_sup_piece`) and 416-419 (`iSupIndep_piece`).",
+   "line": "341"
+  },
+  {
+   "evidence": "Mathlib/Data/Int/Init.lean:162 `protected def Int.leInductionDown {m} (base : motive m _) (pred : \u2200 n hnm, motive n hnm \u2192 motive (n - 1) _) : \u2200 n hnm, motive n hnm` (`Int.le_induction_down` is its deprecated alias, :179).",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Use `Int.leInductionDown` with base `p_bot` (where `hs.F p_bot = \u22a5`) and step `F (k-1) = F k \u2294 piece (k-1)` from `F_eq_F_add_one_sup_piece`, handling `p_bot \u2264 p` by `h_bot` directly.",
+   "issue": "`F_le_iSup_piece` hand-rolls downward integer induction through a `\u2115` counter `h_rec` (lines 355-369, plus an unused `rcases hs.F_top` at 370); Mathlib has the eliminator.",
+   "line": "355"
+  }
+ ],
+ "head_sha": "75de330eb9edb735635994a1afdb06516a46ee98",
+ "merge_base_sha": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3136,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e8c2d36d7a3172f701ff2889f048c8d11017272e74615ec6774997535dfb4ceb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T092643Z-3136-reuse-19a619",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T09:26:43Z",
+ "submitted_by": "kim-em",
+ "summary": "The Hodge-structure content itself is new, but the base-change scaffolding restates Mathlib verbatim (`TensorProduct.isBaseChange`), a second unused conjugation API is built on `Complexification V`, and several long proofs re-derive located Mathlib lemmas (`Submodule.map_top`/`LinearEquiv.range`, `Submodule.map_inf`, `TensorProduct.map_comp`/`map_id`, `Int.leInductionDown`), with two copies each of the `map \u22a4 = \u22a4` and `IsCompl (F (p+1)) \u2026` derivations.",
+ "transcript_blob": "8a35d497670e1edfc04bdf2d2ecef9d4775f5c878044b79168875f7591d1da22",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73619,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73619,
+  "cache_read_input_tokens": 1296934,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1543,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1543,
+    "cache_read_input_tokens": 88575,
+    "input_tokens": 2,
+    "output_tokens": 3868,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26434,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}

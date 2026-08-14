@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.671865,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 301.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79928,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79928,
+    "cache_read_input_tokens": 485708,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5425,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5425,
+      "cache_read_input_tokens": 91002,
+      "input_tokens": 2,
+      "output_tokens": 4368,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24618,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "cost_usd": 1.671865,
+ "dedupe_key": "TauCetiProject/TauCeti|3136|75de330eb9edb735635994a1afdb06516a46ee98|correctness|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "0510811cbc15670693f7bed5a3f564087cc7637553a68f3612f900a852315461",
+ "diff_sha256": "0510811cbc15670693f7bed5a3f564087cc7637553a68f3612f900a852315461",
+ "duration_s": 301.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 299-300 `def IsEffective : Prop := hs.F 0 = \u22a4 \u2227 hs.F (n + 1) = \u22a5`; no other occurrence of `Hodge.IsEffective` in the repo. Roadmap README L0 names it as the hypothesis under which the weight-1 identifications hold, so its content matters downstream.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Add the characterization (`hs.IsEffective \u2192 \u2200 p, p < 0 \u2228 n < p \u2192 hs.piece \u03c9 p = \u22a5`, ideally as an iff) and a witness, e.g. `(tate 0).IsEffective` \u2014 for `m = 0` the conditions read `0 \u2264 0` and `\u00ac(1 \u2264 0)`, both discharged by the same `ite_eq_left`/`ite_eq_right` pattern already used in `tate`.",
+   "issue": "`IsEffective` is a new Prop-valued definition with no consuming theorem and no witness anywhere in the PR or on main (grep for `IsEffective` in `code/` finds only this definition and the module docstring; the other hits are `WeilDivisor`/`Algebra.IsEffective`, unrelated). Its docstring and the module docstring at line 32 claim it means \"the Hodge numbers are supported in [0, n]\", but nothing links `F 0 = \u22a4 \u2227 F (n+1) = \u22a5` to `piece \u03c9 p = \u22a5` for `p < 0` or `p > n`, so the claim is unverified.",
+   "line": 299
+  },
+  {
+   "evidence": "Line 434 `tate` and line 480 `tate_piece_apply` both use `latticeConjugation (complexificationMap_isBaseChange (V := \u2124))`, never `concreteConjugation`; `latticeConj_unique` (line 241) already supplies exactly the identification and is itself otherwise unused.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Add `concreteLatticeConj = latticeConj (complexificationMap_isBaseChange (V := V))` (hence `concreteConjugation V = latticeConjugation _`), proved in one line by `latticeConj_unique` \u2014 the hypothesis `concreteLatticeConj (complexificationMap v) = complexificationMap v` is `concreteLatticeConj_tmul 1 v` plus `map_one`. `tate` can then discharge its `h_top_map` steps through the concrete map.",
+   "issue": "`concreteConjugation` / `concreteLatticeConj` are advertised (docstrings lines 22-23, 94-95) as the canonical conjugation on `\u2102 \u2297[\u2124] V`, but nothing in the PR proves they agree with `latticeConjugation (complexificationMap_isBaseChange)`, which is what `HodgeStructure`, `tate`, and `tate_piece_apply` actually use. `concreteConjugation` has no consumer at all (grep: only its own definition site), so the two canonical conjugations on the same space are left unrelated and a user reasoning with `concreteLatticeConj` can apply no Hodge result.",
+   "line": 177
+  }
+ ],
+ "head_sha": "75de330eb9edb735635994a1afdb06516a46ee98",
+ "merge_base_sha": "fb56272d0ddf53b4673d737f9119779c76049820",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3136,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "84fdeddcced97e93b3dc16ddbfbd71a39829a3ad2622a528865894245dd0d8d7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T092142Z-3136-correctness-e8836c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T09:21:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The Hodge decomposition, the (p,q) conjugation symmetry, and the Tate witness are mathematically faithful and I could not break them. Two unfalsifiable declarations remain: `IsEffective` has no consumer, no witness, and its docstring claim is unproved; and the concrete conjugation is never identified with the abstract one actually used.",
+ "transcript_blob": "06a0267d0d6abb2e36c1fd168735a8039a3030030fed8c1a55fd585d192835d1",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79928,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79928,
+  "cache_read_input_tokens": 485708,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5425,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5425,
+    "cache_read_input_tokens": 91002,
+    "input_tokens": 2,
+    "output_tokens": 4368,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24618,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
