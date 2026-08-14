@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9000670000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 145.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43827,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43827,
+    "cache_read_input_tokens": 382480,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1388,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1388,
+      "cache_read_input_tokens": 59389,
+      "input_tokens": 2,
+      "output_tokens": 2434,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10545,
+    "output_tokens_details": {
+     "thinking_tokens": 7062
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 0.900067,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|2e23a00128eeb566d55f7aebe77e31349ed6f044|documentation|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "b8b5106eded095b55403391bfd4bb58d49b329de670d0929c2a07282919dbfb6",
+ "diff_sha256": "b8b5106eded095b55403391bfd4bb58d49b329de670d0929c2a07282919dbfb6",
+ "duration_s": 145.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": ".github/workflows/ci.yml:6-7 (`push: branches: [main]`); .github/workflows/pr-profile.yml:19-27 (pull_request_target opened/synchronize/reopened, merge_group) with `lake exe cache get` at pr-profile.yml:319 and :419.",
+   "file": "docs/cache-infrastructure.md",
+   "fix": "State the actual boundary: ci.yml is included because it is the sole publisher, pr-build.yml as the highest-volume consumer; pr-profile.yml has comparable per-PR volume and is deliberately left out as a rollout control.",
+   "issue": "\"limiting the change to the two highest-volume build paths\" is inaccurate: ci.yml runs only on main pushes, while the excluded pr-profile.yml runs on every pull_request_target/merge_group event and fetches Mathlib (twice on a pin bump). The reader is told the remaining traffic is negligible when a per-PR path is still uncovered.",
+   "line": 14
+  },
+  {
+   "evidence": "action.yml:28 `path: ${{ env.MATHLIB_CACHE_DIR }}/*.ltar`; grep shows it is set only in .github/workflows/ci.yml:30 and .github/workflows/pr-build.yml:64, and it is not mentioned in the action's inputs or description.",
+   "file": ".github/actions/restore-mathlib-ltars/action.yml",
+   "fix": "Document the required `MATHLIB_CACHE_DIR` env contract in the action `description` (or the step comment), or make it an explicit required input.",
+   "issue": "The action's documented interface is only `project-dir`, but it also requires the caller to set `MATHLIB_CACHE_DIR` in the job env (used unguarded in `path`). A future caller \u2014 e.g. the pages.yml/pr-profile.yml extension the doc anticipates \u2014 that copies the documented usage gets `path: /*.ltar` and a silently useless cache.",
+   "line": 4
+  }
+ ],
+ "head_sha": "2e23a00128eeb566d55f7aebe77e31349ed6f044",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "dad015db91c009880d9363167f0ceedf4fa239c1f4baf7916d44b9dbfa5832bc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T011655Z-3143-documentation-bf65ae",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:16:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior two findings are fixed, but the doc justifies the rollout boundary with an inaccurate volume claim (pr-profile.yml fetches Mathlib on every PR, more often than the included main-only ci.yml), and the new composite action documents only project-dir while silently requiring a caller-set MATHLIB_CACHE_DIR.",
+ "transcript_blob": "e775f357c69acd288f2bc68eb604b969f09ec86e20f67f6eef9b48b585fb5838",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43827,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43827,
+  "cache_read_input_tokens": 382480,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1388,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1388,
+    "cache_read_input_tokens": 59389,
+    "input_tokens": 2,
+    "output_tokens": 2434,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10545,
+  "output_tokens_details": {
+   "thinking_tokens": 7062
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

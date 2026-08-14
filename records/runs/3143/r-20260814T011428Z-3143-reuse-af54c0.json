@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.925708,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 146.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 45105,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 45105,
+    "cache_read_input_tokens": 440550,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3054,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3054,
+      "cache_read_input_tokens": 59001,
+      "input_tokens": 2,
+      "output_tokens": 1220,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9874,
+    "output_tokens_details": {
+     "thinking_tokens": 7391
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 0.925708,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|2e23a00128eeb566d55f7aebe77e31349ed6f044|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "b8b5106eded095b55403391bfd4bb58d49b329de670d0929c2a07282919dbfb6",
+ "diff_sha256": "b8b5106eded095b55403391bfd4bb58d49b329de670d0929c2a07282919dbfb6",
+ "duration_s": 146.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "action.yml:28 `path: ${{ env.MATHLIB_CACHE_DIR }}/*.ltar` with no matching entry under `inputs:` (action.yml:4-7 declares only `project-dir`); ci.yml:30 and pr-build.yml:64 each declare the literal. mathlib/Cache/IO.lean:57 `match \u2190 IO.getEnv \"MATHLIB_CACHE_DIR\"` confirms the same variable drives the fetch tool, so the path is a single shared constant across restore, fetch, prune and save.",
+   "file": ".github/actions/restore-mathlib-ltars/action.yml",
+   "fix": "Give the action a `cache-dir` input defaulting to `${{ github.workspace }}/.mathlib-ltar-cache`, use it for `path`, and have the action export it with `echo \"MATHLIB_CACHE_DIR=$...\" >> \"$GITHUB_ENV\"` so later job steps (`lake exe cache get`, the save step) inherit it. Delete the two job-level `MATHLIB_CACHE_DIR` declarations; keep pr-build's 'outside the base/ tree' note as a comment on the call site.",
+   "issue": "The action owns the key namespace but not the cache path: it reads `env.MATHLIB_CACHE_DIR`, which each caller restates independently (ci.yml:30 and pr-build.yml:64, both `${{ github.workspace }}/.mathlib-ltar-cache`). The two values must be byte-identical for publisher and consumer to share anything \u2014 actions/cache stores workspace-relative paths, so a one-sided edit restores the blobs to a directory the cache tool never reads, with `cache-hit: true` and a green build. A future caller (pages.yml / pr-profile.yml, explicitly deferred to a follow-up) that forgets the env var gets `path: /*.ltar`.",
+   "line": 28
+  }
+ ],
+ "head_sha": "2e23a00128eeb566d55f7aebe77e31349ed6f044",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "50a041e73503ee4523891f9938bcefa294c15c5e174a9c3b807762da3dbdaf73",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T011428Z-3143-reuse-af54c0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:14:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The cache-key clone and the redundant quarantine from the prior round are fixed by the shared composite action. The remaining duplication is the `MATHLIB_CACHE_DIR` path literal, restated in both workflows and read but not declared by the shared action.",
+ "transcript_blob": "587a42d8e6c05b2367dda29715eb03bd4712fa4f35affc1e720a35e583e4fa34",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 45105,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 45105,
+  "cache_read_input_tokens": 440550,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3054,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3054,
+    "cache_read_input_tokens": 59001,
+    "input_tokens": 2,
+    "output_tokens": 1220,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9874,
+  "output_tokens_details": {
+   "thinking_tokens": 7391
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
