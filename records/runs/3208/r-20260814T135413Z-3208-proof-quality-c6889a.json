@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4840129999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 269.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 63672,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 63672,
+    "cache_read_input_tokens": 579232,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1784,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1784,
+      "cache_read_input_tokens": 78387,
+      "input_tokens": 2,
+      "output_tokens": 5889,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21849,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9e45c55978e9fdedfeea495c93478e326fbdf1f2",
+ "cost_usd": 1.484013,
+ "dedupe_key": "TauCetiProject/TauCeti|3208|4d4fb40427ef3c45be426e4832670bf60c267a2b|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "ee20047c780b613ecee900baf5aab025f67a904e762be4f2670b19036f53cc7e",
+ "diff_sha256": "ee20047c780b613ecee900baf5aab025f67a904e762be4f2670b19036f53cc7e",
+ "duration_s": 269.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Module.addCommMonoidToAddCommGroup` (Mathlib/Algebra/Module/NatInt.lean:90) and `Algebra.semiringToRing` (Mathlib/Algebra/Algebra/Basic.lean:169) are reducible non-instances; putting them in a def body makes the term mention a structure that is only defeq, not syntactically equal, to `H`'s real one. The weakening buys no generality either \u2014 the PR reconstructs the `Ring` from `Semiring`+`Algebra k H` itself.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Basic.lean",
+   "fix": "Declare the group/ring structure in the section `variable` block (`[AddCommGroup H]` / `[Ring H]`, as before this PR) so every definition and lemma uses the ambient instance and the `let`s, the `change`s, and the `@`-applications all disappear.",
+   "issue": "Definitions are built by tactic scripts that install a non-ambient structure instance into the term: `dualDistribEquiv` (:80), `evalTripleEquiv` (:136), `instFinite` (:63) use `letI : AddCommGroup H := Module.addCommMonoidToAddCommGroup k`, and `evalLinearEquiv` (Functoriality.lean:182) uses `letI : Ring H := Algebra.semiringToRing k`. The PR then pays for this throughout: `Basic.lean:88` and `:145` re-introduce the same `let` just to make `rfl`/`simp` go through, `Functoriality.lean:191` and `:231` do the same, and `Functoriality.lean:301-311` needs two `change`s plus fully `@`-applied instance arguments to work around what its own comment calls \"the finite-dual instance diamond\".",
+   "line": 80
+  },
+  {
+   "evidence": "Functoriality.lean:303-311 spells out `bH.toCoalgebra.toCoalgebraStruct` / `bHH.toCoalgebra.toCoalgebraStruct` explicitly precisely because the inferred instances are not syntactically the ones `BialgEquiv.ofBijective` (Mathlib/RingTheory/Bialgebra/Equiv.lean:330) selects.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Functoriality.lean",
+   "fix": "Add a named `private theorem coe_evalBialgHom : \u21d1(evalBialgHom k H) = \u21d1(evalLinearEquiv k H) := rfl` and rewrite with it so the coercion defeq is isolated in one place; once the instance diamond from finding 1 is removed, write `evalBialgEquiv` in term mode as `BialgEquiv.ofBijective (evalBialgHom k H) h`.",
+   "issue": "`evalBialgEquiv` is a `def` whose body is a tactic script using `change` on its own declared type (:303-305) and again on the bijectivity goal (:308). The second `change Function.Bijective (evalLinearEquiv k H)` relies on the coercion of a four-layer bundled morphism (`BialgHom` \u2192 `AlgHom` \u2192 `LinearMap` \u2192 `LinearEquiv`) being definitionally the underlying `LinearEquiv`; the comment records what is done, not why no lemma is available. The tactic-built body then leaks: `evalBialgEquiv_apply` (:313-315) must `simp only [evalBialgEquiv, id_eq, ...]`, with `id_eq` present only to clean up the `let` artifacts.",
+   "line": 297
+  },
+  {
+   "evidence": "`grep -rn ofConv_mul_apply TauCeti` \u2192 only Basic.lean:427 (private, `[HopfAlgebra k H]` section) and its two uses at :497, :508; the new file duplicates the proof rather than reusing it.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Functoriality.lean",
+   "fix": "Move `ofConv_mul_apply` into the `Bialgebra` section of `Basic.lean`, make it public (e.g. `ofConv_convMul_apply`), and derive both Functoriality.lean copies from it instead of re-running the induction.",
+   "issue": "The same argument \u2014 `rw [LinearMap.convMul_apply]; generalize Coalgebra.comul \u2026 = z; induction z using TensorProduct.induction_on` \u2014 is written three times in the repo after this PR: `convMul_apply_eq_dualDistribEquiv` (:234-245), the first calc step of `evalAlgHom.map_mul'` (:215-224), and `ofConv_mul_apply` (Basic.lean:436-445). The Basic.lean version already states the general fact but is `private` and stranded inside `section HopfAlgebra`, so neither new copy can reuse it.",
+   "line": 234
+  },
+  {
+   "evidence": "`grep -n symm_symm Mathlib/RingTheory/Bialgebra/Equiv.lean Mathlib/RingTheory/Coalgebra/Equiv.lean` returns no hits \u2014 there is no `BialgEquiv.symm_symm` lemma, so nothing but defeq is discharging that step.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Functoriality.lean",
+   "fix": "Prove by extensionality instead: `BialgEquiv.ext fun phi => \u2026` using `BialgEquiv.ofBialgHom_symm` and `BialgEquiv.coe_ofBialgHom` (Mathlib/RingTheory/Bialgebra/Equiv.lean:301-306), or make the `symm_symm` step an explicit rewrite.",
+   "issue": "`mapEquiv_symm` ends `unfold mapEquiv; rw [BialgEquiv.ofBialgHom_symm]; congr 1`. After the rewrite the two sides differ by `map k e` vs `map k e.symm.symm`, so the bare `congr 1` closes the goal on the undocumented definitional equality `e.symm.symm = e` (plus proof irrelevance for the two `BialgHom` equation arguments). This is exactly the kind of accidental-defeq reliance that breaks when `BialgEquiv.symm` is refactored.",
+   "line": 168
+  },
+  {
+   "evidence": "`grep -c induction_on` on the new file gives 6, each with the same two-line `congrArg\u2082` add case; Basic.lean:307 shows `TensorProduct.ext'` is already the available idiom.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Functoriality.lean",
+   "fix": "Where the statement is an equality of maps in the tensor variable, use `TensorProduct.ext'` (already used in this codebase at Basic.lean:307), which discharges the zero and add cases automatically; otherwise factor the add-case step into a single private helper and apply it at each site.",
+   "issue": "The identical add-case boilerplate `| add \u2026 => simpa only [map_add, LinearMap.add_apply] using congrArg\u2082 (fun a b => a + b) \u2026` is copied six times in the new file (:99-100, :118-120, :221-223, :242-244, :256-258, :275-277), together with the surrounding zero/add scaffolding.",
+   "line": 99
+  },
+  {
+   "evidence": "Functoriality.lean:63 and :87 are character-for-character the same statement modulo `mapLinear` vs `mapAlgHom`; :189 and :229 likewise for `evalLinearEquiv` vs `evalAlgHom`.",
+   "file": "TauCeti/Algebra/HopfAlgebra/FiniteDual/Functoriality.lean",
+   "fix": "Prove them by delegation \u2014 `mapAlgHom_apply_apply := mapLinear_apply_apply k f phi x` and `evalAlgHom_apply_apply := evalLinearEquiv_apply_apply k H x phi` \u2014 as `map_apply_apply` (:131-133) already correctly does.",
+   "issue": "`mapAlgHom_apply_apply` (:84-88) is proved by a fresh `rfl` even though `mapLinear_apply_apply` (:61-64) already states the same equation one wrapper layer down; likewise `evalAlgHom_apply_apply` (:227-232) is a fresh `rfl` copy of `evalLinearEquiv_apply_apply` (:188-192). Each new `rfl` re-crosses the bundled-morphism coercion independently, so a change to `AlgHom`'s coercion breaks them all rather than one lemma.",
+   "line": 84
+  }
+ ],
+ "head_sha": "4d4fb40427ef3c45be426e4832670bf60c267a2b",
+ "merge_base_sha": "9e45c55978e9fdedfeea495c93478e326fbdf1f2",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3208,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "940bf0bc84d22c67fd7273dead0d90ff4a89c7d062abc33659c72d205a2b3a2c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T135413Z-3208-proof-quality-c6889a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T13:54:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR builds definitions on `letI`-manufactured `AddCommGroup`/`Ring` instances, which forces undocumented defeq manipulation downstream: re-introduced `let`s before `rfl`, two `change`s inside the `evalBialgEquiv` definition, and a bare `congr 1`. It also re-proves an existing lemma twice and copies the same tensor-induction boilerplate six times.",
+ "transcript_blob": "93468ecb11a35502b00d157bcb352f6b2b19483448015651ee144fdb0170d9c6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 63672,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 63672,
+  "cache_read_input_tokens": 579232,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1784,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1784,
+    "cache_read_input_tokens": 78387,
+    "input_tokens": 2,
+    "output_tokens": 5889,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21849,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
