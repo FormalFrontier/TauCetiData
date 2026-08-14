@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5999869999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 225.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 67523,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 67523,
+    "cache_read_input_tokens": 921294,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1118,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1118,
+      "cache_read_input_tokens": 82904,
+      "input_tokens": 2,
+      "output_tokens": 4219,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17873,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "29125f369c1cb2e884deecfae041c03abfcc3a72",
+ "cost_usd": 1.599987,
+ "dedupe_key": "TauCetiProject/TauCeti|3175|5d4c0c15313f3ea0c0a3c58b9365b97b3593621b|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "04a1fcaced6f322c89f96a571bc78d697323d61bfccddfae6136fc9e43faaa96",
+ "diff_sha256": "04a1fcaced6f322c89f96a571bc78d697323d61bfccddfae6136fc9e43faaa96",
+ "duration_s": 225.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn '^namespace TauCeti' TauCeti/AlgebraicTopology/SimplicialComplex/` matches only OrderComplex.lean:47 and Subdivision.lean:54; `grep -rl 'TauCeti.PreAbstractSimplicialComplex' TauCeti/` matches only the two new files. Product.lean:105 puts `SimplicialMap.orderedProdFst` in the root `PreAbstractSimplicialComplex.SimplicialMap`.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/OrderComplex.lean",
+   "fix": "Drop `namespace TauCeti`/`end TauCeti` from both files and declare into the root `AbstractSimplicialComplex` and `PreAbstractSimplicialComplex` namespaces, removing the `_root_.` prefixes; update the docstring names accordingly.",
+   "issue": "All new declarations live in `TauCeti.AbstractSimplicialComplex` / `TauCeti.PreAbstractSimplicialComplex(.SimplicialMap)`, while every other file in this directory declares into the root `AbstractSimplicialComplex` / `PreAbstractSimplicialComplex` namespaces (Basic.lean:18, Maps.lean:24, Product.lean:45 and 105). Consequences: `_root_.` qualification is needed ~20 times in the diff, and `SimplicialMap.barycentricMap`/`faceOrderHom` are in a `SimplicialMap` namespace that is not the namespace of the `SimplicialMap` structure, so they do not join `SimplicialMap.comp`/`id`/`orderedProdFst` and `f.barycentricMap` does not resolve the way `f.comp` does.",
+   "line": 47
+  },
+  {
+   "evidence": "`grep -rn 'omparable' mathlib/Mathlib` yields only prose/tactic-internal hits, no theorem names; Mathlib uses `Nat.le_or_le`, `Fin.succ_le_or_le_castSucc`, `IsPreconnected.subset_or_subset` (Mathlib/Topology/Connected/Basic.lean:388), `Finset.exists_subset_or_subset_of_two_mul_lt_card`. The adjacent repo lemma extracting a face condition is `isChain_of_mem_orderedProd` (Product.lean:93).",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/OrderComplex.lean",
+   "fix": "Rename to `le_or_le_of_mem_orderComplex` and `subset_or_subset_of_mem_barycentricSubdivision`.",
+   "issue": "`comparable_of_mem_orderComplex` uses terminology that appears in no Mathlib declaration name; the conclusion is `p \u2264 q \u2228 q \u2264 p`, which the naming dictionary spells `le_or_le`. Same problem at Subdivision.lean:90, where `comparable_of_mem_barycentricSubdivision` concludes `\u03c3 \u2286 \u03c4 \u2228 \u03c4 \u2286 \u03c3` (Mathlib spelling `subset_or_subset`).",
+   "line": 95
+  },
+  {
+   "evidence": "TauCeti/AlgebraicTopology/SimplicialComplex/Basic.lean:21 `abbrev Face {\u03b9 : Type*} (K : AbstractSimplicialComplex \u03b9) := {\u03c3 : Finset \u03b9 // \u03c3 \u2208 K}`, used as `Face K` throughout Realization.lean:87-115.",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Subdivision.lean",
+   "fix": "Name it `PreAbstractSimplicialComplex.Face`, matching `AbstractSimplicialComplex.Face` in Basic.lean:21, and state `barycentricSubdivision K := orderComplex (Face K)`.",
+   "issue": "`BarycentricVertex K := {\u03c3 : Finset \u03b1 // \u03c3 \u2208 K}` is the same object as the existing `AbstractSimplicialComplex.Face K := {\u03c3 : Finset \u03b9 // \u03c3 \u2208 K}` under a different name, and it names the type by one downstream use (vertices of the subdivision) rather than by what it is (a face of `K`). Downstream lemma statements then read `\u03c3 : BarycentricVertex K` where `\u03c3` is just a face.",
+   "line": 62
+  },
+  {
+   "evidence": "OrderComplex.lean:116 `def orderComplexMap` for `orderComplex`; Subdivision.lean:66 `def barycentricSubdivision` but line 124 `def barycentricMap`. Mathlib uses `barycentric` for affine barycentric coordinates (Mathlib/LinearAlgebra/AffineSpace/Basis.lean).",
+   "file": "TauCeti/AlgebraicTopology/SimplicialComplex/Subdivision.lean",
+   "fix": "Rename to `barycentricSubdivisionMap` (and the lemmas `barycentricSubdivisionMap_id`, `_comp`, `_apply_coe`, `coe_`), matching `orderComplex`/`orderComplexMap`.",
+   "issue": "`barycentricMap` does not name the construction it is functorial for, unlike this PR's own `orderComplexMap` (named `orderComplex` + `Map`); the construction here is `barycentricSubdivision`. `barycentric` alone also collides with the standard meaning of barycentric coordinates/maps, which realization work in this directory will need.",
+   "line": 124
+  }
+ ],
+ "head_sha": "5d4c0c15313f3ea0c0a3c58b9365b97b3593621b",
+ "merge_base_sha": "29125f369c1cb2e884deecfae041c03abfcc3a72",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3175,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7cfe400a4103de7ae45b5f73ae3ce16b54d3c3db9882685b6f5421e078165532",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T090728Z-3175-naming-3d61a1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T09:07:28Z",
+ "submitted_by": "kim-em",
+ "summary": "The new declarations are placed in `TauCeti.AbstractSimplicialComplex` / `TauCeti.PreAbstractSimplicialComplex`, breaking the root-namespace convention of every other file in this directory and detaching `barycentricMap`/`faceOrderHom` from the actual `SimplicialMap` namespace. Two lemmas use the non-Mathlib term `comparable` for `\u2264 \u2228 \u2264` / `\u2286 \u2228 \u2286`, and `BarycentricVertex` renames the existing `AbstractSimplicialComplex.Face` subtype.",
+ "transcript_blob": "663241e175b82bd4328f1c94887432a8c691d4048f81deebedca2c3e8ac0fe5f",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 67523,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 67523,
+  "cache_read_input_tokens": 921294,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1118,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1118,
+    "cache_read_input_tokens": 82904,
+    "input_tokens": 2,
+    "output_tokens": 4219,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17873,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
