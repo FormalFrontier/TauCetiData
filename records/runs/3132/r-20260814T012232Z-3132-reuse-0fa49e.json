@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.304291,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 47.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 169472,
+    "input_tokens": 203249,
+    "output_tokens": 1689,
+    "reasoning_output_tokens": 490
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "cost_estimated": true,
+ "cost_usd": 0.304291,
+ "dedupe_key": "TauCetiProject/TauCeti|3132|6b1673351c621ab947401210d5f9e7aee91dd34b|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "a4986d1f5eb8126501565a2579caca0c96411d54a74090dae0c9cad325e5052f",
+ "diff_sha256": "a4986d1f5eb8126501565a2579caca0c96411d54a74090dae0c9cad325e5052f",
+ "duration_s": 47.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/GroupTheory/Presentation/Relator.lean:65` defines `PresentationWord \u03b1 := List (\u03b1 \u00d7 Bool)`, and `Mathlib/GroupTheory/FreeGroup/Basic.lean:665` defines `FreeGroup.Lift.aux` as the product of the mapped generator or inverse, exactly the construction at lines 135\u2013140.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Import `TauCeti.GroupTheory.Presentation.Relator`, use `PresentationWord (Fin (n - 1))` directly, and evaluate with `FreeGroup.Lift.aux sigma`; remove the duplicate definitions and retain only genuinely useful braid-specific lemmas.",
+   "issue": "`BraidWord n` directly specializes the existing `TauCeti.PresentationWord \u03b1`, while `evalWord`/`evalLetter` reimplement `FreeGroup.Lift.aux`; this creates a parallel word API.",
+   "line": 132
+  },
+  {
+   "evidence": "`Mathlib/GroupTheory/PresentedGroup.lean:172` declares `instance (rels) : Inhabited (PresentedGroup rels) := \u27e81\u27e9`.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Delete `BraidGroup.instInhabited`; reducibility of `BraidGroup` exposes the existing instance.",
+   "issue": "`instInhabited` duplicates Mathlib's existing instance for every `PresentedGroup`.",
+   "line": 98
+  },
+  {
+   "evidence": "`Mathlib/Algebra/Group/Subgroup/Ker.lean:245` states `MonoidHom.mem_ker {f} {x} : x \u2208 f.ker \u2194 f x = 1`; unfolding `PureBraidGroup` makes the new theorem identical.",
+   "file": "TauCeti/KnotTheory/Braid/Basic.lean",
+   "fix": "Delete it and use `(permHom n).mem_ker` or `MonoidHom.mem_ker` at call sites.",
+   "issue": "`mem_pureBraidGroup_iff` is an unused type-specific restatement of the generic kernel-membership theorem.",
+   "line": 255
+  }
+ ],
+ "head_sha": "6b1673351c621ab947401210d5f9e7aee91dd34b",
+ "merge_base_sha": "189d7ab98d9b7ea8e2907a7e3c3ead628b57571d",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3132,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7677566b1a4952ddf29fe6a8db608e33def74b11c367760979dbcd27a0ee7676",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T012232Z-3132-reuse-0fa49e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:22:32Z",
+ "submitted_by": "kim-em",
+ "summary": "The braid-word API directly duplicates existing TauCeti and Mathlib word machinery; additional instances and a kernel lemma restate existing declarations.",
+ "transcript_blob": "ad99d0ee3b89763deeaf67cd609035d5e426b0ff93e68fcafcbf50a07033f9a7",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 169472,
+  "input_tokens": 203249,
+  "output_tokens": 1689,
+  "reasoning_output_tokens": 490
+ },
+ "verdict": "block"
+}
