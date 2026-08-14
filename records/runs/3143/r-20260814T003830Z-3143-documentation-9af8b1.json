@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.1074015,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 207.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 54758,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 54758,
+    "cache_read_input_tokens": 380959,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4628,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4628,
+      "cache_read_input_tokens": 66629,
+      "input_tokens": 2,
+      "output_tokens": 4260,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14558,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 1.107401,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|ab3696a6ec4e844759bffa645fcefde929dd63a5|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f6ef21a306b5b0da87d9f375858c57cf140313fe32bbca44208f6e5ea5201daf",
+ "diff_sha256": "f6ef21a306b5b0da87d9f375858c57cf140313fe32bbca44208f6e5ea5201daf",
+ "duration_s": 207.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "docs/cache-infrastructure.md covers only the R2/Lake artifact cache; grep for `mathlib-ltar` matches only .github/workflows/ci.yml and pr-build.yml.",
+   "file": "docs/cache-infrastructure.md",
+   "fix": "Add a short \"Mathlib download cache (GitHub Actions)\" section: what is cached (`$MATHLIB_CACHE_DIR/*.ltar`), who publishes (ci.yml on main only), the key/restore-key shape, that entries are immutable, and the recovery steps (bump `mathlib-ltar-v1` in both workflows, or `gh cache delete`).",
+   "issue": "The repo's cache doc (\"Where the build cache lives, who owns it, and which knob feeds which workflow\") is not updated for the new GitHub-Actions `.ltar` layer. Operator-facing state introduced here \u2014 the `mathlib-ltar-v1` key namespace, main-only publisher / restore-only consumers, pruning to the pin, and the recovery procedure for a poisoned immutable entry \u2014 exists only as a YAML comment.",
+   "line": 3
+  },
+  {
+   "evidence": "ci.yml:104-114 \u2014 the `if !` branch fires on any nonzero exit; `mathlib/Cache/Requests.lean:794` (`IO.FS.createDirAll IO.CACHEDIR`) means `[ -e \"$MATHLIB_CACHE_DIR\" ]` is true even with nothing restored.",
+   "file": ".github/workflows/ci.yml",
+   "fix": "Reword to what is actually known, e.g. \"::warning::lake exe cache get failed; discarding any local .ltar store and forcing a full refetch\", and rename the step to \"Fetch Mathlib oleans, retrying from an empty download cache\" (ci.yml:104).",
+   "issue": "The warning text and the step name assert a cause the code never established: `lake exe cache get` fails far more often for network/server reasons, and on a total restore miss there is no \"restored snapshot\" at all (the directory exists only because the cache tool created it). A maintainer reading the log will misdiagnose a Mathlib server outage as a poisoned cache. Same text at pr-build.yml:398.",
+   "line": 109
+  },
+  {
+   "evidence": "pr-build.yml:377-379 \u2014 both the exact key and the restore-key prefix embed `hashFiles('base/lean-toolchain')`.",
+   "file": ".github/workflows/pr-build.yml",
+   "fix": "Qualify it: the incremental fallback exists only for a Mathlib-only bump; a `lean-toolchain` bump misses both keys and refetches from the Mathlib server.",
+   "issue": "\"For a validated pin bump ... an exact new-pin snapshot is preferred and the newest same-toolchain main snapshot is the incremental fallback\" is wrong for a toolchain bump: `hashFiles('base/lean-toolchain')` is inside the restore-key prefix too, so a toolchain bump has no fallback and restores nothing. ci.yml:76 states the same idea correctly (\"the same-toolchain prefix\").",
+   "line": 365
+  },
+  {
+   "evidence": "ci.yml:85,87 and pr-build.yml:377,379 both carry the literal `mathlib-ltar-v1`.",
+   "file": ".github/workflows/ci.yml",
+   "fix": "Match pr-build.yml: \"Bump `mathlib-ltar-v1` in both workflows (see pr-build.yml) ...\".",
+   "issue": "\"Bump `mathlib-ltar-v1` if an incompatible or poisoned immutable entry must be abandoned\" omits that the same literal is hardcoded in pr-build.yml; bumping only here silently kills all PR-side restores. pr-build.yml:369 says \"in both workflows\" \u2014 the instruction is one-sided only in ci.yml.",
+   "line": 77
+  },
+  {
+   "evidence": "ci.yml:68-78 \u2014 one continuous comment block ending at the `Restore Mathlib's compressed download cache` step; the `Build` step is at ci.yml:116 with no comment.",
+   "file": ".github/workflows/ci.yml",
+   "fix": "Split it back out as its own comment block immediately above the `- name: Build` step (or above the audits), leaving the restore comment self-contained.",
+   "issue": "The pre-existing \"No aggregator check: the root TauCeti.lean is intentionally empty...\" note is now joined by a bare `#` to the new cache-restore rationale, so it reads as documentation of the restore step it precedes; the Build step it explained moved to line 116.",
+   "line": 68
+  }
+ ],
+ "head_sha": "ab3696a6ec4e844759bffa645fcefde929dd63a5",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "876384b501198bbc9dc29abf16e169e3c296fddce5b80cc346b6fef8e0da2c10",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T003830Z-3143-documentation-9af8b1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T00:38:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The inline rationale is mostly accurate, but three comments/messages state more than the code establishes (the failure-cause warning, the pin-bump fallback claim, the one-sided key-bump instruction), and the repo's cache-infrastructure doc is left with no mention of the new cache layer or its escape hatch.",
+ "transcript_blob": "b0b9ade6f00a6991274d9f278d8f22d5a63b340510600f474109b2045fcb699a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 54758,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 54758,
+  "cache_read_input_tokens": 380959,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4628,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4628,
+    "cache_read_input_tokens": 66629,
+    "input_tokens": 2,
+    "output_tokens": 4260,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14558,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
