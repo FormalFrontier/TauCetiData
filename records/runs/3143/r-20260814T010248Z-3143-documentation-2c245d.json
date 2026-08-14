@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.0487165000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 175.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46224,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46224,
+    "cache_read_input_tokens": 506839,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1509,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1509,
+      "cache_read_input_tokens": 61665,
+      "input_tokens": 2,
+      "output_tokens": 4140,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13075,
+    "output_tokens_details": {
+     "thinking_tokens": 9539
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 1.048717,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|0e1d3646dad063e00025060b19d1bcf99b227689|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "8c176f014c216db476620e6e0e053f170f1086eefcd2c2c906b9031b4db9a8b0",
+ "diff_sha256": "8c176f014c216db476620e6e0e053f170f1086eefcd2c2c906b9031b4db9a8b0",
+ "duration_s": 175.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": ".github/workflows/ci.yml:127-139 \u2014 prune `if: steps.mathlib_ltar_restore.outputs.cache-hit != 'true'`; save `if: ... cache-hit != 'true' && steps.mathlib_ltar_prune.outcome == 'success'`. The workflow comment at ci.yml:120-126 explains this; the doc does not.",
+   "file": "docs/cache-infrastructure.md",
+   "fix": "State that main publishes only when the restore was not an exact-key hit (the exact key is immutable and already holds this pin's snapshot), and that a failed prune skips publication rather than saving an unpruned snapshot.",
+   "issue": "\"The main `ci.yml` workflow publishes a narrow snapshot\" / \"Before publishing, main runs `lake exe cache clean`\" reads as unconditional, but both the prune and save steps are gated on `cache-hit != 'true'` (ci.yml:129,134) and the save additionally requires `mathlib_ltar_prune.outcome == 'success'`. An operator wondering why a main run did not refresh the snapshot is misled.",
+   "line": 7
+  },
+  {
+   "evidence": "grep: `.github/workflows/pages.yml:208,281` and `.github/workflows/pr-profile.yml:319,419` run `lake exe cache get`; `MATHLIB_CACHE_DIR` appears only in ci.yml:30 and pr-build.yml:64.",
+   "file": "docs/cache-infrastructure.md",
+   "fix": "Add one sentence naming `pages.yml` and `pr-profile.yml` as intentionally outside this cache (they still fetch from Mathlib's server into the default `~/.cache/mathlib`), and why.",
+   "issue": "The section describes the `.ltar` cache as the Mathlib download cache for the project (\"which knob feeds which workflow\"), but `pages.yml` and `pr-profile.yml` also run `lake exe cache get` and set no `MATHLIB_CACHE_DIR`, so they neither restore nor share this store. The PR description calls this a deliberate rollout control; nothing in the doc records it.",
+   "line": 5
+  }
+ ],
+ "head_sha": "0e1d3646dad063e00025060b19d1bcf99b227689",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8bed5c057f9c09afe26aaaf8824218963cbff8ce25863ac463cf5e6a9e18c83f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T010248Z-3143-documentation-2c245d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:02:48Z",
+ "submitted_by": "kim-em",
+ "summary": "Workflow comments are accurate and well-sourced, but the new docs/cache-infrastructure.md section describes main's publication as unconditional when it is skipped on an exact-key restore (and on a prune failure), and it presents the .ltar store as the project-wide Mathlib download cache while pages.yml and pr-profile.yml are deliberately left out.",
+ "transcript_blob": "8c9f13f1a203fb879f62480982a3c22554d45b0a0b4c4f757dd6e705d983ac10",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46224,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46224,
+  "cache_read_input_tokens": 506839,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1509,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1509,
+    "cache_read_input_tokens": 61665,
+    "input_tokens": 2,
+    "output_tokens": 4140,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13075,
+  "output_tokens_details": {
+   "thinking_tokens": 9539
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
