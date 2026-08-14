@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2413680000000005,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 149.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 123275,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 123275,
+    "cache_read_input_tokens": 1418678,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1648,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1648,
+      "cache_read_input_tokens": 138126,
+      "input_tokens": 2,
+      "output_tokens": 4265,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 9692,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 2.241368,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|fed9cfdf32cf83a3ebcce0c9faebef935366ed1a|proof-quality|claude-opus-5|ce88b39773d791a9|production|4",
+ "diff_blob": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "diff_prompt_sha256": "b722663b2e687e49d40dc8598844f6951718ad5275005e5937cbf41c46add137",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "709d4a67b250169355befc1fbab3095a17b369efcb06411939e8c9c5c4ebdaac",
+ "duration_s": 149.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep of the head checkout: code/TauCeti/Analysis/PositiveDefinite/SemigroupGroup/Time/Axis.lean:70 `change F (t + u, 0 - 0) = F (t + u, 0)`; Time/Slice.lean:73; Basic.lean:173 `change F (p.1 + q.1, p.2 + -q.2) = ...`; Basic.lean:184; Pullback.lean:91. `grep -n \"^[+-].*\\bchange\\b\" diff.txt` \u2192 2472, 2486, 2799, 2874, 2976, all `+` lines, no `-` lines. Mathlib's `Matrix.submatrix_apply` (mathlib/Mathlib/LinearAlgebra/Matrix/Defs.lean) is already used on the identical goal shape at code/TauCeti/Analysis/Bochner/Fourier/Convention.lean:129 and Gaussian/Basic.lean:131.",
+   "file": "TauCeti/Analysis/PositiveDefinite/SemigroupGroup/Time/Axis.lean",
+   "fix": "Replace each `change` with the named rewrite already used elsewhere in this PR: after `ext`, `rw [Matrix.submatrix_apply, Matrix.of_apply, ...]` then finish with the substantive step (`simp [sub_eq_add_neg]`, `add_halves`, `map_sub_of_addHomClass`, etc.). For Basic.lean:173 also rewrite the `BCRPoint` star/add through explicit `BCRPoint` simp lemmas instead of unfolding the instance.",
+   "issue": "Five undocumented `change` steps unfold `Matrix.submatrix`/`Matrix.of` (and at Basic.lean:173 the `BCRPoint` `star`/`+` instance fields) to close the `heq` transports: Time/Axis.lean:70, Time/Slice.lean:73, SemigroupGroup/Basic.lean:173 and :184, Pullback.lean:91. None carries a comment justifying why the goal is unreachable otherwise.",
+   "line": 70
+  },
+  {
+   "evidence": "`grep -rn \"Matrix.submatrix\\b\" TauCeti/ | grep -i simp` \u2192 Pullback.lean:122, Matrix/PosSemidef.lean:129, Matrix/PosSemidef.lean:183 (plus an unrelated pre-existing site in RootSystem). In diff.txt, line 2822 is a `+` line with no matching `-`, so Pullback.lean:122 is newly written; lines 918/972 (`+`) correspond to removed lines 1543/1636 (`-`), so those two are moves.",
+   "file": "TauCeti/Analysis/PositiveDefinite/SemigroupGroup/Pullback.lean",
+   "fix": "Use `simp [Matrix.submatrix_apply, Matrix.of_apply, hw, map_sub_of_addHomClass \u03c6]` (or `Matrix.ext` + `rw [Matrix.submatrix_apply, Matrix.of_apply]`) at Pullback.lean:122, and make the same substitution at Matrix/PosSemidef.lean:129 and :183 while relocating them.",
+   "issue": "`simp [Matrix.submatrix, hw, map_sub_of_addHomClass \u03c6]` unfolds `Matrix.submatrix` by handing simp the definition rather than its API lemma. The same pattern appears at Matrix/PosSemidef.lean:129 and :183, which are verbatim relocations of the deleted Kernel/Basic.lean lines rather than new code, but land in the new canonical file.",
+   "line": 122
+  }
+ ],
+ "head_sha": "fed9cfdf32cf83a3ebcce0c9faebef935366ed1a",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "985b76a5532b473bd5ad7dff7f3c9ed90f13b1b08c7adef292ba0860f2995420",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 4,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T044113Z-3082-proof-quality-9bc9cb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T04:41:13Z",
+ "submitted_by": "kim-em",
+ "summary": "Five undocumented `change` tactics added by this PR close `Matrix.submatrix` transport goals by definitional unfolding, at sites where the named `Matrix.submatrix_apply` \u2014 used by this same PR twice \u2014 applies; one newly written `simp` call also passes `Matrix.submatrix` itself to the simp set.",
+ "transcript_blob": "bc47c02be65ddbd4963b0a33e00aa11124ddf22f61abc6e647f7a2ce934dd802",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 123275,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 123275,
+  "cache_read_input_tokens": 1418678,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1648,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1648,
+    "cache_read_input_tokens": 138126,
+    "input_tokens": 2,
+    "output_tokens": 4265,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 9692,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
