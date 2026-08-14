@@ -1,0 +1,120 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.638698,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 183.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 135790,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 135790,
+    "cache_read_input_tokens": 1749664,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 205,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 205,
+      "cache_read_input_tokens": 152084,
+      "input_tokens": 2,
+      "output_tokens": 3545,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13981,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 2.638698,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|57ecefaca2b49fd1f49eba7df9ceda99330c2982|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "diff_prompt_sha256": "b3bef3b44a616e17c086b25b77888901f1030285aa610257edfe8f29bdbc3b74",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "duration_s": 183.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Declaration at CharFun/PosDef.lean:124. grep for `posSemidef_charFun` gives exactly three call sites, all with the identity: CharFun/PositiveDefinite.lean:57 `simpa using posSemidef_charFun (\u03bc := \u03bc) (fun x : E => x)`; Fourier/Convention.lean:121 `(posSemidef_charFun (\u03bc := \u03bd) (fun x : W => x)).submatrix (fun a : W => (-2 * Real.pi) \u2022 a)`; Gaussian/Basic.lean:123 `(posSemidef_charFun (\u03bc := stdGaussian V) (fun x : V => x)).submatrix (fun a : V => Real.sqrt (2 * c) \u2022 a)`.",
+   "file": "TauCeti/Analysis/Bochner/CharFun/PosDef.lean",
+   "fix": "State it as `theorem posSemidef_charFun : Matrix.PosSemidef fun a b : E => charFun \u03bc (a - b)` (drop `\u03b9`/`t`) and let the rescaling call sites use `(posSemidef_charFun (\u03bc := \u03bd)).submatrix (fun a => (-2 * Real.pi) \u2022 a)` and `.submatrix (fun a => Real.sqrt (2 * c) \u2022 a)` directly.",
+   "issue": "`posSemidef_charFun {\u03b9 : Type*} (t : \u03b9 \u2192 E)` bakes a pullback into the statement, but the PR deleted the canonical hypothesis-free kernel form (`charFun_isPositiveDefiniteKernel`), so every in-repo use now instantiates `t := id` and two of them re-apply `.submatrix` \u2014 re-deriving via a parameter what Mathlib's `Matrix.PosSemidef.submatrix` already provides, and forcing the `Matrix.of`/`submatrix` transport blocks at both sites.",
+   "line": 124
+  },
+  {
+   "evidence": "grep for `posSemidef_charFun_star_kernel_of_star_eq_neg` in ./code returns only line 25 (docstring) and line 50 (declaration). `IsPositiveDefinite.posSemidef : IsPositiveDefinite F \u2192 Matrix.PosSemidef (fun a b => F (a + star b))` at PositiveDefinite/Basic.lean:184 matches the statement verbatim with `F := charFun \u03bc`, and `charFun_isPositiveDefinite_of_star_eq_neg` is at line 63 of the same file. The roadmap bullet (TauCetiRoadmap/OneParameterSemigroups/README.md:216) asks only for the generic PD-function \u2194 PD-kernel equivalence.",
+   "file": "TauCeti/Analysis/Bochner/CharFun/PositiveDefinite.lean",
+   "fix": "Delete the declaration and its `## Main declarations` entry (line 25); callers wanting the `a + star b` shape use `IsPositiveDefinite.posSemidef` applied to `charFun_isPositiveDefinite_of_star_eq_neg`, and callers wanting the subtraction kernel use `posSemidef_charFun`.",
+   "issue": "`posSemidef_charFun_star_kernel_of_star_eq_neg` carries `[StarAddMonoid E]` and `hstar : \u2200 x, star x = -x` that the conclusion does not need: under `hstar` its statement is definitionally the hypothesis-free `Matrix.PosSemidef fun a b => charFun \u03bc (a - b)`, and it duplicates the generic route `(charFun_isPositiveDefinite_of_star_eq_neg hstar).posSemidef`. It has no in-repository user.",
+   "line": 50
+  }
+ ],
+ "head_sha": "57ecefaca2b49fd1f49eba7df9ceda99330c2982",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0abc127ba54ab4eda102716f80c2b1c1d72d032e5c761ee56de976e243366fd4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T000719Z-3082-generality-79bc0a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T00:07:19Z",
+ "submitted_by": "kim-em",
+ "summary": "The migration to `Matrix.PosSemidef` sits at the right level, and the new matrix file is now stated over general star-ordered rings. Two declarations remain below that level: `posSemidef_charFun` bakes in a pullback parameter that no caller uses (all three pass the identity, two then call `.submatrix`), and the `star`-hypothesis charFun kernel wrapper is a strictly weaker, unused special case.",
+ "transcript_blob": "1df4ea4fae27dfa69b4443ada3a1144f27edb255942f876a268ae6a0c3d0f941",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 135790,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 135790,
+  "cache_read_input_tokens": 1749664,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 205,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 205,
+    "cache_read_input_tokens": 152084,
+    "input_tokens": 2,
+    "output_tokens": 3545,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13981,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

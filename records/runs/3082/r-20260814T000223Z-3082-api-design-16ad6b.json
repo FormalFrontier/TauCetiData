@@ -1,0 +1,127 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.7323014999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 296.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 168830,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 168830,
+    "cache_read_input_tokens": 2837329,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1230,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1230,
+      "cache_read_input_tokens": 184099,
+      "input_tokens": 2,
+      "output_tokens": 2097,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22745,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 3.732301,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|57ecefaca2b49fd1f49eba7df9ceda99330c2982|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "diff_prompt_sha256": "b3bef3b44a616e17c086b25b77888901f1030285aa610257edfe8f29bdbc3b74",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "duration_s": 296.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The identical body `simpa only [starRingEnd_apply] using hK.isHermitian.apply b a` (or its `RCLike.star_def` variant) appears at Matrix/PosSemidef.lean:202 and :231 \u2014 twice inside the file that is supposed to own this API \u2014 plus Kernel/Kolmogorov.lean:82 and :133, Kernel/Finsupp.lean:250, Kernel/Radical.lean:128, Kernel/Bounds.lean:70-71, SemigroupGroup/Basic.lean:226 and :265, Time/Slice.lean:82, Time/Axis.lean:79. Mathlib/LinearAlgebra/Matrix/Hermitian.lean:62 confirms `IsHermitian.apply : star (A j i) = A i j`, i.e. the star form, so the conj restatement is not available upstream.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Add `theorem conj_apply_of_posSemidef {K : \u03b1 \u2192 \u03b1 \u2192 \ud835\udd5c} (hK : Matrix.PosSemidef K) (a b : \u03b1) : conj (K a b) = K b a := by simpa only [starRingEnd_apply] using hK.isHermitian.apply b a` to the RCLike section and use it at all 11 sites.",
+   "issue": "The deleted `isPositiveDefiniteKernel_conj_symm` (`conj (K a b) = K b a`) has no replacement. The new RCLike section supplies `normSq_le_of_posSemidef`, `eq_zero_of_apply_self_eq_zero_{left,right}_of_posSemidef` and `norm_le_one_of_apply_self_eq_one_of_posSemidef`, but every consumer that needs conjugate symmetry now re-derives it inline from `hK.isHermitian.apply`, which states `star (K a b) = K b a` and so also needs a `starRingEnd_apply` rewrite.",
+   "line": 198
+  },
+  {
+   "evidence": "PositiveDefinite/Basic.lean:295-298 `IsPositiveDefinite.prod` is `of_posSemidef <| posSemidef_prod ...`, while :284-292 `IsPositiveDefinite.sum` open-codes a four-line `heq : (\u2211 i \u2208 s, fun a b => ...) = fun a b => \u2211 ...` transport; SemigroupGroup/Basic.lean:370-378 repeats the same block verbatim against `Matrix.posSemidef_sum`.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Add `theorem posSemidef_sum {\u03b9} {s : Finset \u03b9} {K : \u03b9 \u2192 \u03b1 \u2192 \u03b1 \u2192 \ud835\udd5c} (hK : \u2200 i \u2208 s, Matrix.PosSemidef (K i)) : Matrix.PosSemidef fun a b => \u2211 i \u2208 s, K i a b` next to `posSemidef_prod`, and use it at the two sites.",
+   "issue": "The file develops the Schur-product side in function form (`posSemidef_prod`, `posSemidef_pow`) but drops the sum side: Mathlib's `Matrix.posSemidef_sum` concludes about `\u2211 i \u2208 s, K i` (matrix-valued sum), not `fun a b => \u2211 i \u2208 s, K i a b`, so consumers must transport by hand. The result is an asymmetric API where the product consumers are one-liners and the sum consumers are not.",
+   "line": 166
+  },
+  {
+   "evidence": "PosSemidef.lean:100-103 `posSemidef_one` vs :106-122 `posSemidef_const_of_nonneg`; the only uses are :170 and :181, both in-file. Mathlib/LinearAlgebra/Matrix/PosDef.lean:114 `protected lemma one : PosSemidef (1 : Matrix n n R)` is the identity matrix.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Make `posSemidef_one` `private`, or delete it and use `posSemidef_const_of_nonneg zero_le_one` at the two internal call sites; drop the corresponding entry from the module docstring.",
+   "issue": "`posSemidef_one` is the `c = 1` instance of `posSemidef_const_of_nonneg` (same typeclasses, adjacent in the file) and is used only twice inside its own file, so it is duplicate public API. Worse, `TauCeti.posSemidef_one` asserts the all-ones constant matrix is PSD while Mathlib's `Matrix.PosSemidef.one` asserts it of the identity matrix \u2014 two in-scope facts with the same name and different content.",
+   "line": 100
+  }
+ ],
+ "head_sha": "57ecefaca2b49fd1f49eba7df9ceda99330c2982",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "60485ba667a13f6cd412180b4229621e5b0901955b09c6b14af1b2f44eada290",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T000223Z-3082-api-design-16ad6b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T00:02:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The predicate migration is clean \u2014 no compatibility aliases, helpers stay private, and the prior namespace finding is resolved. But the replacement API drops the conjugate-symmetry accessor (now open-coded at 11 sites), provides `posSemidef_prod` without its sum counterpart, and exposes `posSemidef_one` as a public duplicate whose name means the opposite of Mathlib's `Matrix.PosSemidef.one`.",
+ "transcript_blob": "71ac45cf1c0dc1e6ec3d0fca0549803ded5ce49c99f73f0acff8cf9d4b200990",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 168830,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 168830,
+  "cache_read_input_tokens": 2837329,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1230,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1230,
+    "cache_read_input_tokens": 184099,
+    "input_tokens": 2,
+    "output_tokens": 2097,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22745,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

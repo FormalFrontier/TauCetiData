@@ -1,0 +1,134 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.861509,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 134.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 111347,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 111347,
+    "cache_read_input_tokens": 807416,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2331,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2331,
+      "cache_read_input_tokens": 125515,
+      "input_tokens": 2,
+      "output_tokens": 2926,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 11169,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "cost_usd": 1.861509,
+ "dedupe_key": "TauCetiProject/TauCeti|3082|57ecefaca2b49fd1f49eba7df9ceda99330c2982|naming|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "diff_prompt_sha256": "b3bef3b44a616e17c086b25b77888901f1030285aa610257edfe8f29bdbc3b74",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "f725eadf79b1b8a6a45fe75909bf4193c2a0093218beece6763eeca741a7eb90",
+ "duration_s": 134.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/PosDef.lean:115 `protected lemma one [StarOrderedRing R] [DecidableEq n] : PosSemidef (1 : Matrix n n R)`; PosSemidef.lean:102 `Matrix.PosSemidef (fun _ _ : \u03b1 => (1 : R))`.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Rename to `posSemidef_const_one`, or delete it and use `posSemidef_const_of_nonneg zero_le_one` at the two call sites (lines 170, 181).",
+   "issue": "`posSemidef_one` states `Matrix.PosSemidef (fun _ _ : \u03b1 => (1 : R))` \u2014 the all-ones matrix \u2014 but Mathlib's `one` on this exact predicate means the identity matrix. In a file whose premise is that a kernel *is* a matrix, the name asserts the wrong matrix.",
+   "line": 100
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/PosDef.lean:325 `protected lemma pow ... : PosSemidef (M ^ k)`, whose `k = 0` base case is `.one` = the identity \u2014 exactly parallel to PosSemidef.lean:181 whose `n = 0` base case is the all-ones `posSemidef_one`.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Rename to `posSemidef_hadamard_pow` and `posSemidef_hadamard_prod` (matching Mathlib's `Matrix.PosSemidef.hadamard`), and update the doc list at lines 31 and the call sites in Basic.lean:298, SemigroupGroup/Basic.lean:386, Function/Closure.lean.",
+   "issue": "`posSemidef_pow` states the *entrywise* power `fun a b => K a b ^ n`, but `Matrix.PosSemidef.pow` in Mathlib is the matrix power `M ^ k`. Same defect at line 166: `posSemidef_prod` names `fun a b => \u220f i \u2208 s, K i a b`, which reads as a product of matrices while the content is the Schur/Hadamard product \u2014 the proof itself goes through `Matrix.PosSemidef.hadamard` (lines 170, 183).",
+   "line": 177
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/PosDef.lean:418 `theorem posSemidef_vecMulVec_star_self [StarOrderedRing R] (a : n \u2192 R) : (vecMulVec (star a) a).PosSemidef` \u2014 cited in the proof at PosSemidef.lean:97; `:356 posSemidef_conjTranspose_mul_self`.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Rename to `posSemidef_vecMulVec_star_self`, matching the Mathlib lemma this generalizes from `Finite` to arbitrary index types; update the doc list (line 28) and uses in FourierAtom.lean:82.",
+   "issue": "`posSemidef_star_mul` reads as the matrix `star A * A`, which Mathlib names `Matrix.posSemidef_conjTranspose_mul_self`. The matrix actually stated is `Matrix.vecMulVec (star g) g` \u2014 the file's own private lemma proves this at line 77 \u2014 for which Mathlib's name is `posSemidef_vecMulVec_star_self`.",
+   "line": 91
+  },
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/PosDef.lean:297 `theorem posSemidef_iff_dotProduct_mulVec`; PosSemidef.lean:42 `open Matrix` with the declaration in `namespace TauCeti`.",
+   "file": "TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "fix": "Name the right-hand side, e.g. `posSemidef_iff_conjSymm_and_sum_nonneg`, and update uses in Basic.lean:186,198, SemigroupGroup/Basic.lean:228, Gaussian/Basic.lean:152, Kernel/Finsupp.lean:265.",
+   "issue": "`posSemidef_iff` claims the bare `_iff` name for a characterization of Mathlib's `Matrix.PosSemidef`, whose right-hand side (conjugate symmetry plus nonnegativity of every finite Hermitian form) is not named. Mathlib names its characterizations of this same predicate after their RHS.",
+   "line": 127
+  }
+ ],
+ "head_sha": "57ecefaca2b49fd1f49eba7df9ceda99330c2982",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3082,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "6a5555bb8ce2c171b754e243b7cb309897d5a186d5e6dd92aa02c99ebc547afc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T001521Z-3082-naming-c3c45c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T00:15:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The new TauCeti/Analysis/Matrix/PosSemidef.lean states everything as Matrix.PosSemidef but names four declarations with matrix-operation words that Mathlib already owns for different matrices: posSemidef_one (all-ones vs identity), posSemidef_pow/posSemidef_prod (Hadamard vs matrix power/product), and posSemidef_star_mul (vecMulVec vs star A * A). posSemidef_iff also claims a bare _iff for a Mathlib predicate that already has a named _iff_ family.",
+ "transcript_blob": "9c13c29a3176d7d9a87ef2b3888dbb691f76d87e955c61cd976fd668de1a249d",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 111347,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 111347,
+  "cache_read_input_tokens": 807416,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2331,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2331,
+    "cache_read_input_tokens": 125515,
+    "input_tokens": 2,
+    "output_tokens": 2926,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 11169,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
