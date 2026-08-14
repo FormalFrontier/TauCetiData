@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9806314999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 140.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 55022,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 55022,
+    "cache_read_input_tokens": 291351,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7226,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7226,
+      "cache_read_input_tokens": 64295,
+      "input_tokens": 1,
+      "output_tokens": 3092,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10827,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "cost_usd": 0.980631,
+ "dedupe_key": "TauCetiProject/TauCeti|3141|29393d31e34b8e14f683f3fcef8ad4ce80c3f978|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "diff_sha256": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "duration_s": 140.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/RingTheory/MvPowerSeries/Basic.lean:334` `def C : R \u2192+* MvPowerSeries \u03c3 R` under `section Semiring`/`variable [Semiring R]`; `:347` `coeff_C n a = if n = 0 then a else 0`; `:786` `theorem c_eq_algebraMap : C = algebraMap R (MvPowerSeries \u03c3 R) := rfl`. The two duplicated proofs are RestrictedPowerSeries.lean:178-181 and 359-363, differing only in the simp set (`coeff_one` vs `algebraMap_apply, coeff_C`).",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Prove `isRestricted_C {k} {A} [Semiring A] [TopologicalSpace A] (a : A) : IsRestricted (MvPowerSeries.C a : MvPowerSeries (Fin k) A)` with the existing proof body (using `MvPowerSeries.coeff_C`), then derive both: `isRestricted_one` from `map_one MvPowerSeries.C \u25b8 isRestricted_C 1`, and `isRestricted_algebraMap` from `MvPowerSeries.c_eq_algebraMap \u25b8 isRestricted_C a`. Update the module docstring line 99 accordingly.",
+   "issue": "`isRestricted_one` (L176-181) and `isRestricted_algebraMap` (L356-363) are the same four-line `isRestricted_of_hasFiniteSupport <| (Set.finite_singleton 0).subset \u2026` argument written twice, both special cases of \"a constant series is restricted\". The general form `IsRestricted (MvPowerSeries.C a)` holds at `[Semiring A] [TopologicalSpace A]`, so a user with the noncommutative `[Ring A]` that `restrictedMvPowerSeriesSubring` is stated at can exhibit only `0` and `1` as constants in `A\u27e8T\u2081, \u2026, T\u2096\u27e9`; `isRestricted_algebraMap` is gated behind `CommSemiring` purely by the `Algebra` instance, not by the mathematics.",
+   "line": 176
+  }
+ ],
+ "head_sha": "29393d31e34b8e14f683f3fcef8ad4ce80c3f978",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3141,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2981e19f8c9e123be456b855ed8301eda44eb4c3c938182f660e3051b1e11485",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T072208Z-3141-generality-963a93",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T07:22:08Z",
+ "submitted_by": "kim-em",
+ "summary": "Binder generality is right everywhere the PR touched (AddMonoid/AddGroup/Module are each the weakest class at which the MvPowerSeries operation exists, and the submodule correctly drops NonarchimedeanRing), but the constant-series fact is proved twice as special cases instead of once in general: `isRestricted_one` and `isRestricted_algebraMap` repeat the same finite-support argument and leave `C a` unavailable over a noncommutative semiring.",
+ "transcript_blob": "6bac968e7c93e42b7cfa087ebc3875b5d9a674c1f97a422fc8ae926ca2eb2242",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 55022,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 55022,
+  "cache_read_input_tokens": 291351,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7226,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7226,
+    "cache_read_input_tokens": 64295,
+    "input_tokens": 1,
+    "output_tokens": 3092,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10827,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

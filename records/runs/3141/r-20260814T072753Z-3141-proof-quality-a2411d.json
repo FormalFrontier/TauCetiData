@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9310934999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 363.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 71672,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 71672,
+    "cache_read_input_tokens": 1300101,
+    "inference_geo": "not_available",
+    "input_tokens": 450,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1758,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1758,
+      "cache_read_input_tokens": 86413,
+      "input_tokens": 2,
+      "output_tokens": 3148,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21931,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "cost_usd": 1.931093,
+ "dedupe_key": "TauCetiProject/TauCeti|3141|29393d31e34b8e14f683f3fcef8ad4ce80c3f978|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "diff_sha256": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "duration_s": 363.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Notation/Support.lean:50 `mulSupport_subset_iff' : mulSupport f \u2286 s \u2194 \u2200 x \u2209 s, f x = 1` (additivised `Function.support_subset_iff'`, used e.g. Mathlib/Algebra/Homology/EulerCharacteristic.lean:115); mathlib/Mathlib/RingTheory/MvPowerSeries/Basic.lean:166 `coeff_monomial_ne (h : m \u2260 n) (a) : coeff m (monomial n a) = 0`, :349 `coeff_C_of_ne_zero`, :787 `c_eq_algebraMap : C = algebraMap R (MvPowerSeries \u03c3 R) := rfl` at `[CommSemiring R]`.",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Factor `isRestricted_monomial {k} {A} [Semiring A] [TopologicalSpace A] (n) (a) : IsRestricted (MvPowerSeries.monomial n a)` (or `isRestricted_C`), proving `Function.support \u2191(monomial n a) \u2286 {n}` once via `Function.support_subset_iff'.mpr` + `MvPowerSeries.coeff_monomial_ne` \u2014 which also removes the `by_contra` double negation. Then `isRestricted_one` is `map_one (C : A \u2192+* _) \u25b8 isRestricted_C 1` and `isRestricted_algebraMap` is `MvPowerSeries.c_eq_algebraMap \u25b8 isRestricted_C a`.",
+   "issue": "`isRestricted_one` (:178-181) and `isRestricted_algebraMap` (:359-363) repeat the identical script \u2014 `(Set.finite_singleton 0).subset fun s hs \u21a6 simp only [Set.mem_singleton_iff]; by_contra h; exact hs (by simp [\u2190 MvPowerSeries.coeff_apply, \u2026, h])` \u2014 differing only in the middle simp lemma. Both are the single fact that a monomial (equivalently `C a`) is restricted, which is also the ring-coefficient introduction rule this file otherwise lacks.",
+   "line": "178"
+  },
+  {
+   "evidence": "mathlib/Mathlib/RingTheory/MvPowerSeries/Basic.lean:140 `theorem coeff_apply (f : MvPowerSeries \u03c3 R) (d) : coeff d f = f d := rfl`; RestrictedPowerSeries.lean:153 `\u2026 := (Iff.rfl)`.",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Prove it through the named lemma, e.g. `isRestricted_iff.trans (by simp only [Filter.ZeroAtFilter, MvPowerSeries.coeff_apply])`, leaving `Iff.rfl` only for `isRestricted_iff`, which unfolds a definition of this file.",
+   "issue": "`isRestricted_iff_coeff` is closed by bare `(Iff.rfl)`, so the bridge between the two normal forms rests on the defeq `MvPowerSeries.coeff s f \u2261 f s` as an unrecorded proof step, even though the explicit lemma exists and the same PR uses it two lemmas later (`\u2190 MvPowerSeries.coeff_apply` at :181 and :362).",
+   "line": "150"
+  },
+  {
+   "evidence": "mathlib/Mathlib/RingTheory/MvPowerSeries/Basic.lean:86 `def MvPowerSeries (\u03c3 R) := (\u03c3 \u2192\u2080 \u2115) \u2192 R`; :117 `instance {A} [Semiring R] [AddCommMonoid A] [Module R A] : Module R (MvPowerSeries \u03c3 A) := inferInstanceAs \u2026`; mathlib/Mathlib/Order/Filter/ZeroAndBoundedAtFilter.lean:56 `zeroAtFilterSubmodule \u2026 (l : Filter \u03b1) : Submodule \ud835\udd5c (\u03b1 \u2192 \u03b2)`.",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Add the same one-line comment at the definition, naming the `inferInstanceAs` instance the ascription relies on.",
+   "issue": "`restrictedMvPowerSeriesSubmodule` is a term of type `Submodule A ((Fin k \u2192\u2080 \u2115) \u2192 M)` accepted at `Submodule A (MvPowerSeries (Fin k) M)`; it elaborates only because both the type synonym and Mathlib's `Module A (MvPowerSeries \u03c3 M)` instance delta-reduce to the `Pi` ones. This is the file's load-bearing wrapper defeq and is the one place not documented, while `isRestricted_zero`/`.add`/`.neg`/`.smul` (:159, :187, :195, :208) each carry an inline comment saying exactly that.",
+   "line": "398"
+  }
+ ],
+ "head_sha": "29393d31e34b8e14f683f3fcef8ad4ce80c3f978",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3141,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "7b5529fac122729a13117986944ee02833fced0ed553180499bba6200ce0481e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T072753Z-3141-proof-quality-a2411d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T07:27:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The delegations to Mathlib's `ZeroAtFilter` API are clean and the cross-wrapper defeq they use is now commented, but `isRestricted_one` and `isRestricted_algebraMap` repeat the same four-line support-subset script instead of sharing one monomial/constant lemma, and two remaining spots cross the `MvPowerSeries`/`Pi` wrapper by bare `rfl` where a named lemma or a comment is available.",
+ "transcript_blob": "299133a1ae5cef2935f5e12ab278253909161efcb1abbaa8df1760be80b3fa88",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71672,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 71672,
+  "cache_read_input_tokens": 1300101,
+  "inference_geo": "not_available",
+  "input_tokens": 450,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1758,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1758,
+    "cache_read_input_tokens": 86413,
+    "input_tokens": 2,
+    "output_tokens": 3148,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21931,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

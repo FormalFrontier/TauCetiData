@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7346199999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 265.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78619,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78619,
+    "cache_read_input_tokens": 860800,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4738,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4738,
+      "cache_read_input_tokens": 90380,
+      "input_tokens": 2,
+      "output_tokens": 1421,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20157,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "cost_usd": 1.73462,
+ "dedupe_key": "TauCetiProject/TauCeti|3141|29393d31e34b8e14f683f3fcef8ad4ce80c3f978|reuse|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "diff_sha256": "fd24a4a4536c48716d4abb3a1a5ef888e32d6cdcf20db9c7faa42e97402ee835",
+ "duration_s": 265.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep in ./mathlib: `Mathlib/RingTheory/MvPowerSeries/Basic.lean:176:theorem eq_of_coeff_monomial_ne_zero {m n : \u03c3 \u2192\u2080 \u2115} {a : R} (h : coeff m (monomial n a) \u2260 0) : m = n`; `:206 theorem monomial_zero_one : monomial (R := R) (0 : \u03c3 \u2192\u2080 \u2115) 1 = 1 := rfl`; `:343 theorem monomial_zero_eq_C_apply (a : R) : monomial (0 : \u03c3 \u2192\u2080 \u2115) a = C a := rfl`; `:786 theorem c_eq_algebraMap : C = algebraMap R (MvPowerSeries \u03c3 R) := rfl` (in the `[CommSemiring R]` section, matching `isRestricted_algebraMap`'s binders). The two diff proofs are textually identical apart from `MvPowerSeries.coeff_one` vs `MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C`.",
+   "file": "TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean",
+   "fix": "Factor out one lemma `isRestricted_monomial {k} {A} [Semiring A] [TopologicalSpace A] (n) (a : A) : IsRestricted (MvPowerSeries.monomial n a) := isRestricted_of_hasFiniteSupport <| (Set.finite_singleton n).subset fun s hs \u21a6 MvPowerSeries.eq_of_coeff_monomial_ne_zero (by simpa [MvPowerSeries.coeff_apply] using hs)`, then `isRestricted_one k A := isRestricted_monomial 0 1` (Mathlib `monomial_zero_one : monomial 0 1 = 1 := rfl`, Basic.lean:206) and `isRestricted_algebraMap a := isRestricted_monomial 0 a` (Mathlib `monomial_zero_eq_C_apply` and `c_eq_algebraMap : C = algebraMap R (MvPowerSeries \u03c3 R) := rfl`, Basic.lean:343/786, both `rfl`).",
+   "issue": "`isRestricted_one` (178-181) and `isRestricted_algebraMap` (359-363) are the same four-line proof, differing only in the simp lemma list, and each re-derives Mathlib's `MvPowerSeries.eq_of_coeff_monomial_ne_zero` (`Mathlib/RingTheory/MvPowerSeries/Basic.lean:176`: `coeff m (monomial n a) \u2260 0 \u2192 m = n`) by hand via `Set.finite_singleton 0 |>.subset` + `by_contra`.",
+   "line": 178
+  }
+ ],
+ "head_sha": "29393d31e34b8e14f683f3fcef8ad4ce80c3f978",
+ "merge_base_sha": "052dec58e5611c2a556cb145f330d541fd12ce89",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3141,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "ed265b555c3327e175bab256d86d324f3fd849fabeff88f6abb2f46d41f98b8a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T071742Z-3141-reuse-2aa3d5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T07:17:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The `ZeroAtFilter` delegation is correct reuse and the submodule genuinely is Mathlib's `zeroAtFilterSubmodule` under the roadmap's name, which earns its place as the object Wedhorn 8.29 needs. One duplication remains: `isRestricted_one` and `isRestricted_algebraMap` are line-for-line clones of each other that re-derive `MvPowerSeries.eq_of_coeff_monomial_ne_zero`. On the contested `isRestricted_iff` / `isRestricted_iff_coeff` pair I do not re-file: the author's `rw`-normal-form build error and the conflicting `naming` instruction are persuasive, and Mathlib keeps such definitionally-equal restatements.",
+ "transcript_blob": "d3a772f2b76a554cf69afcf74e0936fc4ee92b4656b48ec7b6c45d6fb3d53be0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78619,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78619,
+  "cache_read_input_tokens": 860800,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4738,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4738,
+    "cache_read_input_tokens": 90380,
+    "input_tokens": 2,
+    "output_tokens": 1421,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20157,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
