@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9959290000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 156.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 43922,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 43922,
+    "cache_read_input_tokens": 568958,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1423,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1423,
+      "cache_read_input_tokens": 59449,
+      "input_tokens": 2,
+      "output_tokens": 1759,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10591,
+    "output_tokens_details": {
+     "thinking_tokens": 7282
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 0.995929,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|27a9d3e8d311d3d5125f06017486a9687c7468ff|reuse|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "82296b0b155f6b0e1dc571abcc5b032c0e2b2bd448475d1c013b2a5d8bb4388b",
+ "diff_sha256": "82296b0b155f6b0e1dc571abcc5b032c0e2b2bd448475d1c013b2a5d8bb4388b",
+ "duration_s": 156.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"cache-get.log|mathlib-cache-get\" .github/ scripts/ docs/` returns only ci.yml:96,98 (writes) and pr-build.yml:393,395 (writes) plus pr-build.yml:413 (the only read). `grep -n \"RUNNER_TEMP|upload-artifact\" .github/workflows/ci.yml` shows no upload or later read of $RUNNER_TEMP/mathlib-cache-get.log.",
+   "file": ".github/workflows/ci.yml",
+   "fix": "Drop the tee and the pipefail scaffolding in ci.yml: `if ! lake exe cache get; then echo \"::warning::...\"; lake exe cache get!; fi`. Keep pr-build.yml's tee, which has a consumer.",
+   "issue": "The fetch-with-retry block is copied from pr-build.yml:392-396 including `2>&1 | tee \"$RUNNER_TEMP/mathlib-cache-get.log\"` and the `set -o pipefail` it requires, but in ci.yml nothing reads that file \u2014 it duplicates the step log the runner already captures. In pr-build.yml the tee earns its place (pr-build.yml:413 `log=\"$GITHUB_WORKSPACE/cache-get.log\"` feeds the partial-fetch guard); the second tee also overwrites the first, so the file is not even a full record.",
+   "line": 96
+  }
+ ],
+ "head_sha": "27a9d3e8d311d3d5125f06017486a9687c7468ff",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "7a4c88d6ff39a87707295ae0abb6d2bcddf3481c3233a1307638232f807c4b46",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T012740Z-3143-reuse-118ab8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:27:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior round's cache-path duplication is resolved \u2014 the composite action now owns both the key namespace and the cache directory, and neither caller restates the literal. The one remaining duplication is ci.yml's fetch step, cloned from pr-build.yml together with a log capture that has no consumer there.",
+ "transcript_blob": "909ceed9866e5170c5b1902cde344c30cc7af2b6784bda9e35ca82c27b631808",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 43922,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 43922,
+  "cache_read_input_tokens": 568958,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1423,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1423,
+    "cache_read_input_tokens": 59449,
+    "input_tokens": 2,
+    "output_tokens": 1759,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10591,
+  "output_tokens_details": {
+   "thinking_tokens": 7282
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

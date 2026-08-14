@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3471185,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 214.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 55978,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 55978,
+    "cache_read_input_tokens": 789037,
+    "inference_geo": "not_available",
+    "input_tokens": 30,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1423,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1423,
+      "cache_read_input_tokens": 71505,
+      "input_tokens": 2,
+      "output_tokens": 5325,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15431,
+    "output_tokens_details": {
+     "thinking_tokens": 11663
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "add6dc7216715b02e781b1e9775d891215e11fc8",
+ "cost_usd": 1.347119,
+ "dedupe_key": "TauCetiProject/TauCeti|3143|27a9d3e8d311d3d5125f06017486a9687c7468ff|documentation|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "82296b0b155f6b0e1dc571abcc5b032c0e2b2bd448475d1c013b2a5d8bb4388b",
+ "diff_sha256": "82296b0b155f6b0e1dc571abcc5b032c0e2b2bd448475d1c013b2a5d8bb4388b",
+ "duration_s": 214.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "action.yml:37 `echo \"MATHLIB_CACHE_DIR=$cache_dir\" >> \"$GITHUB_ENV\"`; pr-build.yml:618-620 `--env PATH --env HOME --env CI --env LAKE_NO_CACHE --env LAKE_ARTIFACT_CACHE --env LAKE_RESTORE_ARTIFACTS --env LAKE_CACHE_DIR --env WATCHDOG_TOOLCHAIN` \u2014 MATHLIB_CACHE_DIR is absent.",
+   "file": ".github/workflows/pr-build.yml",
+   "fix": "Reword to state the real mechanism: the default cache dir is outside the `base/` tree mounted into landrun, and the sandbox never receives MATHLIB_CACHE_DIR because the landrun invocation passes an explicit `--env` allowlist that excludes it.",
+   "issue": "The comment claims the action \"exports MATHLIB_CACHE_DIR only for the trusted fetch steps\". It does not: the action writes it to $GITHUB_ENV (action.yml:37), which GitHub applies to every subsequent step in the job, including the landrun build. What actually keeps it out of the sandbox is the explicit `--env` allowlist at pr-build.yml:618-620, which omits it, plus the cache dir not being mounted.",
+   "line": 374
+  },
+  {
+   "evidence": "action.yml:8-11 (`cache-dir` input, default \"\"), action.yml:36-38 (default `$GITHUB_WORKSPACE/.mathlib-ltar-cache`, exported via GITHUB_ENV); docs/cache-infrastructure.md:8,16-17 mention neither the path nor the action's role in setting it.",
+   "file": "docs/cache-infrastructure.md",
+   "fix": "Add one sentence: `.github/actions/restore-mathlib-ltars` sets `MATHLIB_CACHE_DIR` (job-wide, via `$GITHUB_ENV`) to `$GITHUB_WORKSPACE/.mathlib-ltar-cache` by default, overridable with its `cache-dir` input.",
+   "issue": "The section opens with `$MATHLIB_CACHE_DIR/*.ltar` and later says the excluded workflows \"continue fetching into Mathlib's default cache directory\", but never says where the included workflows fetch into or who sets the variable. In a document whose first line promises \"where the build cache lives\", the reader cannot locate the cache or learn that the action overrides Mathlib's `~/.cache/mathlib` default; the `cache-dir` input is also unmentioned.",
+   "line": 8
+  }
+ ],
+ "head_sha": "27a9d3e8d311d3d5125f06017486a9687c7468ff",
+ "merge_base_sha": "4a4dbb6daacc9026bd198abd5751dcf99e571a52",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3143,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "51ffb40a49ea54a4e4f7f0dc8e793bdb54842272d2d5d25fb6d9b541d5c3b818",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "a66b04d97721565b13c8abe07f750fb1d2959ad5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260814T013017Z-3143-documentation-da6d4e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-14T01:30:17Z",
+ "submitted_by": "kim-em",
+ "summary": "The pr-build.yml comment misdescribes the sandbox protection mechanism (GITHUB_ENV exports are job-wide, not scoped to the fetch steps), and the new docs section never says where the cached files actually live despite that being the document's stated purpose.",
+ "transcript_blob": "dfefe8d562df9c52b35e7e7c38d9045d62a959694bb33b7aa479a53ac1d4baa0",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 55978,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 55978,
+  "cache_read_input_tokens": 789037,
+  "inference_geo": "not_available",
+  "input_tokens": 30,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1423,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1423,
+    "cache_read_input_tokens": 71505,
+    "input_tokens": 2,
+    "output_tokens": 5325,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15431,
+  "output_tokens_details": {
+   "thinking_tokens": 11663
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
