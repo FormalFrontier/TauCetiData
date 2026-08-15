@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.262387,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 132864,
+    "input_tokens": 163301,
+    "output_tokens": 1459,
+    "reasoning_output_tokens": 434
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3bccc7ac8bf1c1fd1ffda441044b0ccbc559f6d8",
+ "cost_estimated": true,
+ "cost_usd": 0.262387,
+ "dedupe_key": "TauCetiProject/TauCeti|3376|931658383bb8e36181959c9307f2a2c80dc27d6d|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "8634adb07ae401d32f7094d5520e6862b10ccd93294361e4eb961caa5cca0f9a",
+ "diff_sha256": "8634adb07ae401d32f7094d5520e6862b10ccd93294361e4eb961caa5cca0f9a",
+ "duration_s": 38.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 113 declares `@[expose] noncomputable def Hom.ofMapWeightSpace`, while lines 129\u2013133 already provide the characteristic `toLinearMap` theorem.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/LinearlyReductive.lean",
+   "fix": "Remove `@[expose]` and prove the projection lemma without exposing the body, e.g. use `:= (rfl)` as needed for controlled reducibility.",
+   "issue": "`Hom.ofMapWeightSpace` is marked `@[expose]` even though consumers are given `Hom.ofMapWeightSpace_toLinearMap`; this unnecessarily makes the constructor body part of the usable API.",
+   "line": "113"
+  },
+  {
+   "evidence": "Lines 146\u2013147 rewrite `f (weightProj \u2026 v)` to `weightProj \u2026 (f v)`; the parallel comodule naturality lemmas `Hom.map_coact_eq` and `Hom.map_coact_apply` in `Comodule/Basic.lean:166\u2013174` are both `[simp]`.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/LinearlyReductive.lean",
+   "fix": "Annotate `Hom.map_weightProj` with `@[simp]`.",
+   "issue": "`Hom.map_weightProj` is the canonical naturality normal form but lacks `@[simp]`, so simplification will not move a comodule morphism through a weight projection.",
+   "line": "146"
+  }
+ ],
+ "head_sha": "931658383bb8e36181959c9307f2a2c80dc27d6d",
+ "merge_base_sha": "ba33e87cc4c6dcbc349fe1b353048ff85c63ce2a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3376,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "bf4cf799d17f18b0435e24efa4025ff4cf7faf4baa15b34f5e0ef640df5bc92a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260815T133626Z-3376-api-design-2d3645",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-15T13:36:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The public weight-map API unnecessarily exposes an implementation body and omits the expected simplification rule for projection naturality.",
+ "transcript_blob": "84952c9418d1a046770083382bc3e675c6e35619fc0f9af4551524dba173eb90",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 132864,
+  "input_tokens": 163301,
+  "output_tokens": 1459,
+  "reasoning_output_tokens": 434
+ },
+ "verdict": "request_changes"
+}
