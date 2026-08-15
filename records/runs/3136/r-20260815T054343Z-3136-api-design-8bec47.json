@@ -1,0 +1,88 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.297627,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 79104,
+    "input_tokens": 122673,
+    "output_tokens": 1341,
+    "reasoning_output_tokens": 354
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f91c438a98179d023fcb47117acedfc5d615198f",
+ "cost_estimated": true,
+ "cost_usd": 0.297627,
+ "dedupe_key": "TauCetiProject/TauCeti|3136|73ae85e3db555f44217041cbd047c7440f3197a6|api-design|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "a610a917475fdd44c790ccd0f7380e1ddb2f8b3af5b1ca3d85fcc06037deb68e",
+ "diff_sha256": "a610a917475fdd44c790ccd0f7380e1ddb2f8b3af5b1ca3d85fcc06037deb68e",
+ "duration_s": 36.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`@[expose]` occurs at lines 110, 321, and 416; the corresponding API lemmas occur at lines 115\u2013123, 338\u2013347, and 450\u2013474.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Remove `@[expose]` from all three definitions and keep downstream reasoning through their public characteristic lemmas.",
+   "issue": "`piece`, `twist`, and `tate` are marked `@[expose]` even though `piece_def`/`mem_piece_iff`, `twist_F`/`twist_piece`, and `tate_F`/`tate_piece_apply` characterize them.",
+   "line": 110
+  },
+  {
+   "evidence": "The annotations occur at lines 53, 93, and 137, while `concreteLatticeConj_tmul`, `latticeConj_apply`, `latticeConj_\u03b9`, and `latticeConjugation_toEquiv_apply` already provide the intended interface.",
+   "file": "TauCeti/Geometry/Hodge/Conjugation.lean",
+   "fix": "Remove all three `@[expose]` annotations; add any genuinely missing accessor lemma instead of permitting consumers to unfold the implementations.",
+   "issue": "`concreteLatticeConj`, `latticeConj`, and `latticeConjugation` expose their bodies despite public evaluation, involution, lattice-fixing, and coercion lemmas.",
+   "line": 53
+  },
+  {
+   "evidence": "`id` and `comp` are declared at lines 383 and 389; `rg` finds no corresponding application or composition-law declarations in `TauCeti/Geometry/Hodge/Structure.lean`.",
+   "file": "TauCeti/Geometry/Hodge/Structure.lean",
+   "fix": "Add `[simp]` lemmas for `id_apply` and `comp_apply` (or `toLinearMap`), plus `id_comp`, `comp_id`, and `comp_assoc` proved by extensionality.",
+   "issue": "The public `Hom.id` and `Hom.comp` operations have no application simp lemmas or identity/associativity laws, so morphism expressions do not form a usable compositional API without unfolding.",
+   "line": 383
+  },
+  {
+   "evidence": "`concreteLatticeConj_tmul` at line 72 and `latticeConjugation_toEquiv_apply` at line 144 are `[simp]`; the lattice-fixing theorem at line 114 is not.",
+   "file": "TauCeti/Geometry/Hodge/Conjugation.lean",
+   "fix": "Mark `latticeConj_\u03b9` with `@[simp]`.",
+   "issue": "`latticeConj_\u03b9` is the canonical normalization rule for conjugation on lattice points but lacks `@[simp]`, unlike the adjacent pure-tensor and bundled-application rules.",
+   "line": 114
+  }
+ ],
+ "head_sha": "73ae85e3db555f44217041cbd047c7440f3197a6",
+ "merge_base_sha": "f91c438a98179d023fcb47117acedfc5d615198f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3136,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2114fd2eba9a89e314667c96847250e0b155939d6b82aa8cd690a142a36656c5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260815T054343Z-3136-api-design-8bec47",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-15T05:43:43Z",
+ "submitted_by": "kim-em",
+ "summary": "Several public definitions expose implementation bodies despite having characteristic lemmas, and the morphism/conjugation APIs lack expected normalization and composition laws.",
+ "transcript_blob": "f436dca504ce6e85e632a60dacf2e31c85906efd0efd9d867e2053bae5f40a7a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 79104,
+  "input_tokens": 122673,
+  "output_tokens": 1341,
+  "reasoning_output_tokens": 354
+ },
+ "verdict": "request_changes"
+}
