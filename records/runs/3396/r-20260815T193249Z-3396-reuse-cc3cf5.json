@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.243811,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 63.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 60672,
+    "input_tokens": 94721,
+    "output_tokens": 1441,
+    "reasoning_output_tokens": 490
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "102fe25d5281ab7423d1933074839b2c04d127e6",
+ "cost_estimated": true,
+ "cost_usd": 0.243811,
+ "dedupe_key": "TauCetiProject/TauCeti|3396|95e921fa7030415c5d254c15fb4cab18ba4c662c|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "35c2a2726cd8b641f96c97b19d7315a0981b99e1c39b39bc03c06cfbd3814528",
+ "diff_sha256": "35c2a2726cd8b641f96c97b19d7315a0981b99e1c39b39bc03c06cfbd3814528",
+ "duration_s": 63.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 185\u2013217 are respectively `Iff.rfl` or direct references to `ConflationClass.abelian_conflation`, `isInflation_abelian_iff`, `isDeflation_abelian_iff`, `inflations_abelian_eq`, and `deflations_abelian_eq`; `ExactStructure.IsInflation` and `IsDeflation` are abbreviations in `ExactStructure.lean:220\u2013225`.",
+   "file": "TauCeti/CategoryTheory/Exact/Abelian.lean",
+   "fix": "Keep the canonical `ExactStructure` API and make/remove the construction-only `ConflationClass` lemmas instead of publishing two interchangeable theorem families.",
+   "issue": "`ExactStructure.abelian_conflation`, `abelian_isInflation_iff`, `abelian_isDeflation_iff`, `abelian_inflations_eq`, and `abelian_deflations_eq` duplicate the public `ConflationClass` declarations at lines 81, 104, 117, 128, and 134 through an abbreviated projection.",
+   "line": 185
+  },
+  {
+   "evidence": "Its entire proof is `(ShortComplex.Splitting.ofHasBinaryBiproduct X Y).shortExact`; Mathlib defines `Splitting.shortExact` at `Mathlib/Algebra/Homology/ShortComplex/ShortExact.lean:195`, and `rg` finds no consumer of `abelian_conflation_biprod_exact` outside its declaration.",
+   "file": "TauCeti/CategoryTheory/Exact/Abelian.lean",
+   "fix": "Delete it, or add a genuine consumer before retaining the specialization; use `abelian_conflation_of_splitting _ (ShortComplex.Splitting.ofHasBinaryBiproduct X Y)` at call sites.",
+   "issue": "`abelian_conflation_biprod_exact` is an unused public specialization of the immediately preceding splitting API and re-exposes Mathlib's canonical biproduct splitting as another theorem.",
+   "line": 265
+  }
+ ],
+ "head_sha": "95e921fa7030415c5d254c15fb4cab18ba4c662c",
+ "merge_base_sha": "72289887081ad8abeda958b59d2e92fad32dc7da",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3396,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "616a12d55fab26ad89e0ed9c48030577374fcdce16dd8efea70b5ae5d29dff82",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260815T193249Z-3396-reuse-cc3cf5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-15T19:32:49Z",
+ "submitted_by": "kim-em",
+ "summary": "The file exposes parallel conflation-class and exact-structure APIs for definitionally identical predicates, and one unused specialization duplicates the preceding splitting result.",
+ "transcript_blob": "5fb5f059d16a5c2dd1b61836dd03beb89ccfe53a820f0dd7603c9a9afec4550f",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 60672,
+  "input_tokens": 94721,
+  "output_tokens": 1441,
+  "reasoning_output_tokens": 490
+ },
+ "verdict": "request_changes"
+}
