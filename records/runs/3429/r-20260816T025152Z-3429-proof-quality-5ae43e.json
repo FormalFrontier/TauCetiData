@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.200225,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 35.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 87040,
+    "input_tokens": 110965,
+    "output_tokens": 1236,
+    "reasoning_output_tokens": 518
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8b110ef40fed6a16ac7b24558ae1a008996fb9ee",
+ "cost_estimated": true,
+ "cost_usd": 0.200225,
+ "dedupe_key": "TauCetiProject/TauCeti|3429|ae016c388c21adb0cda39ebade0e923ab67e9567|proof-quality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "1b2a5bc9ea8dc572eb392af3e941b4234ceb3844e812d665db379a0bc715ec6a",
+ "diff_sha256": "1b2a5bc9ea8dc572eb392af3e941b4234ceb3844e812d665db379a0bc715ec6a",
+ "duration_s": 35.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The call passes `P.toLinearMap.toAddMonoidHom` while the goal uses `P`; the previous inline proof explicitly named exactly these two coercion rewrites.",
+   "file": "TauCeti/Analysis/Fredholm/Proper.lean",
+   "fix": "Restore an explicit `simpa only [LinearMap.toAddMonoidHom_coe, ContinuousLinearMap.coe_coe]` (or an equally explicit coercion lemma).",
+   "issue": "The unrestricted `simpa` hides the coercion conversion from `ContinuousLinearMap` through `LinearMap.toAddMonoidHom`, so this proof depends on the evolving global simp set.",
+   "line": "186"
+  },
+  {
+   "evidence": "The witness ends in `rfl` for `V.subtypeL \u27e8P x, hPV x\u27e9 = P x`, and line 151 uses `rfl` for `\u2016(\u27e8P x, hPV x\u27e9 : V)\u2016 = \u2016P x\u2016`; Mathlib provides `Submodule.coe_norm`.",
+   "file": "TauCeti/Analysis/Fredholm/Proper.lean",
+   "fix": "Prove the image witness equality with an explicit subtype-map simp lemma and replace the norm `rfl` with `Submodule.coe_norm` (or explicit `simpa only` using it).",
+   "issue": "The new compactness lemma relies on undocumented definitional equality through `V.subtypeL` and the subtype norm at lines 149 and 151.",
+   "line": "149"
+  }
+ ],
+ "head_sha": "ae016c388c21adb0cda39ebade0e923ab67e9567",
+ "merge_base_sha": "e40699ea99d09659fd9558027943ad723416977b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3429,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "756d5d938844766929bd64cc495b09e61b86426739a23c0fe5fc4127b100cb22",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260816T025152Z-3429-proof-quality-5ae43e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-16T02:51:52Z",
+ "submitted_by": "kim-em",
+ "summary": "The extraction introduces fragile reliance on coercion simplification and subtype definitional equality.",
+ "transcript_blob": "4190910a392a1c74c11b7abee15568ecd50ccb1b3eee355ed08b29ef2249312e",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 87040,
+  "input_tokens": 110965,
+  "output_tokens": 1236,
+  "reasoning_output_tokens": 518
+ },
+ "verdict": "request_changes"
+}
