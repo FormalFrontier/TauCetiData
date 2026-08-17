@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.3762709999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 410.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 132059,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 132059,
+    "cache_read_input_tokens": 2439736,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 356,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 356,
+      "cache_read_input_tokens": 148653,
+      "input_tokens": 2,
+      "output_tokens": 2584,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 31568,
+    "output_tokens_details": {
+     "thinking_tokens": 23144
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "33a6e252ee41521e3dd70d143be219072ae7ca82",
+ "cost_usd": 3.376271,
+ "dedupe_key": "TauCetiProject/TauCeti|3615|59960866f0df1079371c397a5f44c04a1e481a66|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "5c9dfc56dd7e74fac7c5b890bb58dbe310b4133736909ead87e4fb76974e75d5",
+ "diff_sha256": "5c9dfc56dd7e74fac7c5b890bb58dbe310b4133736909ead87e4fb76974e75d5",
+ "duration_s": 410.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TotalRamification.lean:114 `variable (hK : finrank \u211a K = 2) (hp : p.Prime) (hmem : p \u2208 ramifiedPrimes K)` gates all of that file's public theorems, and its module doc (line 37) has to compensate in prose: \"In the namespace `NumberField`, all for `Module.finrank \u211a K = 2`\". Quadratic/Basic.lean:56 `theorem finrank_rat_eq_two (hmin : minpoly \u2124 \u03b8 = X ^ 2 - C d) (hgen : Algebra.adjoin \u211a {(\u03b8 : K)} = \u22a4) : finrank \u211a K = 2`. Mathlib has no `NumberField.Quadratic` namespace, so it is free.",
+   "file": "TauCeti/NumberTheory/NumberField/Quadratic/Basic.lean",
+   "fix": "Put the `Quadratic/` files in `namespace NumberField.Quadratic` (still canonical-rooted, no `TauCeti` prefix) and update in-repo call sites; alternatively give each name a `quadratic` component.",
+   "issue": "The whole quadratic-presentation slice is moved into the root `NumberField` namespace, so hypothesis-gated quadratic facts now carry canonical names that read as general number-field statements: `NumberField.finrank_rat_eq_two`, `minpoly_rat_quadratic`, `coe_gen_sq`, `coe_gen_sq_ratCast`, `gen_notMem_range`, `not_isSquare_radicand`, `trace_gen_eq_zero`, `discr_one_gen`, `discr_one_halfGen` (Quadratic/Basic.lean:43); `halfGen`, `coe_halfGen`, `adjoin_gen_eq_top_of_mod_four_ne_one`, `adjoin_halfGen_eq_top_of_mod_four_eq_one`, `discr_eq_four_mul_of_mod_four_ne_one`, `discr_eq_of_squarefree_of_mod_four_eq_one` (Quadratic/RingOfIntegers.lean:43); `primesOver_eq_singleton_of_mem_ramifiedPrimes`, `ncard_primesOver_eq_one_of_mem_ramifiedPrimes`, `ramificationIdx_eq_two_of_mem_ramifiedPrimes`, `inertiaDeg_eq_one_of_mem_ramifiedPrimes`, `map_span_eq_sq_of_mem_ramifiedPrimes`, `map_eq_self_of_mem_ramifiedPrimes`, `mem_ramifiedPrimes_iff_ramificationIdx_eq_two` (Quadratic/TotalRamification.lean:55); `classGroupMk0_sq_eq_one_of_mem_ramifiedPrimes` (Quadratic/RamifiedPrimesClassGroup.lean:38). `NumberField.mem_ramifiedPrimes_iff_ramificationIdx_eq_two` is outright false as its canonical name reads (a ramified prime of a cubic field can have e = 3); every consumer that does `open NumberField` now sees `halfGen`, `discr_one_gen`, `finrank_rat_eq_two` with no marker of the \u03b8-presentation they require.",
+   "line": 43
+  },
+  {
+   "evidence": "PrimeDivisibility.lean:25 `theorem not_intCast_prime_dvd_natPrime {p l : \u2115} [Fact p.Prime] (hl : l.Prime) (hne : p \u2260 l) : \u00ac (p : \u2124) \u2223 (l : \u2124)`; WorkedExamples.lean:64 `namespace NumberField.WorkedExamples`; both helpers have cross-file consumers (RadicandSplitting.lean:49, Discriminant/Basic.lean:166) so `private` is not available.",
+   "file": "TauCeti/NumberTheory/NumberField/Internal/PrimeDivisibility.lean",
+   "fix": "Keep these repo-local (`TauCeti.\u2026`, as `TauCeti.Multiquadratic` was kept \u2014 neither `Internal` nor `WorkedExamples` names a mathematical object upstream), or promote each helper under its true canonical home (`Int`/`Nat` for `not_intCast_prime_dvd_natPrime`).",
+   "issue": "Scaffolding namespaces are moved into the canonical namespace: `NumberField.Internal` (PrimeDivisibility.lean:22, Internal/QuadraticIntegralBasis.lean:26) and `NumberField.WorkedExamples` (EffectiveBounds/WorkedExamples.lean:64). `NumberField.Internal.not_intCast_prime_dvd_natPrime` is a statement purely about \u2115/\u2124 primes with no number field in sight, yet is now advertised as canonical `NumberField` API; `NumberField.WorkedExamples.classNumber_adjoinRoot_sqrt_neg_five_le` (a non-sharp `\u2264 320` bound for one model of \u211a(\u221a-5)) is repo-local demonstration material presented as canonical API.",
+   "line": 22
+  }
+ ],
+ "head_sha": "59960866f0df1079371c397a5f44c04a1e481a66",
+ "merge_base_sha": "33a6e252ee41521e3dd70d143be219072ae7ca82",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3615,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "588f25bc1669e3d1cea02370e3dc1bdfddaff54e3203ff19abc820c93c64c401",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T114055Z-3615-api-design-4a93e0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T11:40:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The move to the canonical namespace is right for the genuinely general results, but it also plants quadratic-field-only lemmas (one of them false for general number fields) at the top of Mathlib's `NumberField` namespace, and plants two non-mathematical scaffolding namespaces (`Internal`, `WorkedExamples`) there as well. Nest the quadratic slice under `NumberField.Quadratic` and keep the scaffolding out of the canonical namespace.",
+ "transcript_blob": "3e0f5961ba579728f9a8e621d70be64473f1d7b99b54ab4180993cb66d21c12c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 132059,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 132059,
+  "cache_read_input_tokens": 2439736,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 356,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 356,
+    "cache_read_input_tokens": 148653,
+    "input_tokens": 2,
+    "output_tokens": 2584,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 31568,
+  "output_tokens_details": {
+   "thinking_tokens": 23144
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
