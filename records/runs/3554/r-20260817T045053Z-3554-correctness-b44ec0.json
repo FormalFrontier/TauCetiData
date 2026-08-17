@@ -1,0 +1,117 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 4.054867000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 420.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 122620,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 122620,
+    "cache_read_input_tokens": 3973574,
+    "inference_geo": "not_available",
+    "input_tokens": 69,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1144,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1144,
+      "cache_read_input_tokens": 138426,
+      "input_tokens": 2,
+      "output_tokens": 2624,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 31608,
+    "output_tokens_details": {
+     "thinking_tokens": 22317
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0232e0e828bc4af83d27420bcd24da1babb5d1f5",
+ "cost_usd": 4.054867,
+ "dedupe_key": "TauCetiProject/TauCeti|3554|022238853f28f3faf9d4db60379a45fd065976b3|correctness|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "22ee3a0a150b3067d083fe9fc019b97108daef1eb832fb1d370ac9a6ffdbe92b",
+ "diff_sha256": "22ee3a0a150b3067d083fe9fc019b97108daef1eb832fb1d370ac9a6ffdbe92b",
+ "duration_s": 420.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -n 'namespace' TauCeti/Algebra/HopfAlgebra/Basic.lean` \u2192 40 `namespace TauCeti`, 42 `namespace BialgHom`; `grep -n '\u2192\u2090c\\[' ` gives the eight declaration lines above. `sed -n '78,100p' TauCeti/Analysis/Normed/Operator/Resolvent/Unbounded.lean` shows `namespace TauCeti` / `namespace LinearPMap` / `structure IsResolventAt (A : X \u2192\u2097.[\u211d] X)`. `grep -n 'HopfAlgebra/Basic|Resolvent/Unbounded|Operator/LinearPMap' scripts/lint-dot-notation-baseline.txt` \u2192 no matches. Both names are Mathlib namespaces (`Mathlib/RingTheory/Bialgebra/Hom.lean:106 namespace BialgHom`, `Mathlib/Analysis/InnerProductSpace/LinearPMap.lean:70 namespace LinearPMap`), neither is in ORGANISATIONAL, and neither is suppressed by own_declaration_paths (no TauCeti `def/structure/class BialgHom` or `LinearPMap`).",
+   "file": "scripts/lint-dot-notation.py",
+   "fix": "Add `(\"\u2192\u2090c[\", \"BialgHom\")`, `(\"\u2243\u2090c[\", \"BialgEquiv\")`, `(\"\u2192\u2097c[\", \"CoalgHom\")`, `(\"\u2243\u2097c[\", \"CoalgEquiv\")`, and `(\"\u2192\u2097.[\", \"LinearPMap\")` to NOTATION_RECEIVERS, extend test_notation_receivers_and_dotted_subtypes to cover them, and regenerate the baseline with --write-baseline so the newly visible findings are grandfathered explicitly (or move them to root).",
+   "issue": "NOTATION_RECEIVERS omits `\u2192\u2090c[` (BialgHom) and `\u2192\u2097.[` (LinearPMap). In `_top_level_notation_receiver`, `A \u2192\u2090c[R] B` fails `\u2192\u2090[` (third char is `c`) and `X \u2192\u2097.[\u211d] X` fails `\u2192\u2097[` (third char is `.`); both then hit `\u2192` in TOP_LEVEL_CONNECTIVES and return None, and `_binder_has_type`'s head regex fails because the type is not spelled `BialgHom`/`LinearPMap`. Missed in-tree instances, none of which appear in the baseline: TauCeti/Algebra/HopfAlgebra/Basic.lean under `namespace TauCeti`/`namespace BialgHom`, all `(\u03c6 : A \u2192\u2090c[R] B)` \u2014 toCoalgHom_toLinearMap:49, coe_coalgHom_toLinearMap:55, algHom_comp_convMul_ofConv:61, convMul_comp_coalgHom_ofConv:73, algHom_comp_antipode_id_ofConv:86, id_antipode_comp_coalgHom_ofConv:96, toLinearMap_comp_antipode:107, map_antipode:141; TauCeti/Analysis/Normed/Operator/Resolvent/Unbounded.lean under `namespace TauCeti`(80)/`namespace LinearPMap`(84), all `(A : X \u2192\u2097.[\u211d] X)` \u2014 IsResolventAt:99, resolventSet:137, exists_isResolventAt_of_mem:154, resolvent:168, isOpen_resolventSet:356; TauCeti/Analysis/Normed/Operator/LinearPMap/Shift.lean under `namespace TauCeti.LinearPMap`(26), all `(A : X \u2192\u2097.[R] X)` \u2014 subScalar:32, subScalar_domain:37, subScalar_apply:43, subScalar_zero:52, subScalar_subScalar:57. Related latent hole: `\u27f6`, `\u2964`, `\u2245`, `\u2297` sit in TOP_LEVEL_CONNECTIVES, so a recreated `Functor`/`Iso`/`TensorProduct` namespace with an explicit receiver can never be flagged (no in-tree instance today).",
+   "line": 50
+  }
+ ],
+ "head_sha": "022238853f28f3faf9d4db60379a45fd065976b3",
+ "merge_base_sha": "0232e0e828bc4af83d27420bcd24da1babb5d1f5",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3554,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "cdbc9e31e8aa3d4126fd1f98cda55eac134be127a1e86c8404fce44956a2ba7c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T045053Z-3554-correctness-b44ec0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T04:50:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The notation table is still incomplete: `\u2192\u2090c[` (BialgHom) and `\u2192\u2097.[` (LinearPMap) are absent, so 18 declarations that recreate those Mathlib namespaces under `namespace TauCeti` with explicit receivers are invisible to the lint and missing from the regenerated baseline \u2014 the baseline is therefore not the census the PR claims, and new violations of the same shape would pass the ratchet. The prior round's `\u2243\u209c`/`\u2243\u2098` gap is fixed and the rest of the parser checks out.",
+ "transcript_blob": "24211298bd0b64e2a4de980f4842e545f3644c83117bb4b831b8b41b6068fad6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 122620,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 122620,
+  "cache_read_input_tokens": 3973574,
+  "inference_geo": "not_available",
+  "input_tokens": 69,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1144,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1144,
+    "cache_read_input_tokens": 138426,
+    "input_tokens": 2,
+    "output_tokens": 2624,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 31608,
+  "output_tokens_details": {
+   "thinking_tokens": 22317
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
