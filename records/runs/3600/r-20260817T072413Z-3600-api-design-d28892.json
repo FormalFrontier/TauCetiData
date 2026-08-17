@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5996800000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 219.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72055,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72055,
+    "cache_read_input_tokens": 911142,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3494,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3494,
+      "cache_read_input_tokens": 85060,
+      "input_tokens": 2,
+      "output_tokens": 1708,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16651,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7dc15de2693ca122ddb25952e51b06a90b69fe46",
+ "cost_usd": 1.59968,
+ "dedupe_key": "TauCetiProject/TauCeti|3600|9d8ede826629261f8522bcd8eaa9d7b44de60577|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "77e77046a11a3f450b5104a96d1ec3d3fe0416b2f2f26c7dbf948a93a93601ea",
+ "diff_sha256": "77e77046a11a3f450b5104a96d1ec3d3fe0416b2f2f26c7dbf948a93a93601ea",
+ "duration_s": 219.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 600-618: the private lemma's hypotheses are `{g : E \u2192 \u211d\u22650\u221e} (hg : \u2200\u1d50 x \u2202\u03bc, g x < \u221e)` with all Haar/normed instances omitted; the public wrapper's body is `eLpNorm_toReal_eq_of_ae_lt_top hM`. Mathlib has the opposite direction public and no `eLpNorm_toReal` (grep `eLpNorm_ofReal`, Mathlib/MeasureTheory/Function/LpSeminorm/Basic.lean:443).",
+   "file": "TauCeti/MeasureTheory/Integral/MaximalFunction.lean",
+   "fix": "Delete `eLpNorm_maximalFunction_toReal_eq` and make `eLpNorm_toReal_eq_of_ae_lt_top` public (it needs only `[MeasurableSpace E]`, per its own `omit`, so state it outside the `Haar` section); if the general lemma is to stay unexposed, keep it `private` and drop the wrapper, calling it directly in `memLp_maximalFunction_toReal`.",
+   "issue": "`eLpNorm_maximalFunction_toReal_eq` is public but is a pure instantiation of the private `eLpNorm_toReal_eq_of_ae_lt_top` (proof is `eLpNorm_toReal_eq_of_ae_lt_top hM`, adding no maximal-function content), used only inside `memLp_maximalFunction_toReal`. The general lemma \u2014 the actual reusable statement, and the dual of Mathlib's public `eLpNorm_ofReal` \u2014 is the one hidden, so the exposure is inverted and the surface carries two names for one fact.",
+   "line": 614
+  },
+  {
+   "evidence": "`maximalFunction_le_eLpNormEssSup` (line 169) is unconditional; `ae_maximalFunction_lt_top_of_eLpNorm_ne_top` handles `rcases eq_or_ne p \u221e with rfl | hp_top` at lines 584-586 using exactly that bound.",
+   "file": "TauCeti/MeasureTheory/Integral/MaximalFunction.lean",
+   "fix": "Drop `hp_top` from `eLpNorm_maximalFunction_lt_top` and `memLp_maximalFunction_toReal`, splitting on `p = \u221e` and closing that branch with `maximalFunction_le_eLpNormEssSup` + `eLpNorm_exponent_top` (the same two steps already used at lines 585-586).",
+   "issue": "`memLp_maximalFunction_toReal` requires `hp_top : p \u2260 \u221e`, and `eLpNorm_maximalFunction_lt_top` (line 573) likewise, although both hold at `p = \u221e`: `eLpNorm (maximalFunction \u03bc f) \u221e \u03bc = essSup (maximalFunction \u03bc f) \u2264 eLpNormEssSup f \u03bc \u2260 \u221e`. The companion `ae_maximalFunction_lt_top_of_eLpNorm_ne_top` deliberately covers `p = \u221e`, so that generality has no consumer and the flagship `MemLp` result silently omits an endpoint the file develops.",
+   "line": 622
+  }
+ ],
+ "head_sha": "9d8ede826629261f8522bcd8eaa9d7b44de60577",
+ "merge_base_sha": "7dc15de2693ca122ddb25952e51b06a90b69fe46",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3600,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "b36859867d9c3377ad5e2e99601fdcc72d73b2b488efc833d6312282ef67706b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T072413Z-3600-api-design-d28892",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T07:24:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The reusable content of the new eLpNorm-preservation result is private while a contentless maximal-function specialization of it is public, and both new finiteness lemmas exclude p = \u221e although the file's own L^\u221e endpoint gives that case immediately.",
+ "transcript_blob": "2da98c1de38b742e8efbe1e9ef1df508390be6a5fd3bf36144d126afd363197b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72055,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72055,
+  "cache_read_input_tokens": 911142,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3494,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3494,
+    "cache_read_input_tokens": 85060,
+    "input_tokens": 2,
+    "output_tokens": 1708,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16651,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
