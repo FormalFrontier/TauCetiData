@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.129855,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 27.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 52480,
+    "input_tokens": 66723,
+    "output_tokens": 1080,
+    "reasoning_output_tokens": 298
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fc74400dfdae84724011f04ced14649239b5fbf9",
+ "cost_estimated": true,
+ "cost_usd": 0.129855,
+ "dedupe_key": "TauCetiProject/TauCeti|3690|23c9c333684bf9f3418767356580ebd4d0863f5c|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "5de3b6d76717d47ff08e6b9e1c85f62a1ef207db428afac5032e6fcba0da807e",
+ "diff_sha256": "5de3b6d76717d47ff08e6b9e1c85f62a1ef207db428afac5032e6fcba0da807e",
+ "duration_s": 27.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds these names only in this file; lines 66, 82, 92, and 100 directly apply the generic declarations, while lines 73\u201374 compose the index specialization with `indexEquiv.symm_apply_apply`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Numbering.lean",
+   "fix": "Delete the specialization layer and use `equivOfCartanMatrixEq_indexEquiv_apply`, `equivOfCartanMatrixEq_weightMap_root`, `equivOfCartanMatrixEq_coweightEquiv_symm_coroot`, and `map_equivOfCartanMatrixEq` directly at consumers.",
+   "issue": "All five public Geck declarations are unused thin specializations of the generic API in `Isomorphism.lean`; the inverse theorem additionally follows from the index theorem and `Equiv.symm_apply_apply`.",
+   "line": 63
+  },
+  {
+   "evidence": "Lines 84\u201385 prove the inverse solely from those two components; lines 94\u201395 prove the weight result solely by rewriting `root_weightMap_apply` and `equivOfCartanMatrixEq_indexEquiv_apply`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Isomorphism.lean",
+   "fix": "Remove both composite declarations and rewrite uses with `equivOfCartanMatrixEq_indexEquiv_apply` plus `Equiv.symm_apply_apply` or `RootPairing.Hom.root_weightMap_apply`.",
+   "issue": "`equivOfCartanMatrixEq_indexEquiv_symm_apply` and `equivOfCartanMatrixEq_weightMap_root` duplicate immediate compositions of the new index theorem with existing equivalence/root-map equations.",
+   "line": 79
+  }
+ ],
+ "head_sha": "23c9c333684bf9f3418767356580ebd4d0863f5c",
+ "merge_base_sha": "fc74400dfdae84724011f04ced14649239b5fbf9",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3690,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3b2d265ce72ae2f93f0c304fa9bfa02573d7a1b366e6b17efb6b23eaea506af8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T221306Z-3690-reuse-e8321a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T22:13:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR retains public thin specializations and composite simp lemmas whose located generic components already provide the same results, with no in-repository consumers demonstrating a distinct API need.",
+ "transcript_blob": "a9ae2733122316cdd653a46e62f62bfdf58b457649a5c31ea5e4854d418ddfd4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 52480,
+  "input_tokens": 66723,
+  "output_tokens": 1080,
+  "reasoning_output_tokens": 298
+ },
+ "verdict": "request_changes"
+}
