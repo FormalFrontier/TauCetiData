@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.530556,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 277.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 68848,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 68848,
+    "cache_read_input_tokens": 600914,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6378,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6378,
+      "cache_read_input_tokens": 78969,
+      "input_tokens": 2,
+      "output_tokens": 8791,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21013,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "06a304f561c776dd7c97ccc8c6369ba240c5859e",
+ "cost_usd": 1.530556,
+ "dedupe_key": "TauCetiProject/TauCeti|3603|3af8b93df8ec7bc87bec7210d04aa3b7953e72be|proof-quality|claude-opus-5|ce88b39773d791a9|production|12",
+ "diff_blob": "48998c73aece93fae73bd8b1da0ce004cf91e375745d2d099b1a7601cc109a42",
+ "diff_sha256": "48998c73aece93fae73bd8b1da0ce004cf91e375745d2d099b1a7601cc109a42",
+ "duration_s": 277.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Diff: pre-PR `theorem indFDRepMap_id`/`indFDRepMap_comp` and `@[expose, simps obj map] noncomputable def indFDRepFunctor` (with the docstring stating expose is what makes `indFDRepFunctor.obj A` reduce to `indFDRep A`); head lines 381, 393, 409, 426-433. No user of these names exists elsewhere in the repo (grep over `TauCeti/` returns only this file), so the laws are now unreachable downstream except through the cast-laden 426.",
+   "file": "TauCeti/RepresentationTheory/Induction/FiniteDimensional.lean",
+   "fix": "Drop `private` from `indFDRepMap_id`/`indFDRepMap_comp` and restore `@[expose, simps obj map]` on `indFDRepFunctor`, deleting the hand-written `indFDRepFunctor_obj`/`indFDRepFunctor_map` with their `eqToHom` transports.",
+   "issue": "`indFDRepMap_id` (381) and `indFDRepMap_comp` (393) were public before this PR and are now `private`. Since an `@[expose]` body may not reference private declarations, this forces `indFDRepFunctor` to stay opaque, which is why `indFDRepFunctor_map` (426) is now stated with two `eqToHom` casts and proved by `rfl` (relying on proof-irrelevance defeq) instead of the pre-PR `@[expose, simps obj map]` projection `indFDRepFunctor_map f = indFDRepMap f`. Nothing in the universe split requires this: the cast-free statement elaborates in-file, where the functor body is transparent.",
+   "line": 381
+  },
+  {
+   "evidence": "`Mathlib/RepresentationTheory/Rep/Basic.lean:157,169` state `mkIso_hom_hom_apply`/`mkIso_inv_hom_apply` for `Rep.mkIso e`, whose head cannot match `(indFDRepForgetIso A).hom`; head lines 318, 325 mark the local replacements `private`, while `indFDRepForgetIso` is used outside the file at `TauCeti/RepresentationTheory/Induction/FrobeniusReciprocity.lean:102,128`.",
+   "file": "TauCeti/RepresentationTheory/Induction/FiniteDimensional.lean",
+   "fix": "Make both lemmas public (and tag them `@[simp]`), so `indFDRepForgetIso` has a usable interface rather than being a black box outside this file.",
+   "issue": "`indFDRepForgetIso` (311) is public but opaque, and its only action lemmas `indFDRepForgetIso_hom_hom_apply` (318) and `indFDRepForgetIso_inv_hom_apply` (325) are `private`. Mathlib's `Rep.mkIso_hom_hom_apply`/`mkIso_inv_hom_apply` cannot fire on the opaque def, so no downstream proof can compute with the isomorphism at all \u2014 the same gap that made this file need the two lemmas internally at line 378.",
+   "line": 318
+  }
+ ],
+ "head_sha": "3af8b93df8ec7bc87bec7210d04aa3b7953e72be",
+ "merge_base_sha": "06a304f561c776dd7c97ccc8c6369ba240c5859e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3603,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "c8fec5e6d59dc4294de779258683677aaf1e15198eabe039664b6ac87902a6a0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 12,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T114235Z-3603-proof-quality-ee3941",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T11:42:35Z",
+ "submitted_by": "kim-em",
+ "summary": "The prior round's rfl-bridge and misattributed-change findings are fixed. Remaining issue: the functor laws and the only projection lemmas for the public `indFDRepForgetIso` were made `private`, which forced dropping `@[expose, simps obj map]` and degraded `indFDRepFunctor_map` into an `eqToHom`-laden statement proved by `rfl`.",
+ "transcript_blob": "0cf61a1aa2fb4fc02d6542a9d458113699b445060a0e5f6d80241804961ccca9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 68848,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 68848,
+  "cache_read_input_tokens": 600914,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6378,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6378,
+    "cache_read_input_tokens": 78969,
+    "input_tokens": 2,
+    "output_tokens": 8791,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21013,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
