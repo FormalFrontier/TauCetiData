@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9673134999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 143.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 44627,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 44627,
+    "cache_read_input_tokens": 420461,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 374,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 374,
+      "cache_read_input_tokens": 60752,
+      "input_tokens": 2,
+      "output_tokens": 4948,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12013,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "cost_usd": 0.967313,
+ "dedupe_key": "TauCetiProject/TauCeti|3578|0e158e6a2ae2bfd0a5d5aee28055587e596b164d|api-design|claude-opus-5|ce88b39773d791a9|production|3",
+ "diff_blob": "516ecc7b86fa0f5fd41394781a150fa390986db21c8228e0ec0c773366850c4d",
+ "diff_sha256": "516ecc7b86fa0f5fd41394781a150fa390986db21c8228e0ec0c773366850c4d",
+ "duration_s": 143.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 710 body is `peterWeylCoeff (IrrepClass.model (\ud835\udd5c := \ud835\udd5c) (G := G)) f x`; each std proof at 726, 734, 740 is `simpa only [stdPeterWeylCoeff] using <general lemma> (isIrrepSkeleton_model \ud835\udd5c G)`. Bodies unexposed under `public section` (line 129), cf. `RegularRepresentation.lean:75` (\"body of `rightRegularLp` is not exposed\"). Recovery route exists via `Mathlib/Analysis/InnerProductSpace/l2Space.lean:414` `HilbertBasis.repr_apply_apply` plus `coe_stdPeterWeylBasis` (687) and `peterWeylCoeff_eq_inner` (532), which is why deletion \u2014 not a `_def` lemma \u2014 is the right fix and does not conflict with the reuse finding.",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "Delete `stdPeterWeylCoeff` and the five duplicate lemmas. Restate `stdPeterWeylBasis_repr_apply` (714) as `(stdPeterWeylBasis \ud835\udd5c G).repr f x = peterWeylCoeff (IrrepClass.model (\ud835\udd5c := \ud835\udd5c) (G := G)) f x`, keeping `@[simp]`; consumers get the std Parseval/expansion statements by applying the general lemmas to `isIrrepSkeleton_model \ud835\udd5c G`. Drop docstring lines 92 and the `stdPeterWeylCoeff` clause of 110-111. Keep `peterWeylCoeff_def` (521): the body of `peterWeylCoeff` is unexposed, so it is the only route to the Haar integral, and the alternative (`@[expose]`) is worse.",
+   "issue": "`stdPeterWeylCoeff \ud835\udd5c G f x := peterWeylCoeff (IrrepClass.model) f x` \u2014 same type, same value, opaque body, no value lemma. Its dependent lemmas duplicate the general API verbatim modulo the name: `hasSum_stdPeterWeyl_expansion` (723), `tsum_star_stdPeterWeylCoeff_mul_stdPeterWeylCoeff` (730), `hasSum_norm_sq_stdPeterWeylCoeff` (738), `tsum_norm_sq_stdPeterWeylCoeff` (744), `summable_norm_sq_stdPeterWeylCoeff` (750). Consumers must detour through `repr_apply_apply` + `coe_stdPeterWeylBasis` + `peterWeylCoeff_eq_inner` to see it is the same coefficient. Docstring lines 92 and 110-111 present it as a distinct coefficient.",
+   "line": "707"
+  }
+ ],
+ "head_sha": "0e158e6a2ae2bfd0a5d5aee28055587e596b164d",
+ "merge_base_sha": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3578,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2d08577fdb43c8a39144f9ae7d016b178395cc44c8604eff4288b769343ee53c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T062035Z-3578-api-design-b61e80",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T06:20:35Z",
+ "submitted_by": "kim-em",
+ "summary": "`stdPeterWeylCoeff` is a definitionally identical duplicate of `peterWeylCoeff (IrrepClass.model)`, and five of its lemmas restate the general ones at `isIrrepSkeleton_model`; the only effect of the wrapper is to give the same value an opaque second name. Deleting it reconciles this thread with the reuse thread; `peterWeylCoeff_def` should stay, since `peterWeylCoeff` is a real definition with an unexposed body and `_def` is its characteristic lemma.",
+ "transcript_blob": "21cdda28bccbc41b834ddaeae357c4b3ea7fcdff85654f691a59830498f050cf",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 44627,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 44627,
+  "cache_read_input_tokens": 420461,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 374,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 374,
+    "cache_read_input_tokens": 60752,
+    "input_tokens": 2,
+    "output_tokens": 4948,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12013,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
