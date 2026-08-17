@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.221111,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 33.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 60672,
+    "input_tokens": 90955,
+    "output_tokens": 1312,
+    "reasoning_output_tokens": 627
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "7dc15de2693ca122ddb25952e51b06a90b69fe46",
+ "cost_estimated": true,
+ "cost_usd": 0.221111,
+ "dedupe_key": "TauCetiProject/TauCeti|3599|a350c7dc72539cf6612270d82e692e15e7028107|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "ce721f502a42b4264a3f49c71353460a3ca480d9fbe4be4d65f56f3b78acebcb",
+ "diff_sha256": "ce721f502a42b4264a3f49c71353460a3ca480d9fbe4be4d65f56f3b78acebcb",
+ "duration_s": 33.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 146\u2013153 define `invFun := dotAction P b w\u207b\u00b9`, but lines 155\u2013157 provide only `dotActionPerm_apply`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Weyl/DotAction.lean",
+   "fix": "Add an `@[simp]` lemma stating `(dotActionPerm P b w).symm x = dotAction P b w\u207b\u00b9 x`.",
+   "issue": "`dotActionPerm` exposes only its forward application; consumers cannot characterize `(dotActionPerm P b w).symm x` without unfolding the bundled definition.",
+   "line": "146"
+  },
+  {
+   "evidence": "Lines 144\u2013146 claim support for dot orbits and stabilizers, while the file defines no `MulAction` value; Mathlib's `MulAction.orbit` and `MulAction.stabilizer` require `[MulAction G \u03b1]`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/Weyl/DotAction.lean",
+   "fix": "Expose a non-instance `dotActionMulAction : MulAction P.weylGroup M` derived from `dotActionPerm`, with a simp lemma for its scalar action; consumers can then install it locally without conflicting with the linear action.",
+   "issue": "A homomorphism to `Equiv.Perm M` alone does not let consumers use `MulAction.orbit` or `MulAction.stabilizer`, despite the declaration's stated purpose, because those APIs require a `MulAction` value installed as a local instance.",
+   "line": "144"
+  }
+ ],
+ "head_sha": "a350c7dc72539cf6612270d82e692e15e7028107",
+ "merge_base_sha": "7dc15de2693ca122ddb25952e51b06a90b69fe46",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3599,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "1c75578fcf7c147d5fc45fc60251f9e7cc73bbca111256eadc07f899e7372be7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T071137Z-3599-api-design-81c700",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T07:11:37Z",
+ "submitted_by": "kim-em",
+ "summary": "The permutation packaging lacks the inverse and action interfaces needed for its advertised use with equivalences, orbits, and stabilizers.",
+ "transcript_blob": "932db235ae7d7bbb9ebe06c23dcb5caca39cdbd4bc7edc3e646f270de87f584a",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 60672,
+  "input_tokens": 90955,
+  "output_tokens": 1312,
+  "reasoning_output_tokens": 627
+ },
+ "verdict": "request_changes"
+}
