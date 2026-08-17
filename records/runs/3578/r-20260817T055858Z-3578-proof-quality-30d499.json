@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.1735595,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 191.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 46958,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 46958,
+    "cache_read_input_tokens": 651113,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 869,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 869,
+      "cache_read_input_tokens": 62588,
+      "input_tokens": 2,
+      "output_tokens": 2790,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14785,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "cost_usd": 1.17356,
+ "dedupe_key": "TauCetiProject/TauCeti|3578|88d27d9e880aab5cb40af2bf4fe1af7f1f20956b|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c07cba9fae1028a567bc3479b7ed3adefce8c6b48dd289d53d7cba2611b568ef",
+ "diff_sha256": "c07cba9fae1028a567bc3479b7ed3adefce8c6b48dd289d53d7cba2611b568ef",
+ "duration_s": 191.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "MatrixCoefficient.lean:84 `theorem coeFn_matrixCoeffLp (v w : V) : matrixCoeffLp \u03c0 h\u03c0 v w =\u1d50[haarProb G] fun g \u21a6 \u27ea\u03c0 g v, w\u27eb_\ud835\udd5c`; Mathlib `Lp.coeFn_smul` (MeasureTheory/Function/LpSpace/Basic.lean:436). Pattern precedent: Chebyshev/Cosine/HilbertBasis.lean:48 `coeFn_chebyshevCosineHilbertBasis` used at Cosine/Parseval.lean:61; Hermite/Function/Pi/Basis.lean:60 `coeFn_hermiteFunctionPiBasis` used at Pi/Parseval.lean:79.",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "Add `coeFn_peterWeylFamily : \u21d1(peterWeylFamily models x) =\u1d50[haarProb G] fun g \u21a6 (Real.sqrt (models x.1).dim : \ud835\udd5c) * \u27ea(models x.1).rep g (basis x.2.1), basis x.2.2\u27eb` proved from `Lp.coeFn_smul` and `ContRepresentation.coeFn_matrixCoeffLp`, then prove `peterWeylBasis_repr_apply` by `rw [repr_apply_apply, L2.inner_def]; refine integral_congr_ae ?_; filter_upwards [coeFn_peterWeylFamily ...]`.",
+   "issue": "`peterWeylBasis_repr_apply` re-derives the a.e. representative of a basis element inline (`filter_upwards [ContinuousMap.coeFn_toLp ... ((\u221adim : \ud835\udd5c) \u2022 matrixCoeff ...)]`), duplicating reasoning already packaged as `ContRepresentation.coeFn_matrixCoeffLp` and hiding the reusable fact consumers need to evaluate the coefficient integral. Sibling Parseval developments in this repo factor it out first.",
+   "line": 507
+  },
+  {
+   "evidence": "PeterWeyl.lean:487-494 proof is `rw [coe_peterWeylBasis, peterWeylFamily_apply, ContRepresentation.matrixCoeffLp_def, map_smul]`; `peterWeylFamily` (line 374) is already defined as `(\u221adim : \ud835\udd5c) \u2022 matrixCoeffLp ...` and `matrixCoeffLp_def` (MatrixCoefficient.lean:79) is `rfl`; MatrixCoefficient.lean:94-121 provide the `matrixCoeffLp_{zero,add,smul}_*` simp lemmas stated on the wrapper.",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "Drop both lemmas once `coeFn_peterWeylFamily` exists; if a pointwise statement is still wanted, state it as `peterWeylBasis h x = (\u221adim : \ud835\udd5c) \u2022 ContRepresentation.matrixCoeffLp ...` keeping the wrapper intact.",
+   "issue": "`peterWeylBasis_apply` (and its clone `stdPeterWeylBasis_apply`, line 663) is the composite of three existing lemmas (`coe_peterWeylBasis`, `peterWeylFamily_apply`, `matrixCoeffLp_def`) and its only purpose is to feed the inline a.e. argument above. As exported API it also unfolds the `matrixCoeffLp` wrapper, pushing `ContinuousMap.toLp` out through the `\u221adim \u2022` scalar, so downstream goals no longer match the `matrixCoeffLp_*` simp set.",
+   "line": 483
+  }
+ ],
+ "head_sha": "88d27d9e880aab5cb40af2bf4fe1af7f1f20956b",
+ "merge_base_sha": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3578,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fcd540919192d49935c17a1b86e29c6d86498dc4a5599cd2df0b8f9d586ab11a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T055858Z-3578-proof-quality-30d499",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T05:58:58Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs are short and free of `change`/`show` or brittle rewrite chains, but the a.e.-representative fact for a Peter-Weyl basis element is derived inline inside `peterWeylBasis_repr_apply` instead of being factored out, and it bypasses the existing `ContRepresentation.coeFn_matrixCoeffLp`. The two `*_apply` lemmas exist only to support that inline detour and unfold the `matrixCoeffLp` wrapper.",
+ "transcript_blob": "53100e526a748a0636b26db31212dfbd9181fa6ccf42466556c6527d86268a1c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 46958,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 46958,
+  "cache_read_input_tokens": 651113,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 869,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 869,
+    "cache_read_input_tokens": 62588,
+    "input_tokens": 2,
+    "output_tokens": 2790,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14785,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

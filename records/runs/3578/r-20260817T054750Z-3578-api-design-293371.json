@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4328435,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 202.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64684,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64684,
+    "cache_read_input_tokens": 733441,
+    "inference_geo": "not_available",
+    "input_tokens": 23,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 801,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 801,
+      "cache_read_input_tokens": 80382,
+      "input_tokens": 2,
+      "output_tokens": 2545,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16410,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "cost_usd": 1.432843,
+ "dedupe_key": "TauCetiProject/TauCeti|3578|88d27d9e880aab5cb40af2bf4fe1af7f1f20956b|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c07cba9fae1028a567bc3479b7ed3adefce8c6b48dd289d53d7cba2611b568ef",
+ "diff_sha256": "c07cba9fae1028a567bc3479b7ed3adefce8c6b48dd289d53d7cba2611b568ef",
+ "duration_s": 202.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Every other def in this area carries one: `matrixCoeffLp_def` (MatrixCoefficient.lean:79, `:= (rfl)`), `peterWeylFamily_apply` (PeterWeyl.lean:382), `coe_characterFamily` (Character/Basis.lean:295), and this PR's own `stdPeterWeylCoeff_def` (line 685). RegularRepresentation.lean:74-77 states the convention explicitly: \"body of `rightRegularLp` is not exposed, so this is the lemma that lets a downstream file transfer\u2026\".",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "Add `theorem peterWeylCoeff_def (models \u2026) (f \u2026) (x \u2026) : peterWeylCoeff models f x = \u222b g, (starRingEnd \ud835\udd5c) (\u2026) * f g \u2202haarProb G := (rfl)` next to the definition.",
+   "issue": "`peterWeylCoeff` is a `public` def with an unexposed body (no `@[expose]` anywhere in this file) and no `peterWeylCoeff_def`/`_apply` lemma, so no consumer can see that it is the Haar integral \u2014 the sole content of the definition. `@[simp] peterWeylBasis_repr_apply` (line 506) then normalizes goals into this opaque constant.",
+   "line": 496
+  },
+  {
+   "evidence": "The proof at lines 511-519 uses the skeleton only through `peterWeylBasis_apply`, which is `coe_peterWeylBasis` + `peterWeylFamily_apply` + `matrixCoeffLp_def` + `map_smul`; after replacing the first step by `peterWeylFamily_apply`, the remaining `L2.inner_def`/`integral_congr_ae`/`RCLike.inner_apply` steps use neither `h` nor `IsAlgClosed`.",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "Add, outside the skeleton lemmas, `theorem peterWeylCoeff_eq_inner (models : \u03b9 \u2192 IrrepModel \ud835\udd5c G) (f) (x) : peterWeylCoeff models f x = inner \ud835\udd5c (peterWeylFamily models x) f`, and derive `peterWeylBasis_repr_apply` from it via `repr_apply_apply` + `coe_peterWeylBasis`.",
+   "issue": "The only lemma connecting `peterWeylCoeff` to anything is `peterWeylBasis_repr_apply`, which requires `[IsAlgClosed \ud835\udd5c]` and `IsIrrepSkeleton models`, although the definition needs neither. Consumers get no linearity in `f`, no Cauchy-Schwarz bound, and nothing at all for a non-skeleton family.",
+   "line": 507
+  },
+  {
+   "evidence": "`@[simp] theorem coe_stdPeterWeylBasis : \u21d1(stdPeterWeylBasis \ud835\udd5c G) = peterWeylFamily (IrrepClass.model \u2026)` at line 656-659 rewrites `stdPeterWeylBasis \ud835\udd5c G x` away.",
+   "file": "TauCeti/RepresentationTheory/Compact/PeterWeyl.lean",
+   "fix": "State it as `HasSum (fun x \u21a6 stdPeterWeylCoeff \ud835\udd5c G f x \u2022 peterWeylFamily (IrrepClass.model (\ud835\udd5c := \ud835\udd5c) (G := G)) x) f`.",
+   "issue": "`hasSum_stdPeterWeyl_expansion` sums against `stdPeterWeylBasis \ud835\udd5c G x`, while the parallel `hasSum_peterWeyl_expansion` (line 523) sums against `peterWeylFamily models x`; since `coe_stdPeterWeylBasis` is `@[simp]`, the std statement is not in simp-normal form, so a simp-normalized goal will not match it.",
+   "line": 703
+  }
+ ],
+ "head_sha": "88d27d9e880aab5cb40af2bf4fe1af7f1f20956b",
+ "merge_base_sha": "70f6c4b87d8385b0663ee302bd148b52314ff52f",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3578,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "cc264014c664a1e44b1103ed2eab10ccc0cfa99c970d0408ba6c0ae29482b14f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T054750Z-3578-api-design-293371",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T05:47:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `peterWeylCoeff` definition ships with no unfolding lemma and no unconditional characterization, so the Haar integral it exists to expose is invisible downstream and every fact about it is gated behind `IsAlgClosed` plus a skeleton. The unconditional expansion lemma is also stated in a non-parallel, non-simp-normal form.",
+ "transcript_blob": "76c6e01ad312987a7c3f1542a87d860e3282c75365348f61fdd45b2c5c682478",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64684,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64684,
+  "cache_read_input_tokens": 733441,
+  "inference_geo": "not_available",
+  "input_tokens": 23,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 801,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 801,
+    "cache_read_input_tokens": 80382,
+    "input_tokens": 2,
+    "output_tokens": 2545,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16410,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
