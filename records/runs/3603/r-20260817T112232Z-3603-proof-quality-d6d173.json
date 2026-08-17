@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.1259669999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 398.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79907,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79907,
+    "cache_read_input_tokens": 1137162,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2765,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2765,
+      "cache_read_input_tokens": 93641,
+      "input_tokens": 2,
+      "output_tokens": 7628,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 29720,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "06a304f561c776dd7c97ccc8c6369ba240c5859e",
+ "cost_usd": 2.125967,
+ "dedupe_key": "TauCetiProject/TauCeti|3603|9a0da1a099a876d0a930833071e6dd1ab38dbee6|proof-quality|claude-opus-5|ce88b39773d791a9|production|11",
+ "diff_blob": "b154df615916d6aef94490b01fbcaccf6562a783b74d7ac6f7376c42b7383922",
+ "diff_sha256": "b154df615916d6aef94490b01fbcaccf6562a783b74d7ac6f7376c42b7383922",
+ "duration_s": 398.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/CategoryTheory/Functor/FullyFaithful.lean:80,87` gives `Functor.preimage`/`map_preimage`; `Full`/`Faithful` for `forget\u2082 (FDRep R G) (Rep R G)` at separate universes is `Mathlib/RepresentationTheory/FDRep.lean:178-184`; `grep -rn forget\u2082HomLinearEquiv Mathlib/` returns only its definition (FDRep.lean:165) and one use, i.e. no inversion lemma; the pre-PR code used `.preimage` + `map_preimage` (diff, `indFDRepMap`/`forget\u2082_map_indFDRepMap`).",
+   "file": "TauCeti/RepresentationTheory/Induction/FiniteDimensional.lean",
+   "fix": "Define `indFDRepMap f := (forget\u2082 (FDRep k G) (Rep k G)).preimage f'` (term mode, no tactic block) and delete `forget\u2082_map_forget\u2082HomLinearEquiv`, using Mathlib's `Functor.map_preimage` in `indFDRepMap_apply` instead.",
+   "issue": "`forget\u2082_map_forget\u2082HomLinearEquiv` is a new `rfl` bridge asserting `(forget\u2082).map (FDRep.forget\u2082HomLinearEquiv X Y f) = f`; Mathlib states no such lemma, so this is raw definitional unfolding of `HasForget\u2082 (FDRep R G) (Rep R G)` (`mapAction \u22d9 Rep.ActionToRep`) and `InducedCategory.homMk`, with no comment on why defeq is needed. The PR deleted the lemma-backed route it replaces.",
+   "line": 318
+  },
+  {
+   "evidence": "`Mathlib/RepresentationTheory/Rep/Basic.lean:156-174` gives `@[simp] mkIso_hom_hom_apply`, `mkIso_inv_hom_apply`, `mkIso_hom_hom`; these cannot fire because line 311 wraps `Rep.mkIso` in a plain `def` with no `@[simps]`/`@[expose]`, so the goal head is `(indFDRepForgetIso A).hom`, not `(Rep.mkIso _).hom`.",
+   "file": "TauCeti/RepresentationTheory/Induction/FiniteDimensional.lean",
+   "fix": "Add rfl projection lemmas for the wrapper (e.g. `indFDRepForgetIso_hom_hom_apply : (indFDRepForgetIso A).hom.hom x = indFDRepForgetEquiv A x` and the `inv` mirror, or tag it `@[simps]`), then close both goals by `simp` with those plus `indFDRepMap_apply` instead of a `change`; if a step genuinely still fails, name that step in the comment rather than the instance-path claim.",
+   "issue": "`forget\u2082_map_indFDRepMap` is proved by a four-line `change` that silently absorbs several wrapper identifications at once (`\u226b` in `Rep` vs `LinearMap` composition, `mkIso.hom.hom`/`mkIso.inv.hom`, `indFunctor.map` vs `indMap`). The justifying comment blames a `Field`/`CommRing` instance mismatch, but the actual blocker is that `indFDRepForgetIso` (line 311) is an opaque `def` with no projection lemmas, so Mathlib's `@[simp]` `mkIso` projections cannot see through it \u2014 a misattributed reason that will mislead the next maintainer. Same pattern at line 432 in `indFDRepForgetNatIso`.",
+   "line": 362
+  }
+ ],
+ "head_sha": "9a0da1a099a876d0a930833071e6dd1ab38dbee6",
+ "merge_base_sha": "06a304f561c776dd7c97ccc8c6369ba240c5859e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3603,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "871b124a7cc57e8a504bac04c16b6c5d4e49dad36743b4a131b80838ffcc87b6",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 11,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T112232Z-3603-proof-quality-d6d173",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T11:22:32Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proof-quality regressions in the reworked morphism layer: a new private `rfl` bridge unfolding `HasForget\u2082 (FDRep) (Rep)` internals replaces the lemma-backed `Functor.preimage`/`map_preimage` route the PR deleted, and the characterizing lemma is now proved by a four-line `change` through the opaque `indFDRepForgetIso` rather than by projection lemmas. Everything else (coset model, dimension, functor laws) reads fine.",
+ "transcript_blob": "3752f1f96223f89a52be19b824e6744a1ddc6acdefaa24adb691a74d6ddf433b",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79907,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79907,
+  "cache_read_input_tokens": 1137162,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2765,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2765,
+    "cache_read_input_tokens": 93641,
+    "input_tokens": 2,
+    "output_tokens": 7628,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 29720,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
