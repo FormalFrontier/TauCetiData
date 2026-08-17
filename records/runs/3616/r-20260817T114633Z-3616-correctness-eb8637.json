@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.244969,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 104448,
+    "input_tokens": 134573,
+    "output_tokens": 1404,
+    "reasoning_output_tokens": 525
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "33a6e252ee41521e3dd70d143be219072ae7ca82",
+ "cost_estimated": true,
+ "cost_usd": 0.244969,
+ "dedupe_key": "TauCetiProject/TauCeti|3616|6e26b87b92c90bf0dff06f40a70729db97b75bfd|correctness|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "adcb83b1bce464bfa438615a958be19d6acd1800a356b65121d4acd2ae8b148b",
+ "diff_sha256": "adcb83b1bce464bfa438615a958be19d6acd1800a356b65121d4acd2ae8b148b",
+ "duration_s": 38.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib-shims.json:4-29 maps only `Complex.exists_bijOn_unitBall_map_eq_zero` to files including Rouche and Vitali, whose docstrings require corresponding Rouch\u00e9/Vitali lemmas; lines 34-44 and 141-150 similarly group distinct APIs. Lines 225-232 fan out any matched target to every source.",
+   "file": "scripts/check-expired-mathlib-shims.py",
+   "fix": "Map probes to individual sources and require each source's actual replacement targets; represent PR/module landing sentinels separately and do not emit source-deletion advice from them.",
+   "issue": "Any target found for a group marks every grouped source replaceable. This falsely labels unrelated or only partially upstreamed APIs as obsolete, including all 21 Riemann-mapping files, both automorphism files, and both ValuativeRel files.",
+   "line": "225"
+  },
+  {
+   "evidence": "TauCeti/RingTheory/DedekindDomain/SInteger/Unit.lean:65-78 names the four non-upstream declarations and states the latter two must be re-homed; registry lines 47-56 nevertheless associate the entire source with the upstream probe.",
+   "file": "scripts/mathlib-shims.json",
+   "fix": "Track only declarations genuinely replaced by upstream and preserve/re-home `mem_unit_iff`, `unit_mono`, `unit_fg_of_units`, and `algebraMap_unitEmptyEquivUnits_apply`; avoid whole-file deletion messaging.",
+   "issue": "The S-unit entry reports the whole file obsolete when `Set.unit_fg` or the module appears, although the file explicitly contains four declarations absent from upstream and says two must be re-homed rather than deleted.",
+   "line": "47"
+  }
+ ],
+ "head_sha": "6e26b87b92c90bf0dff06f40a70729db97b75bfd",
+ "merge_base_sha": "33a6e252ee41521e3dd70d143be219072ae7ca82",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3616,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7411acc42204722f223cb57f927dc424be28a236df69b5a51dc8968e00dd5bd1",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260817T114633Z-3616-correctness-eb8637",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-17T11:46:33Z",
+ "submitted_by": "kim-em",
+ "summary": "The probe conflates upstream activity with source-level replacement, producing materially false migration and deletion alerts.",
+ "transcript_blob": "484c78e5c78b6de44c98ce0afbe41ec98fd1e6c557a74333f87330649325c6ba",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 104448,
+  "input_tokens": 134573,
+  "output_tokens": 1404,
+  "reasoning_output_tokens": 525
+ },
+ "verdict": "block"
+}
