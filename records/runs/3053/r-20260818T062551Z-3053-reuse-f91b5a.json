@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2372875000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 211.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 91433,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 91433,
+    "cache_read_input_tokens": 1751543,
+    "inference_geo": "not_available",
+    "input_tokens": 42,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5893,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5893,
+      "cache_read_input_tokens": 102490,
+      "input_tokens": 2,
+      "output_tokens": 2377,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16220,
+    "output_tokens_details": {
+     "thinking_tokens": 10525
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "cost_usd": 2.237288,
+ "dedupe_key": "TauCetiProject/TauCeti|3053|713a49d5fb849bd4b18daab3ac8f5fc4be59b88f|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "31bd9a58c10b9d0e5cca22fa455b462e9d06659b832aff73d91eb0a05063e921",
+ "diff_sha256": "31bd9a58c10b9d0e5cca22fa455b462e9d06659b832aff73d91eb0a05063e921",
+ "duration_s": 211.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"mul_mem_filtrationPrevious_left\\|mul_mem_filtrationPrevious_right\" code/TauCeti` returns only the two definition sites (Filtration.lean:187,193). Replacements: `TauCeti/Algebra/WordFiltration/Basic.lean:233` (`mul_mem_wordFiltrationPrevious_left`) and `:249` (`..._right`), used at `TauCeti/Algebra/WordFiltration/AssociatedGraded.lean:147,161`.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Delete both declarations; callers use `TauCeti.Algebra.mul_mem_wordFiltrationPrevious_left (\u03b9 Q) hx hy` and `..._right (\u03b9 Q) hx hy`, exactly as the new `AssociatedGraded.lean` does at lines 147 and 161.",
+   "issue": "`mul_mem_filtrationPrevious_left` (:187) and `mul_mem_filtrationPrevious_right` (:193) now state their hypotheses and conclusions entirely in the generic vocabulary (`wordFiltrationPrevious (\u03b9 Q)`), and with `filtration` changed to an `abbrev` (:114) they are literally `TauCeti.Algebra.mul_mem_wordFiltrationPrevious_left/right (\u03b9 Q)` up to reducible unfolding. Their only consumers were `filtrationGradedPreMul_mem_ker_left/right` in the file this PR deletes, so they now have zero uses; their names also refer to `filtrationPrevious`, deleted in this same PR.",
+   "line": 187
+  },
+  {
+   "evidence": "`grep -rn \"\\bone_mem_filtration\\b\" code/TauCeti` matches only Filtration.lean:150. Replacement at `TauCeti/Algebra/WordFiltration/Basic.lean:201`; the PR rewrote the analogous `filtration_zero`/`filtration_one` call sites to `wordFiltration_zero` (Filtration.lean:582) and `wordFiltration_one` (Vectors.lean:260).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Delete `one_mem_filtration`; use `TauCeti.Algebra.one_mem_wordFiltration (\u03b9 Q) k`, as `AssociatedGraded.lean:225` already does.",
+   "issue": "`one_mem_filtration` is a one-line restatement of `TauCeti.Algebra.one_mem_wordFiltration (\u03b9 Q)` and, after the deletion of `TauCeti/LinearAlgebra/CliffordAlgebra/AssociatedGraded.lean` (which used it as `one_mem_filtration Q 0`), has no consumer left. This is the same situation as `filtration_zero`/`filtration_one`, which this PR does delete in favour of `wordFiltration_zero`/`wordFiltration_one`; the cleanup was applied selectively.",
+   "line": 150
+  }
+ ],
+ "head_sha": "713a49d5fb849bd4b18daab3ac8f5fc4be59b88f",
+ "merge_base_sha": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3053,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "3d9de64b697d445a9cba8f84cd826e8e47921b10789ee6e9b1179fc9c49432f1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T062551Z-3053-reuse-f91b5a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T06:25:51Z",
+ "submitted_by": "kim-em",
+ "summary": "Generalizing the Clifford associated graded to word filtrations is genuine deduplication, and Mathlib has no associated-graded API to reuse. But the PR orphans three Clifford wrappers whose last consumers were the deleted file, and after `filtration` became an `abbrev` two of them are now the generic lemmas verbatim, named after a definition this PR deletes.",
+ "transcript_blob": "8ced09b48d10a5b15d6b22b35021a6449641cd9aee364f07bd6b43e5e4ab73a2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 91433,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 91433,
+  "cache_read_input_tokens": 1751543,
+  "inference_geo": "not_available",
+  "input_tokens": 42,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5893,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5893,
+    "cache_read_input_tokens": 102490,
+    "input_tokens": 2,
+    "output_tokens": 2377,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16220,
+  "output_tokens_details": {
+   "thinking_tokens": 10525
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
