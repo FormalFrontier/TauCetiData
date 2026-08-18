@@ -1,0 +1,138 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5253575000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 161.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 88094,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 88094,
+    "cache_read_input_tokens": 573639,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2276,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2276,
+      "cache_read_input_tokens": 102768,
+      "input_tokens": 2,
+      "output_tokens": 8114,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12688,
+    "output_tokens_details": {
+     "thinking_tokens": 8829
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "cost_usd": 1.525358,
+ "dedupe_key": "TauCetiProject/TauCeti|3053|713a49d5fb849bd4b18daab3ac8f5fc4be59b88f|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "31bd9a58c10b9d0e5cca22fa455b462e9d06659b832aff73d91eb0a05063e921",
+ "diff_sha256": "31bd9a58c10b9d0e5cca22fa455b462e9d06659b832aff73d91eb0a05063e921",
+ "duration_s": 161.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Filtration.lean:581-584 `| zero => change (wordFiltration (\u03b9 Q) 0).FG; rw [wordFiltration_zero, Submodule.one_eq_span]`; the diff removes `theorem filtration_zero : filtration Q 0 = 1` and makes `filtration` an `abbrev` (Filtration.lean:114).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Document why the goal cannot be reached otherwise (`filtration` is an `abbrev`, so the generic lemma only applies after unfolding), or replace the step with `simp only [filtration, wordFiltration_zero, Submodule.one_eq_span]` so the reliance on unfolding is explicit in the tactic rather than in a bare defeq.",
+   "issue": "`change (wordFiltration (\u03b9 Q) 0).FG` in `fg_filtration` has no comment, unlike every other `change` in the file (lines 239, 245, 280, 301, 311, 320, 338 all carry one). It is needed only because this PR deleted `filtration_zero`, so the step now rests on `filtration` being a reducible alias of `wordFiltration` \u2014 `rw [wordFiltration_zero]` cannot fire directly since `kabstract` keys on the head symbol `filtration`.",
+   "line": 582
+  },
+  {
+   "evidence": "PBW.lean:249-256: `rw [gradedGMul_mul]` immediately followed by `change DirectSum.of (fun n : \u2115 => \u22c0[R]^n M) (i + j) ...` with no intervening comment; diff shows the comment line removed.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/PBW.lean",
+   "fix": "Restore a comment on the surviving `change` (it unfolds `filtrationGradedPieceToExteriorDirectSum` to compare the two `DirectSum.of` summands), matching line 235.",
+   "issue": "In `filtrationGradedPieceToExteriorDirectSum_mul` the diff deletes the comment `-- \\`DirectSum.toAlgebra\\` states multiplication through \\`GMul\\`; expose its named product and maps.` but keeps the second `change`, leaving it undocumented; the parallel `change` at line 236 in the preceding lemma still has its comment.",
+   "line": 251
+  },
+  {
+   "evidence": "AssociatedGraded.lean:422-429 vs. AssociatedGraded.lean:296-299 and 470-474.",
+   "file": "TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "fix": "Add the same one-line comment used in the sibling proofs (quotient equality is ambient membership, the form in which `Algebra.smul_def` applies).",
+   "issue": "The `change algebraMap R (A) r * (x : A) - r \u2022 x \u2208 wordFiltrationPrevious f k` in `gradedAlgebraMap\u2080_mul` is undocumented; the comment at line 422 documents the preceding `gradedPiece_cast_mk'` rewrite, not this defeq step. The sibling proofs `gradedOne_mul` (296), `gradedMul_one` (318) and `gradedAlgebraMap\u2080_commutes` (470) each comment their corresponding step.",
+   "line": 427
+  },
+  {
+   "evidence": "AssociatedGraded.lean:205-220, 285-300, 307-321, 414-430, 456-475 \u2014 the five blocks differ only in the degree equation and the final ambient rewrite.",
+   "file": "TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "fix": "Extract one private lemma, e.g. `gradedMul_mk_eq_cast (f) {i j k} (h : i + j = k) (x y z) (hz : (x : A) * y - z \u2208 wordFiltrationPrevious f k) : cast (congrArg (GradedPiece f) h) (gradedMul f i j (Submodule.Quotient.mk x) (Submodule.Quotient.mk y)) = Submodule.Quotient.mk z`, and derive all five from it; each then reduces to supplying the ambient identity (`mul_assoc`, `one_mul`, `mul_one`, `Algebra.smul_def`, `Algebra.commutes`).",
+   "issue": "`gradedMul_assoc`, `gradedOne_mul`, `gradedMul_one`, `gradedAlgebraMap\u2080_mul` and `gradedAlgebraMap\u2080_commutes` each repeat the identical ~10-line skeleton: quotient induction, `gradedMul_apply_mk`, `gradedPiece_cast_mk'`, `(Submodule.Quotient.eq _).mpr`, `mem_previousRestricted_iff`/`Submodule.coe_sub`/`wordFiltration_coe_cast`, an undocumented-or-documented `change` into `A`, then `sub_self`. The shared reasoning is never named, and it is what forces each proof to carry its own `change`.",
+   "line": 198
+  }
+ ],
+ "head_sha": "713a49d5fb849bd4b18daab3ac8f5fc4be59b88f",
+ "merge_base_sha": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3053,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6969420fc5b8a4cd489a357c7743af4af356b0acf820cf65fa6fac31c4b5eca7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T064120Z-3053-proof-quality-371b77",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T06:41:20Z",
+ "submitted_by": "kim-em",
+ "summary": "Three `change` steps in the PR are undocumented, one of them newly relying on the `filtration \u2261 wordFiltration` reducible-alias defeq after this PR deleted the rewrite lemma that used to do the job. The new generic file also repeats one ~10-line quotient/cast skeleton five times instead of factoring it into a single lemma.",
+ "transcript_blob": "fca137dac1d58922d8717199500c8dbd03ffee27a34bde09d05a877d8bc6d873",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 88094,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 88094,
+  "cache_read_input_tokens": 573639,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2276,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2276,
+    "cache_read_input_tokens": 102768,
+    "input_tokens": 2,
+    "output_tokens": 8114,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12688,
+  "output_tokens_details": {
+   "thinking_tokens": 8829
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
