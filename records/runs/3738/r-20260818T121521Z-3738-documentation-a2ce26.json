@@ -1,0 +1,138 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 0.9105545,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 73.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 61494,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 61494,
+    "cache_read_input_tokens": 275633,
+    "inference_geo": "not_available",
+    "input_tokens": 10,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 219,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 219,
+      "cache_read_input_tokens": 78225,
+      "input_tokens": 2,
+      "output_tokens": 2963,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 5323,
+    "output_tokens_details": {
+     "thinking_tokens": 3346
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "51c18f42c4f242614702d7c2f58dc0b726811aa9",
+ "cost_usd": 0.910555,
+ "dedupe_key": "TauCetiProject/TauCeti|3738|52267b880068233516be34e810b5761f795204b1|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "489ffe77ed623ff8dd6db3154974d1327afcf83d7e994f87aa57a5f69cee9f60",
+ "diff_sha256": "489ffe77ed623ff8dd6db3154974d1327afcf83d7e994f87aa57a5f69cee9f60",
+ "duration_s": 73.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn \"lean_source\" .` \u2192 only `scripts/lint-dot-notation.py:4` and `scripts/test_lint_dot_notation.py:12`.",
+   "file": "scripts/lean_source.py",
+   "fix": "State that this module holds the syntactic parser plus the dot-notation lint that currently uses it, summarise the parser entry points, and drop the claim of existing multiple consumers (or say it is intended for future hygiene checks).",
+   "issue": "\"The parser is intentionally syntactic and is shared by repository hygiene checks\" claims present-tense sharing across multiple checks; the only importers are `scripts/lint-dot-notation.py` and the test module. The remaining 8 lines are the old lint docstring verbatim, so the module docstring never says what the reusable parser API (`declarations`, `scopes`, `qualified_declarations`, `update_scope`) provides \u2014 the stated reason this file exists.",
+   "line": 4
+  },
+  {
+   "evidence": "Line 12: `import lean_source as lint`; every test calls `lint.find_violations` / `lint.main` / `lint.own_declaration_paths`.",
+   "file": "scripts/test_lint_dot_notation.py",
+   "fix": "Retarget the docstring to `scripts/lean_source.py` (parser and dot-notation lint).",
+   "issue": "Docstring still reads \"Regression tests for ``scripts/lint-dot-notation.py``\", but the module now imports and exercises `lean_source` (the wrapper is 8 lines and is never imported by the tests).",
+   "line": 2
+  },
+  {
+   "evidence": "Lines 461-498: `extra_declarations: Iterable[tuple[int, str]]`, `keep: Callable[[Declaration], bool] | None`; lines 486 and 493 implement the undocumented dropping/rooting rules.",
+   "file": "scripts/lean_source.py",
+   "fix": "Document both keyword parameters and the `_root_.`/unnamed-declaration behaviour, at the level of detail the other public functions in this module get.",
+   "issue": "`qualified_declarations` is the new public API this PR adds, but its one-line docstring documents neither `extra_declarations` (what the `int` and `str` in each pair mean \u2014 source offset and declaration name, ordered against scope events) nor `keep`, and does not state that unnamed declarations and `_root_.`-rooted names are handled specially.",
+   "line": 465
+  },
+  {
+   "evidence": "`_declaration_tail` (line 281) sets `start = position` before binder scanning and returns `text[start:header_end]`; `_declaration_returns_sort` (line 507) relies on finding the top-level colon inside that same string.",
+   "file": "scripts/lean_source.py",
+   "fix": "Describe `header` as the declaration header from after the name through the body introducer (binders plus result type).",
+   "issue": "`Declaration`'s docstring labels the fields in order and calls `header` \"result text\", but `_declaration_tail` returns the slice starting immediately after the name, so `header` contains the binders as well as the result type \u2014 misleading for consumers of the now-public dataclass.",
+   "line": 125
+  }
+ ],
+ "head_sha": "52267b880068233516be34e810b5761f795204b1",
+ "merge_base_sha": "a8adb6c608751a76bae5110151949e8b14007b60",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3738,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c13712ef9e0e2427b58cb49bcd107fa3958aba2bc9f8126ea1d8893cdbf4cebb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T121521Z-3738-documentation-a2ce26",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T12:15:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The extraction copies the old lint docstring into the new shared module without adapting it: the module docstring overclaims plural consumers and never describes the reusable parser API it exists to expose, the test module still says it tests the old script, and the PR's headline new public function has a one-line docstring that leaves its non-obvious parameters undocumented.",
+ "transcript_blob": "b75a86e440fe2510f98d93568933073243f73a755ef7e5f7feca25eee421bbab",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 61494,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 61494,
+  "cache_read_input_tokens": 275633,
+  "inference_geo": "not_available",
+  "input_tokens": 10,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 219,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 219,
+    "cache_read_input_tokens": 78225,
+    "input_tokens": 2,
+    "output_tokens": 2963,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 5323,
+  "output_tokens_details": {
+   "thinking_tokens": 3346
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
