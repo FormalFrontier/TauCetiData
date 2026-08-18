@@ -1,0 +1,138 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4449625,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 418.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 103253,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 103253,
+    "cache_read_input_tokens": 1118307,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1307,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1307,
+      "cache_read_input_tokens": 118896,
+      "input_tokens": 2,
+      "output_tokens": 3997,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 33263,
+    "output_tokens_details": {
+     "thinking_tokens": 27707
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3b66d2d79cc1ee039c79fe91d814b08e261f6b2a",
+ "cost_usd": 2.444962,
+ "dedupe_key": "TauCetiProject/TauCeti|3586|2b7e2afd626e095e8a0547626267bb8eaee495f9|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "7727ae829d745a0884168d1356112fa79b7d0b38c6acf55e099f56c58b812fd4",
+ "diff_sha256": "7727ae829d745a0884168d1356112fa79b7d0b38c6acf55e099f56c58b812fd4",
+ "duration_s": 418.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`coe_subtype` (95) and `toLinearMap_subtype` (98) are stated as `@[simp]` and then never used by these five proofs; `grep -rn coe_subtype TauCeti/` shows `Subrepresentation.coe_subtype` has no use anywhere in the repo. `Submodule.subtype_injective` (Mathlib/Algebra/Module/Submodule/LinearMap.lean:58) is stated about `\u21d1p.subtype`, so `\u03c1'.toSubmodule.subtype_injective h` at line 103 typechecks only by coe defeq.",
+   "file": "TauCeti/RepresentationTheory/Subrepresentation.lean",
+   "fix": "Rewrite with `toLinearMap_subtype` / `coe_subtype` (and `IntertwiningMap.range_toSubmodule`, `ker_toSubmodule` from Mathlib's `@[simps]` on `range`/`ker`) before appealing to the `Submodule` lemmas, so the proofs do not depend on how the coercion is defined.",
+   "issue": "`subtype_injective` (102), `range_subtype` (107), `ker_subtype` (113), `subtype_eq_zero_iff` (119) and `subtype_surjective_iff` (138) all identify `\u21d1\u03c1'.subtype` / `\u03c1'.subtype.range` / `\u03c1'.subtype.ker` with the `Submodule.subtype` versions by definitional unfolding of two different `FunLike`/structure layers (e.g. `apply LinearMap.range_eq_top.mp` at 146 against a goal about an `IntertwiningMap`), which is undocumented defeq across wrappers.",
+   "line": 102
+  },
+  {
+   "evidence": "Lines 119-134 versus the one-line `range_subtype`/`ker_subtype` at 107-115 that state the same submodule facts.",
+   "file": "TauCeti/RepresentationTheory/Subrepresentation.lean",
+   "fix": "Prove both directions by `ext` (`Representation.IntertwiningMap.ext` plus `Submodule.mem_bot`) or derive from the already-available `ker_subtype`/`range_subtype`; a long named-lemma chain here is fragile under Mathlib renames for no gain.",
+   "issue": "`subtype_eq_zero_iff` spends 16 lines rebuilding `range = \u22a5` arguments in both directions (`LinearMap.range_eq_bot`, `Submodule.range_subtype`, `toSubmodule_bot`, plus an auxiliary `hlin` proved by a five-lemma rewrite chain) for a statement that follows from extensionality, and it re-derives `range_subtype`/`ker_subtype` proved ten lines above instead of using them.",
+   "line": 119
+  },
+  {
+   "evidence": "`theorem _root_.FDRep.of_\u03c1_eq_self (X : FDRep k G) : FDRep.of X.\u03c1 = X := rfl` (AsModule.lean:114); `FDRep.forget\u2082_\u03c1` is proved `by ext g v; rfl` (Mathlib/RepresentationTheory/FDRep.lean:135-136), so it is not a top-level `rfl`.",
+   "file": "TauCeti/RepresentationTheory/AsModule.lean",
+   "fix": "Drop the no-op rewrites and close with `exact \u27e8i\u27e9`, with a one-line comment naming `FDRep.of_\u03c1_eq_self` as why it typechecks (structure eta on `Action`); add a comment at 126 saying the equivalence is being transported along `FDRep.forget\u2082_\u03c1`.",
+   "issue": "`rw [FDRep.of_\u03c1_eq_self, FDRep.of_\u03c1_eq_self] at i` rewrites the type of a data term (`i : FDRep.of X.\u03c1 \u2245 FDRep.of Y.\u03c1`) along a lemma proved by `rfl`, so it is a `change` in disguise: the two types are already definitionally equal and `exact \u27e8i\u27e9` closes the goal. The sibling `rw [FDRep.forget\u2082_\u03c1, FDRep.forget\u2082_\u03c1] at e` (126) is a genuine transport of a `Representation.Equiv` along an equation, also undocumented.",
+   "line": 131
+  },
+  {
+   "evidence": "`theorem range_subtype : range p.subtype = p` with `variable (p : Submodule R M)` (Mathlib/Algebra/Module/Submodule/Range.lean:309, section variables at 296-298) \u2014 `R`, `M`, `p` are section binder names, and Mathlib's own uses are positional (`Submodule.range_subtype (ker f)`, `p.range_subtype`). `simple_iff_isSimpleModule` takes `{R M : Type*}` from `variable` (Mathlib/Algebra/Category/ModuleCat/Simple.lean:23,27), and the primed form `simple_iff_isSimpleModule'` avoids naming them.",
+   "file": "TauCeti/RepresentationTheory/Subrepresentation.lean",
+   "fix": "Use `\u03c1'.toSubmodule.range_subtype` / `Submodule.range_subtype _` and `ModuleCat.simple_iff_isSimpleModule' (ModuleCat.of k[G] A.\u03c1.asModule)`; all these arguments are determined by the goal.",
+   "issue": "Mathlib lemmas are applied with hand-written binder names that are neither needed nor guaranteed stable: `Submodule.range_subtype (R := A) (M := W) (p := \u03c1'.toSubmodule)` (109, 126), `Submodule.ker_subtype (R := A) (M := W) (p := \u03c1'.toSubmodule)` (115), and `simple_iff_isSimpleModule (R := k[G]) (M := A.\u03c1.asModule)` in TauCeti/RepresentationTheory/Simple/Basic.lean:74.",
+   "line": 109
+  }
+ ],
+ "head_sha": "2b7e2afd626e095e8a0547626267bb8eaee495f9",
+ "merge_base_sha": "3b66d2d79cc1ee039c79fe91d814b08e261f6b2a",
+ "mode": "manual",
+ "model": "claude-opus-5",
+ "pr": 3586,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7ab83e6b46453b450bb873abfab5e5c850205aacee881df0788f1d98cb6ad521",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T112231Z-3586-proof-quality-988e9a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T11:22:31Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `Subrepresentation.subtype` block moves between an intertwining map and its underlying linear map by undocumented coercion defeq, bypassing the `coe_subtype`/`toLinearMap_subtype` lemmas it states for exactly that purpose, and `subtype_eq_zero_iff` is a 16-line rewrite chain for a fact extensionality settles. `nonempty_fdRepIso_iff` rewrites a data term along a `rfl` lemma, and several proofs pass Mathlib binder names as named arguments.",
+ "transcript_blob": "93646e9885f28e35b6c1c50b5fd1ad78cdcbabee3411d699c689a7ca9fc67b93",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 103253,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 103253,
+  "cache_read_input_tokens": 1118307,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1307,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1307,
+    "cache_read_input_tokens": 118896,
+    "input_tokens": 2,
+    "output_tokens": 3997,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 33263,
+  "output_tokens_details": {
+   "thinking_tokens": 27707
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

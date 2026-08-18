@@ -1,0 +1,145 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.453776,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 278.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 105789,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 105789,
+    "cache_read_input_tokens": 1606910,
+    "inference_geo": "not_available",
+    "input_tokens": 38,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1035,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1035,
+      "cache_read_input_tokens": 121704,
+      "input_tokens": 2,
+      "output_tokens": 5545,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22833,
+    "output_tokens_details": {
+     "thinking_tokens": 16307
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3b66d2d79cc1ee039c79fe91d814b08e261f6b2a",
+ "cost_usd": 2.453776,
+ "dedupe_key": "TauCetiProject/TauCeti|3586|2b7e2afd626e095e8a0547626267bb8eaee495f9|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "7727ae829d745a0884168d1356112fa79b7d0b38c6acf55e099f56c58b812fd4",
+ "diff_sha256": "7727ae829d745a0884168d1356112fa79b7d0b38c6acf55e099f56c58b812fd4",
+ "duration_s": 278.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `TauCeti/RepresentationTheory/Symmetric/Specht/Ideal/Basic.lean:134: noncomputable abbrev spechtIdealFDRep (t : YoungTableau \u03bc) : FDRep \u211a (Equiv.Perm (Fin \u03bc.card)) := FDRep.of (spechtIdealRep t).\u03c1`; `Ideal/Irreducible.lean:10: public import TauCeti.RepresentationTheory.Symmetric.Specht.Ideal.Basic`; `Ideal/Irreducible.lean:149: instance isIrreducible_spechtIdealRep`.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Specht/Ideal/Irreducible.lean",
+   "fix": "Rewrite the paragraph: say the `FDRep` mirror is `Simple (spechtIdealFDRep t)`, which follows from `FDRep.simple_iff_isIrreducible` (or fires as an instance) \u2014 or drop the sentence rather than assert a nonexistent obstruction.",
+   "issue": "New docstring claims \"the ideal `\u211a[S\u2099] c_t` is not packaged as an object of `FDRep \u211a S\u2099` here, so there is nothing to mirror it onto\". It is packaged: `YoungTableau.spechtIdealFDRep t : FDRep \u211a (Equiv.Perm (Fin \u03bc.card)) := FDRep.of (spechtIdealRep t).\u03c1`, defined in `Specht/Ideal/Basic.lean:134`, which this file imports directly (line 10). With the instance `isIrreducible_spechtIdealRep` (line 149) and this PR's `FDRep.simple_of_isIrreducible`, `Simple (spechtIdealFDRep t)` is immediate.",
+   "line": 45
+  },
+  {
+   "evidence": "Lines 38-45 vs. line 163 `theorem existsUnique_nonempty_linearEquiv_spechtModule (M : Type*) ... \u2203! \u03bc : n.Partition, Nonempty (M \u2243\u2097[\u211a[Equiv.Perm (Fin n)]] ...)` and the Main-results entry at line 52.",
+   "file": "TauCeti/RepresentationTheory/Symmetric/Specht/Completeness.lean",
+   "fix": "Say the `\u2203!` form is given in all three languages, alongside the two bijections `partitionEquivSimpleModuleClasses` and `partitionEquivSimpleFDRepClasses`.",
+   "issue": "Module docstring says of the three languages that \"In the last two it is stated as a `\u2203!`\", but the first language also gets an `\u2203!` form: `existsUnique_nonempty_linearEquiv_spechtModule` (line 163) is about an arbitrary simple `\u211a[S\u2099]`-module, and the Main results list two lines below says so.",
+   "line": 40
+  },
+  {
+   "evidence": "grep for \"Neither Mathlib nor this repository\" / \"exists neither\" / \"not available\" across TauCeti/RepresentationTheory returns no remaining statement that the dictionary is missing.",
+   "file": "TauCeti/RepresentationTheory/Simple/Basic.lean",
+   "fix": "Drop the clause or put it in the past: \"...which is why several files here previously stopped at the `Representation` level.\"",
+   "issue": "Module docstring states in the present tense that \"several files here say so and stop at the `Representation` level\". No file in the repository says so after this PR \u2014 the PR itself rewrote all such passages (CharacterTable/Completeness.lean, Specht/Ideal/Irreducible.lean); a reader grepping finds nothing.",
+   "line": 23
+  },
+  {
+   "evidence": "Lines 76-83 and 186-192 of the file; contrast the documented `Rep.simple_iff_isIrreducible` (67-70) and the Main-results entries at lines 52-56.",
+   "file": "TauCeti/RepresentationTheory/Simple/Basic.lean",
+   "fix": "Add a one-line docstring to each stating what it provides (the instance direction / the theorem direction of the corresponding `simple_iff_isIrreducible`).",
+   "issue": "Four declarations advertised in the file's own Main results list carry no docstring: `Rep.simple_of_isIrreducible` (77), `Rep.isIrreducible_of_simple` (81), `FDRep.simple_of_isIrreducible` (186), `FDRep.isIrreducible_of_simple` (190). Every other declaration in the file, including the private helpers, is documented.",
+   "line": 77
+  },
+  {
+   "evidence": "Lines 61-99 of the file: `mem_toSubmodule`, `toSubmodule_bot`, `toSubmodule_top`, `toSubmodule_le_toSubmodule`, `toSubmodule_lt_toSubmodule`, `subtype` all documented; `coe_subtype`, `toLinearMap_subtype` not, and absent from lines 44-49.",
+   "file": "TauCeti/RepresentationTheory/Subrepresentation.lean",
+   "fix": "Add one-line docstrings and add both names to the Main results list.",
+   "issue": "`coe_subtype` (94) and `toLinearMap_subtype` (97) are the only undocumented declarations in a file where every other lemma, including one-line `Iff.rfl` simp lemmas, has a docstring, and they are also the only new public declarations missing from the file's Main-results list (lines 44-49, which otherwise enumerates every declaration).",
+   "line": 94
+  }
+ ],
+ "head_sha": "2b7e2afd626e095e8a0547626267bb8eaee495f9",
+ "merge_base_sha": "3b66d2d79cc1ee039c79fe91d814b08e261f6b2a",
+ "mode": "manual",
+ "model": "claude-opus-5",
+ "pr": 3586,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "563a7ab1999be66b35a26f8238da907d139128c6144d5b666f873f30663f23bc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T111753Z-3586-documentation-d40aba",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T11:17:53Z",
+ "submitted_by": "kim-em",
+ "summary": "The rewritten paragraph in Specht/Ideal/Irreducible.lean states something the repository contradicts: the Specht ideal is already bundled as an FDRep object in that file's own direct import. Two further new docstring passages describe the repository's state or the file's own contents inaccurately, and four declarations listed as main results are undocumented.",
+ "transcript_blob": "57495ab8f01190e689a8f5410d9274eefc18c9927bfd2634cc3d0fbedd22abe5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 105789,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 105789,
+  "cache_read_input_tokens": 1606910,
+  "inference_geo": "not_available",
+  "input_tokens": 38,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1035,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1035,
+    "cache_read_input_tokens": 121704,
+    "input_tokens": 2,
+    "output_tokens": 5545,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22833,
+  "output_tokens_details": {
+   "thinking_tokens": 16307
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
