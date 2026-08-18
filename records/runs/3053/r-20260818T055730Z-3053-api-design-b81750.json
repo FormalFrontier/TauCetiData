@@ -1,0 +1,124 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0463419999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 232.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 117606,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 117606,
+    "cache_read_input_tokens": 771038,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 10711,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 10711,
+      "cache_read_input_tokens": 123845,
+      "input_tokens": 2,
+      "output_tokens": 5853,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18136,
+    "output_tokens_details": {
+     "thinking_tokens": 13645
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "cost_usd": 2.046342,
+ "dedupe_key": "TauCetiProject/TauCeti|3053|0f968d2a7868c6b084216aa6739925104798bd49|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6c480fac00b0da71cccf510fd514f444723c5c1dd5ab10a5128c868baadadd45",
+ "diff_sha256": "6c480fac00b0da71cccf510fd514f444723c5c1dd5ab10a5128c868baadadd45",
+ "duration_s": 232.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Filtration.lean:156-195 defines the twins; their docstrings state \"The generic `TauCeti.Algebra.wordFiltration.previousRestricted_zero` is the `simp` lemma and reaches this statement through the reducible `filtrationPreviousRestricted`; this Clifford-facing name is for `rw`.\" AssociatedGraded.lean:81-108 defines the identical generic versions.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Delete `filtrationPreviousRestricted`, `FiltrationGradedPiece`, `mem_filtrationPreviousRestricted_iff`, `filtrationPreviousRestricted_zero` and `filtrationPreviousRestricted_succ`, and move the uses in Filtration.lean:411-505, FiltrationGradedEquiv.lean:89-172, ExteriorFiltration.lean:94-111 and PBW.lean to `TauCeti.Algebra.wordFiltration.previousRestricted (\u03b9 Q)` / `GradedPiece (\u03b9 Q)` and the generic lemmas. Since `filtration` is now a reducible `abbrev` the migration is mechanical, and it needs no transport layer, so it does not conflict with the contested `abbrev` thread.",
+   "issue": "Duplicated API: this PR adds generic twins of declarations that the Clifford file keeps. `TauCeti.Algebra.wordFiltration.previousRestricted` (AssociatedGraded.lean:81) vs `CliffordAlgebra.filtrationPreviousRestricted` (Filtration.lean:156); `GradedPiece` (AssociatedGraded.lean:107) vs `FiltrationGradedPiece` (Filtration.lean:194); and three duplicated theorems: `mem_previousRestricted_iff`/`previousRestricted_zero`/`previousRestricted_succ` (AssociatedGraded.lean:87,94,101) vs `mem_filtrationPreviousRestricted_iff`/`filtrationPreviousRestricted_zero`/`filtrationPreviousRestricted_succ` (Filtration.lean:166,177,188). The PR itself demotes the Clifford copies out of `simp`, documenting them as reachable-through-the-generic duplicates, so both surfaces coexist with no canonical choice; consumers already mix them (PBW.lean:262 uses `associatedGraded (\u03b9 Q)` while PBW.lean:311,330,342,351 use `DirectSum.of (FiltrationGradedPiece Q)`).",
+   "line": 194
+  },
+  {
+   "evidence": "PBW.lean:227-228 `change filtrationGradedPieceToExteriorDirectSum Q 0 (gradedOne (\u03b9 Q)) = 1`; PBW.lean:250-253 `change ... (gradedMul (\u03b9 Q) i j x y) = _`; PBW.lean:258-259 `rw [DirectSum.of_mul_of, ...]` closed by bare `rfl`; the same pattern inside the file itself at AssociatedGraded.lean:363-374 (`change gradedMul f _ _ 0 x = 0`, `change gradedMul f _ _ (x + y) z = ...`).",
+   "file": "TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "fix": "Add, next to `gradedGOne`/`gradedGMul`, `@[simp] theorem gradedGOne_one : (GradedMonoid.GOne.one : GradedPiece f 0) = gradedOne f := (rfl)`, `@[simp] theorem gradedGMul_mul (x : GradedPiece f i) (y : GradedPiece f j) : GradedMonoid.GMul.mul x y = gradedMul f i j x y := (rfl)`, and an `associatedGraded_of_mul_of` stating the direct-sum product of two homogeneous generators, then replace the `change` steps in PBW.lean with them.",
+   "issue": "The graded instances expose no characteristic lemma linking them to the named operations, so the new API cannot be used without unfolding: no `GradedMonoid.GOne.one = gradedOne f`, no `GradedMonoid.GMul.mul x y = gradedMul f i j x y`, and no `DirectSum.of _ i x * DirectSum.of _ j y = DirectSum.of _ (i + j) (gradedMul f i j x y)` for `associatedGraded`. Every consumer therefore relies on defeq via `change`.",
+   "line": 325
+  }
+ ],
+ "head_sha": "0f968d2a7868c6b084216aa6739925104798bd49",
+ "merge_base_sha": "bb5bda82972cf1761e4ae4c8a101a3f9af6dde4c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3053,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4955b46f4f0596863734dbbb603f8a81a0fdb7c3ac342388c3fea67ffe4b9377",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T055730Z-3053-api-design-b81750",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T05:57:30Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR ships two public names for each of the same objects \u2014 the new generic `previousRestricted`/`GradedPiece` (plus their three restatements) alongside the retained Clifford `filtrationPreviousRestricted`/`FiltrationGradedPiece` twins \u2014 and the new graded API lacks the lemmas connecting `gradedOne`/`gradedMul` to the `GOne`/`GMul` fields, forcing consumers to unfold by defeq.",
+ "transcript_blob": "fd1cc02fbe9ac4eee250db329e066bd40e60fddb7fe27189b04888ca056e594e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 117606,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 117606,
+  "cache_read_input_tokens": 771038,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 10711,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 10711,
+    "cache_read_input_tokens": 123845,
+    "input_tokens": 2,
+    "output_tokens": 5853,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18136,
+  "output_tokens_details": {
+   "thinking_tokens": 13645
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
