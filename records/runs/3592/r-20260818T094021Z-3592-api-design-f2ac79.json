@@ -1,0 +1,145 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.2496665,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 262.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 121358,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 121358,
+    "cache_read_input_tokens": 1022475,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1091,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1091,
+      "cache_read_input_tokens": 137217,
+      "input_tokens": 2,
+      "output_tokens": 4353,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19458,
+    "output_tokens_details": {
+     "thinking_tokens": 14709
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c5f9cc7ebf8c3f7bec20061f413e03150825015a",
+ "cost_usd": 2.249667,
+ "dedupe_key": "TauCetiProject/TauCeti|3592|ea5cc13a255f5531fc2b3489ecfc909d889609f1|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "4c06c024fd22a8cf5b079a155ade22dc097f33b89bd08dd2d2c3179273b96419",
+ "diff_sha256": "4c06c024fd22a8cf5b079a155ade22dc097f33b89bd08dd2d2c3179273b96419",
+ "duration_s": 262.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "GroupFunctor.lean:62-96 (`structure TensorAutFunctorData`, `obj_eq _ := rfl`, `map_heq ... rfl`, `noncomputable abbrev tensorAutFunctor := (tensorAutFunctorData R H).functor`); the parallel functor at GeneralLinear/ScalarExtension.lean:211-238 needs no such structure (`_obj := (rfl)`, `_map` via `conj_eqToHom_iff_heq ... unfold ...; rfl`).",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/GroupFunctor.lean",
+   "fix": "Delete the structure and its instance; define `tensorAutFunctor` directly as a `noncomputable def` (still sealed) and prove `tensorAutFunctor_obj` by `rfl` and `tensorAutFunctor_map` in-file, exactly as `scalarExtensionAutomorphismsFunctor_map` does. This is not a request to re-add `@[expose]`; bodies are transparent inside the defining module, so both witnesses go through unchanged.",
+   "issue": "`TensorAutFunctorData` and `tensorAutFunctorData` are public API but are pure scaffolding: three fields whose only role is to carry two `rfl`-provable witnesses out of the definition, no consumer, and neither is listed in the module's Main declarations. `tensorAutFunctor` is then an `abbrev`, so its exposed body is the opaque projection `(tensorAutFunctorData R H).functor`.",
+   "line": 62
+  },
+  {
+   "evidence": "JordanDecomposition.lean:131 `private theorem autOfComponents_mul`, :162 `private theorem autOfComponents_congr`, both about `FGComoduleCat.autOfComponents R C A`; definition at Finite/ScalarExtension/Basic.lean:84 with variables at :48-50.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/JordanDecomposition.lean",
+   "fix": "Move both to `TauCeti.FGComoduleCat` in `Finite/ScalarExtension/Basic.lean` next to the definition, public, at the definition's hypotheses (`[CommSemiring R]`, coalgebra `C`, `[Semiring A]`), and use them from here.",
+   "issue": "`FGComoduleCat.autOfComponents` is now public API, but its two general laws \u2014 multiplicativity (`autOfComponents_mul`) and equality from pointwise equality (`autOfComponents_congr`) \u2014 remain `private` in this file, in namespace `TauCeti.Tannaka`, under `[HopfAlgebra k H] [Field K]` (line 59) that neither statement uses. Any other consumer of `autOfComponents` must re-derive the group law.",
+   "line": 131
+  },
+  {
+   "evidence": "grep: only occurrences are the declaration at End/ScalarExtension.lean:69 and the rewrite at :273; docstring's declaration list at :35-43 omits it.",
+   "file": "TauCeti/LinearAlgebra/End/ScalarExtension.lean",
+   "fix": "Mark it `private` (`rTensor_algHom_smul`, which has out-of-file uses at GeneralLinear/ScalarExtension.lean:116 and PointsAction.lean:107, correctly stays public).",
+   "issue": "`TauCeti.distribBaseChange_symm_rTensor_tmul` is public in the bare `TauCeti` root namespace, has exactly one use (line 273, same file), and is absent from the module's Main declarations list \u2014 an implementation helper in the public surface.",
+   "line": 69
+  },
+  {
+   "evidence": "Finite/ScalarExtension/Basic.lean:8,11; PointsAction.lean:11,14.",
+   "file": "TauCeti/Algebra/Coalgebra/Comodule/Finite/ScalarExtension/Basic.lean",
+   "fix": "Delete the second occurrence in each file.",
+   "issue": "Duplicated `public import` lines, in two files added by this PR: `Mathlib.LinearAlgebra.GeneralLinearGroup.Basic` at lines 8 and 11 here, and `TauCeti.LinearAlgebra.End.ScalarExtension` at lines 11 and 14 of `TauCeti/Algebra/Coalgebra/Comodule/PointsAction.lean`.",
+   "line": 11
+  },
+  {
+   "evidence": "Monoidal.lean:329-352: `inv := scalarExtensionComponent R H A \u03b7\u207b\u00b9 M`, with only `scalarExtensionComponentGL_coe` exported; no `@[expose]` on the def.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/Tannaka/Monoidal.lean",
+   "fix": "Add the companion lemma, e.g. `@[simp] theorem scalarExtensionComponentGL_inv : (scalarExtensionComponentGL R H A \u03b7 M)\u207b\u00b9 = scalarExtensionComponentGL R H A \u03b7\u207b\u00b9 M`, provable in-file from the definition.",
+   "issue": "`scalarExtensionComponentGL`'s docstring asserts \"Its inverse is the component of the inverse automorphism\", but the body is sealed and only `_coe` (for `val`) is provided, so that fact is not directly available to consumers.",
+   "line": 331
+  }
+ ],
+ "head_sha": "ea5cc13a255f5531fc2b3489ecfc909d889609f1",
+ "merge_base_sha": "c5f9cc7ebf8c3f7bec20061f413e03150825015a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3592,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "faf27b712c6442a1af554ccb667ed16188cc380fc50734b35d08e43a2ae46b89",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260818T094021Z-3592-api-design-f2ac79",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-18T09:40:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The new surface is mostly well characterized, but the group functor ships a public construction-scaffolding structure that no consumer can use, the laws of the newly public `FGComoduleCat.autOfComponents` stay private in an unrelated file under irrelevant hypotheses, and a single-use helper plus two duplicated `public import`s leak into the module interface.",
+ "transcript_blob": "ce9ec7b295df1fbc438701f46917183f5fb6eac320be0318ffb328da34444ee8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 121358,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 121358,
+  "cache_read_input_tokens": 1022475,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1091,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1091,
+    "cache_read_input_tokens": 137217,
+    "input_tokens": 2,
+    "output_tokens": 4353,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19458,
+  "output_tokens_details": {
+   "thinking_tokens": 14709
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
