@@ -1,0 +1,146 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0202699999999996,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 257.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 90861,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 90861,
+    "cache_read_input_tokens": 1102692,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4787,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4787,
+      "cache_read_input_tokens": 102573,
+      "input_tokens": 2,
+      "output_tokens": 2817,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21558,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "81f57e381b3b448fa9656a34faa4c8fe71c58346",
+ "cost_usd": 2.02027,
+ "dedupe_key": "TauCetiProject/TauCeti|3766|17fd34cdc197cff5bfa7655ea5ecfe0b4b87b690|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9a225b4abd72999bae6f6d9ddc81b59866646e7519e83cde37dd6f4426e9884d",
+ "diff_sha256": "9a225b4abd72999bae6f6d9ddc81b59866646e7519e83cde37dd6f4426e9884d",
+ "duration_s": 257.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Multiplicity.lean:107 `open TauCeti` (no `namespace TauCeti`), :135 `namespace Representation`, :426 `end Representation` \u2014 contrast Orbit.lean:91-93 `namespace TauCeti` / `namespace Representation`. `open` does not change the namespace stack.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Strip the `TauCeti.` prefix from all self-references (the `TauCeti.Representation.conjSubrep`, `apply_conjNormal_inv`, `mem_conjSubrep_iff` references at lines 17, 146, 329 are correct and must stay, since Basic.lean/Orbit.lean do sit under `namespace TauCeti`).",
+   "issue": "The file opens `open TauCeti` (line 107) and then `namespace Representation` (line 135) at top level, so the declarations are `Representation.asModuleTranslate`, `Representation.translateHom`, `Representation.finrank_hom_eq_of_isAtom`, etc. \u2014 not `TauCeti.Representation.*`. Every docstring reference to a declaration introduced by this file names something that does not exist: lines 31, 33, 36, 38, 48, 50, 52, 53, 58, 60, 61, 63, 66, 67, 68, 158, 273.",
+   "line": 48
+  },
+  {
+   "evidence": "Mathlib/GroupTheory/GroupAction/ConjAct.lean:262 `theorem _root_.MulAut.conjNormal_inv_apply`; Mathlib/RepresentationTheory/Basic.lean:94 `theorem inv_self_apply (g : G) (x : V)`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Rename to `conjAlgAut_inv_self_apply`, following `Representation.inv_self_apply` (Mathlib/RepresentationTheory/Basic.lean:94), which this file already uses at line 166 for the same `f g\u207b\u00b9 (f g x) = x` shape.",
+   "issue": "`conjAlgAut_inv_apply` states `conjAlgAut k N g\u207b\u00b9 (conjAlgAut k N g a) = a`, but `_inv_apply` in Mathlib means applying the inverse map \u2014 cf. `MulAut.conjNormal_inv_apply (g) (h) : \u2191((MulAut.conjNormal g)\u207b\u00b9 h) = g\u207b\u00b9 * h * g`, the immediate analogue of this very lemma's subject. The name advertises an evaluation lemma and delivers a cancellation lemma.",
+   "line": 129
+  },
+  {
+   "evidence": "Mathlib/LinearAlgebra/FreeModule/Finite/Matrix.lean:59 `theorem Module.finrank_linearMap`; TauCeti/RingTheory/Semisimple/Multiplicity.lean:133 `finrank_linearMap_pos_iff_exists_nonempty_linearEquiv`; TauCeti/RingTheory/Semisimple/Schur.lean:117 `nontrivial_linearMap_iff_nonempty_linearEquiv`, :283 `finiteDimensional_linearMap_of_isSimpleModule` \u2014 both files are `public import`ed here.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Use `linearMap`: `finrank_linearMap_conjSubrep`, `finrank_linearMap_eq_of_isAtom`, `nontrivial_linearMap_of_ne_bot`, `finiteDimensional_linearMap`, `finrank_linearMap_pos`, `exists_forall_finrank_linearMap_eq`.",
+   "issue": "`hom` is used for a `\u2192\u2097[k[N]]` space, contradicting both Mathlib and the two files this PR imports for exactly these statements. Affects `finrank_hom_conjSubrep` (337), `finrank_hom_eq_of_isAtom` (349), `nontrivial_hom_of_ne_bot` (376), `finiteDimensional_hom` (389), `finrank_hom_pos` (403), `exists_forall_finrank_hom_eq` (414). (The existing `finrank_hom_indFDRep` family is not a precedent: it is about categorical `\u27f6` in `FDRep`.)",
+   "line": 337
+  },
+  {
+   "evidence": "Multiplicity.lean:238 `translateSub \u03c1 g\u207b\u00b9 h' (translateSub \u03c1 g h x) = x` vs :246 `translateSub \u03c1 g h (translateSub \u03c1 g\u207b\u00b9 h' y) = y`; Mathlib/RepresentationTheory/Basic.lean:94,99.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Rename to `translateSub_inv_translateSub` and `translateSub_translateSub_inv`, mirroring `Representation.inv_self_apply` / `self_inv_apply` which the definition at lines 166-167 is built from.",
+   "issue": "`translateSub_translateSub` (237) and `translateSub_translateSub'` (245) have literally the same descriptive name; the prime carries the whole distinction between the left-inverse statement on `\u03c3` and the right-inverse statement on `\u03c4`.",
+   "line": 245
+  },
+  {
+   "evidence": "naming-conventions.md Algebra table: `-` \u2192 `sub`; TauCeti/RepresentationTheory/Induction/Clifford/Basic.lean:235 `noncomputable def conjSubrepEquiv`, and `conjSubrep`/`conjSubrepOrderIso` in the same file.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Rename `translateSub` \u2192 `translateSubrep` (and `coe_translateSub`, `translateSub_add`, `translateSub_smul`, the two inverse lemmas, `translateSubEquiv` accordingly).",
+   "issue": "`translateSub` uses `Sub` for \"subrepresentation\", but `sub` is the naming dictionary's word for `-`; `translateSub_add` and `translateSub_smul` read as subtraction lemmas. The adjacent file abbreviates the same notion `Subrep`.",
+   "line": 212
+  },
+  {
+   "evidence": "Multiplicity.lean:159-161 `def asModuleTranslate (g : G) : ... \u2243\u2097[k] ...`; Basic.lean:235 `conjSubrepEquiv`.",
+   "file": "TauCeti/RepresentationTheory/Induction/Clifford/Multiplicity.lean",
+   "fix": "Rename to `asModuleTranslateEquiv` (with `asModuleTranslateEquiv_apply`, `asModuleTranslateEquiv_symm`, `asModuleTranslateEquiv_smul`), matching `Representation.conjSubrepEquiv`.",
+   "issue": "`asModuleTranslate` returns a `\u2243\u2097[k]` but carries no `Equiv` suffix, while the file's other two equivs do (`translateSubEquiv` 312, `translateHomEquiv` 294) \u2014 and in this file the suffix is what distinguishes the bare function `translateSub` from the equiv `translateSubEquiv`, so its absence here is actively misleading.",
+   "line": 159
+  }
+ ],
+ "head_sha": "17fd34cdc197cff5bfa7655ea5ecfe0b4b87b690",
+ "merge_base_sha": "81f57e381b3b448fa9656a34faa4c8fe71c58346",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3766,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ce5d66557c1ae8afaf5c76429d4af6952468806dbea0547fa781878d75038178",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T060426Z-3766-naming-75ee74",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T06:04:26Z",
+ "submitted_by": "kim-em",
+ "summary": "Every advertised name in the module docstring is wrong: the declarations land in the root `Representation` namespace, not `TauCeti.Representation`. Separately, `conjAlgAut_inv_apply` states something other than what its name means in Mathlib, and the `finrank_hom_*` family contradicts the `finrank_linearMap_*` naming of the very files it imports.",
+ "transcript_blob": "2c0c7c3c952654ce31b967663766f044f6b673979ea6d9e63649e9ff8bc5a74e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 90861,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 90861,
+  "cache_read_input_tokens": 1102692,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4787,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4787,
+    "cache_read_input_tokens": 102573,
+    "input_tokens": 2,
+    "output_tokens": 2817,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21558,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
