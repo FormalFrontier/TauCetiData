@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3844020000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 200.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 71802,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 71802,
+    "cache_read_input_tokens": 505890,
+    "inference_geo": "not_available",
+    "input_tokens": 14,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1110,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1110,
+      "cache_read_input_tokens": 87191,
+      "input_tokens": 2,
+      "output_tokens": 6299,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15929,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.384402,
+ "dedupe_key": "TauCetiProject/TauCeti|3813|21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "diff_sha256": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "duration_s": 200.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: CutDiameter.lean:158 and BoundarySplit.lean:189 both read `rw [\u2190 sdiff_sphere_eq_inter_ball_union_sdiff_closedBall, sdiff_union_inter]`, the new Cut.lean:89 proof; CutDiameter.lean:11 imports TauCeti.Topology.MetricSpace.Cut, BoundarySplit.lean:9 gets it through Normed/Module/Ball/Cut.lean:9.",
+   "file": "TauCeti/Analysis/Complex/Conformal/CutDiameter.lean",
+   "fix": "Replace those three `have ... := by rw [\u2190 sdiff_sphere_eq_inter_ball_union_sdiff_closedBall, sdiff_union_inter]` blocks with `eq_inter_ball_union_sdiff_closedBall_union_inter_sphere` (plus a `union_comm` rewrite at CutDiameter.lean:174).",
+   "issue": "The PR adds `eq_inter_ball_union_sdiff_closedBall_union_inter_sphere` (Cut.lean:87-89) but leaves the identical inline `have`s in place: CutDiameter.lean:157-158 (`hcov`, character-for-character the new lemma's statement and proof), CutDiameter.lean:174-176 (same, up to `union_comm`), and BoundarySplit.lean:188-189 (`hset`).",
+   "line": 157
+  },
+  {
+   "evidence": "BoundarySplit.lean:190-193: `have himg : f '' U = ... := by conv_lhs => rw [hset]; rw [image_union, image_union]` \u2014 the same statement as Inside.lean:127-129.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "State it once as a public general lemma (`f '' s = f '' (s \u2229 ball x \u03c1) \u222a f '' (s \\ closedBall x \u03c1) \u222a f '' (s \u2229 sphere x \u03c1)`, any `f`, pseudometric `X`) in TauCeti/Topology/MetricSpace/Cut.lean beside the set-level form, and use it both here and at BoundarySplit.lean:190.",
+   "issue": "The private `image_eq_union_sides_union_crosscut` restates and reproves BoundarySplit.lean:190-193 (`himg : f '' U = f '' (U \u2229 ball \u03b6 \u03c1) \u222a f '' (U \\ closedBall \u03b6 \u03c1) \u222a f '' (U \u2229 sphere \u03b6 \u03c1)`). Being private, the duplication is locked in.",
+   "line": 127
+  },
+  {
+   "evidence": "Line 140: `refine Or.inl ((closure_eq_self_union_frontier S \u25b8 hyc).resolve_right fun hyf => ?_)`; `closure_eq_self_union_frontier` is Mathlib/Topology/Closure.lean:577.",
+   "file": "TauCeti/Topology/FilledHull.lean",
+   "fix": "`rw [closure_eq_self_union_frontier] at hyc` followed by `rcases hyc with h | h`, keeping the `frontier S \u2286 K` contradiction in the second branch.",
+   "issue": "`(closure_eq_self_union_frontier S \u25b8 hyc).resolve_right` rewrites a hypothesis with `\u25b8` (motive-dependent, no direction control) and then consumes membership in a union as an `Or` by definitional unfolding.",
+   "line": 140
+  },
+  {
+   "evidence": "grep `image_subset_filledHull\\b` in TauCeti/ returns only Inside.lean:49, 85 (prose) and 188 (the declaration); the proof at 235-237 uses `absurd (diam_le_diam_of_subset_filledHull ...) (not_le.mpr hlt)`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Either route the exclusion through `image_subset_filledHull` or correct lines 48-49 (and 85-86) to say the far alternative is ruled out by the diameter comparison alone; drop the lemma if it stays unused.",
+   "issue": "The module doc presents `image_subset_filledHull` as the \"Not both sides\" step of the main argument, but no proof in the file (or repo) uses it: `image_inter_ball_subset_filledHull_of_diam_lt` (line 232-237) excludes the far alternative purely by `diam_le_diam_of_subset_filledHull` versus `hlt`. The stated proof structure does not match the actual one.",
+   "line": 48
+  }
+ ],
+ "head_sha": "21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f",
+ "merge_base_sha": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3813,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4fa05a6a246c677ab532ed30a086d0e101463d88afb55d0e17d33342b84c93f4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T130030Z-3813-proof-quality-5d1407",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T13:00:30Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are short and free of `change`/`show`, but the PR factors out two decomposition facts while leaving three (resp. one) verbatim inline copies of them in existing files, and adds a private duplicate of a fact already proved in BoundarySplit.lean.",
+ "transcript_blob": "183525467c69c6fe4e96d6e400715ed6370a0d5e939e7fb3f27eb3c4cf5e12b6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 71802,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 71802,
+  "cache_read_input_tokens": 505890,
+  "inference_geo": "not_available",
+  "input_tokens": 14,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1110,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1110,
+    "cache_read_input_tokens": 87191,
+    "input_tokens": 2,
+    "output_tokens": 6299,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15929,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

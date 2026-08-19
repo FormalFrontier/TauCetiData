@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8287979999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 233.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79080,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79080,
+    "cache_read_input_tokens": 1160026,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 340,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 340,
+      "cache_read_input_tokens": 95239,
+      "input_tokens": 2,
+      "output_tokens": 4209,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17696,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.828798,
+ "dedupe_key": "TauCetiProject/TauCeti|3813|21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "diff_sha256": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "duration_s": 233.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep -n \"image_subset_filledHull\" Inside.lean \u2192 46,49,84,85,178,188,233,236; lines 233/236 are `image_subset_filledHull_of_nonempty_inter`, not this lemma. Repo-wide grep for `image_subset_filledHull` outside Inside.lean returns no hits.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Either delete it (or make it `private`) and drop the corresponding bullets at lines 48-49 and 84-86, or route the far-side exclusion in `image_inter_ball_subset_filledHull_of_diam_lt` through it so the advertised architecture matches the proof; if kept public, give it a name naming the crosscut (e.g. `image_subset_filledHull_of_image_sides_subset`).",
+   "issue": "`TauCeti.image_subset_filledHull` has no consumer in the file or the repository (only occurrences of the exact token are its own declaration and the two doc mentions at lines 49 and 85), yet the module doc lists it as the \"Not both sides\" step that excludes the far side. `image_inter_ball_subset_filledHull_of_diam_lt` (lines 232-237) never uses it; it excludes the far alternative directly via `diam_le_diam_of_subset_filledHull`. The exposed name is also maximally generic in the root `TauCeti` namespace, next to the genuinely general `TauCeti.subset_filledHull`, while denoting a crosscut-specific composite of the private cover lemma.",
+   "line": 188
+  },
+  {
+   "evidence": "Inside.lean:254 `(hEsub : E \u2286 frontier (f '' U))` vs CutDiameter.lean:271-273, whose existential over `E` has no `E \u2286 frontier (f '' U)` conjunct.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Drop `hEsub` and state the conclusion with the shrunken set, `f '' (U \u2229 ball \u03b6 \u03c1) \u2286 filledHull (f '' (U \u2229 sphere \u03b6 \u03c1) \u222a (E \u2229 frontier (f '' U)))` (diameter only decreases, so `diam (\u03b3 \u222a E) \u2264 \u03b5` still gives the criterion's bound), or keep `hEsub` and correct the docstring to say `E` must first be replaced by `E \u2229 frontier (f '' U)`.",
+   "issue": "`image_inter_ball_subset_filledHull_of_frontier_subset` requires `hEsub : E \u2286 frontier (f '' U)`, but `TauCeti.exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le` (CutDiameter.lean:271-273) supplies only `IsBounded E \u2227 frontier (f '' U) \u2229 frontier (f '' (U \u2229 ball w \u03c1)) \u2286 E \u2227 diam (f '' (U \u2229 sphere w \u03c1) \u222a E) \u2264 \u03b5` \u2014 nothing puts `E` inside `frontier (f '' U)`. So the docstring claim (lines 247-251) that the enclosure hypothesis is implied \"read with the same `E`\" is false, and a consumer cannot apply this lemma to the `E` the frontier route hands out.",
+   "line": 254
+  }
+ ],
+ "head_sha": "21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f",
+ "merge_base_sha": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3813,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8b274e03156c78ec0f421798a7bc6a0fb8a00491b1784a5cf66e93580b643071",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T124235Z-3813-api-design-a887a9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T12:42:35Z",
+ "submitted_by": "kim-em",
+ "summary": "Two interface defects: `TauCeti.image_subset_filledHull` is exposed with no consumer anywhere and is advertised in the module doc as a step the file does not actually take, and the comparison lemma `image_inter_ball_subset_filledHull_of_frontier_subset` carries a hypothesis `E \u2286 frontier (f '' U)` that the frontier-route criterion it claims to be implied by does not supply, so the advertised \"same E\" implication does not hold as stated.",
+ "transcript_blob": "4d0bedae816097e1ea9efaee94d41cb0f695ab4c9445fffa6801889154306751",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79080,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79080,
+  "cache_read_input_tokens": 1160026,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 340,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 340,
+    "cache_read_input_tokens": 95239,
+    "input_tokens": 2,
+    "output_tokens": 4209,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17696,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

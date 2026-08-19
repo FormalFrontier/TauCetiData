@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4060730000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 204.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 73120,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 73120,
+    "cache_read_input_tokens": 546246,
+    "inference_geo": "not_available",
+    "input_tokens": 16,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1636,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1636,
+      "cache_read_input_tokens": 87983,
+      "input_tokens": 2,
+      "output_tokens": 2597,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15467,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.406073,
+ "dedupe_key": "TauCetiProject/TauCeti|3813|21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "diff_sha256": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "duration_s": 204.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`filledHull_mono` at TauCeti/Topology/FilledHull.lean:96; the only use of `hEsub` is line 263, feeding the `hK` argument of `disjoint_image_of_disjoint_inter_sphere`, which `E \u2229 frontier (f '' U)` satisfies unconditionally.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Drop `hEsub`. Prove the conclusion for `E \u2229 frontier (f '' U)` \u2014 which still satisfies `hE` since `frontier (f '' U) \u2229 frontier (f '' (U \u2229 ball \u03b6 \u03c1)) \u2286 E` and lands in `frontier (f '' U)` \u2014 then transport to `E` by `filledHull_mono` on `f '' (U \u2229 sphere \u03b6 \u03c1) \u222a E \u2229 frontier (f '' U) \u2286 f '' (U \u2229 sphere \u03b6 \u03c1) \u222a E`.",
+   "issue": "`hEsub : E \u2286 frontier (f '' U)` is not needed and is stronger than what `TauCeti.exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le` (CutDiameter.lean:269) asks of its `E` (only `IsBounded E`), so the docstring's claim that the enclosure route \"asks for no more than the frontier route ... with the same `E`\" does not literally hold as stated.",
+   "line": 254
+  },
+  {
+   "evidence": "Inside.lean:283-285 and CutDiameter.lean:236-238 are the same `dist_le_diam_of_mem ... |>.trans` step under `subsingleton_clusterSetOn_of_forall_exists` (TauCeti/Topology/ClusterSet.lean:354), which is already stated for `X` pseudometric and `Y` metric.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "State the general criterion once at metric-space level beside `TauCeti.subsingleton_clusterSetOn_of_forall_exists` in `TauCeti/Topology/ClusterSet.lean`: `(h : \u2200 \u03b5 > 0, \u2203 \u03b4 > 0, IsBounded (f '' (U \u2229 ball w \u03b4)) \u2227 diam (f '' (U \u2229 ball w \u03b4)) \u2264 \u03b5) : (clusterSetOn f U w).Subsingleton`, and derive both the filled-hull form (via `diam_le_diam_of_subset_filledHull` and `isBounded_filledHull`) and CutDiameter's form (via `diam_image_inter_ball_le`) from it in one line each.",
+   "issue": "`subsingleton_clusterSetOn_of_forall_exists_subset_filledHull` and its two wrappers (lines 290, 312) duplicate `subsingleton_clusterSetOn_of_forall_exists_diam_union_le` / `exists_tendsto_nhdsWithin_of_forall_exists_diam_union_le` / `exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le` (CutDiameter.lean:228, 248, 269) proof-for-proof. Both hypotheses factor through the same fact \u2014 the cut-off piece is bounded and has diameter \u2264 \u03b5 \u2014 and neither proof uses holomorphy, injectivity, or anything about \u2102 (the docstring at line 275 says so).",
+   "line": 277
+  },
+  {
+   "evidence": "grep for `image_subset_filledHull` in ./code returns only the declaration (Inside.lean:188), prose mentions (lines 49, 85), and hits on the distinct `image_subset_filledHull_of_nonempty_inter`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Delete it, or state it at the level it lives at (a set-level `S = S\u2081 \u222a S\u2082 \u222a S\u2083`, `S\u2081, S\u2082 \u2286 filledHull K`, `S\u2083 \u2286 K`) in `TauCeti/Topology/FilledHull.lean` if a consumer is actually wanted.",
+   "issue": "`image_subset_filledHull` has no consumer: the \"not both sides\" step of `image_inter_ball_subset_filledHull_of_diam_lt` is done by the diameter comparison (line 235), not through this lemma. Its content is `union_subset` plus `subset_filledHull` dressed in the conformal decomposition, and it assumes nothing of `f`.",
+   "line": 188
+  },
+  {
+   "evidence": "All three sites contain the identical `rw [\u2190 sdiff_sphere_eq_inter_ball_union_sdiff_closedBall, sdiff_union_inter]` proof of `U = U \u2229 ball \u03b6 \u03c1 \u222a U \\ closedBall \u03b6 \u03c1 \u222a U \u2229 sphere \u03b6 \u03c1`.",
+   "file": "TauCeti/Topology/MetricSpace/Cut.lean",
+   "fix": "Replace the `have hcov`/`have hset` blocks at CutDiameter.lean:157-158, CutDiameter.lean:174-176 (permuted, so `union_comm` plus the lemma) and Crosscut/BoundarySplit.lean:188-189 with the new lemma.",
+   "issue": "`eq_inter_ball_union_sdiff_closedBall_union_inter_sphere` is extracted as a general lemma but its three existing verbatim in-repo copies are left in place, so the same proof is still duplicated at the special cases.",
+   "line": 87
+  }
+ ],
+ "head_sha": "21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f",
+ "merge_base_sha": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3813,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "378e5719321f61ede991ecd68253d1cd9a281478366d48ddda2183de18bc9d72",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T124629Z-3813-generality-358c5b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T12:46:29Z",
+ "submitted_by": "kim-em",
+ "summary": "The comparison lemma carries a removable hypothesis that is strictly stronger than the criterion it claims to dominate, and the three enclosure-form criteria re-prove, at the conformal special case, a plain diameter criterion that neither route needs holomorphy for. One added lemma has no consumer, and the newly extracted set-level decomposition leaves its three existing in-repo copies untouched.",
+ "transcript_blob": "9e86986d6cde5d0073e60b58d1c0ef378d3dbb3d2e42161b165d1069b7f072fd",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 73120,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 73120,
+  "cache_read_input_tokens": 546246,
+  "inference_geo": "not_available",
+  "input_tokens": 16,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1636,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1636,
+    "cache_read_input_tokens": 87983,
+    "input_tokens": 2,
+    "output_tokens": 2597,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15467,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

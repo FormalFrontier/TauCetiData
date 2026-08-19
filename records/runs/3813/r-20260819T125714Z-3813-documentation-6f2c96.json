@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.5588915,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 195.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 76090,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 76090,
+    "cache_read_input_tokens": 792631,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2004,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2004,
+      "cache_read_input_tokens": 90585,
+      "input_tokens": 2,
+      "output_tokens": 2202,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15463,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.558892,
+ "dedupe_key": "TauCetiProject/TauCeti|3813|21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "diff_sha256": "fb2b03efb2f1011f9fc7795c4c5075cd3733c1464c639fea5573fdc852d31c17",
+ "duration_s": 195.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Inside.lean:229 `(hlt : diam K < diam (f '' (U \\ closedBall \u03b6 \u03c1)))`; no lower-bound lemma for that diameter exists in TauCeti.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "State the remaining obligations honestly: besides `J \u2286 closure (filledHull J \\ J)`, the far side must be shown wider than the curve at each small radius (and the crosscut nonempty). Same correction in the docstring at line 303-308.",
+   "issue": "Overclaim: \"the effect of this file is to reduce the remaining gap \u2026 to that single statement about Jordan curves, with the conformal side of the argument discharged: given it at one point of one small Jordan curve per crosscut, the last criterion below delivers the continuous extension\". `image_inter_ball_subset_filledHull_of_diam_lt` (line 229) also requires `diam K < diam (f '' (U \\ closedBall \u03b6 \u03c1))`, a lower bound on the far-side image diameter that nothing in the repository supplies (grep for `diam (f '' (U \\ closedBall` finds only this hypothesis and the upper bound in CutDiameter.lean:211), plus a point `p` of the image crosscut.",
+   "line": 65
+  },
+  {
+   "evidence": "Inside.lean:254 `(hEsub : E \u2286 frontier (f '' U))` vs CutDiameter.lean:270-272, whose hypothesis is only `IsBounded E \u2227 frontier (f '' U) \u2229 frontier (f '' (U \u2229 ball w \u03c1)) \u2286 E \u2227 diam (\u2026) \u2264 \u03b5`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Say the frontier criterion's `E` must first be replaced by `E \u2229 frontier (f '' U)` (which still contains `frontier \u03a9 \u2229 frontier A` and is no wider), or drop the phrase \"with the same `E`\".",
+   "issue": "Inaccurate: \"the hypothesis of the criterion below is implied by the hypothesis of the criterion of `Conformal/CutDiameter.lean` with the same `E`\" (repeated at line 247). `image_inter_ball_subset_filledHull_of_frontier_subset` additionally assumes `hEsub : E \u2286 frontier (f '' U)`, which `exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le` does not require of its `E`.",
+   "line": 73
+  },
+  {
+   "evidence": "Inside.lean:207 and Inside.lean:230 both read `(hin : p \u2208 closure (filledHull K \\ K))`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Reword to \"the only place this assumption is introduced; it is passed on unchanged to `image_inter_ball_subset_filledHull_of_diam_lt`\".",
+   "issue": "False statement: \"nothing else in the file mentions the inside of `K` at all\" (and, at line 201, \"This is the only statement in the file about the inside of `K`\"). `image_inter_ball_subset_filledHull_of_diam_lt` carries the identical hypothesis `hin : p \u2208 closure (filledHull K \\ K)`.",
+   "line": 62
+  },
+  {
+   "evidence": "SmallJordanCurve.lean:83 `theorem exists_isJordanCurve_superset_closure_image_ball_inter_sphere_diam_le`.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Name `Conformal/Crosscut/SmallJordanCurve.lean` as the source of the cited theorem.",
+   "issue": "Wrong cross-reference: the module doc credits `Conformal/Crosscut/Jordan.lean` and `Conformal/Crosscut/Arc.lean` with `exists_isJordanCurve_superset_closure_image_ball_inter_sphere_diam_le`; that theorem is in `Conformal/Crosscut/SmallJordanCurve.lean` (as the PR description itself says). Jordan.lean/Arc.lean supply only the two branch cases.",
+   "line": 28
+  },
+  {
+   "evidence": "Inside.lean:232-237 uses only `nonempty_inter_filledHull_or_\u2026`, `image_subset_filledHull_of_nonempty_inter`, `diam_le_diam_of_subset_filledHull`; grep for `image_subset_filledHull\\b` matches only the definition at line 188 and two doc mentions.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Inside.lean",
+   "fix": "Describe the actual exclusion (far side trapped \u21d2 `diam B \u2264 diam K`, contradicting `hlt`) and present `image_subset_filledHull` as a standalone fact, not a step of the combination.",
+   "issue": "The module doc presents \"Not both sides\" via `TauCeti.image_subset_filledHull` as one of the three facts \"combined\" into `image_inter_ball_subset_filledHull_of_diam_lt`, but that proof never uses it: the far branch is killed directly by `diam_le_diam_of_subset_filledHull`. `image_subset_filledHull` has no use site anywhere.",
+   "line": 48
+  }
+ ],
+ "head_sha": "21c8ef785fb13b7fc449eed71da1ee9efb4bcd4f",
+ "merge_base_sha": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3813,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7ea8a54c52418954c7f5da524c3dc735eaf1215f0e41e982b528203e500f6c66",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T125714Z-3813-documentation-6f2c96",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T12:57:14Z",
+ "submitted_by": "kim-em",
+ "summary": "Docstrings are present everywhere, but several are inaccurate: the module doc understates what is still needed for L5, misstates the comparison with the frontier route, claims a hypothesis occurs only once when it occurs twice, points at the wrong file for the small-Jordan-curve theorem, and narrates a proof step that the proof does not use.",
+ "transcript_blob": "5b8ab978dc67509adab368cca8c14799b12d03ee95cddcd8447bc1b402cbd7c2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 76090,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 76090,
+  "cache_read_input_tokens": 792631,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2004,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2004,
+    "cache_read_input_tokens": 90585,
+    "input_tokens": 2,
+    "output_tokens": 2202,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15463,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
