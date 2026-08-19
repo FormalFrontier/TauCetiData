@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.315492,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 38.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 88064,
+    "input_tokens": 133512,
+    "output_tokens": 1474,
+    "reasoning_output_tokens": 549
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4016d128f04b9122af556d223bc907e20b65ebac",
+ "cost_estimated": true,
+ "cost_usd": 0.315492,
+ "dedupe_key": "TauCetiProject/TauCeti|3751|53c420cf2ca8f46e621d7c8427b0002778bc40de|api-design|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "9f6dac3b8282575180cc12b73fff703ebc46689e55e3b6b29d34f6185a5cc382",
+ "diff_sha256": "9f6dac3b8282575180cc12b73fff703ebc46689e55e3b6b29d34f6185a5cc382",
+ "duration_s": 38.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 165\u2013182 expose the definition and use `rfl`; analogous APIs such as `Topology/Covering/Monodromy/Basic.lean:81` and `Algebra/Category/ModuleCat/DirectedUnion.lean:73` keep functors sealed and state map lemmas with `eqToHom`.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/CompleteSeparated/RefinementCategory.lean",
+   "fix": "Seal the definition and state `presentationFunctor_map` with `eqToHom` transports along `presentationFunctor_obj`, following the existing sealed-functor APIs in the repository.",
+   "issue": "`presentationFunctor` is marked `@[expose]`, making the entire functor body public merely to obtain an untransported map equation.",
+   "line": 165
+  },
+  {
+   "evidence": "Lines 157\u2013170 define `num := insert p.den p.num * insert q.den q.num` and `den := p.den * q.den`; the only following public lemmas, `le_prod_left` and `le_prod_right`, do not expose either projection.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/Presentation.lean",
+   "fix": "Add `[simp]` lemmas for `(p.prod q).num` and `(p.prod q).den` (and a membership iff for the numerator if downstream reasoning needs membership).",
+   "issue": "The opaque `Presentation.prod` has no characteristic API for its numerator and denominator, so consumers using its advertised intersection presentation must unfold its implementation.",
+   "line": 157
+  }
+ ],
+ "head_sha": "53c420cf2ca8f46e621d7c8427b0002778bc40de",
+ "merge_base_sha": "4016d128f04b9122af556d223bc907e20b65ebac",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3751,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9bbd34904eade4ec7bdb6871b5db7bd9c9609b9afa6aca4caaa34bbc183a33ca",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T132515Z-3751-api-design-d3b77b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T13:25:15Z",
+ "submitted_by": "kim-em",
+ "summary": "The new functor and product presentation expose implementation details instead of providing sealed, characteristic APIs.",
+ "transcript_blob": "08b5bf4662bb8700e649cb1219dec3b331641604c29b20b02d6e5c2f68d8c7e6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 88064,
+  "input_tokens": 133512,
+  "output_tokens": 1474,
+  "reasoning_output_tokens": 549
+ },
+ "verdict": "request_changes"
+}
