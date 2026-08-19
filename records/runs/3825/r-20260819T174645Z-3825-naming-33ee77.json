@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3421765000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 172.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64290,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64290,
+    "cache_read_input_tokens": 655143,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2138,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2138,
+      "cache_read_input_tokens": 78651,
+      "input_tokens": 2,
+      "output_tokens": 2160,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 13994,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "15a3fed102f3309d0ae8129f40a182b5b49425df",
+ "cost_usd": 1.342177,
+ "dedupe_key": "TauCetiProject/TauCeti|3825|c24322658ec65b8ff93ebd367325ca2870307b7f|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "177434cca63de63149ba8dd4e43c3699e69a02e25b5e7035c22c885527bbf8a8",
+ "diff_sha256": "177434cca63de63149ba8dd4e43c3699e69a02e25b5e7035c22c885527bbf8a8",
+ "duration_s": 172.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/Algebra/Group/Commute/Defs.lean:147 `theorem pow_left (h : Commute a b) (n : \u2115) : Commute (a ^ n) b`; Mathlib/Algebra/Group/Commute/Units.lean:36 `theorem units_inv_left : Commute (\u2191u) a \u2192 Commute (\u2191u\u207b\u00b9) a`; Defs.lean:103 `mul_left (hac) (hbc) : Commute (a * b) c`. In every case `_left` names the left argument of the conclusion.",
+   "file": "TauCeti/LinearAlgebra/JordanChevalley/Commuting.lean",
+   "fix": "Rename all six to `_left_of_commute` (e.g. `commute_semisimplePart_left_of_commute`, `commute_coe_unipotentPart_left_of_commute`), or drop to dot notation `Commute.semisimplePart_left`, and update the `## Main declarations` lists and call sites.",
+   "issue": "`commute_semisimplePart_right_of_commute : Commute g h \u2192 Commute (semisimplePart g) h` puts the modified operand in the LEFT argument of the conclusion, so the `_right` suffix is inverted. Same defect at lines 74 (`commute_coe_semisimplePart_right_of_commute`), 83 (`commute_coe_unipotentPart_right_of_commute`), 99 (`commute_unipotentPart_right_of_commute`), and in TauCeti/Algebra/AlgebraicGroup/Representation/JordanDecomposition/Commuting.lean lines 60 and 71 \u2014 six declarations plus their module docstring entries.",
+   "line": 92
+  },
+  {
+   "evidence": "`grep -rn \"cross_commute\" mathlib/Mathlib` \u2014 no hits; the proof body is literally `(hac.mul_left hbc).mul_right (had.mul_left hbd)`, i.e. a `Commute`-namespace composite of Mathlib/Algebra/Group/Commute/Defs.lean:97,103.",
+   "file": "TauCeti/LinearAlgebra/JordanChevalley/Commuting.lean",
+   "fix": "Name it `Commute.mul_mul` (hypotheses `Commute a c`, `Commute a d`, `Commute b c`, `Commute b d`; conclusion `Commute (a * b) (c * d)`) so it is discoverable next to `Commute.mul_left`/`mul_right` and usable as `hac.mul_mul had hbc hbd`.",
+   "issue": "`TauCeti.commute_mul_mul_of_cross_commute` invents the term `cross_commute`, which names no predicate in Mathlib or this repo, and sits outside the `Commute` namespace despite being the exact `Commute.mul_left`/`Commute.mul_right` shape.",
+   "line": 56
+  },
+  {
+   "evidence": "Line 70-72: `theorem commute_ofLinearEquiv_pointsAction (g h : WithConv (H \u2192\u2090[R] A)) (hgh : Commute g h)`; contrast `IsUnipotentPoint.mul_of_commute` (UnipotentPoint/Basic.lean:160) and the six `_of_commute` names added in JordanChevalley/Commuting.lean.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Representation/PointsAction.lean",
+   "fix": "Rename to `commute_ofLinearEquiv_pointsAction_of_commute` (or `Commute.ofLinearEquiv_pointsAction` for dot notation on `hgh`), and update the docstring entry at line 29 and the three call sites.",
+   "issue": "`Comodule.commute_ofLinearEquiv_pointsAction` reads as an unconditional claim that point actions commute, but it has a `Commute g h` hypothesis. Every sibling introduced by this PR uses the `_of_commute` suffix for the same hypothesis.",
+   "line": 70
+  },
+  {
+   "evidence": "The adjacent lemma at line 299 names both operands explicitly: `semisimplePart_mul_unipotentPart : semisimplePart g * unipotentPart g = g`.",
+   "file": "TauCeti/LinearAlgebra/JordanChevalley/Multiplicative.lean",
+   "fix": "Rename to `unipotentPart_eq_semisimplePart_inv_mul`.",
+   "issue": "`unipotentPart_eq_inv_mul : unipotentPart g = (semisimplePart g)\u207b\u00b9 * g` does not say which factor is inverted; `inv_mul` reads just as naturally as `g\u207b\u00b9 * _`.",
+   "line": 305
+  }
+ ],
+ "head_sha": "c24322658ec65b8ff93ebd367325ca2870307b7f",
+ "merge_base_sha": "15a3fed102f3309d0ae8129f40a182b5b49425df",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3825,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6a69c97e229b036111ca242353c50f9a93eb42bf2ac80d4b667fc8c7f3ecf508",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T174645Z-3825-naming-33ee77",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T17:46:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The centralizer lemmas carry a `_right` suffix that is inverted relative to Mathlib's `Commute.pow_left`/`units_inv_left` convention (the modified operand is the left argument of the conclusion's `Commute`), repeated in six declarations. Three smaller naming issues: invented `cross_commute` terminology, a missing `_of_commute`, and an ambiguous `inv_mul`.",
+ "transcript_blob": "729bba9bac6e2d944feb59292096bb6b6f364944075d9e2846fc6ba71160f7c8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64290,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64290,
+  "cache_read_input_tokens": 655143,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2138,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2138,
+    "cache_read_input_tokens": 78651,
+    "input_tokens": 2,
+    "output_tokens": 2160,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 13994,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
