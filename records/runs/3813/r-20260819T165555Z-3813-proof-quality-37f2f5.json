@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.33692,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 197.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 62827,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 62827,
+    "cache_read_input_tokens": 589692,
+    "inference_geo": "not_available",
+    "input_tokens": 18,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1111,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1111,
+      "cache_read_input_tokens": 78215,
+      "input_tokens": 2,
+      "output_tokens": 5442,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15901,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.33692,
+ "dedupe_key": "TauCetiProject/TauCeti|3813|8878e0c494c6eb207ee069679adf5b9d2ffcfea9|proof-quality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "d99945b449b5a80863f59f828c6cb3559f93fc8b1e4df1c7fd18204f71db1a71",
+ "diff_sha256": "d99945b449b5a80863f59f828c6cb3559f93fc8b1e4df1c7fd18204f71db1a71",
+ "duration_s": 197.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Image.lean:272-276 contains `(h\u03a9o.inter_frontier_eq.subset \u27e8image_mono hVU hw, hfr\u27e9).elim` and `(h\u03a9o.inter_frontier_eq.subset \u27e8image_mono hVU hw, h\u27e9).elim`; `disjoint_frontier_iff_isOpen : Disjoint (frontier s) s \u2194 IsOpen s` is Mathlib/Topology/Closure.lean:557.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/Image.lean",
+   "fix": "Prove the two disjointnesses once and combine: `have hfr : Disjoint (f '' V) (frontier (f '' U)) := (disjoint_frontier_iff_isOpen.mpr h\u03a9o).symm.mono_left (image_mono hVU)`; `have hKsub : K \u2286 f '' (U \u2229 sphere \u03b6 \u03c1) \u222a frontier (f '' U) := hK.trans (union_subset (closure_image_inter_sphere_subset_union_frontier_image hUo hd hinj) subset_union_right)`; then `exact ((hV.image hinj hVU inter_subset_left).union_right hfr).mono_right hKsub`. No `\u2205`-membership elimination, no branch duplication.",
+   "issue": "`disjoint_image_of_subset_closure_image_inter_sphere_union_frontier_image` duplicates the `f '' U` vs `frontier (f '' U)` step in both branches (lines 274-275 and 276) and closes each by `(h\u03a9o.inter_frontier_eq.subset \u27e8\u2026\u27e9).elim`, i.e. undocumented defeq unfolding of `w \u2208 (\u2205 : Set \u2102)` to `False`.",
+   "line": 270
+  },
+  {
+   "evidence": "BoundarySplit.lean:188-190 `have himg : \u2026 := image_eq_image_inter_ball_union_image_sdiff_closedBall_union_image_inter_sphere f`, while lines 179-180 describe the old two-step route; CutDiameter.lean:150 likewise names only the two-piece lemma.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Crosscut/BoundarySplit.lean",
+   "fix": "Name the lemma the proof now invokes in both docstrings.",
+   "issue": "The docstring still says the decomposition \"is `TauCeti.sdiff_sphere_eq_inter_ball_union_sdiff_closedBall` together with `Set.sdiff_union_inter`\", but the PR replaced that proof step with a single call to `image_eq_image_inter_ball_union_image_sdiff_closedBall_union_image_inter_sphere` (line 190). Same staleness at CutDiameter.lean:150, whose proof now uses `eq_inter_ball_union_sdiff_closedBall_union_inter_sphere` (lines 157-158, 174-179).",
+   "line": 179
+  }
+ ],
+ "head_sha": "8878e0c494c6eb207ee069679adf5b9d2ffcfea9",
+ "merge_base_sha": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3813,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "80b23eef46966a3d290e014c06c4a7ca21f4f9e845c05ccb133d6016a79838af",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T165555Z-3813-proof-quality-37f2f5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T16:55:55Z",
+ "submitted_by": "kim-em",
+ "summary": "All four prior findings are fixed. Remaining: the new disjointness lemma in Image.lean runs the same openness-vs-frontier argument twice and discharges it by reading `w \u2208 \u2205` as `False` definitionally, and two docstrings still describe the proofs the PR replaced.",
+ "transcript_blob": "2126d3bb769f07cf1b3bec56bab6f8dae047b13731ffec8f58fe30b410ec56f4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 62827,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 62827,
+  "cache_read_input_tokens": 589692,
+  "inference_geo": "not_available",
+  "input_tokens": 18,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1111,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1111,
+    "cache_read_input_tokens": 78215,
+    "input_tokens": 2,
+    "output_tokens": 5442,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15901,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
