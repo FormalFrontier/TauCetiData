@@ -1,0 +1,111 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 3.1429225,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 310.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 142803,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 142803,
+    "cache_read_input_tokens": 2208353,
+    "inference_geo": "not_available",
+    "input_tokens": 34,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 415,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 415,
+      "cache_read_input_tokens": 158887,
+      "input_tokens": 2,
+      "output_tokens": 7870,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22235,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "80b3b3422aee3b424f90f2bf3e9a46db3ac1276a",
+ "cost_usd": 3.142923,
+ "dedupe_key": "TauCetiProject/TauCeti|3792|604bed2df2e78eb5dce501c9c05dd798e98a0a3c|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "7d4f668049c4166cab35da1d20e4bd327f44bb5c12127f1385fba046390a3c79",
+ "diff_sha256": "7d4f668049c4166cab35da1d20e4bd327f44bb5c12127f1385fba046390a3c79",
+ "duration_s": 310.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Located replacements, all in this PR: `GridPoint.Icount_empty_left/_empty_right/_singleton_singleton/_union_left/_union_right/_insert_left/_insert_right/_image_swap` at TauCeti/KnotTheory/Grid/JFunction/Basic.lean:122-195; `JNumCount_empty_left/_empty_right/_union_left/_union_right/_insert_left/_insert_right` at Basic.lean:302-334; `JCount_empty_left/_empty_right/_union_left/_union_right/_insert_left/_insert_right` at Basic.lean:338-370. Grep for each of the twenty names over TauCeti/ returns only its own declaration line (plus, for JCenter_union_left, the module docstring at Center.lean:55).",
+   "file": "TauCeti/KnotTheory/Grid/JFunction/Center.lean",
+   "fix": "Delete these twenty declarations. Keep the ones with callers \u2014 `ICenter_singleton_left`/`_singleton_right` (used at Center.lean:220,227), `ICenter_graph_eq_card` (328), `JNumCenter_def`/`_image_swap` (336; Integer.lean:195,201), `JCenter_def`/`_image_swap`/`_insert_left` (376,389; Change.lean:90) \u2014 and the `JNumCenter`/`JCenter` singleton counting forms requested by the api-design review. When a consumer for one of the deleted shapes appears, either reinstate it then or expose an `ICenter_eq_Icount`-style equation so `Icount_union_left (\u00b7 \u2264 \u00b7) h` and `JCount_insert_right _ _ h` can be applied directly.",
+   "issue": "Twenty new lemmas restate, at a fixed relation, generic lemmas added in the same PR, and have no consumer anywhere in the repository (verified by grepping each name over TauCeti/): ICenter_def (85), ICenter_empty_left (92), ICenter_empty_right (97), ICenter_singleton_singleton (102), ICenter_union_left (117), ICenter_union_right (122), ICenter_insert_left (127), ICenter_insert_right (132), ICenter_image_swap (138); JNumCenter_empty_left (207), JNumCenter_empty_right (212), JNumCenter_union_left (230), JNumCenter_union_right (236), JNumCenter_insert_left (241), JNumCenter_insert_right (246); JCenter_empty_left (268), JCenter_empty_right (273), JCenter_union_left (293), JCenter_union_right (298), JCenter_insert_right (308). Each proof is a single application of the located generic lemma (e.g. `ICenter_union_left := Icount_union_left _ h`, `JCenter_union_left := JCount_union_left _ _ h`), so the block is a parallel API over `GridPoint.Icount`/`JNumCount`/`JCount` rather than new mathematics. Note `JFunction/Basic.lean` already carries the same mirror layer for `I`/`JNum`/`J`, so this is the third copy of the same seven-lemma shape.",
+   "line": 85
+  }
+ ],
+ "head_sha": "604bed2df2e78eb5dce501c9c05dd798e98a0a3c",
+ "merge_base_sha": "80b3b3422aee3b424f90f2bf3e9a46db3ac1276a",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3792,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0c401acfcf4c7f7bd0d088fc20a77e31e02d7a8ac2309f42ab150c6a053eac45",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T142639Z-3792-reuse-8fa733",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T14:26:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The relation-parametric refactor is sound and the strict-`J` API is correctly re-derived from it, but `JFunction/Center.lean` also adds ~20 consumer-less mirror lemmas that are literally the generic `Icount_*`/`JNumCount_*`/`JCount_*` lemmas applied at a fixed relation. Delete the ones with no caller; the rest of the PR reuses existing API well.",
+ "transcript_blob": "c2f883deef00513bbdf28757df64b239213661abed2a00b2da712aa51f1735d2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 142803,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 142803,
+  "cache_read_input_tokens": 2208353,
+  "inference_geo": "not_available",
+  "input_tokens": 34,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 415,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 415,
+    "cache_read_input_tokens": 158887,
+    "input_tokens": 2,
+    "output_tokens": 7870,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22235,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
