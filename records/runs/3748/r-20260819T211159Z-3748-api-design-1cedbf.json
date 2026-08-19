@@ -1,0 +1,118 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7244580000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 387.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 109914,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 109914,
+    "cache_read_input_tokens": 1690052,
+    "inference_geo": "not_available",
+    "input_tokens": 36,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2780,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2780,
+      "cache_read_input_tokens": 123633,
+      "input_tokens": 2,
+      "output_tokens": 2078,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 30239,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e4f5717e2e0a95094298524333165fec2839585e",
+ "cost_usd": 2.724458,
+ "dedupe_key": "TauCetiProject/TauCeti|3748|d8f9cad568a3911bbe567f8a920ad9622014b27b|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "665e0c3fc8ff18fdb887ed88de499868361ab761ecc79afd14113f98cc45bd25",
+ "diff_sha256": "665e0c3fc8ff18fdb887ed88de499868361ab761ecc79afd14113f98cc45bd25",
+ "duration_s": 387.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "WeightTorus.lean:96-99 defines `weightTorusCoordinateMap := diagonalTorusCoordinateMap \u226b (DiagonalizableGroup.coordinateMap R (FGCommGrpCat.ofHom (weightCharacterMap wt))).hom`; WeightTorus.lean:140-144 needs `change ... (CommHopfAlgCat.ofHom (MonoidAlgebra.mapDomainBialgHom R (FGCommGrpCat.toMonoidHom (FGCommGrpCat.ofHom (weightCharacterMap wt)))))...` before `rw [DiagonalizableGroup.mapPointsFunctor_coordinateMap_app]` succeeds. `FiniteType/CommHopfAlgCat.lean:197` (`pointsFunctor_map : (pointsFunctor).map \u03c6 = CommHopfAlgCat.mapPointsFunctor \u03c6.unop.hom`) confirms `.hom` is the canonical bridge.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/FiniteType.lean",
+   "fix": "State the LHS as `(CommHopfAlgCat.mapPointsFunctor (coordinateMap R \u03c6).hom).app A p = pointsMap (FGCommGrpCat.toMonoidHom \u03c6) p` (still `rfl`), matching the name and the `FiniteTypeCommHopfAlgCat.pointsFunctor_map` bridge; then drop the `change` block in `mapPointsFunctor_weightTorusCoordinateMap_app`.",
+   "issue": "`mapPointsFunctor_coordinateMap_app` (and its module-doc entry at line 44) advertises a lemma about `coordinateMap`, but the statement never mentions it: the argument to `mapPointsFunctor` is the unfolded `CommHopfAlgCat.ofHom (MonoidAlgebra.mapDomainBialgHom R (FGCommGrpCat.toMonoidHom \u03c6))`. The canonical form users hold is `(coordinateMap R \u03c6).hom` \u2014 that is literally how `GeneralLinear.weightTorusCoordinateMap` is built \u2014 and the lemma does not `rw` against it.",
+   "line": 99
+  },
+  {
+   "evidence": "HopfIdealPoints.lean:18-23 lists 2 of 8 public declarations; Scheme/Points.lean:88 and ToralClosure/Points.lean:106,115 are the only external call sites and use exactly `mem_hopfIdealPointsSubgroup_iff` and `hopfIdealPointsSubgroup_le_of_le`, while Scheme/Points.lean:29 and ToralClosure/Points.lean:36-45 do index their membership criteria.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/GeneralLinear/HopfIdealPoints.lean",
+   "fix": "Add entries for `TauCeti.GeneralLinear.mem_hopfIdealPointsSubgroup_iff` and `TauCeti.GeneralLinear.hopfIdealPointsSubgroup_le_of_le` to the index, as the sibling Kostant point files do.",
+   "issue": "The `## Main declarations` index of this new general-purpose file lists only `hopfIdealPointsSubgroup` and `mapHopfIdealPointsSubgroup`, omitting `mem_hopfIdealPointsSubgroup_iff` (the characterizing lemma of the definition, whose body is unexposed) and `hopfIdealPointsSubgroup_le_of_le` \u2014 the two declarations both downstream consumers actually use.",
+   "line": 18
+  }
+ ],
+ "head_sha": "d8f9cad568a3911bbe567f8a920ad9622014b27b",
+ "merge_base_sha": "e4f5717e2e0a95094298524333165fec2839585e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3748,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "947d688137742b25af20714cb756add1e92110ecfbba7d32bb1029072f24beda",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T211159Z-3748-api-design-1cedbf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T21:11:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Hopf-ideal point layer and toral point subgroup are minimal, unexposed, and fully characterized. One lemma is stated on an unfolded body rather than the named `coordinateMap` API, so consumers cannot rewrite with it without unfolding first.",
+ "transcript_blob": "cd44c6a559884f8d9dbeb7c014b7c2423ceb5e8c12cc056e9694efe2ddffebc2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 109914,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 109914,
+  "cache_read_input_tokens": 1690052,
+  "inference_geo": "not_available",
+  "input_tokens": 36,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2780,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2780,
+    "cache_read_input_tokens": 123633,
+    "input_tokens": 2,
+    "output_tokens": 2078,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 30239,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
