@@ -1,0 +1,125 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.7919680000000007,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 435.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 105274,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 105274,
+    "cache_read_input_tokens": 1807952,
+    "inference_geo": "not_available",
+    "input_tokens": 39,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3955,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3955,
+      "cache_read_input_tokens": 117818,
+      "input_tokens": 2,
+      "output_tokens": 2486,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 32548,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 2.791968,
+ "dedupe_key": "TauCetiProject/TauCeti|3770|d406eecdce390042ff1ec6a979a005b751a056de|generality|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "diff_sha256": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "duration_s": 435.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/RingTheory/Huber/Basic.lean:138`: `class IsHuberRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop where nonempty_pairOfDefinition : Nonempty (PairOfDefinition A)`; the construction idiom is used at `TauCeti/RingTheory/Huber/LaurentSeries.lean:221` (`\u27e8\u27e8pairOfDefinition K\u27e9\u27e9`). Every other repo declaration picks one or the other: `inter_mem_spaRationalFamily_of_pairOfDefinition` (Basis.lean:153) takes `P` with no instance, `inter_mem_spaRationalFamily` (Basis.lean:165) the instance with no `P`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/SheafCriterion.lean",
+   "fix": "Drop `[IsHuberRing A]` from the signature and open the proof with `haveI : IsHuberRing A := \u27e8\u27e8P\u27e9\u27e9` before applying `isSheaf_iff_isSheafFor_rationalCover`.",
+   "issue": "`isPresentationLimitSheaf_iff_isSheafFor_rationalCover` takes both `[IsHuberRing A]` and `(P : PairOfDefinition A)`. `IsHuberRing A` is exactly `Nonempty (PairOfDefinition A)`, so the explicit `P` already supplies it; the instance binder is a strictly redundant hypothesis and blocks the lemma for a caller who has a pair of definition but no registered instance.",
+   "line": 51
+  },
+  {
+   "evidence": "`grep -rn \"rationalIndexInclusionOfLE_refl\\|rationalIndexInclusionOfLE_comp\" TauCeti/` returns only lines 217, 222 and the comment at 250. `grep -rn \"pre_id\" mathlib/Mathlib/CategoryTheory/Limits/HasLimits.lean` gives only `colimit.pre_id` at :940 \u2014 the limit form is absent, which is what forces the ad-hoc `erw`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Give them the use the comment claims: state the general `limit.pre_id : limit.pre F (\ud835\udfed J) = \ud835\udfd9 (limit F)` (the dual of Mathlib's existing `colimit.pre_id`), then `map_id` is `rationalIndexInclusionOfLE_refl` plus that lemma and the `erw` disappears. If you do not want the general lemma, delete both `_refl` and `_comp` and correct the comment.",
+   "issue": "`rationalIndexInclusionOfLE_refl` (:217) and `rationalIndexInclusionOfLE_comp` (:222) have no consumer in the PR or the repo, and the comment at :249-250 asserts the functor laws go \"through the named functor identities `rationalIndexInclusionOfLE_refl`/`_comp`\" \u2014 `map_id` uses `erw [limit.pre_\u03c0, Category.id_comp]` and `map_comp` uses `limit.pre_pre` directly; neither lemma is mentioned.",
+   "line": 217
+  },
+  {
+   "evidence": "`grep -rn \"IsDirected\\|Presentation.directed\" TauCeti/` shows the only hits in this PR's files are the declaration sites (`StructurePresheaf/Basic.lean:160`, `Presentation.lean:196,201`); `RationalIndex.directed` (:145) uses `le_prod_left`/`le_prod_right` directly, not `Presentation.directed`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Either land these with the cofinality argument that consumes them, or drop the two `IsDirected` instances and `Presentation.directed`; `RationalIndex.directed`, `Presentation.prod`, `le_prod_left` and `le_prod_right` are used and should stay.",
+   "issue": "Same class of defect: the `IsDirected (RationalIndex P Aplus V)` instance (:160) and the `IsDirected (Presentation P)` instance (`LocalizationTopology/Presentation.lean:201`, whose only input `Presentation.directed` at :196 exists solely to feed it) have no consumer anywhere. The docstring at :156-159 states this outright \u2014 \"nothing in this file consumes it. It is recorded for the eventual cofinality/initiality argument.\"",
+   "line": 160
+  }
+ ],
+ "head_sha": "d406eecdce390042ff1ec6a979a005b751a056de",
+ "merge_base_sha": "4016d128f04b9122af556d223bc907e20b65ebac",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3770,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "04593a23b8277af4f0065bce989033d0e98585334bf3b5e2af04e6ece8e356cb",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T201247Z-3770-generality-131776",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T20:12:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The presheaf and its index sit at the natural level, but the new rational-cover criterion carries a hypothesis its own explicit argument already supplies, and the two named functor-identity lemmas the functor-law comment cites have no consumer at all.",
+ "transcript_blob": "b27ffe45ad7f4caeafffb6de86538eb0157f8de595e8df5555558b9b0f0599c9",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 105274,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 105274,
+  "cache_read_input_tokens": 1807952,
+  "inference_geo": "not_available",
+  "input_tokens": 39,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3955,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3955,
+    "cache_read_input_tokens": 117818,
+    "input_tokens": 2,
+    "output_tokens": 2486,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 32548,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

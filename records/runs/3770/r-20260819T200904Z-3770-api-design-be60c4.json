@@ -1,0 +1,132 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8462859999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 222.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 92378,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 92378,
+    "cache_read_input_tokens": 922202,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 669,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 669,
+      "cache_read_input_tokens": 108208,
+      "input_tokens": 2,
+      "output_tokens": 4061,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17579,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.846286,
+ "dedupe_key": "TauCetiProject/TauCeti|3770|d406eecdce390042ff1ec6a979a005b751a056de|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "diff_sha256": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "duration_s": 222.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/CategoryTheory/Limits/HasLimits.lean:442 `limit.pre_\u03c0 (k) : limit.pre F E \u226b limit.\u03c0 (E \u22d9 F) k = limit.\u03c0 F (E.obj k)`; StructurePresheaf/Basic.lean:254-260 the `erw`, not `rw` comment; grep for `presentationLimitMap` finds no such lemma.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Add `@[reassoc (attr := simp)] theorem presentationLimitMap_\u03c0 (h : W \u2264 V) (j : RationalIndex P Aplus W) : presentationLimitMap P h \u226b limit.\u03c0 (rationalIndexDiagram P Aplus W) j = limit.\u03c0 (rationalIndexDiagram P Aplus V) ((rationalIndexInclusionOfLE P h).obj j)`, proved once with the `erw`, and correct the docstring claim.",
+   "issue": "The only characteristic equation of `presentationLimitMap` \u2014 its composite with a projection \u2014 is missing, and the docstring (lines 60-63, 229-230) claims `limit.pre_\u03c0` \"applies directly\". It does not: `limit.pre_\u03c0` is stated with `limit.\u03c0 (E \u22d9 F)`, and the file's own `map_id` proof needs `erw` with a five-line comment explaining that `rw` cannot see `rationalIndexInclusionOfLE \u22d9 rationalIndexDiagram V` as `rationalIndexDiagram W`. Every consumer must reproduce that `erw`.",
+   "line": 232
+  },
+  {
+   "evidence": "The sibling file states this requirement explicitly: RefinementCategory.lean:38-40 \u2014 `restrictionHom_refl` and `\u2026restrictionHom_comp` \"stated on `restrictionHom` itself so that simp-normalised goals can still reach them\" (RefinementCategory.lean:134-145). grep finds no `presentationLimitMap` lemma other than `presentationLimitPresheaf_map`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Add `@[simp] presentationLimitMap_refl : presentationLimitMap P (le_refl V) = \ud835\udfd9 _` and `@[reassoc (attr := simp)] presentationLimitMap_comp : presentationLimitMap P h\u2082 \u226b presentationLimitMap P h\u2081 = presentationLimitMap P (h\u2081.trans h\u2082)`, exactly as RefinementCategory.lean does for `restrictionHom`.",
+   "issue": "`presentationLimitPresheaf_map` is `@[simp]`, so simp normalises `(presentationLimitPresheaf P Aplus).map h` to `presentationLimitMap P _`, but there is no identity or composition lemma stated on `presentationLimitMap`; the functor laws are only available inside the anonymous constructor. A simp-normalised goal loses functoriality.",
+   "line": 232
+  },
+  {
+   "evidence": "RationalSubset/Basic.lean:225-231 `@[simp] rationalSubset_inter : \u2026 \u2229 \u2026 = rationalSubset Aplus (insert s\u2081 T\u2081 * insert s\u2082 T\u2082) (s\u2081 * s\u2082)` versus lines 235-237.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset/Basic.lean",
+   "fix": "State it as `spaRationalOpen Aplus T\u2081 s\u2081 \u2293 spaRationalOpen Aplus T\u2082 s\u2082 = spaRationalOpen Aplus (insert s\u2081 T\u2081 * insert s\u2082 T\u2082) (s\u2081 * s\u2082)` (matching both the `_inf` name's LHS head and `rationalSubset_inter`'s direction) and mark it `@[simp]`; the single use in `RationalIndex.directed` becomes `\u2190 spaRationalOpen_inf`.",
+   "issue": "`spaRationalOpen_inf` is oriented opposite to the `@[simp]` lemma it calls its companion: `rationalSubset_inter` (line 227, simp) rewrites `\u2229` into the product presentation, while `spaRationalOpen_inf` rewrites the product presentation into `\u2293`, and carries no annotation. The `Opens` layer therefore has no normal form, and the two layers contradict each other.",
+   "line": 235
+  },
+  {
+   "evidence": "Mathlib/Topology/Sets/Opens.lean:95-96 `@[simp] Opens.mem_mk` (needs a syntactic `mk`); Mathlib/Data/SetLike/Basic.lean:179 `mem_coe : x \u2208 (p : Set B) \u2194 x \u2208 p`; RationalSubset/Basic.lean:124-125 and Basis.lean:273-275 for the simp-annotated siblings.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset/Basic.lean",
+   "fix": "Mark `mem_spaRationalOpen_iff` `@[simp]`.",
+   "issue": "`mem_spaRationalOpen_iff`, the `mem_*_iff` restatement of the new definition, is not `@[simp]`, while both its siblings `mem_rationalSubset_iff` (line 125) and `mem_spaRationalOpens` (Basis.lean:274) are. Since `spaRationalOpen`'s body is sealed, Mathlib's `Opens.mem_mk` cannot fire and `SetLike.mem_coe` normalises away from the coercion, so `coe_spaRationalOpen` never reaches a membership goal and `x \u2208 spaRationalOpen Aplus T s` has no automatic route.",
+   "line": 212
+  }
+ ],
+ "head_sha": "d406eecdce390042ff1ec6a979a005b751a056de",
+ "merge_base_sha": "4016d128f04b9122af556d223bc907e20b65ebac",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3770,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2ca29b58847813982df4743569ed3ff0b1d65b16b28454053b6a364aec54300f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T200904Z-3770-api-design-be60c4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T20:09:04Z",
+ "submitted_by": "kim-em",
+ "summary": "The limit interface is documented as \"Mathlib's own, applies directly\", but the file's own functor-law proof shows `limit.pre_\u03c0` does not match syntactically, and no `presentationLimitMap_\u03c0` or functoriality lemma is provided at the simp-normal form the file establishes. The new `spaRationalOpen` API also has inconsistent/missing simp annotations.",
+ "transcript_blob": "3d0ef2dc78441b57e7a75c044c41e9e879cff2a28b65a90a0c5fa74a497983d2",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 92378,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 92378,
+  "cache_read_input_tokens": 922202,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 669,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 669,
+    "cache_read_input_tokens": 108208,
+    "input_tokens": 2,
+    "output_tokens": 4061,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17579,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

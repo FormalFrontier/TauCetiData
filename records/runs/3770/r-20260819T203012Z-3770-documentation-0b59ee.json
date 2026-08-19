@@ -1,0 +1,139 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.934704,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 268.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75567,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75567,
+    "cache_read_input_tokens": 1357148,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1867,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1867,
+      "cache_read_input_tokens": 90199,
+      "input_tokens": 1,
+      "output_tokens": 2173,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19156,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "284f9ad1773d24aac6706155732bcbe70cf22c9c",
+ "cost_usd": 1.934704,
+ "dedupe_key": "TauCetiProject/TauCeti|3770|d406eecdce390042ff1ec6a979a005b751a056de|documentation|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "diff_sha256": "b40f4db7b8155366267bf6506e2b74d01f050e28c5fb949f3a28f693371d857a",
+ "duration_s": 268.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Basic.lean:279 vs Basic.lean:21-23 (\"Identifying it with Wedhorn's `\ud835\udcaa_X` \u2026 is *not* proved here\") and roadmap `TauCetiRoadmap/AdicSpaces/README.md:522`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Drop \"sheafy\" from the prose: e.g. \"**The presentation-indexed presheaf of `P` over `Aplus` is a sheaf**\", and keep \"sheafy\" reserved for the `\ud835\udcaa_X`-level notion.",
+   "issue": "The docstring headline reads \"**The presentation data `P` is sheafy over `Aplus`**\", but the roadmap defines sheafiness of a pair as `Huber.IsSheafyPair A Aplus`: \"the chosen pair has a sheaf structure presheaf\" (roadmap `AdicSpaces/README.md:522`). Lines 20-23 and 241-243 of this same file state the presheaf is not known to be Wedhorn's `\ud835\udcaa_X`, so the prose claims exactly what the rename to `IsPresentationLimitSheaf` was meant not to claim.",
+   "line": 279
+  },
+  {
+   "evidence": "SheafCriterion.lean:13,43-46; statement at :50-56 is about `presentationLimitPresheaf`, not `\ud835\udcaa_X`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/SheafCriterion.lean",
+   "fix": "Rephrase title and headline in terms of the presentation-indexed presheaf, e.g. \"The presentation-indexed presheaf is a sheaf exactly when it satisfies the sheaf condition for every rational cover\".",
+   "issue": "Same overclaim in this file: the module title \"# Sheafiness is decided by rational covers\" (line 13) and the theorem headline \"The pair `(P, Aplus)` is sheafy exactly when \u2026\" assert the pair-level sheafiness notion, while the statement only says the presentation-indexed presheaf satisfies the rational-cover sheaf condition.",
+   "line": 43
+  },
+  {
+   "evidence": "`grep -rn rationalIndexInclusionOfLE_refl\\|rationalIndexInclusionOfLE_comp TauCeti` \u2192 only Basic.lean:217, :222 (declarations) and :250 (this comment).",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/StructurePresheaf/Basic.lean",
+   "fix": "Correct the comment to name the lemmas actually used (`limit.pre_\u03c0`, `limit.pre_pre`), or rewrite the proofs to go through the two functor identities as advertised.",
+   "issue": "The comment says both functor laws are proved \"through the named functor identities `rationalIndexInclusionOfLE_refl`/`_comp`\", but neither lemma appears in either proof: `map_id` is `erw [limit.pre_\u03c0, Category.id_comp]; rfl` and `map_comp` is `limit.pre_pre`. Grep shows both lemmas are unused repo-wide.",
+   "line": 249
+  },
+  {
+   "evidence": "Basic.lean:52-56 lists only `rationalSubset`; new decls at :199-213, :232; Basis.lean:42-56 vs new/public decls at :135, :282.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/RationalSubset/Basic.lean",
+   "fix": "Add `spaRationalOpen` to Main definitions and `spaRationalOpen_inf` (Basic.lean) plus `isOpen_span_insert_mul_insert`, `spaRationalOpen_mem_spaRationalOpens` (Basis.lean) to Main results.",
+   "issue": "The module docstring's \"Main definitions\"/\"Main results\" enumerate every public declaration of the file, but were not updated for the new public `spaRationalOpen` (a definition downstream files index on), `coe_spaRationalOpen`, `mem_spaRationalOpen_iff` and `spaRationalOpen_inf`. The same holds in `RationalSubset/Basis.lean:42`, where the newly de-privatized public `isOpen_span_insert_mul_insert` and the new `spaRationalOpen_mem_spaRationalOpens` are absent from \"Main results\".",
+   "line": 52
+  },
+  {
+   "evidence": "PR description code block (`def PairOfDefinition.IsSheafy`) vs Basic.lean:294 `IsPresentationLimitSheaf` and SheafCriterion.lean:50.",
+   "file": "",
+   "fix": "Update the description's code block and prose to the current names, or note the rename explicitly.",
+   "issue": "The PR description documents declarations that do not exist at head: it presents `PairOfDefinition.IsSheafy`, `isSheafy_iff`, `PairOfDefinition.IsSheafyPair` and `isSheafy_iff_isSheafFor_rationalCover`, while the code defines `IsPresentationLimitSheaf`, `isPresentationLimitSheaf_iff` and `isPresentationLimitSheaf_iff_isSheafFor_rationalCover`; the description's own \"Three notions\" section argues for a name the diff no longer uses.",
+   "line": 0
+  }
+ ],
+ "head_sha": "d406eecdce390042ff1ec6a979a005b751a056de",
+ "merge_base_sha": "4016d128f04b9122af556d223bc907e20b65ebac",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3770,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "eee4c446bef675bfeea7d3166830578ab33d4339723b1cb6f24f1cf73036bd9a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "2c299e1d1950d731786005ef33209486b2fa7f9d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260819T203012Z-3770-documentation-0b59ee",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-19T20:30:12Z",
+ "submitted_by": "kim-em",
+ "summary": "Docstrings are dense and mostly accurate, but the sheafiness docstrings call the pair \"sheafy\" \u2014 the roadmap's `IsSheafyPair` meaning \u2014 which the same file says is not established, one inline comment describes a proof route the proofs do not take, and the two modified `RationalSubset` module docstrings were not updated for the public declarations added to them.",
+ "transcript_blob": "55f56cb13d2c5399baecaa39d8eb98b420251cd3ad01973c16c0cd082441aa1c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75567,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75567,
+  "cache_read_input_tokens": 1357148,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1867,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1867,
+    "cache_read_input_tokens": 90199,
+    "input_tokens": 1,
+    "output_tokens": 2173,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19156,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
