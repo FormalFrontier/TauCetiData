@@ -1,0 +1,220 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.089724,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 365.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79177,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79177,
+    "cache_read_input_tokens": 1189194,
+    "inference_geo": "not_available",
+    "input_tokens": 33,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4313,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4313,
+      "cache_read_input_tokens": 91363,
+      "input_tokens": 2,
+      "output_tokens": 4189,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27682,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "35b2f85475d352650ca78c3171f16cfaf411f039",
+ "cost_usd": 2.089724,
+ "dedupe_key": "TauCetiProject/TauCeti|3831|be6ca98dd9e80c848a60e715ea4487e8fa9322bc|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "bb5add3294552571e6f8773f5be4deeea59f4ce00d758f11f0427a67a9ef7c58",
+ "diff_sha256": "bb5add3294552571e6f8773f5be4deeea59f4ce00d758f11f0427a67a9ef7c58",
+ "duration_s": 365.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`grep -rn tensorPowerRep TauCeti/` shows the canonical object on `\u2a02[k]^d`; `Representation.tensorPowerAddEquiv` at TauCeti/RepresentationTheory/Tensor/Power.lean:121 relates `(\u03c1.tensorPower d).tprod (\u03c1.tensorPower e)` to `\u03c1.tensorPower (d + e)`; Weight/Basic.lean contains no weightSpace transport lemma.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "fix": "Either drop it (it is a one-line instantiation of `isInternal_weightSpace_tprod`), or add the missing transport lemma (`Submodule.map e (weightSpace \u03c1 l) = weightSpace \u03c3 l` for an intertwining equivalence) and state the corollary for `tensorPowerRep k n 2` via `Representation.tensorPowerAddEquiv`.",
+   "issue": "`isInternal_weightSpace_tprod_stdRep` is stated for `(stdRep k n).tprod (stdRep k n)` on `(Fin n \u2192 k) \u2297[k] (Fin n \u2192 k)`, but the repo's tensor square of the standard representation is `tensorPowerRep k n 2 = (stdRep k n).tensorPower 2` on `\u2a02[k]^2 (Fin n \u2192 k)` (TensorPower.lean:48), used by Decomposition.lean, ExtremeShape.lean, WeylModule.lean, Rational.lean. Since no lemma transports `weightSpace` along a representation equivalence, no existing consumer can reach this corollary; the docstring's \"the tensor square of the standard representation\" reads as covering `tensorPowerRep k n 2` and does not.",
+   "line": 266
+  },
+  {
+   "evidence": "Tensor.lean:173 `private theorem mem_weightSpace_tprod_detPowerRep_iff`, Tensor.lean:188 `private theorem map\u2082_mk_top_eq_comap_rid`; public statements at Tensor.lean:203 and 213 both quantify over submodules only.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "fix": "Make `mem_weightSpace_tprod_detPowerRep_iff` public (it is already proved and is the characteristic membership form), or state `weightSpace_tprod_detPowerRep` in `Submodule.comap (rid).toLinearMap` form so `Submodule.mem_comap` supplies membership.",
+   "issue": "`mem_weightSpace_tprod_detPowerRep_iff` \u2014 the `mem_*_iff` characterization of the det-twisted weight space \u2014 is `private`, and so is the bridge `map\u2082_mk_top_eq_comap_rid` (line 188). The public `weightSpace_tprod_detPowerRep` lands in `Submodule.map\u2082 (mk k W k) S \u22a4`, an object the file gives consumers no membership API for; recovering `x \u2208 weightSpace (\u03c1.tprod (det^m)) l \u2194 rid x \u2208 weightSpace \u03c1 (l - m)` requires re-deriving it via `map_rid_weightSpace_tprod_detPowerRep` plus `Submodule.mem_map_equiv`.",
+   "line": 173
+  }
+ ],
+ "head_sha": "be6ca98dd9e80c848a60e715ea4487e8fa9322bc",
+ "merge_base_sha": "35b2f85475d352650ca78c3171f16cfaf411f039",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3831,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "831c066c0317fa2fefb58cffbb4d0c378a6e824de8383c2d4f40edfe2c82f194",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260820T201310Z-3831-api-design-900f19",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-20T20:13:10Z",
+ "submitted_by": "kim-em",
+ "summary": "Surface is minimal and free of compatibility artifacts, but the one worked corollary is stated on a tensor square no consumer in the repo uses, and the only membership characterization of the det-twisted weight space is private.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/ClassicalGroups/Weight/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Basis/DiagonalTorus.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": false,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": false,
+   "tool": "Bash"
+  },
+  {
+   "ok": false,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": false,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 23,
+  "trace_truncated": false
+ },
+ "transcript_blob": "7ed76f48f65c29cde6fc58833d7fdc7ea2df39a69ad1d633e6e75953fa38577c",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79177,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79177,
+  "cache_read_input_tokens": 1189194,
+  "inference_geo": "not_available",
+  "input_tokens": 33,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4313,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4313,
+    "cache_read_input_tokens": 91363,
+    "input_tokens": 2,
+    "output_tokens": 4189,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27682,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

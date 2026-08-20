@@ -1,0 +1,270 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0809989999999994,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 291.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 82682,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 82682,
+    "cache_read_input_tokens": 1385726,
+    "inference_geo": "not_available",
+    "input_tokens": 38,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1035,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1035,
+      "cache_read_input_tokens": 98146,
+      "input_tokens": 2,
+      "output_tokens": 2495,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21997,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "35b2f85475d352650ca78c3171f16cfaf411f039",
+ "cost_usd": 2.080999,
+ "dedupe_key": "TauCetiProject/TauCeti|3831|be6ca98dd9e80c848a60e715ea4487e8fa9322bc|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "bb5add3294552571e6f8773f5be4deeea59f4ce00d758f11f0427a67a9ef7c58",
+ "diff_sha256": "bb5add3294552571e6f8773f5be4deeea59f4ce00d758f11f0427a67a9ef7c58",
+ "duration_s": 291.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Proof body at Tensor.lean:271-272 is the instantiation verbatim; `grep -rn \"isInternal_weightSpace_tprod\" TauCeti/` outside Weight/Tensor.lean returns nothing.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "fix": "Delete `isInternal_weightSpace_tprod_stdRep`; a user writes the same one-liner from `isInternal_weightSpace_tprod` and `iSup_weightSpace_stdRep` (Weight/Basic.lean:140).",
+   "issue": "`isInternal_weightSpace_tprod_stdRep` is nothing but `isInternal_weightSpace_tprod hchar iSup_weightSpace_stdRep iSup_weightSpace_stdRep` (its own proof), an instantiation of the lemma 10 lines above with two already-named hypotheses, and it has no consumer anywhere in the repository.",
+   "line": 268
+  },
+  {
+   "evidence": "Tensor.lean:203-219; `Submodule.map_equiv_eq_comap_symm` (Mathlib/LinearAlgebra/CliffordAlgebra/Conjugation.lean:199 uses it), `Submodule.map_comap_eq_of_surjective` already used in the proof.",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "fix": "Keep one form. State `weightSpace_tprod_detPowerRep` as `weightSpace (\u03c1.tprod (detPowerRep k n m)) l = Submodule.map (TensorProduct.rid k W).symm.toLinearMap (weightSpace \u03c1 (l - fun _ \u21a6 m))` and drop `map_rid_weightSpace_tprod_detPowerRep`, since `Submodule.map_equiv_eq_comap_symm` / `Submodule.map_comap_eq_of_surjective` convert between the forms generically.",
+   "issue": "`map_rid_weightSpace_tprod_detPowerRep` is `weightSpace_tprod_detPowerRep` transported along the equiv `TensorProduct.rid k W` \u2014 two public lemmas for one fact, two rewrites apart, neither with an in-repo consumer. Its own docstring says it is the other \"with the trailing scalar factor discarded\", and its proof (lines 218-219) is `rw [weightSpace_tprod_detPowerRep, map\u2082_mk_top_eq_comap_rid, Submodule.map_comap_eq_of_surjective ...]`.",
+   "line": 213
+  },
+  {
+   "evidence": "`Submodule.map\u2082_span_singleton_eq_map_flip` (Mathlib/Algebra/Module/Submodule/Bilinear.lean:154), `TensorProduct.toLinearMap_symm_rid : (rid R M).symm.toLinearMap = (mk R M R).flip 1 := rfl` (Mathlib/LinearAlgebra/TensorProduct/Associator.lean:91), `Ideal.span_singleton_one : span {1} = \u22a4` (Mathlib/RingTheory/Ideal/Span.lean:81).",
+   "file": "TauCeti/RepresentationTheory/ClassicalGroups/Weight/Tensor.lean",
+   "fix": "Replace the antisymmetry argument by `rw [\u2190 Ideal.span_singleton_one, Submodule.map\u2082_span_singleton_eq_map_flip, \u2190 TensorProduct.toLinearMap_symm_rid, \u2190 Submodule.comap_equiv_eq_map_symm]` (or drop the helper entirely if the statements are phrased with `Submodule.map (rid k W).symm.toLinearMap` per the previous finding).",
+   "issue": "The private helper `map\u2082_mk_top_eq_comap_rid` re-derives by hand what Mathlib already provides: `Submodule.map\u2082 (mk k W k) S \u22a4` is `Submodule.map ((mk k W k).flip 1) S`, and `(mk R M R).flip 1` is definitionally `(TensorProduct.rid R M).symm.toLinearMap`.",
+   "line": 188
+  }
+ ],
+ "head_sha": "be6ca98dd9e80c848a60e715ea4487e8fa9322bc",
+ "merge_base_sha": "35b2f85475d352650ca78c3171f16cfaf411f039",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3831,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "087a5f75873637bb151a72def3fa078ab7206c624df6c37a074f79e03397c2fd",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260820T200342Z-3831-reuse-d7130f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-20T20:03:42Z",
+ "submitted_by": "kim-em",
+ "summary": "The tensor-product weight theory is new material with no counterpart in Mathlib or TauCeti, but the PR ships a bare instantiation of its own general lemma, two public forms of the determinant-twist statement, and a private helper that re-derives existing Mathlib lemmas.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/ClassicalGroups/Weight/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Coalgebra/Comodule/GroupLike.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Coalgebra/Comodule/MonoidAlgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Coalgebra/Comodule/TensorProduct.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 33,
+  "trace_truncated": false
+ },
+ "transcript_blob": "04e11ca27429c58feebf092621d91f65c0b5cb2c8ed2f4ce5cc3969d9f337864",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 82682,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 82682,
+  "cache_read_input_tokens": 1385726,
+  "inference_geo": "not_available",
+  "input_tokens": 38,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1035,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1035,
+    "cache_read_input_tokens": 98146,
+    "input_tokens": 2,
+    "output_tokens": 2495,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21997,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
