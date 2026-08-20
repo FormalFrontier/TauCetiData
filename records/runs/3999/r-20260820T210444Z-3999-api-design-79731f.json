@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.185093,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 27.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 66816,
+    "input_tokens": 91003,
+    "output_tokens": 1025,
+    "reasoning_output_tokens": 390
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "bb87ed6097b97507a2600e763dd707b5ce38245f",
+ "cost_estimated": true,
+ "cost_usd": 0.185093,
+ "dedupe_key": "TauCetiProject/TauCeti|3999|3e93d43a1ee2245554500e38d035e9208aa4f042|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "a26d4f4c8bb26b9b7172bc3e3bad050a83b4bfdc2480291cd3aaf7d1b7d6aab8",
+ "diff_sha256": "a26d4f4c8bb26b9b7172bc3e3bad050a83b4bfdc2480291cd3aaf7d1b7d6aab8",
+ "duration_s": 27.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The exposed declarations occur at lines 128, 143, and 169; lines 133\u2013152 already characterize the recursive definitions, while later proofs unfold `loopPathAt` directly because no public definition theorem exists.",
+   "file": "TauCeti/Combinatorics/Enumerative/LoopWord.lean",
+   "fix": "Remove all three `@[expose]` attributes; retain the existing `loopPath_nil/cons` and `loopSteps_nil/cons` equations and add a `loopPathAt_def` theorem for intentional unfolding.",
+   "issue": "`loopPath`, `loopSteps`, and `loopPathAt` are all marked `@[expose]`, making downstream proofs depend on their implementations despite the public equation API.",
+   "line": 128
+  },
+  {
+   "evidence": "`length_loopPath` is declared at line 155 and the endpoint equation at line 176; both strictly reduce observations of a loop and do not introduce a rewrite cycle.",
+   "file": "TauCeti/Combinatorics/Enumerative/LoopWord.lean",
+   "fix": "Add `@[simp]` to `length_loopPath` and `loopPathAt_loopSteps`.",
+   "issue": "The characteristic normal forms `length_loopPath` and `loopPathAt_loopSteps` are not tagged `@[simp]`, so consumers cannot normalize loop length or its terminal value through the advertised API.",
+   "line": 155
+  }
+ ],
+ "head_sha": "3e93d43a1ee2245554500e38d035e9208aa4f042",
+ "merge_base_sha": "bb87ed6097b97507a2600e763dd707b5ce38245f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3999,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9f02b85c77dfe4898df5d3493076962ab6941a161a45cb7ed49c5acea7bff1fd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260820T210444Z-3999-api-design-79731f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-20T21:04:44Z",
+ "submitted_by": "kim-em",
+ "summary": "The loop API unnecessarily exposes implementation bodies and omits normal-form automation on its characteristic equations.",
+ "transcript_blob": "f7db60fe418d962f92d52ea602e0609ca97d81144c88fba06f4166102c6f266b",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 66816,
+  "input_tokens": 91003,
+  "output_tokens": 1025,
+  "reasoning_output_tokens": 390
+ },
+ "verdict": "request_changes"
+}
