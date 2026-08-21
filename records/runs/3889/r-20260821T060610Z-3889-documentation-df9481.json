@@ -1,0 +1,179 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3284714999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 191.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 72003,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 72003,
+    "cache_read_input_tokens": 383873,
+    "inference_geo": "not_available",
+    "input_tokens": 15,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4864,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4864,
+      "cache_read_input_tokens": 69939,
+      "input_tokens": 2,
+      "output_tokens": 4573,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16040,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e40c6c6c7d3bd14b3e15a0b2d87065e6fb474a3",
+ "cost_usd": 1.328471,
+ "dedupe_key": "TauCetiProject/TauCeti|3889|a1018a811b5035372af45668707b07c90cbd8a5b|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "5dc8b896513372317271aa60f5261a82758becb5f6b113551a6f1a99e00cbb87",
+ "diff_sha256": "5dc8b896513372317271aa60f5261a82758becb5f6b113551a6f1a99e00cbb87",
+ "duration_s": 191.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib `LinearEquiv.funCongrLeft_apply`/`LinearMap.funLeft_apply` (Mathlib/Algebra/Module/Equiv/Basic.lean:815,856): `funCongrLeft R M e x = x \u2218 e`; `coroot_simpleIndex` (Assembly.lean:256) gives `coroot (simpleIndex i) = Pi.single i 1`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "fix": "State the two directions separately: the weight map is `x \u21a6 x \u2218 \u03c3\u207b\u00b9` (fundamental weights permuted by \u03c3); Mathlib's coweight slot is its transpose `y \u21a6 y \u2218 \u03c3` (simple coroots permuted by \u03c3\u207b\u00b9), the coroots themselves being permuted by \u03c3 via `coroot_diagramRootPerm`.",
+   "issue": "Module docstring claims \"On both pinned lattices the automorphism is the permutation of coordinates by \u03c3 ... and \u03c3 permutes each of those two bases.\" False on the cocharacter side: `coweightMap = funCongrLeft \u2124 \u2124 \u03c3` (line 300) is `y \u21a6 y \u2218 \u03c3`, so `Pi.single i 1 \u21a6 Pi.single (\u03c3\u207b\u00b9 i) 1`, i.e. it permutes the simple coroots by \u03c3\u207b\u00b9, while `weightMap = funCongrLeft \u2124 \u2124 \u03c3.symm` permutes the fundamental weights by \u03c3.",
+   "line": "19"
+  },
+  {
+   "evidence": "Statements at lines 185-188, 216-218, 313-314, 318-319 and RootDatumAutomorphism.lean:72-82 differ by `.symm`; their docstrings do not.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "fix": "Name the permutation in each docstring, e.g. \"precomposition with \u03c3\u207b\u00b9\" vs \"precomposition with \u03c3 (the transpose of the weight map)\".",
+   "issue": "Mutually inverse maps carry identical docstrings, so neither says which permutation it is: line 183-184 (`rationalDiagramAut_coweightEquiv_symm`, `funCongrLeft \u211a \u211a \u03c3.symm`) and line 214-215 (`rationalDiagramAut_coweightMap`, `funCongrLeft \u211a \u211a \u03c3`) both read \"is the permutation of the simple-coroot coordinates\". Same defect at lines 312/317 (`diagramAut_weightMap` uses `\u03c3.symm`, `diagramAut_coweightMap` uses `\u03c3`, both said to \"permute the ... coordinates\") and at RootDatumAutomorphism.lean:70-82 (`datumGraphAut_weightMap` uses `diagramPerm.symm`, `datumGraphAut_coweightMap` uses `diagramPerm`, both said to permute \"by the diagram permutation of the index\").",
+   "line": "183"
+  }
+ ],
+ "head_sha": "a1018a811b5035372af45668707b07c90cbd8a5b",
+ "merge_base_sha": "5e40c6c6c7d3bd14b3e15a0b2d87065e6fb474a3",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3889,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b8da0361ba90a32813c8d31085343559b5269f03418a0daa5d2dfb05a58eb8ab",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T060610Z-3889-documentation-df9481",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T06:06:10Z",
+ "submitted_by": "kim-em",
+ "summary": "Module docstrings and declaration docstrings are otherwise accurate and complete, but the weight/coweight direction is documented wrongly: the coweight map permutes the simple-coroot basis by \u03c3\u207b\u00b9 (it is the transpose slot), yet the docs say \u03c3 permutes both bases and describe mutually inverse maps with identical wording.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/RootDatumAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Assembly.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Assembly.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Assembly.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/SerreGraphAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/Pi.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 11,
+  "trace_truncated": false
+ },
+ "transcript_blob": "bc8830ba94025944a1cddf131687ddaf69002cff3bdb2429622a50644ae25d25",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 72003,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 72003,
+  "cache_read_input_tokens": 383873,
+  "inference_geo": "not_available",
+  "input_tokens": 15,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4864,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4864,
+    "cache_read_input_tokens": 69939,
+    "input_tokens": 2,
+    "output_tokens": 4573,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16040,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

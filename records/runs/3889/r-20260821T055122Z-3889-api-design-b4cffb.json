@@ -1,0 +1,241 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.3407020000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 348.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 106104,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 106104,
+    "cache_read_input_tokens": 1133890,
+    "inference_geo": "not_available",
+    "input_tokens": 33,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5284,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5284,
+      "cache_read_input_tokens": 103620,
+      "input_tokens": 2,
+      "output_tokens": 5243,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27867,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e40c6c6c7d3bd14b3e15a0b2d87065e6fb474a3",
+ "cost_usd": 2.340702,
+ "dedupe_key": "TauCetiProject/TauCeti|3889|a1018a811b5035372af45668707b07c90cbd8a5b|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "5dc8b896513372317271aa60f5261a82758becb5f6b113551a6f1a99e00cbb87",
+ "diff_sha256": "5dc8b896513372317271aa60f5261a82758becb5f6b113551a6f1a99e00cbb87",
+ "duration_s": 348.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Rubric: keep bodies unexposed unless a consumer must unfold or compute. Repo convention reserves `@[expose]` for computable tables (`f4Root`, `b2Index`, ...); grep shows no use of `diagramRootPerm` outside the two new files, and both uses are via lemmas.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "fix": "Drop `@[expose]`; `rationalDiagramAut_indexEquiv` (line 139) already supplies the defining equation.",
+   "issue": "`@[expose] def diagramRootPerm` exposes the body downstream for no consumer. It is noncomputable, its body is `(rationalDiagramAut ht h\u03c3).indexEquiv` whose head `rationalDiagramAut` is itself not exposed, and every in-repo use (`diagramAut_indexEquiv`, `datumGraphAut_indexEquiv`, `root_/coroot_diagramRootPerm`) goes through lemmas in the same file or through imported lemmas.",
+   "line": "134"
+  },
+  {
+   "evidence": "grep for `diagramPerm_mem_diagramSymmetry` in ./code returns nothing. Precedent in the sibling file: `SerreGraphAutomorphism.lean:70 cartanMatrix_submatrix_diagramPerm` names exactly this kind of restatement and every declaration there consumes the name, not the term.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/RootDatumAutomorphism.lean",
+   "fix": "Add `theorem diagramPerm_mem_diagramSymmetry : d.diagramPerm \u2208 d.1.dynkinType.diagramSymmetry := DynkinType.mem_diagramSymmetry_iff.mpr d.cartanMatrix_diagramPerm` and use it in all five places.",
+   "issue": "`DynkinType.mem_diagramSymmetry_iff.mpr d.cartanMatrix_diagramPerm` is spelled out five times (lines 60, 67, 94, 105, 112) and appears inside the public statement of `datumGraphAut_indexEquiv`, so a consumer restating anything must reproduce the raw proof term. The PR description claims `TauCeti.GraphTwistedIndex.diagramPerm_mem_diagramSymmetry` exists; it does not.",
+   "line": "60"
+  },
+  {
+   "evidence": "`DiagramAutomorphism.lean:171,236` mark `root_diagramRootPerm` and `coroot_diagramRootPerm` `@[simp]`; Mathlib `LinearAlgebra/RootSystem/Hom.lean:689` marks `root_indexEquiv_eq_smul` `@[simp]` in the `root (g.indexEquiv i) \u2192 g \u2022 root i` direction, which the file's own `datumGraphAut_indexEquiv` pre-empts.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/RootDatumAutomorphism.lean",
+   "fix": "State both in the same shape (both `coroot/root (d.datumGraphAut.indexEquiv k) = ...`) and give both the same annotation \u2014 or drop them, since each is one `simp` step from `datumGraphAut_indexEquiv` plus `root_diagramRootPerm`/`coroot_diagramRootPerm`.",
+   "issue": "The root/coroot pair is stated in two different shapes and annotated inconsistently: `root_datumGraphAut_indexEquiv` is `@[simp]` and phrased with `\u2022` (its name mentions `indexEquiv`, its statement does not), while `coroot_datumGraphAut_indexEquiv` (line 98) is phrased with `.indexEquiv` and is not `@[simp]`. Neither LHS is in simp normal form: `datumGraphAut_indexEquiv` is `@[simp]` (line 64), so simp rewrites `d.datumGraphAut.indexEquiv` to `diagramRootPerm` first and then fires the imported `root_/coroot_diagramRootPerm`, bypassing both lemmas.",
+   "line": "86"
+  },
+  {
+   "evidence": "The repo's Lie-algebra analogue has the full set: `Serre/Automorphism.lean:187 eq_serreDiagramAut`, `:197 serreDiagramAut_refl`, `:203 serreDiagramAut_trans`, `:211 serreDiagramAut_symm`. Here only the first two analogues exist.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "fix": "Add `diagramAut_inv (h\u03c3) : diagramAut ht (t.diagramSymmetry.inv_mem h\u03c3) = (diagramAut ht h\u03c3)\u207b\u00b9` (via `map_inv (diagramAutHom ht)`), and `eq_diagramAut {g : (t.simplyConnectedRootDatum ht).Aut} (h\u03c3) (h : g.toHom.weightMap = (LinearEquiv.funCongrLeft \u2124 \u2124 \u03c3.symm).toLinearMap) : g = diagramAut ht h\u03c3`, which also yields transport along `\u03c3 = \u03c4`.",
+   "issue": "The group API is developed for `one` (line 345) and `mul` (line 352) but stops there: there is no `diagramAut_inv`/`diagramRootPerm_inv` even though `diagramSymmetry` is closed under inverses, and no uniqueness lemma identifying an automorphism with `diagramAut` from its weight map \u2014 although `weightHom_injective` is already the proof technique used twice in this file.",
+   "line": "352"
+  }
+ ],
+ "head_sha": "a1018a811b5035372af45668707b07c90cbd8a5b",
+ "merge_base_sha": "5e40c6c6c7d3bd14b3e15a0b2d87065e6fb474a3",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3889,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f196d514b89e1e7f61dd374fa6d75c3c3adb76d4465ecd7932441d9c00f0a81d",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T055122Z-3889-api-design-b4cffb",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T05:51:22Z",
+ "submitted_by": "kim-em",
+ "summary": "The construction and its characteristic lemmas (indexEquiv, weightMap, coweightMap, root/coroot coordinates, multiplicativity, order relation) are in good shape, but the surface has four defects: an unjustified `@[expose]`, a missing named membership lemma promised by the description, an inconsistent root/coroot pair in the CFSG file, and a missing inverse/uniqueness half of the group API.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/DiagramAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/RootDatumAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Rational.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/Submatrix.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/RootSystem/Hom.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/RootSystem/Hom.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/Isomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/SerreGraphAutomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/Assembly.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Presentation/Serre/Automorphism.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 21,
+  "trace_truncated": false
+ },
+ "transcript_blob": "c8670d8d6a0ca3834754d80c6d576674c9002fbd833afb8c8d44e60b6b6fda9a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 106104,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 106104,
+  "cache_read_input_tokens": 1133890,
+  "inference_geo": "not_available",
+  "input_tokens": 33,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5284,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5284,
+    "cache_read_input_tokens": 103620,
+    "input_tokens": 2,
+    "output_tokens": 5243,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27867,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
