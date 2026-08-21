@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.359245,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 66.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 221440,
+    "input_tokens": 258371,
+    "output_tokens": 2129,
+    "reasoning_output_tokens": 788
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "cost_estimated": true,
+ "cost_usd": 0.359245,
+ "dedupe_key": "TauCetiProject/TauCeti|4002|cbd7288e57262dd51153c17b2930712b88d7ae8d|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "914f9dc058cf2a092da1030bf612da8017995f1d266fa34bc9c6698ca374e372",
+ "diff_sha256": "914f9dc058cf2a092da1030bf612da8017995f1d266fa34bc9c6698ca374e372",
+ "duration_s": 66.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The generic theorem is at `TauCeti/Topology/Sheaves/EtaleSpace.lean:158`; lines 394\u2013396 define the new theorem as exactly that application.",
+   "file": "TauCeti/Analysis/Complex/HolomorphicSheaf.lean",
+   "fix": "Delete the specialization and use `TopCat.Presheaf.EtaleSpace.isLocalHomeomorph_base (holomorphicPresheaf E)` at its call site.",
+   "issue": "`HolomorphicPresheaf.isLocalHomeomorph_base` directly duplicates the generic `TopCat.Presheaf.EtaleSpace.isLocalHomeomorph_base`.",
+   "line": 394
+  },
+  {
+   "evidence": "Mathlib defines the same theorem at `Mathlib/Topology/Homotopy/Lifting.lean:154`; lines 194\u2013200 merely discharge its two map hypotheses, and repository grep finds no code consumer.",
+   "file": "TauCeti/Analysis/Complex/Conformal/Continuation/Etale.lean",
+   "fix": "Delete it and apply the Mathlib theorem directly with `TopCat.Presheaf.EtaleSpace.isLocalHomeomorph_base (holomorphicPresheaf E)` and `HolomorphicPresheaf.isSeparatedMap_base`.",
+   "issue": "`monodromy_theorem_etaleSpace` is an unused thin specialization of Mathlib's existing `IsLocalHomeomorph.monodromy_theorem`.",
+   "line": 194
+  },
+  {
+   "evidence": "`germSection` is defined at lines 44\u201347, `germSection_apply` is `(rfl)` at lines 50\u201352, and grep finds only one use at `HolomorphicSheaf.lean:343`.",
+   "file": "TauCeti/Topology/Sheaves/EtaleSpace.lean",
+   "fix": "Delete the lemma and unfold `germSection` at the sole consumer in `HolomorphicSheaf.lean`.",
+   "issue": "`germSection_apply` publicly restates the immediately preceding definition by reflexivity.",
+   "line": 50
+  }
+ ],
+ "head_sha": "cbd7288e57262dd51153c17b2930712b88d7ae8d",
+ "merge_base_sha": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4002,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "700f4ed1e702e6e6c4a33c04cdf725cdff467ca572c5d7b272b6e3738421da9a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T021956Z-4002-reuse-1267db",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T02:19:56Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds direct specializations of existing generic theorems and a definitional restatement that should be removed.",
+ "transcript_blob": "3173335ca937b87e1287cd8391da3379ec0115f13e9197e7d8da3ac33f00a6c6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 221440,
+  "input_tokens": 258371,
+  "output_tokens": 2129,
+  "reasoning_output_tokens": 788
+ },
+ "verdict": "block"
+}
