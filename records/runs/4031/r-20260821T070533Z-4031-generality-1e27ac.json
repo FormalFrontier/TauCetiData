@@ -1,0 +1,189 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.240384,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 190.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 64202,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 64202,
+    "cache_read_input_tokens": 426674,
+    "inference_geo": "not_available",
+    "input_tokens": 19,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2396,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2396,
+      "cache_read_input_tokens": 64606,
+      "input_tokens": 2,
+      "output_tokens": 3579,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 14882,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "84f76015e7e6857cb751a47fcf90d75a69ac5fa5",
+ "cost_usd": 1.240384,
+ "dedupe_key": "TauCetiProject/TauCeti|4031|96464da571fea02c6cbffb2b6389936b9efe7cc3|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "90daacb98eb1ea42d89d6b15da788c270e64cb2d3c36e345f06ff9c0137eb05e",
+ "diff_sha256": "90daacb98eb1ea42d89d6b15da788c270e64cb2d3c36e345f06ff9c0137eb05e",
+ "duration_s": 190.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Their proofs invoke `Subring.coe_topologicalClosure` (needs `[Ring R] [IsSemitopologicalRing R]`, Mathlib/Topology/Algebra/Ring/Basic.lean:493), `Subring.coe_map` (`[Ring R] [Ring S]`, Mathlib/Algebra/Ring/Subring/Basic.lean:200), `Subring.coe_toAddSubgroup` (Defs.lean:416), and `isOpen_closure_image_coe` (line 108, `[AddCommGroup A]`). `IsTopologicalRing (Completion A)` is available from `[Ring A]` via Mathlib/Topology/Algebra/UniformRing.lean:150. Note `IsHuberRing` is `CommRing`-bound (Huber/Basic.lean:141), but this file's `Ring` section deliberately is not.",
+   "file": "TauCeti/Topology/Algebra/Nonarchimedean/Completion.lean",
+   "fix": "Move both into the preceding `section Ring` (line 116), which already declares `[Ring A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]` and hosts `coe_coeRingHom`. Leave only the `IsIntegral`-flavoured declarations under `[CommRing A]`.",
+   "issue": "`coe_topologicalClosure_map_coeRingHom` and `isOpen_topologicalClosure_map_coeRingHom` (lines 147 and 154) sit in `section IntegrallyClosed` under `variable ... [CommRing A]` (line 142), but neither statement nor proof uses commutativity \u2014 they are facts about the image of a subring under `Completion.coeRingHom`.",
+   "line": "147"
+  },
+  {
+   "evidence": "`Mathlib/Topology/Algebra/OpenSubgroup.lean:255`: `theorem isOpen_mono [SeparatelyContinuousMul G] {H\u2081 H\u2082 : Subgroup G} (h : H\u2081 \u2264 H\u2082) (h\u2081 : IsOpen (H\u2081 : Set G)) : IsOpen (H\u2082 : Set G)` under `variable {G : Type*} [Group G] [TopologicalSpace G]`, `@[to_additive]`. `Mathlib/Topology/Algebra/Group/Defs.lean:100-101`: `class IsTopologicalAddGroup ... extends ContinuousAdd G, ContinuousNeg G`.",
+   "file": "TauCeti/Topology/Algebra/Ring/Subring.lean",
+   "fix": "Replace `[IsTopologicalAddGroup B]` with `[SeparatelyContinuousAdd B]` on line 52 and adjust the two docstrings to say separate continuity of addition.",
+   "issue": "`isOpen_integralClosure_toSubring` assumes `[IsTopologicalAddGroup B]`; its sole dependency `AddSubgroup.isOpen_mono` needs only `[SeparatelyContinuousAdd B]`, so `ContinuousNeg B` is visibly unused and `ContinuousAdd B` is stronger than required. The docstring at line 55 (\"Only the additive topological group structure of `B` is used\") and module docstring line 17 overstate what is needed.",
+   "line": "52"
+  }
+ ],
+ "head_sha": "96464da571fea02c6cbffb2b6389936b9efe7cc3",
+ "merge_base_sha": "84f76015e7e6857cb751a47fcf90d75a69ac5fa5",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4031,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6350305c5a786b17848e0aa0e40a96a40b26b1f9a5c8a46b02660b04f2a07bae",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T070533Z-4031-generality-1e27ac",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T07:05:33Z",
+ "submitted_by": "kim-em",
+ "summary": "Two public declarations carry assumptions stronger than their proofs use: the two `topologicalClosure_map_coeRingHom` lemmas are trapped under `[CommRing A]` although nothing in them touches commutativity, and `isOpen_integralClosure_toSubring` demands `[IsTopologicalAddGroup B]` where only separate continuity of addition is used.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/Algebra/Ring/Subring.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/Algebra/Nonarchimedean/Completion.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra/UniformRing.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra/OpenSubgroup.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RingTheory/Huber/LocalizationTopology/Plus.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Ring/Subring",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RingTheory/Huber/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra/Group",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 13,
+  "trace_truncated": false
+ },
+ "transcript_blob": "edc5848ffb01d0f4f5b52692459e06a9b713de240af5c77be3692dab13fd9be8",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 64202,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 64202,
+  "cache_read_input_tokens": 426674,
+  "inference_geo": "not_available",
+  "input_tokens": 19,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2396,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2396,
+    "cache_read_input_tokens": 64606,
+    "input_tokens": 2,
+    "output_tokens": 3579,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 14882,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
