@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.363262,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 40.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 173824,
+    "input_tokens": 219596,
+    "output_tokens": 1583,
+    "reasoning_output_tokens": 352
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "9b7ba4aef6773c8cd31e86a7ef90d58652693683",
+ "cost_estimated": true,
+ "cost_usd": 0.363262,
+ "dedupe_key": "TauCetiProject/TauCeti|3770|8ae7b56cc5f9b25f3534b54853b67cb4826159ac|reuse|gpt-5.6-sol|ce88b39773d791a9|production|3",
+ "diff_blob": "a7819d37d363549aad63bf94ac7219b494439ebcb452fcbac2bf35795b32f8f7",
+ "diff_sha256": "a7819d37d363549aad63bf94ac7219b494439ebcb452fcbac2bf35795b32f8f7",
+ "duration_s": 40.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib/CategoryTheory/Functor/KanExtension/Pointwise.lean:701 defines the object as `limit (StructuredArrow.proj Y L \u22d9 F)` and lines 725\u2013782 provide its maps and universal property. For `Y = op V`, the structured-arrow objects are exactly open-numerator presentations with `spaRationalOpen \u2026 \u2264 V`; Basic.lean:278 already supplies the antitonicity needed to define `L`.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/PresentationLimit/Basic.lean",
+   "fix": "Define the open-presentation `ObjectProperty`, its functor `L` to `Opens\u1d52\u1d56` using `spaRationalOpen_le_of_cofactor`, and set the presheaf to `L.pointwiseRightKanExtension (Q.\u03b9 \u22d9 P.presentationFunctor)`; remove the bespoke index/reindexing apparatus and the unused `_refl`, `_comp`, and `_comp_diagram` restatements.",
+   "issue": "`RationalIndex` through `presentationLimitPresheaf` hand-builds the index, limits, restriction maps, universal property, and functor laws already supplied by `Functor.pointwiseRightKanExtension`.",
+   "line": "125"
+  },
+  {
+   "evidence": "Its proof at line 74 is exactly `(P.hasSheafyPresentationLimit_iff Aplus).trans (isSheaf_iff_isSheafFor_rationalCover Aplus _)`; the general theorem is already public at RationalSubset/SheafCriterion.lean:51, and `rg` finds no other term-level use.",
+   "file": "TauCeti/AlgebraicGeometry/AdicSpace/Spa/PresentationLimit/SheafCriterion.lean",
+   "fix": "Delete this theorem/file and apply `isSheaf_iff_isSheafFor_rationalCover Aplus (presentationLimitPresheaf P Aplus)` directly at consumers.",
+   "issue": "`hasSheafyPresentationLimit_iff_isSheafFor_rationalCover` merely specializes the existing general rational-cover criterion and has no in-repository consumer.",
+   "line": "67"
+  }
+ ],
+ "head_sha": "8ae7b56cc5f9b25f3534b54853b67cb4826159ac",
+ "merge_base_sha": "9b7ba4aef6773c8cd31e86a7ef90d58652693683",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3770,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "8cbb17416c1458233034d1c2c9f01f0ae96b75358d19f251c63056098d0b3445",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 3,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T172511Z-3770-reuse-a062ee",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T17:25:11Z",
+ "submitted_by": "kim-em",
+ "summary": "The core presheaf directly reconstructs Mathlib\u2019s pointwise right Kan extension, while the rational-cover theorem is an unused specialization of an existing general criterion.",
+ "transcript_blob": "84584b7fe1c322da0ed713fee7765fec65f51dce30b407ff22e77c86793831cd",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 173824,
+  "input_tokens": 219596,
+  "output_tokens": 1583,
+  "reasoning_output_tokens": 352
+ },
+ "verdict": "block"
+}
