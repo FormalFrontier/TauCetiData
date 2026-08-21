@@ -1,0 +1,223 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7465735000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 250.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 86342,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 86342,
+    "cache_read_input_tokens": 731007,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1306,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1306,
+      "cache_read_input_tokens": 87836,
+      "input_tokens": 2,
+      "output_tokens": 2949,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19824,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "6d5e9ab797314131cd5e38f0a550710744bd48a3",
+ "cost_usd": 1.746574,
+ "dedupe_key": "TauCetiProject/TauCeti|4078|afb30cd8fa81aa6ac14e515e1ce892ec57b0e9ad|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6ffa9b67b7132ba5dede0faea2173c906bcf9ca1ddfa01483184bafbb5e89b65",
+ "diff_sha256": "6ffa9b67b7132ba5dede0faea2173c906bcf9ca1ddfa01483184bafbb5e89b65",
+ "duration_s": 250.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep in mathlib: `sup_idem`, `insert_idem`, `dedup_idem`, `erase_idem` all state `f (f x) = f x`-shaped equations; TauCeti itself spells it out in `TauCeti/RingTheory/Idempotents/Module.lean:94` (`IsIdempotentElem`).",
+   "file": "TauCeti/Algebra/AlbertAlgebra.lean",
+   "fix": "Rename to `diagIdempotent` (propagating to `diagIdem_diag`, `diagIdem_off`, `diagIdem_mul_diagIdem`, `sum_diagIdem`, `trace_diagIdem`), or to `diagMatrixUnit` if \"matrix unit\" is the intended term; make the docstrings use the same word.",
+   "issue": "`diagIdem`: in Mathlib the token `idem` names an idempotency *equation* (`Mathlib/Order/Lattice.lean:232 sup_idem : a \u2294 a = a`, `Data/Finset/Insert.lean:422 insert_idem`, `Data/List/Dedup.lean:128 dedup_idem`), never an idempotent *element* (that is `IsIdempotentElem`). The docstrings here also call these \"diagonal matrix units\", so the name and the prose use different terminology.",
+   "line": "361"
+  },
+  {
+   "evidence": "190 occurrences of `offDiag` across 16 Mathlib files (e.g. `Mathlib/Data/Sym/Sym2.lean`, `Mathlib/Topology/MetricSpace/Infsep.lean`); no Mathlib declaration uses bare `off` for the off-diagonal.",
+   "file": "TauCeti/Algebra/AlbertAlgebra.lean",
+   "fix": "Rename the field to `offDiag`, propagating to `zero_off`, `one_off`, `add_off`, `neg_off`, `sub_off`, `smul_off`, `mul_off`, `diagIdem_off`.",
+   "issue": "Structure field `off` is an ad-hoc abbreviation of \"off-diagonal\"; Mathlib's spelling of that word in names is `offDiag` (`Set.offDiag`, `Finset.offDiag`). The derived lemma names read badly as a result (`mul_off`, `add_off`, `smul_off` parse as \"multiply/add/smul off\").",
+   "line": "106"
+  },
+  {
+   "evidence": "`Mathlib/LinearAlgebra/QuadraticForm/Basic.lean:765 theorem polar_toQuadraticMap (x y : M) : polar (toQuadraticMap B) x y = B x y + B y x`; likewise `polar_prod` (Prod.lean:213) and `polar_pi` (Prod.lean:356).",
+   "file": "TauCeti/Algebra/Octonion.lean",
+   "fix": "Rename to `polar_normQuadraticForm`.",
+   "issue": "`polar_normQuadraticForm_apply`: the `_apply` suffix marks evaluation of a bundled map at an argument, but this lemma is about `QuadraticMap.polar Q x y`, already a plain application; Mathlib names the identical shape without `_apply`.",
+   "line": "457"
+  },
+  {
+   "evidence": "`Octonion.lean:62` and `:465` vs `AlbertAlgebra.lean:26`; the theorem at `Octonion.lean:468` proves `= polar \u2026 \u2022 1` (unhalved), while `AlbertAlgebra.lean:218-222` multiplies by `\u215f(2 : R)`.",
+   "file": "TauCeti/Algebra/Octonion.lean",
+   "fix": "Use `QuadraticMap.polar (normQuadraticForm R) x y` explicitly in both docstrings, or fix one convention and write the other as `\u00bd \u27e8x, y\u27e9`.",
+   "issue": "The informal symbol `\u27e8x, y\u27e9` denotes two different forms differing by a factor of 2: here (and at line 465) `x * conj y + y * conj x = \u27e8x, y\u27e9 \u00b7 1` makes it `QuadraticMap.polar`, while `AlbertAlgebra.lean:26` defines `\u27e8x, y\u27e9 = \u00bd (x * conj y + y * conj x)`. A reader carrying the symbol across files misreads the product's diagonal by a factor of 2. `\u27e8_, _\u27e9` is also Lean's anonymous-constructor syntax.",
+   "line": "62"
+  }
+ ],
+ "head_sha": "afb30cd8fa81aa6ac14e515e1ce892ec57b0e9ad",
+ "merge_base_sha": "9f67875134dd2dc40d3cac98bd16e87fe3830918",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4078,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "da6b42eccb9a67fc501d69448806435f6a575d841ad520f50666cd9786d34bc2",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T125946Z-4078-naming-7a58c1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T12:59:46Z",
+ "submitted_by": "kim-em",
+ "summary": "Names mostly follow the adjacent Octonion file, but `diagIdem` uses `Idem` in a sense Mathlib reserves for idempotency equations (and contradicts its own \"matrix unit\" docstrings), the field `off` is a non-Mathlib abbreviation, `polar_normQuadraticForm_apply` carries an `_apply` Mathlib's analogues do not, and the informal symbol `\u27e8x, y\u27e9` means two different forms in the two files.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlbertAlgebra.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Octonion.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Octonion.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Octonion.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Quaternion.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Quaternion.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/RepresentationTheory/LieHighestWeight/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 17,
+  "trace_truncated": false
+ },
+ "transcript_blob": "51d22a562a9e64455a8ce392849c654fae829aaed0fe6b8fc6460f75b59ddd6a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 86342,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 86342,
+  "cache_read_input_tokens": 731007,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1306,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1306,
+    "cache_read_input_tokens": 87836,
+    "input_tokens": 2,
+    "output_tokens": 2949,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19824,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
