@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.282236,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 45.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 90112,
+    "input_tokens": 128992,
+    "output_tokens": 1426,
+    "reasoning_output_tokens": 508
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "a82c6f9fd9a77946e5f70d02014f5d224ccdf3c4",
+ "cost_estimated": true,
+ "cost_usd": 0.282236,
+ "dedupe_key": "TauCetiProject/TauCeti|3922|1f194a8e01150f2c21b07eb7d5ebe9c3a80bccca|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "27f4eaf84547ec89ed78745030568f7b6db5a62b12c8ba155194f64520ab2ddd",
+ "diff_sha256": "27f4eaf84547ec89ed78745030568f7b6db5a62b12c8ba155194f64520ab2ddd",
+ "duration_s": 45.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The proofs at lines 116 and 323 consist solely of `mapMulEquiv_mapDomain A \u03c6.hom p` and `schemePointsAlg\u0393MulEquiv_mapDomain T \u03c6.hom g`, respectively.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/CommHopfAlgCat/SchemePoints.lean",
+   "fix": "Delete both wrappers and update their consumers to call the corresponding `*_mapDomain` theorem with `\u03c6.hom`, rewriting `mapPointsFunctor_app_apply` only where the displayed form is needed.",
+   "issue": "`mapMulEquiv_mapPointsFunctor` is exactly `mapMulEquiv_mapDomain A \u03c6.hom p`, and `schemePointsAlg\u0393MulEquiv_mapPointsFunctor` at line 316 is likewise exactly `schemePointsAlg\u0393MulEquiv_mapDomain T \u03c6.hom g`; these create parallel public APIs for definitional specializations.",
+   "line": 109
+  },
+  {
+   "evidence": "Its entire proof is `rw [pointMap_apply]` followed by the existing naturality theorem, and `rg` finds no consumer beyond line 91.",
+   "file": "TauCeti/AlgebraicGeometry/GroupScheme/CentralIsogeny/Coordinate.lean",
+   "fix": "Delete it and prove the use at line 91 directly with `pointMap_apply` followed by `schemePointsAlg\u0393MulEquiv_mapDomain T f.hom g`.",
+   "issue": "`schemePointsAlg\u0393MulEquiv_pointMap` is another public thin wrapper around `schemePointsAlg\u0393MulEquiv_mapPointsFunctor`, used only once in the same file.",
+   "line": 61
+  }
+ ],
+ "head_sha": "1f194a8e01150f2c21b07eb7d5ebe9c3a80bccca",
+ "merge_base_sha": "a82c6f9fd9a77946e5f70d02014f5d224ccdf3c4",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 3922,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8294db4fca65f41188d46c8318e51da8e29d57af389c7ea5e2dfbbfabaee5f77",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T022821Z-3922-reuse-aa3885",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T02:28:21Z",
+ "submitted_by": "kim-em",
+ "summary": "Three public Hopf-category lemmas duplicate the new generic bialgebra naturality API without adding content.",
+ "transcript_blob": "86438abafc3e27120a6ba1f1329279ea246ea2b4a3233a3ab45d29ee4e0de48d",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 90112,
+  "input_tokens": 128992,
+  "output_tokens": 1426,
+  "reasoning_output_tokens": 508
+ },
+ "verdict": "request_changes"
+}
