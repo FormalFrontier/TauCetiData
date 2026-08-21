@@ -1,0 +1,204 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.666463,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 229.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 75728,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 75728,
+    "cache_read_input_tokens": 888006,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1449,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1449,
+      "cache_read_input_tokens": 90778,
+      "input_tokens": 2,
+      "output_tokens": 2720,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18007,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "cost_usd": 1.666463,
+ "dedupe_key": "TauCetiProject/TauCeti|3991|c9e00d256c33b87b374cafa0dab0ca2aff8c1c86|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a4d5e12361bf90e4f655a2ff4f31d595778eb915a809e6e558c6a9fc894d47ca",
+ "diff_sha256": "a4d5e12361bf90e4f655a2ff4f31d595778eb915a809e6e558c6a9fc894d47ca",
+ "duration_s": 229.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 99 `(g : P.Equiv P\u2082) (\u03c4 : b.support \u2243 b\u2082.support)`; line 106 `def geckIndexEquiv := Equiv.sumCongr \u03c4 g.indexEquiv`; `h\u03c4` first appears at line 160 inside `section Numbered`.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "fix": "State that both definitions take an arbitrary `\u03c4` alongside `g`, and that the compatibility `h\u03c4 : \u2200 i, (\u03c4 i : \u03b9\u2082) = g.indexEquiv i` is assumed only from `submatrix_geckIndexEquiv_h` onward.",
+   "issue": "The `geckIndexEquiv` docstring says it is \"attached to an equivalence `g` ... whose index bijection restricts to `\u03c4` on the bases\", but the definition imposes no relation between `g` and `\u03c4`: `\u03c4 : b.support \u2243 b\u2082.support` is arbitrary data (line 99) and `h\u03c4` is only introduced at line 160. Same for `geckModuleEquiv` (line 125), \"induced by a base-preserving equivalence of root pairings\".",
+   "line": 101
+  },
+  {
+   "evidence": "`grep -rn \"graphAut\" code/TauCeti` returns only `SerreGraphAutomorphism.lean` (`serreGraphAut`) and this line 70.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "fix": "Drop the name or mark it as planned, as the sibling file does (`SerreGraphAutomorphism.lean:46-52` describes future work without naming unbuilt declarations).",
+   "issue": "The Roadmap section names `TauCeti.GraphTwistedIndex.graphAut` as the existing consumer, but no such declaration exists in the repo; only `serreGraphAut` does. A reader greps and finds nothing.",
+   "line": 70
+  },
+  {
+   "evidence": "NumberedSymmetry.lean:78-82 `variable (\u03c3) (\u03b8) (h\u03b8M : \u2200 v, \u03b8 v \u2208 M \u2194 v \u2208 M) (h\u03b8e ...) (h\u03c3 : Surjective \u03c3)`; `kostantElementaryNumberedSymmetryAut` at line 155 takes all five.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "fix": "Say the file supplies the permutation and the intertwining relation only, and that the lattice hypothesis `h\u03b8M` and the identification of Geck's representation with the Kostant data remain to be provided.",
+   "issue": "Overclaim: the docstring says the pair `(\u03c3, \u03b8)` \"is exactly the input of `kostantElementaryNumberedSymmetryAut`\" and that `geckModuleEquiv` with `geckModuleEquiv_mulVec_e` \"supplies it\". That constructor also needs `h\u03b8M` (\u03b8 preserves the lattice) and `h\u03c3`; nothing here establishes either, and line 35's \"Such a coordinate permutation preserves the standard coordinate lattice\" is stated by no declaration in the file (the PR description itself defers \"checking the lattice hypothesis against the Geck integral lattice\").",
+   "line": 73
+  },
+  {
+   "evidence": "Mathlib Basic.lean:68 documents `h` as \"Part of an `sl\u2082` triple\"; `grep -rn \"Cartan matrix\" code/TauCeti` shows the term reserved for `CartanMatrix.A n` / `b.cartanMatrix` (e.g. `SimplyConnectedRootDatum/Assembly.lean:309`).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "fix": "Say \"the Cartan generator matrix `h i`\" (or \"the diagonal matrix `h i`\") in both docstrings.",
+   "issue": "`reindex_geckIndexEquiv_h` and `geckModuleEquiv_mulVec_h` (line 289) call `GeckConstruction.h i` \"the Cartan matrix numbered by `i`\". `h i` is the diagonal matrix of the Cartan generator h\u1d62, not a Cartan matrix; `b.cartanMatrix` is a different object that appears in this file's own proofs (`Base.cartanMatrixIn_def`, lines 193 and 209), and the repo uses \"Cartan matrix\" for that everywhere else.",
+   "line": 217
+  }
+ ],
+ "head_sha": "c9e00d256c33b87b374cafa0dab0ca2aff8c1c86",
+ "merge_base_sha": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3991,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8f9c700ac0126d47d65b3a78fda66fd93c26b028fd59f552c0e797b3d53cb2a8",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T034521Z-3991-documentation-149b00",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T03:45:21Z",
+ "submitted_by": "kim-em",
+ "summary": "Documentation is otherwise thorough, but the `geckIndexEquiv`/`geckModuleEquiv` docstrings assert a compatibility between `g` and `\u03c4` that neither definition imposes, two docstrings call `GeckConstruction.h i` \"the Cartan matrix\" (which collides with `b.cartanMatrix`, used in this very file), and the Roadmap paragraph cites a declaration that does not exist and claims a downstream input is supplied when its lattice hypothesis is unproved.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/EquivInvariance.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/RootSystem/GeckConstruction/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/RootSubgroup/NumberedSymmetry.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/RootSubgroup/NumberedSymmetry.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 15,
+  "trace_truncated": false
+ },
+ "transcript_blob": "2a92484a01d0be4624bc408db8a872dcbcca41b443bfe407c1a755ff2d222bc6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 75728,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 75728,
+  "cache_read_input_tokens": 888006,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1449,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1449,
+    "cache_read_input_tokens": 90778,
+    "input_tokens": 2,
+    "output_tokens": 2720,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18007,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

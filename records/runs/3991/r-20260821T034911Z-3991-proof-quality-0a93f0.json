@@ -1,0 +1,210 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9253415000000003,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 322.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79009,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79009,
+    "cache_read_input_tokens": 923507,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2325,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2325,
+      "cache_read_input_tokens": 93183,
+      "input_tokens": 2,
+      "output_tokens": 5156,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 26332,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "cost_usd": 1.925342,
+ "dedupe_key": "TauCetiProject/TauCeti|3991|c9e00d256c33b87b374cafa0dab0ca2aff8c1c86|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a4d5e12361bf90e4f655a2ff4f31d595778eb915a809e6e558c6a9fc894d47ca",
+ "diff_sha256": "a4d5e12361bf90e4f655a2ff4f31d595778eb915a809e6e558c6a9fc894d47ca",
+ "duration_s": 322.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Symmetry.lean:192,208 list `h\u03c4, \u2190 indexEquiv_neg g, indexNeg_neg` together; EquivInvariance.lean:82 states `indexEquiv_neg` with RHS `-g.indexEquiv i`, which `indexNeg_neg` itself rewrites, so the `@[simp]` RHS is not simp-normal either.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "fix": "Restate the transport lemma without `Neg`/`letI` as `indexEquiv_reflectionPerm_self : g.indexEquiv (P.reflectionPerm i i) = P\u2082.reflectionPerm (g.indexEquiv i) (g.indexEquiv i)` and use it (as `\u2190`) alongside `indexNeg_neg`; the two then act on disjoint redexes and the rewrite is confluent.",
+   "issue": "The `simp only` set contains both `indexNeg_neg` (`-i = P.reflectionPerm i i`, generated `@[simp]` by `@[simps]` on `RootPairing.indexNeg`, Defs.lean:403) and `\u2190 indexEquiv_neg g` (`-(g.indexEquiv i) = g.indexEquiv (P.reflectionPerm i i)`). After `h\u03c4` rewrites `\u2191(\u03c4 i)` to `g.indexEquiv i`, both rules match the redex `-(g.indexEquiv i)` and produce different results; only one order leaves the goal in a shape `Equiv.apply_eq_iff_eq` can close, so the proof depends on simp's internal rule ordering, not on anything visible. Same in `submatrix_geckIndexEquiv_f` (line 208). Mathlib's own proofs about `e`/`f`/`\u03c9` explicitly disable this lemma (`simp [e, h, -indexNeg_neg]`, GeckConstruction/Basic.lean:356; `simp [\u03c9, -indexNeg_neg]`, :248).",
+   "line": 192
+  },
+  {
+   "evidence": "`Mathlib/LinearAlgebra/RootSystem/Chain.lean:266` `chainTopCoeff_reflectionPerm_left : P.chainTopCoeff (P.reflectionPerm i i) j = P.chainBotCoeff i j` and `:277` `chainBotCoeff_reflectionPerm_left`, both `@[simp]`, under `variable {\u03b9 R M N} [Finite \u03b9] [CommRing R] [CharZero R] [IsDomain R] ... [P.IsCrystallographic]` (Chain.lean:37-42).",
+   "file": "TauCeti/LinearAlgebra/RootSystem/EquivInvariance.lean",
+   "fix": "Derive it: `rw [\u2190 chainTopCoeff_reflectionPerm_left, \u2190 indexEquiv_reflectionPerm_self, chainTopCoeff_indexEquiv, chainTopCoeff_reflectionPerm_left]` (instance requirements of `Chain.lean` match this file's `Chain` section exactly).",
+   "issue": "`chainBotCoeff_indexEquiv` repeats `chainTopCoeff_indexEquiv` verbatim (same `by_cases`, same `key`, same `le_antisymm`) with add\u2194sub and Top\u2194Bot swapped; the reusable fact that the two coefficients swap under index negation is already in Mathlib and is hidden here.",
+   "line": 152
+  },
+  {
+   "evidence": "EquivInvariance.lean:64-65 vs. its uses at :140 and :159, where the goal is produced by `rw [\u2190 map_add]`/`\u2190 map_sub` in `range`-membership form.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/EquivInvariance.lean",
+   "fix": "State it as `g.toHom.weightMap m \u2208 range P\u2082.root \u2194 m \u2208 range P.root`; the two `exact`s then match syntactically and the `@[simp]` form is uniform.",
+   "issue": "`mem_range_root_weightMap_iff` is stated with the left side unfolded (`\u2203 i, P\u2082.root i = g.toHom.weightMap m`) while the right side uses `\u2208 range`; the two uses (`exact mem_range_root_weightMap_iff g` at lines 140 and 159) then close a goal of the form `_ \u2208 range P\u2082.root \u2194 _ \u2208 range P.root` only through the definitional unfolding of `Set.range` membership.",
+   "line": 64
+  }
+ ],
+ "head_sha": "c9e00d256c33b87b374cafa0dab0ca2aff8c1c86",
+ "merge_base_sha": "5badc36ee54d36059a8e54632ba425d5dd51f0d6",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 3991,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "58a4cae854ae6397d567380b3b2f6578f1375c67fb6c83b003d73aa80dbc2297",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T034911Z-3991-proof-quality-0a93f0",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T03:49:11Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proof-quality issues: the negation-transport lemma is stated against `Neg` so that the `simp only` sets in `submatrix_geckIndexEquiv_e`/`_f` contain two rules (`indexNeg_neg` and `\u2190 indexEquiv_neg`) that match the same redex and rewrite it incompatibly, and `chainBotCoeff_indexEquiv` duplicates the whole 14-line `chainTopCoeff_indexEquiv` proof instead of deriving it in four rewrites from Mathlib's `chain*Coeff_reflectionPerm_left`.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/EquivInvariance.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/GeckConstruction/Symmetry.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": false,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  },
+  {
+   "ok": true,
+   "tool": "Bash"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 19,
+  "trace_truncated": false
+ },
+ "transcript_blob": "1ca5f21101d88949946d9c7df9140f9f23f68a9000bbdcd34301dcf4424b480a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79009,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79009,
+  "cache_read_input_tokens": 923507,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2325,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2325,
+    "cache_read_input_tokens": 93183,
+    "input_tokens": 2,
+    "output_tokens": 5156,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 26332,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
