@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.410678,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 57.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 141056,
+    "input_tokens": 199528,
+    "output_tokens": 1593,
+    "reasoning_output_tokens": 525
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5e40c6c6c7d3bd14b3e15a0b2d87065e6fb474a3",
+ "cost_estimated": true,
+ "cost_usd": 0.410678,
+ "dedupe_key": "TauCetiProject/TauCeti|4007|f8d6b985c2afb46a17a60f4715392e316ee066fd|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "cfc3c1503a0e3280fa46ad16567d1dd280911a53c55d5c78520356ce51b80d98",
+ "diff_sha256": "cfc3c1503a0e3280fa46ad16567d1dd280911a53c55d5c78520356ce51b80d98",
+ "duration_s": 57.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds this declaration only at line 113, while Mathlib uses `Commute.all` throughout for arbitrary elements of commutative rings.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/AssociatedGraded.lean",
+   "fix": "Delete `commute_pbwGradedGenerator`; consumers should use `Commute.all (pbwGradedGenerator R L x) (pbwGradedGenerator R L y)`.",
+   "issue": "`commute_pbwGradedGenerator` duplicates generic commutativity: after `pbwAssociatedGradedCommRing`, the same proposition is exactly `Commute.all _ _`, and the specialized theorem has no in-repository consumer.",
+   "line": "113"
+  },
+  {
+   "evidence": "`TauCeti/Algebra/WordFiltration/Basic.lean:124` contains the generic theorem; this proof ends with exactly `simpa only [id_eq] using span_prod_map_eq_wordFiltration f id hid k`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/AssociatedGraded.lean",
+   "fix": "Delete the wrapper and invoke `span_prod_map_eq_wordFiltration f id hid k` directly where `hs` is established.",
+   "issue": "`span_pbwWords_eq_wordFiltration` is a private thin specialization of the existing `TauCeti.Algebra.span_prod_map_eq_wordFiltration` with `e := id`, and is used only once at line 320.",
+   "line": "295"
+  }
+ ],
+ "head_sha": "f8d6b985c2afb46a17a60f4715392e316ee066fd",
+ "merge_base_sha": "8b876313601c813bcd2435b537d07a2b66ff9b5e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4007,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4454d1825a3720e93bfd4af78560b350be924e7384f205b2c24b3238cf25972e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "85349e8225cebb5fb9f1877b31bb8555303ade84",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260821T010147Z-4007-reuse-4262aa",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-21T01:01:47Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds one public theorem directly covered by the resulting commutative-ring API and one unnecessary private specialization of an existing TauCeti theorem.",
+ "transcript_blob": "cab869d61505fc8065c9baca9f6a84f79a6dbe0f318f60b9a55df4c73371074c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 141056,
+  "input_tokens": 199528,
+  "output_tokens": 1593,
+  "reasoning_output_tokens": 525
+ },
+ "verdict": "block"
+}
