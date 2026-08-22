@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.222528,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 71936,
+    "input_tokens": 100800,
+    "output_tokens": 1408,
+    "reasoning_output_tokens": 579
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "814df962cac27d8d65cce7b48f9645e74cd26fe7",
+ "cost_estimated": true,
+ "cost_usd": 0.222528,
+ "dedupe_key": "TauCetiProject/TauCeti|4202|2da115a4c73b311df13cae51cb0a97dcd912eb72|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "b6671efaa202b90617ac1b7c962d0d6924fb45ca52ac9cbf9da7bb258f3e93da",
+ "diff_sha256": "b6671efaa202b90617ac1b7c962d0d6924fb45ca52ac9cbf9da7bb258f3e93da",
+ "duration_s": 36.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 346, 361, and 446 require `ContDiff \u211d \u221e f`, while `Basic.lean:441` defines the canonical half-line notion using `ContinuousOn f (Ici 0)` and derivatives on the positive half-line; the PR's own shift lemma at line 373 already works from `ContDiffOn \u211d \u221e f (Ici 0)`.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/FiniteDifference/Basic.lean",
+   "fix": "Prove the sign lemma using `iteratedDerivWithin` under `ContDiffOn \u211d \u221e f (Ici 0)`, then state `isCompletelyMonotone` and the equivalence with that half-line hypothesis.",
+   "issue": "The derivative characterization unnecessarily requires global `ContDiff \u211d \u221e f`, although both predicates and the conclusion use only `[0, \u221e)` (and `IsCompletelyMonotone` itself is formulated with within-derivatives). The same overstrong assumption propagates to lines 361 and 446.",
+   "line": "346"
+  },
+  {
+   "evidence": "In the proof, `hcont` is used only at line 104 to obtain global continuity of `F`; subsequent uses provide integrability and `F.locallyIntegrable` (lines 74, 125, and 137), properties available for the monotone extension without continuity.",
+   "file": "TauCeti/Analysis/CompletelyMonotone/FiniteDifference/Mollify.lean",
+   "fix": "Derive local integrability/measurability from `hf.antitoneOn`, prove the convolution and difference-under-integral steps with those hypotheses, and remove `hcont` from both public theorem signatures.",
+   "issue": "`ContinuousOn f (Ici 0)` is stronger than needed for mollification: the finite-difference hypothesis already makes `f` antitone and hence locally integrable after the constant left extension. The same unnecessary assumption is exposed again by the Laplace corollary at `Laplace.lean:57`.",
+   "line": "99"
+  }
+ ],
+ "head_sha": "2da115a4c73b311df13cae51cb0a97dcd912eb72",
+ "merge_base_sha": "814df962cac27d8d65cce7b48f9645e74cd26fe7",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4202,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d253013127e077b85c5cd1a916f0edb136d3510b6476a4aafbe14e6f64e2ec35",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260822T171106Z-4202-generality-4c061a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-22T17:11:06Z",
+ "submitted_by": "kim-em",
+ "summary": "The characterization and smoothing APIs impose assumptions stronger than their half-line finite-difference content requires.",
+ "transcript_blob": "2e9b2565b7c981664018f35191b5ef8c5723e91f1f6f935241701f5037a72e52",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 71936,
+  "input_tokens": 100800,
+  "output_tokens": 1408,
+  "reasoning_output_tokens": 579
+ },
+ "verdict": "request_changes"
+}
