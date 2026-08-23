@@ -1,0 +1,214 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6068725000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 222.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 85119,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 85119,
+    "cache_read_input_tokens": 663459,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1009,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1009,
+      "cache_read_input_tokens": 86910,
+      "input_tokens": 2,
+      "output_tokens": 5148,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15923,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c9c988d19854f021ce457c4425a8c9126eaaad6f",
+ "cost_usd": 1.606873,
+ "dedupe_key": "TauCetiProject/TauCeti|4285|a92cd4424fb9e7c041614e712fa725d516c35560|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c824b53687ce10ae68ed11e14317016ebfa97061d417976cabf3ad9996ba84f9",
+ "diff_sha256": "c824b53687ce10ae68ed11e14317016ebfa97061d417976cabf3ad9996ba84f9",
+ "duration_s": 222.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Only `.source` is proved: `theorem symOpenPartialHomeomorph_source` at line 92; nothing else mentions the definition except `symChartAt_description`. Mathlib supplies the needed inputs: `mathlib/Mathlib/Topology/OpenPartialHomeomorph/Basic.lean:228 lemma toOpenPartialHomeomorph_left_inv`. The sibling homeomorphism in this development does provide them: `TauCeti/Analysis/Polynomial/SymmetricPower.lean:172 @[simp] coeffHomeomorph_apply`, `:177 coeffHomeomorph_symm_apply`.",
+   "file": "TauCeti/Geometry/Manifold/SymmetricPower.lean",
+   "fix": "Add `@[simp] symOpenPartialHomeomorph_apply : symOpenPartialHomeomorph c V m hm .. e hp (Sym.sumSubtype V m hm p) = piFinSumHomeomorph K e (fun i => Sym.coeffEquiv K (m i) (Sym.map (fun x : \u21a5(V i) => chartAt K (c i) (x : \u03b1)) (p i)))`, the corresponding `_symm_apply`, and `_target`. The proofs are `OpenPartialHomeomorph.trans_apply` plus `IsOpenEmbedding.toOpenPartialHomeomorph_left_inv` / `_apply`.",
+   "issue": "`symOpenPartialHomeomorph` is exposed with only `symOpenPartialHomeomorph_source` (line 92). There is no `_apply`, `_symm_apply` or `_target`, so no consumer can evaluate the chart or its inverse without unfolding the `letI`/`let` chain of the definition. Since `symChartAt` is `Exists.choose` and `symChartAt_description` (line 150) reduces it to exactly this definition, the whole charted structure is unusable for the stated next step (holomorphic transition maps `chart\u2082 \u2218 chart\u2081.symm`).",
+   "line": 70
+  },
+  {
+   "evidence": "`noncomputable abbrev symChartSupport (s : Sym \u03b1 n) : Finset \u03b1 := by classical; exact (s : Multiset \u03b1).toFinset` (lines 104-106); the proof of `exists_openPartialHomeomorph_sym` must `unfold symChartSupport` (line 123) because no lemma relates it to `s`.",
+   "file": "TauCeti/Geometry/Manifold/SymmetricPower.lean",
+   "fix": "Add `@[simp] theorem mem_symChartSupport {a : \u03b1} {s : Sym \u03b1 n} : a \u2208 symChartSupport s \u2194 a \u2208 s`, and state the definition as a plain `def` with the classical instance written out rather than a tactic block, so the intended `Finset` is unambiguous.",
+   "issue": "`symChartSupport` is public (it appears in the statements of `exists_openPartialHomeomorph_sym` and `symChartAt_description` as the index type `\u21a5(symChartSupport s)`) but has no characteristic lemma: nothing states `a \u2208 symChartSupport s \u2194 a \u2208 s`. Its body is a `by classical; exact` block, so the `DecidableEq` instance in `Multiset.toFinset` is `Classical.decEq`, which is not defeq to a user's own instance \u2014 a consumer cannot even reconstruct the index type by writing `(s : Multiset \u03b1).toFinset` themselves.",
+   "line": 104
+  },
+  {
+   "evidence": "`TauCeti/Topology/Sym/Basic.lean:181 instance instT2Space [T2Space \u03b1] : T2Space (Sym \u03b1 n)`, reachable via `public import TauCeti.Topology.Sym.Family` \u2192 `TauCeti.Topology.Sym.Basic`; the file's variable line 58 has `[T2Space \u03b1]`.",
+   "file": "TauCeti/Geometry/Manifold/SymmetricPower.lean",
+   "fix": "Drop the Hausdorff clause from the docstring (or state that it is supplied by `TauCeti.Sym.instT2Space`), keeping only the second-countability caveat.",
+   "issue": "The `symChartedSpace` docstring says reading the result as a topological manifold \"requires the separate Hausdorff instance on the symmetric power \u2026 which are not assumed here\". `T2Space (Sym \u03b1 n)` is already an instance in this file's import closure and the file assumes `[T2Space \u03b1]`, so it is automatic; only the countability clause is genuinely missing.",
+   "line": 162
+  }
+ ],
+ "head_sha": "a92cd4424fb9e7c041614e712fa725d516c35560",
+ "merge_base_sha": "4d5c1e20089c6911b104c0c94775f13a4615cf67",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4285,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8c148408565acbceb5119fa3d299943675ea61e6a5d87f65922715e44f481601",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260823T210159Z-4285-api-design-e371ba",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-23T21:01:59Z",
+ "submitted_by": "kim-em",
+ "summary": "The obsolete `appendSubtype` surface is fully removed and the `sumSubtype`/`piCurry` layers are well characterized, but the chart layer is opaque: `symOpenPartialHomeomorph` ships only a `_source` lemma, with no way to evaluate the chart or its inverse, and `symChartSupport` has no membership lemma. One docstring claim about the missing Hausdorff instance is false.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry/Manifold/SymmetricPower.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/Sym/Family.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Data/Sym/Family.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/PiCurry.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Constructions.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": false,
+   "target": "<not-found>",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SymmetricPower.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Data/Sym/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/Sym/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Topology/Sym/Basic.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 17,
+  "trace_truncated": false
+ },
+ "transcript_blob": "7afc4a63a79adefb89da319cc518d3fdb92047d00cdf3c4f8924ca26c60d826e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 85119,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 85119,
+  "cache_read_input_tokens": 663459,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1009,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1009,
+    "cache_read_input_tokens": 86910,
+    "input_tokens": 2,
+    "output_tokens": 5148,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15923,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
