@@ -1,0 +1,238 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.7484885000000001,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 287.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 80796,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 80796,
+    "cache_read_input_tokens": 744045,
+    "inference_geo": "not_available",
+    "input_tokens": 26,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 999,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 999,
+      "cache_read_input_tokens": 82597,
+      "input_tokens": 2,
+      "output_tokens": 3233,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22286,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ffd9e9d19a2d0317dfe1f23ec7a94a5669b806ac",
+ "cost_usd": 1.748489,
+ "dedupe_key": "TauCetiProject/TauCeti|4334|73b6eb37208e542c128e4db498426195eee6b2d6|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1e92f435a14e7147d1aea54012c31adf84bf837c19060663147dab86ec06a718",
+ "diff_sha256": "1e92f435a14e7147d1aea54012c31adf84bf837c19060663147dab86ec06a718",
+ "duration_s": 287.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Only occurrence outside its own statement is line 115 `.ofCoeff (Finsupp.ofSupportFinite _ (finite_support_finrank_genWeightSpace K L M))`; grep for the name shows no other use in `code/TauCeti`.",
+   "file": "TauCeti/Algebra/Lie/Weights/FormalCharacter.lean",
+   "fix": "Mark it `private`. The definition's body is not exposed (plain `public section`, no `@[expose]`), so a private helper is usable there, and `formalCharacter_coeff` remains the only public handle.",
+   "issue": "`finite_support_finrank_genWeightSpace` is public but serves only the `Finsupp.ofSupportFinite` argument in the definition on line 115; it is not in the module docstring's Main results and has no consumer (its statement, the support of the \u2124-cast finrank as a function on `Dual K L`, is the internal shape of the definition).",
+   "line": "101"
+  },
+  {
+   "evidence": "`AddMonoidAlgebra.single` at mathlib/Mathlib/Algebra/MonoidAlgebra/Defs.lean:222; `Weight.instFinite` at mathlib/Mathlib/Algebra/Lie/Weights/Basic.lean:694 supplies the finite index; roadmap Suggested.lean:387-402 builds the Weyl numerator/denominator/formula out of the same group algebra.",
+   "file": "TauCeti/Algebra/Lie/Weights/FormalCharacter.lean",
+   "fix": "Add `formalCharacter_eq_sum_single : formalCharacter K L M = \u2211 w : Weight K L M, .single (w : Dual K L) (finrank K (genWeightSpace M w) : \u2124)` (provable in the `Defs` section, no `IsTriangularizable` needed, since the coefficient vanishes off the weights).",
+   "issue": "The API gives elimination (`formalCharacter_coeff`) but no introduction form: nothing relates `formalCharacter` to `AddMonoidAlgebra.single`, i.e. to `e^\u03bc`, although the docstring justifies the group-algebra carrier by exactly that structure (`ch M = \u2211_\u03bc dim M\u03bc \u00b7 e^\u03bc`), and the downstream roadmap targets (`weylNumerator`, `weylDenominator`, `weyl_character_formula`) are built from `single`.",
+   "line": "114"
+  },
+  {
+   "evidence": "Line 211 `@[simp] theorem mem_genWeightSpace_prod_iff`; precedent for the `= \u22a5` iff form as simp: `@[simp] theorem weightSpace_weylGroup_smul_eq_bot_iff` at TauCeti/Algebra/Lie/Weights/WeylInvariance.lean:352.",
+   "file": "TauCeti/Algebra/Lie/Weights/FormalCharacter.lean",
+   "fix": "Tag both `@[simp]`. Neither loops: each rewrites a statement about `M \u00d7 N` into statements about the factors, matching the sibling `mem_genWeightSpace_prod_iff` which is already `@[simp]`.",
+   "issue": "`genWeightSpace_prod_eq_bot_iff` (line 226) and `finrank_genWeightSpace_prod` (line 281) are normal-form decomposition lemmas for a product module but carry no `@[simp]`; the proof of `formalCharacter_prod` on line 291 has to pass `finrank_genWeightSpace_prod` to `simp` by hand.",
+   "line": "226"
+  }
+ ],
+ "head_sha": "73b6eb37208e542c128e4db498426195eee6b2d6",
+ "merge_base_sha": "7800b3c48eaf491f6910d94354974465be742ad0",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4334,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e7b0b46604de0dac169563a20555e7b186cfd85ffcbb9fff27ba7ffee62484a9",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260824T003205Z-4334-api-design-26006e",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-24T00:32:05Z",
+ "submitted_by": "kim-em",
+ "summary": "The character's elimination API (`formalCharacter_coeff`, the vanishing iff, congr, total dimension, additivity, Killing-section restatements) is in good shape and bodies are correctly unexposed, but an implementation-only finiteness helper is public, there is no introduction form relating the definition to the group-algebra basis it was given for, and two product lemmas that are normal forms lack `@[simp]`.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/FormalCharacter.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/RepresentationTheory/LieHighestWeight",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MonoidAlgebra/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Prod.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/RepresentationTheory/LieHighestWeight/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/Integrality.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Lie",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/Dimension.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Lie/Weights",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MonoidAlgebra/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MonoidAlgebra/Defs.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MonoidAlgebra",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 22,
+  "trace_truncated": false
+ },
+ "transcript_blob": "68de105a3a92081a6482f4281408bd81c7f73fe5c90f7df85257901fb04c994a",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 80796,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 80796,
+  "cache_read_input_tokens": 744045,
+  "inference_geo": "not_available",
+  "input_tokens": 26,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 999,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 999,
+    "cache_read_input_tokens": 82597,
+    "input_tokens": 2,
+    "output_tokens": 3233,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22286,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
