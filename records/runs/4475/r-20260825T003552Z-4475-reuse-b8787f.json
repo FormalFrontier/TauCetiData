@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.251489,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 41.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 89088,
+    "input_tokens": 122533,
+    "output_tokens": 1324,
+    "reasoning_output_tokens": 352
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "e3f990cb848cd31d8bcb903de85a7f4fbf1c8730",
+ "cost_estimated": true,
+ "cost_usd": 0.251489,
+ "dedupe_key": "TauCetiProject/TauCeti|4475|eacb0804311330e8643d32c7b3a0ca43567f08b2|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "ca5d559dafa525479e41af53da98ffc0711fb5dab9172df1c7d2fa73f772d3e2",
+ "diff_sha256": "ca5d559dafa525479e41af53da98ffc0711fb5dab9172df1c7d2fa73f772d3e2",
+ "duration_s": 41.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/Topology/ClusterPt.lean:177` declares `IsClosed.mem_of_mapClusterPt`; lines 82\u201385 reproduce it after constructing the eventual tail-membership premise.",
+   "file": "TauCeti/Topology/OmegaLimit.lean",
+   "fix": "Delete the declaration and use `hs.mem_of_mapClusterPt hx (mem_map.mpr (mem_of_superset (Ici_mem_atTop a) hmaps))` at consumers.",
+   "issue": "`mem_of_mapClusterPt_atTop` is a direct specialization of Mathlib's `IsClosed.mem_of_mapClusterPt`.",
+   "line": "82"
+  },
+  {
+   "evidence": "`Mathlib/Topology/Compactness/Compact.lean:43` declares `IsCompact.exists_mapClusterPt`; lines 89\u201393 merely supply its filter-containment premise, and the only PR consumer is `Convergence.lean:249`.",
+   "file": "TauCeti/Topology/OmegaLimit.lean",
+   "fix": "Delete it and use `hK.exists_mapClusterPt (le_principal_iff.mpr (mem_map.mpr (mem_of_superset (Ici_mem_atTop a) hmaps)))` directly.",
+   "issue": "`exists_mem_mapClusterPt_atTop` is an unnecessary wrapper around Mathlib's `IsCompact.exists_mapClusterPt`.",
+   "line": "89"
+  },
+  {
+   "evidence": "`Mathlib/Topology/ClusterPt.lean:177` is exactly the closed-set membership lemma; the current proof reconstructs it via `hx.clusterPt.mem_closure_of_mem` and `hcl.closure_subset`.",
+   "file": "TauCeti/Analysis/Calculus/Morse/Convergence.lean",
+   "fix": "Replace lines 224\u2013226 with `have hmemx := hcl.mem_of_mapClusterPt hx hmem`.",
+   "issue": "`gradient_eq_zero_of_mapClusterPt` manually expands the closed-set cluster-point argument already provided by `IsClosed.mem_of_mapClusterPt`.",
+   "line": "224"
+  }
+ ],
+ "head_sha": "eacb0804311330e8643d32c7b3a0ca43567f08b2",
+ "merge_base_sha": "84857d9d4ee788df8323d2753b15faccf4d977fd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4475,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a07ec95de7fb0841d92ac3614760253048bd15ce28f9db52c80dd7e83b97775c",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "f854a7e1bf95d7182f672ea06e690d08b07e06a5",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260825T003552Z-4475-reuse-b8787f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-25T00:35:52Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new omega-limit declarations directly duplicate existing Mathlib cluster-point APIs, and another proof reimplements the same API internally.",
+ "transcript_blob": "88fb5a7ec33d2786cc125e59ab70600121ae0bd0741db68a17dfaa6d4d652f5f",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 89088,
+  "input_tokens": 122533,
+  "output_tokens": 1324,
+  "reasoning_output_tokens": 352
+ },
+ "verdict": "block"
+}
