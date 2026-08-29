@@ -1,0 +1,259 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9965365,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 231.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 98204,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 98204,
+    "cache_read_input_tokens": 1049757,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3448,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3448,
+      "cache_read_input_tokens": 97556,
+      "input_tokens": 2,
+      "output_tokens": 1414,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19231,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5d582ee6a309654d9c7989d410e92385d6983b16",
+ "cost_usd": 1.996536,
+ "dedupe_key": "TauCetiProject/TauCeti|5106|9980b67d5caa14a360cd723f31c768c6d6b697c2|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e206be2061ffb5379cac1d1c3d4155dbae4398b7afe54b787e4001d996fd35e9",
+ "diff_sha256": "e206be2061ffb5379cac1d1c3d4155dbae4398b7afe54b787e4001d996fd35e9",
+ "duration_s": 231.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Logic/Function/Basic.lean:456`: `theorem RightInverse.leftInverse {f g} (h : RightInverse g f) : LeftInverse f g := h` \u2014 proof is `h`, i.e. the two are the same proposition. Compare Functoriality.lean:93-98 with 102-107.",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "Delete `map_rightInverse`; callers wanting the right-inverse form use `map_leftInverse R h` directly (it elaborates against `Function.RightInverse` since the two are definitionally equal).",
+   "issue": "`map_rightInverse` is the same statement as `map_leftInverse` (line 93) with `f` and `g` swapped: `Function.RightInverse (map R g) (map R f)` *is* `Function.LeftInverse (map R f) (map R g)` by definition, and the hypothesis `f.comp g = LinearMap.id` is `map_leftInverse`'s hypothesis at the swapped instantiation. The proof body is a character-for-character copy with `f`/`g` exchanged.",
+   "line": 102
+  },
+  {
+   "evidence": "`mathlib/Mathlib/LinearAlgebra/SymmetricAlgebra/Basic.lean:119-123` `@[ext 1200] theorem algHom_ext`; `Basic.lean:99` `def lift : (M \u2192\u2097[R] A) \u2243 (SymmetricAlgebra R M \u2192\u2090[R] A)`; Functoriality.lean:72-73 shows the reverse direction is `map_\u03b9` verbatim. grep for `map_unique` in `code/TauCeti` returns only this declaration (other hits are unrelated `TriangulatedK0`/`AbelianK0` lemmas).",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "Delete `map_unique`; uniqueness is already `SymmetricAlgebra.algHom_ext` (plus the `@[simp]` `map_\u03b9`), and `SymmetricAlgebra.lift` is an `Equiv`, so `g = map R f` is decided by `lift.injective`. If a uniqueness lemma is wanted, keep only the `\u2192` direction (`(h : \u2200 a, g (\u03b9 R M a) = \u03b9 R N (f a)) : g = map R f`).",
+   "issue": "`map_unique` bundles two already-available facts: the `\u2190` direction is literally `map_\u03b9` (its proof is `rintro rfl; exact map_\u03b9 R f`), and the `\u2192` direction is a one-line application of Mathlib's `@[ext]` lemma `SymmetricAlgebra.algHom_ext` together with `map_\u03b9`. It has no consumer in the repo.",
+   "line": 62
+  }
+ ],
+ "head_sha": "9980b67d5caa14a360cd723f31c768c6d6b697c2",
+ "merge_base_sha": "cf980b419369bba045afbb1d63262d9349ce5618",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5106,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "be882be3d11db5a426ba8f81164d9c6c3a669830470302be811b537dc6774925",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T165255Z-5106-reuse-46b00d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T16:52:55Z",
+ "submitted_by": "kim-em",
+ "summary": "The new `map`/`mapEquiv` API is genuinely absent from Mathlib and TauCeti, and the PR correctly deletes the private `symmetricAlgebraAlgEquiv` duplicate in `AdditiveGroup/BaseChange.lean`. Two declarations in the new file restate other declarations in the same file.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/SymmetricAlgebra/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/SymmetricAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/HopfAlgebra/SymmetricAlgebra/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/SymmetricAlgebra/Derivation.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/TensorAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/ExteriorAlgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Logic/Function/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Logic/Function/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/RingTheory/Bialgebra/SymmetricAlgebra.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/CliffordAlgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Equiv.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Logic",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 27,
+  "trace_truncated": false
+ },
+ "transcript_blob": "ead0d2857159b33899fa62d80225400bd48281732b3e8bfec50a420265049ba5",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 98204,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 98204,
+  "cache_read_input_tokens": 1049757,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3448,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3448,
+    "cache_read_input_tokens": 97556,
+    "input_tokens": 2,
+    "output_tokens": 1414,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19231,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

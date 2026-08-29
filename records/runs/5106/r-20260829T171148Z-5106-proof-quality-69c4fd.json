@@ -1,0 +1,205 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.0402915,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 182.6,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 53355,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 53355,
+    "cache_read_input_tokens": 230705,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3278,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3278,
+      "cache_read_input_tokens": 52877,
+      "input_tokens": 2,
+      "output_tokens": 4220,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15319,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5d582ee6a309654d9c7989d410e92385d6983b16",
+ "cost_usd": 1.040291,
+ "dedupe_key": "TauCetiProject/TauCeti|5106|9980b67d5caa14a360cd723f31c768c6d6b697c2|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "e206be2061ffb5379cac1d1c3d4155dbae4398b7afe54b787e4001d996fd35e9",
+ "diff_sha256": "e206be2061ffb5379cac1d1c3d4155dbae4398b7afe54b787e4001d996fd35e9",
+ "duration_s": 182.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`BialgEquiv.symm_apply_apply` at mathlib/Mathlib/RingTheory/Bialgebra/Equiv.lean:280; the sibling lemma `gaScalarTensorBialgEquiv_symm_\u03b9` (BaseChange.lean:191-201) already uses this pattern instead of a `change`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/AdditiveGroup/BaseChange.lean",
+   "fix": "Mirror the proof already used at lines 191-201: `have h : symmetricAlgebraBialgEquiv (K := K) e (\u03b9 K P (e.symm n)) = \u03b9 K N n := by rw [symmetricAlgebraBialgEquiv_\u03b9, LinearEquiv.apply_symm_apply]` then `rw [\u2190 h, BialgEquiv.symm_apply_apply]`.",
+   "issue": "`change` crosses the `BialgEquiv.ofAlgEquiv` wrapper by definitional equality; the comment records that it is defeq but not why no lemma-based route exists \u2014 one does.",
+   "line": "121"
+  },
+  {
+   "evidence": "Lines 158-161: no goal is discharged by a named characteristic lemma; the closing `simp only` succeeds only because both sides reduce to `map R e.symm.toLinearMap a` after unfolding the definition.",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "Prove it from the characteristic equations rather than the definition, e.g. `apply AlgEquiv.coe_toAlgHom_injective; apply algHom_ext; ext a; simp [AlgEquiv.symm_apply_eq]`, so it survives any refactor of `mapEquiv`.",
+   "issue": "`mapEquiv_symm` is proved by unfolding `mapEquiv` twice (`rw [mapEquiv]`, then `simp only [..., mapEquiv, ...]`) and closing on definitional equality of two `AlgEquiv.ofAlgHom` bundles; the pointwise `AlgEquiv.ext`/`intro a` plays no role and there is no comment.",
+   "line": "157"
+  },
+  {
+   "evidence": "`LinearEquiv.coe_trans : (e\u2081\u2082.trans e\u2082\u2083 : M\u2081 \u2192\u209b\u2097 M\u2083) = e\u2082\u2083.comp e\u2081\u2082` at mathlib/Mathlib/Algebra/Module/Equiv/Defs.lean:346 (and `comp_coe`, simp, at :407) is the statement of `h` at lines 183-185.",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "Drop both `have`s: `apply AlgEquiv.coe_toAlgHom_injective; apply algHom_ext; ext a; simp` reduces the statement to `mapEquiv_\u03b9`; otherwise use `LinearEquiv.coe_trans`/`comp_coe` instead of reproving it.",
+   "issue": "`mapEquiv_trans` inlines two general facts unrelated to symmetric algebras: `htrans` (an `AlgEquiv.trans`/`toAlgHom` law) and `h`, which is exactly Mathlib's `LinearEquiv.coe_trans`.",
+   "line": "177"
+  },
+  {
+   "evidence": "Lines 93-98 and 102-107 are the same five-line `have hmaps ... AlgHom.congr_fun` script; `map_leftInverse` instantiated at `f := g, g := f` takes exactly the hypothesis `f.comp g = LinearMap.id`.",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "`theorem map_rightInverse ... := map_leftInverse R h`.",
+   "issue": "`map_rightInverse` repeats `map_leftInverse`'s proof verbatim with `f`/`g` swapped; `Function.RightInverse (map R g) (map R f)` is by definition `Function.LeftInverse (map R f) (map R g)`.",
+   "line": "102"
+  },
+  {
+   "evidence": "`AlgHom.commutes` is `@[simp]` at mathlib/Mathlib/Algebra/Algebra/Hom.lean:202-203; the goal is `map R f (algebraMap R _ r) = algebraMap R _ r`.",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "fix": "Use `by simp` (or `AlgHom.commutes _ _`).",
+   "issue": "The `algebraMap` branch of `map_surjective` unfolds the definition (`simp [map]`) where the bundled `AlgHom` API already closes the goal, exposing the proof to `lift`'s internals.",
+   "line": "120"
+  }
+ ],
+ "head_sha": "9980b67d5caa14a360cd723f31c768c6d6b697c2",
+ "merge_base_sha": "cf980b419369bba045afbb1d63262d9349ce5618",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5106,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "86733d98d4ed17d919e2fc35bc4f6a8522b6c2cc387874852ec5438f5cd87309",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T171148Z-5106-proof-quality-69c4fd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T17:11:48Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs work by unfolding the new definitions or by re-deriving general library facts inline, and one bridges a BialgEquiv wrapper by definitional equality when the same file already demonstrates a wrapper-free route. Fixes are local: prove the equivalence laws from the characteristic generator equations.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/SymmetricAlgebra/Functoriality.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/AdditiveGroup/BaseChange.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/SymmetricAlgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/RingTheory/Bialgebra/Equiv.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Equiv.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/RingTheory/Bialgebra/Equiv.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Equiv.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Equiv/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Hom.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 12,
+  "trace_truncated": false
+ },
+ "transcript_blob": "e45a1d20d158e66032bf2a2bbe11f0cc45a134c9c3e716277be699103bfcb974",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 53355,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 53355,
+  "cache_read_input_tokens": 230705,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3278,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3278,
+    "cache_read_input_tokens": 52877,
+    "input_tokens": 2,
+    "output_tokens": 4220,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15319,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
