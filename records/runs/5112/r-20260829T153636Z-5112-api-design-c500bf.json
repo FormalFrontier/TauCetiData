@@ -1,0 +1,247 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9157595,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 373.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 82399,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 82399,
+    "cache_read_input_tokens": 708447,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1297,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1297,
+      "cache_read_input_tokens": 83902,
+      "input_tokens": 2,
+      "output_tokens": 4508,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 29167,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5756fee720f7f9fa6d5822b4483d60235db35051",
+ "cost_usd": 1.91576,
+ "dedupe_key": "TauCetiProject/TauCeti|5112|9efcc165511a886de419b7e5f6e09995b697cafd|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "f9964e8f8d9c3b19f0d8cac4a542084c6a777cfef07baaa46297962b0f96c794",
+ "diff_sha256": "f9964e8f8d9c3b19f0d8cac4a542084c6a777cfef07baaa46297962b0f96c794",
+ "duration_s": 373.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Group/Equiv/Basic.lean:96-103 (`@[simps apply] def monoidHomCongrLeftEquiv ... toFun f := f.comp e.symm.toMonoidHom`); the PR's own proof at Normal.lean:65 does `rw [MulEquiv.monoidHomCongrLeftEquiv_apply, MonoidHom.comp_apply]`; mathlib/Mathlib/GroupTheory/GroupAction/ConjAct.lean:255 `@[simp] MulAut.conjNormal_symm_apply`.",
+   "file": "TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal.lean",
+   "fix": "State the characteristic lemma at the element level and in simp-stable form, e.g. `@[simp] theorem nonzeroJointWeightAction_apply_coe_apply ... : ((nonzeroJointWeightAction N \u03c1 g \u03c7 : N \u2192* K\u02e3)) n = \u03c7 ((MulAut.conjNormal g).symm n)` (whose coercion is then handled by `MulAut.conjNormal_symm_apply`, giving the advertised `\u03c7 (g\u207b\u00b9 * n * g)`), and add the corresponding evaluation form for the conjugated character used in the two main theorems (keeping the hom-level equation unannotated).",
+   "issue": "`nonzeroJointWeightAction_apply_coe` is `@[simp]` but its RHS `(MulAut.conjNormal g).monoidHomCongrLeftEquiv \u03c7` is itself a simp redex: Mathlib's `@[simp] MulEquiv.monoidHomCongrLeftEquiv_apply` rewrites it to `\u03c7.comp (MulAut.conjNormal g).symm.toMonoidHom`. The lemma therefore never leaves a goal in the stated form. The same non-normal form is used in the statements of `map_iInf_eigenspace_unitHom_eq_conjNormal` (line 78) and `iInf_eigenspace_unitHom_conjNormal_ne_bot_iff` (line 94), so after any `simp` the goal shows `\u03c7 ((MulAut.conjNormal g).symm n)` and neither theorem can be `rw`-applied.",
+   "line": "145"
+  },
+  {
+   "evidence": "TauCeti/LinearAlgebra/RootSystem/Weyl/DotAction.lean:158-164 pairs `dotActionPerm_apply` with `dotActionPerm_symm_apply`; Normal.lean:139-146 has only the forward lemma.",
+   "file": "TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal.lean",
+   "fix": "Add `@[simp] nonzeroJointWeightAction_symm_apply_coe : (((nonzeroJointWeightAction N \u03c1 g).symm \u03c7 : ...) : N \u2192* K\u02e3) = (MulAut.conjNormal g\u207b\u00b9).monoidHomCongrLeftEquiv \u03c7` (in the same evaluated form as above).",
+   "issue": "`nonzeroJointWeightAction` exposes only the forward evaluation; there is no lemma for the inverse permutation, which orbit/stabilizer reasoning in the Lie\u2013Kolchin argument needs. The repo's analogous `Perm`-valued hom supplies both directions.",
+   "line": "120"
+  }
+ ],
+ "head_sha": "9efcc165511a886de419b7e5f6e09995b697cafd",
+ "merge_base_sha": "5756fee720f7f9fa6d5822b4483d60235db35051",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5112,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "b59c6c714a39dfb6f836c4d96329b473719a3ae202bfd2eda3504396d2895ea7",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T153636Z-5112-api-design-c500bf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T15:36:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is minimal and free of compatibility artifacts, but every public statement phrases the conjugated character as `(MulAut.conjNormal g).monoidHomCongrLeftEquiv \u03c7 n`, which Mathlib's own `@[simp] monoidHomCongrLeftEquiv_apply` rewrites away, so the `@[simp]` lemma has a non-normal RHS and the two main theorems no longer match a simp-normalized goal. The permutation `nonzeroJointWeightAction` also lacks the inverse-direction lemma the repo's analogous `dotActionPerm` provides.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": false,
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Induction/Clifford/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/scripts/lint-dot-notation-baseline.txt",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/ClassicalGroups/Weight/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Induction/Conjugate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/GroupTheory/Perm/Subgroup.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/GroupTheory/GroupAction/ConjAct.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Coalgebra/Comodule/GroupLike.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/Weyl/DotAction.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 25,
+  "trace_truncated": false
+ },
+ "transcript_blob": "a629ac3e1640d2334ba042d6d11d7d8d35eaab158e227c176edfc7f42f3af775",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 82399,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 82399,
+  "cache_read_input_tokens": 708447,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1297,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1297,
+    "cache_read_input_tokens": 83902,
+    "input_tokens": 2,
+    "output_tokens": 4508,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 29167,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
