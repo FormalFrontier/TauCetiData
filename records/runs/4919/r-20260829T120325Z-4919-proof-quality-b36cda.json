@@ -1,0 +1,246 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.99587,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 323.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 92019,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 92019,
+    "cache_read_input_tokens": 884522,
+    "inference_geo": "not_available",
+    "input_tokens": 29,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4839,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4839,
+      "cache_read_input_tokens": 89980,
+      "input_tokens": 2,
+      "output_tokens": 3065,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 24770,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c6da6eb29eb677d4e2a414562a3d83754cbb75b5",
+ "cost_usd": 1.99587,
+ "dedupe_key": "TauCetiProject/TauCeti|4919|62aa9f38ea4269239be3049e08069f5c08065829|proof-quality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6037989f6910c1a3196d0c41e6ecfaef48dd19a3f7666c39d750036afad87803",
+ "diff_sha256": "6037989f6910c1a3196d0c41e6ecfaef48dd19a3f7666c39d750036afad87803",
+ "duration_s": 323.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`DirectSum.lof` and `lof_eq_of`: mathlib/Mathlib/Algebra/DirectSum/Module.lean:79,82. The same `Submodule.span_le`-into-a-submodule idiom is already the repo's precedent at TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean:372.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Homogeneous.lean",
+   "fix": "State it as `homogeneousSubmodule R L n \u2264 (LinearMap.range (DirectSum.lof R \u2115 (PBWGradedPiece R L) n)).comap (pbwAssociatedGradedMap R L).toLinearMap` and prove by `rw [homogeneousSubmodule_eq_span, Submodule.span_le]; rintro _ \u27e8l, rfl, rfl\u27e9` plus `pbwAssociatedGradedMap_prod_map_\u03b9`; only the generator case remains.",
+   "issue": "`pbwMap_isHomogeneous` uses `Submodule.span_induction` with a non-submodule predicate (`\u2203 x, map a = of n x`) and therefore re-proves the zero/add/smul closure by hand (lines 83-90, including a manual `DirectSum.of_smul` reindexing). That target is a submodule: `LinearMap.range (DirectSum.lof R \u2115 (PBWGradedPiece R L) n)`.",
+   "line": 76
+  },
+  {
+   "evidence": "AssociatedGraded.lean:557-560 (`congrArg Submodule.Quotient.mk (Subtype.ext hab)`); uses at :603 `gradedPiece_mk_eq_mk f _ (prod_map_mem_wordFiltration f hl) rfl` and :606 `... hlen.le) rfl`.",
+   "file": "TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "fix": "Drop the redundant `hab` and state the helper as `(ha hb : a \u2208 wordFiltration f k) : mk \u27e8a, ha\u27e9 = mk \u27e8a, hb\u27e9`, and add a comment at line 606 saying the rewrite exists solely to match the proof term `mk_prod_map_eq_zero_of_length_lt` is stated with (or drop the step if `exact` closes the goal up to proof irrelevance).",
+   "issue": "`gradedPiece_mk_eq_mk` takes `hab : a = b`, but both call sites (lines 603 and 606) pass `rfl`; specialised to `rfl` the statement is definitional proof irrelevance, so those two `rw`s are `change` steps in disguise that only reshape the membership proof term. Only the first has an explanatory comment.",
+   "line": 557
+  },
+  {
+   "evidence": "New lemma at TauCeti/Algebra/WordFiltration/Basic.lean:96-111; Filtration.lean already imports it via `public import TauCeti.Algebra.WordFiltration.AssociatedGraded` (line 12), and its proof at :372-385 is the same `Set.mem_pow`/`choose`/`List.ofFn` chain.",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "fix": "Replace lines 372-382 with `rw [\u2190 TauCeti.Algebra.span_prod_map_eq_range_pow (\u03b9 Q) (k + 1), Submodule.span_le]; rintro _ \u27e8l, hl, rfl\u27e9` and continue from the word form.",
+   "issue": "`\u03b9_range_pow_le_map_leadingTermPreimage` inlines exactly the argument the PR has just factored out as `span_prod_map_eq_range_pow` (`Submodule.pow_eq_span_pow_set`, `Set.mem_pow`, `choose`, `List.ofFn` juggling, lines 372-385); the new general lemma leaves that duplicate in place.",
+   "line": 372
+  }
+ ],
+ "head_sha": "62aa9f38ea4269239be3049e08069f5c08065829",
+ "merge_base_sha": "bbb5931d17c30af79f3dd3629623c651c4a1a224",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4919,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "51d438e0c84791b444aadc64d65fab6178d46fb0c84419f1ae4833c00b167002",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T120325Z-4919-proof-quality-b36cda",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T12:03:25Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly readable and the extraction of `gradedPiece_induction_on` is an improvement, but one span induction hand-rolls submodule closure that `Submodule.span_le` gives for free, a private helper carries a hypothesis only ever instantiated with `rfl` to reshape proof terms, and the newly added `span_prod_map_eq_range_pow` leaves an identical inlined argument in the Clifford filtration file.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/SymmetricAlgebra/Homogeneous.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Homogeneous.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/PBW/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Hom.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Subalgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Submodule/Range.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Submodule/Range.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Algebra/Subalgebra/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 23,
+  "trace_truncated": false
+ },
+ "transcript_blob": "b5629d749679304be7c3b270aa78ed5598e56ec8f74befb4ecb5b9ccfc3fb822",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 92019,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 92019,
+  "cache_read_input_tokens": 884522,
+  "inference_geo": "not_available",
+  "input_tokens": 29,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4839,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4839,
+    "cache_read_input_tokens": 89980,
+    "input_tokens": 2,
+    "output_tokens": 3065,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 24770,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

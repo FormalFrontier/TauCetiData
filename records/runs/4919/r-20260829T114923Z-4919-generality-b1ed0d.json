@@ -1,0 +1,244 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.139465,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 283.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 95337,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 95337,
+    "cache_read_input_tokens": 1319582,
+    "inference_geo": "not_available",
+    "input_tokens": 41,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 929,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 929,
+      "cache_read_input_tokens": 97208,
+      "input_tokens": 2,
+      "output_tokens": 4118,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20490,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c6da6eb29eb677d4e2a414562a3d83754cbb75b5",
+ "cost_usd": 2.139465,
+ "dedupe_key": "TauCetiProject/TauCeti|4919|62aa9f38ea4269239be3049e08069f5c08065829|generality|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "6037989f6910c1a3196d0c41e6ecfaef48dd19a3f7666c39d750036afad87803",
+ "diff_sha256": "6037989f6910c1a3196d0c41e6ecfaef48dd19a3f7666c39d750036afad87803",
+ "duration_s": 283.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/ExteriorAlgebra/Basic.lean:79 `abbrev exteriorPower : Submodule R (ExteriorAlgebra R M) := LinearMap.range (\u03b9 R : M \u2192\u2097[R] ExteriorAlgebra R M) ^ n`; mathlib/Mathlib/Algebra/DirectSum/Internal.lean:295 `instance nat_power_gradedMonoid ... (p : Submodule S R)` already covers `fun n => p ^ n`, which is why lines 64-65 here are a re-declaration; the repo's own Clifford code uses the raw expression (TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean:370 `LinearMap.range (\u03b9 Q) ^ (k + 1)`).",
+   "file": "TauCeti/LinearAlgebra/SymmetricAlgebra/Homogeneous.lean",
+   "fix": "Make it `abbrev homogeneousSubmodule (n : \u2115) : Submodule R (SymmetricAlgebra R M) := LinearMap.range (SymmetricAlgebra.\u03b9 R M) ^ n` (exactly Mathlib's `exteriorPower` pattern), and delete `homogeneousSubmodule_def`, which then becomes a pure restatement. Alternatively drop the wrapper and state `pbwHomogeneousComponentMap` on `LinearMap.range (SymmetricAlgebra.\u03b9 R L) ^ n` directly, using `TauCeti.Algebra.prod_map_mem_range_pow` and `span_prod_map_eq_range_pow` in place of the two specializations at lines 51 and 56.",
+   "issue": "`homogeneousSubmodule R M n` is an opaque `noncomputable def` for `LinearMap.range (SymmetricAlgebra.\u03b9 R M) ^ n`. Because it is not reducible, Mathlib's `Submodule` power API and instances no longer apply to it: the PR must restate `Submodule.nat_power_gradedMonoid` at line 64, `homogeneousSubmodule_def` (line 46) exists only to unfold it, and every future use of `Submodule.pow_succ`, `Submodule.mul_mem_mul`, `pow_le_pow_right` on it will need a shadow lemma. This duplicates an existing API surface under a new name.",
+   "line": "42"
+  }
+ ],
+ "head_sha": "62aa9f38ea4269239be3049e08069f5c08065829",
+ "merge_base_sha": "bbb5931d17c30af79f3dd3629623c651c4a1a224",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4919,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "5614fc46a1a62ae2ad534356338e5e61a6b368f75f36499b4b594c608ff000ef",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T114923Z-4919-generality-b1ed0d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T11:49:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The general lemmas (span_prod_map_eq_range_pow, gradedPiece_induction_on) are at the right level and the PBW results are derived from them rather than duplicated. The only level problem is the new SymmetricAlgebra.homogeneousSubmodule wrapper, an opaque def for LinearMap.range \u03b9 ^ n that hides the Submodule power API instead of following Mathlib's reducible `exteriorPower` idiom.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/SymmetricAlgebra/Homogeneous.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/SymmetricAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/PBW/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/UniversalEnveloping/PBW/Homogeneous.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/WordFiltration/AssociatedGraded.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/FiltrationGradedEquiv.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/FiltrationGradedEquiv.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/Filtration.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/TensorPower/Symmetric.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/TensorPower/Symmetric.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/ExteriorAlgebra/Grading.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/ExteriorPower/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/ExteriorAlgebra/Basic.lean",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 26,
+  "trace_truncated": false
+ },
+ "transcript_blob": "9f8bd1b676066c26868bd169b46517810bc8cf7fb29e262828f01cca7fa248a6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 95337,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 95337,
+  "cache_read_input_tokens": 1319582,
+  "inference_geo": "not_available",
+  "input_tokens": 41,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 929,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 929,
+    "cache_read_input_tokens": 97208,
+    "input_tokens": 2,
+    "output_tokens": 4118,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20490,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
