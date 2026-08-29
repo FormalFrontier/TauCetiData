@@ -1,0 +1,224 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.48024,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 159.5,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 84412,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 84412,
+    "cache_read_input_tokens": 614558,
+    "inference_geo": "not_available",
+    "input_tokens": 25,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 7049,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 7049,
+      "cache_read_input_tokens": 80163,
+      "input_tokens": 2,
+      "output_tokens": 4096,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 12737,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "93b0cc0fa23a803d761170fd4c486b2d03c7b246",
+ "cost_usd": 1.48024,
+ "dedupe_key": "TauCetiProject/TauCeti|5151|913c2466a1907cbfe272463ea74a3b4e4d4cbd1b|placement|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "fea390c65b50b6c9ca8f9cec23fb7a95f6a3ebfff872f47f85353250b6a8fe8e",
+ "diff_sha256": "fea390c65b50b6c9ca8f9cec23fb7a95f6a3ebfff872f47f85353250b6a8fe8e",
+ "duration_s": 159.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `code/TauCeti/Algebra/Lie/Presentation/Serre.lean:294:theorem ad_neg_pow_apply_eq_zero {x y : L} {n : \u2115}`; its statement mentions only `ad`, `-x` and `n`. Sole out-of-file use: `code/TauCeti/Algebra/Lie/Orthogonal/TypeB/SerreRelations.lean:227`. No other `Presentation.Serre` declaration (`IsSerreSystem`, `serreLift`, `serreE`, \u2026) occurs in the new file outside the module docstring, while `LieHom.map_ad_pow` used at line 224 comes from `Presentation/Basic.lean:164`. `Presentation/Serre.lean:8-9` pulls in `Mathlib.Algebra.Lie.SerreConstruction` and `Presentation.Basic`.",
+   "file": "TauCeti/Algebra/Lie/Presentation/Serre.lean",
+   "fix": "Move `ad_neg_pow_apply_eq_zero` to the earlier `TauCeti/Algebra/Lie/Presentation/Basic.lean`, next to `LieHom.map_ad_pow` (line 164), which the new file also uses and whose `variable {R L L' : Type*} [CommRing R] [LieRing L] [LieAlgebra R L]` block already fits it; then drop the `omit [DecidableEq B]` and change `SerreRelations.lean:10` to `import TauCeti.Algebra.Lie.Presentation.Basic`.",
+   "issue": "`ad_neg_pow_apply_eq_zero` is made public but stays in `Presentation/Serre.lean`, inside `section Stability` (needing `omit [DecidableEq B]` only because of the surrounding Serre-system variables). It is a generic fact about `ad R L (-x) ^ n` with no Serre content, and is now consumed from `Orthogonal/TypeB/SerreRelations.lean:227`; that lone use is the only thing `SerreRelations.lean:10`'s `import TauCeti.Algebra.Lie.Presentation.Serre` provides.",
+   "line": "294"
+  }
+ ],
+ "head_sha": "913c2466a1907cbfe272463ea74a3b4e4d4cbd1b",
+ "merge_base_sha": "2e3679867847096e877e84947dadc8ad41b40a99",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5151,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "709ba67355c117f0a78958ec66a961aebc91e3a78808c7a4d4612e32c225d323",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T205539Z-5151-placement-efe909",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T20:55:39Z",
+ "submitted_by": "kim-em",
+ "summary": "Placement of the new file and of the `_def` lemmas is correct, but the de-privatized `ad_neg_pow_apply_eq_zero` is a generic `ad` lemma stranded in the Serre-presentation file, which is the only reason the type-B file imports all of `Presentation.Serre`.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": false,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Orthogonal/TypeB/SerreRelations.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Orthogonal/TypeB/GeneratorRelations.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Presentation/Serre.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Orthogonal/TypeB/RootGenerators.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Presentation/Serre.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/OfAssociative.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": ".",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Presentation/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Presentation/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Orthogonal/TypeB/DiagonalCartan.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/GeneralLinear/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/GeneralLinear/DiagonalCartan.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 22,
+  "trace_truncated": false
+ },
+ "transcript_blob": "b41e5a7107dbc1af74c51381598365999c45e99f67042abeef3dac4b7f05daea",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 84412,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 84412,
+  "cache_read_input_tokens": 614558,
+  "inference_geo": "not_available",
+  "input_tokens": 25,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 7049,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 7049,
+    "cache_read_input_tokens": 80163,
+    "input_tokens": 2,
+    "output_tokens": 4096,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 12737,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
