@@ -1,0 +1,253 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.8495779999999997,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 346.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 144758,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 144758,
+    "cache_read_input_tokens": 1408758,
+    "inference_geo": "not_available",
+    "input_tokens": 31,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 13472,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 13472,
+      "cache_read_input_tokens": 134086,
+      "input_tokens": 2,
+      "output_tokens": 4663,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 27137,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5dd6ed42bb7add68c0fa6f3f371c0fc2df8dfa88",
+ "cost_usd": 2.849578,
+ "dedupe_key": "TauCetiProject/TauCeti|4530|1c8e6d704b6941d16e443734b943d8bc64387f15|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "c8d27e72ecccfbb2eda532e7bab1b96edfc2d48ac0d8d7971a64471e11eb47c6",
+ "diff_sha256": "c8d27e72ecccfbb2eda532e7bab1b96edfc2d48ac0d8d7971a64471e11eb47c6",
+ "duration_s": 346.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Proofs are `simp [cyclicGroupThreeModularCentralRows]` (line 195) and `exact (cyclicClassData 3).complexTableOfMap_apply _ _ _ _` (line 280) \u2014 the general lemmas do all the work. `grep -n 'mem_cyclicGroupThreeModularCentralRows_iff\\|cyclicGroupThreeComplexCharacterTable_apply\\b' TauCeti/` returns only the declaration sites (lines 190, 272).",
+   "file": "TauCeti/RepresentationTheory/CharacterTable/Dixon/Cyclotomic/CyclicThree.lean",
+   "fix": "Delete both. Callers get the same statements from `ClassData.mem_modularCentralRows_iff` and `ClassData.complexTableOfMap_apply` (both `@[simp]`) by unfolding the defs, e.g. `simp [cyclicGroupThreeModularCentralRows]` / `simp [cyclicGroupThreeComplexCharacterTable]`.",
+   "issue": "`mem_cyclicGroupThreeModularCentralRows_iff` (line 190) and `cyclicGroupThreeComplexCharacterTable_apply` (line 272) are the general `@[simp]` lemmas added in this same PR, restated after unfolding the example's `def`, and neither is referenced anywhere in the repo. Unlike `mem_cyclicGroupTwoModularCentralRows_iff`, which is consumed at `Rational/CyclicTwo.lean:299`, these two have no consumer.",
+   "line": "190"
+  },
+  {
+   "evidence": "`grep -n 'star_complexRoot' TauCeti/` gives only Basic.lean:473,481 (the internal `rw`) and CyclicThree.lean:331, where it appears solely inside a simp-erase list.",
+   "file": "TauCeti/RingTheory/Cyclotomic/Basic.lean",
+   "fix": "Keep one rewrite direction: drop `@[simp]` from `star_complexRoot`, or delete it and prove `star_complexRoot_eq_pow` directly from `(Complex.inv_eq_conj (isPrimitiveRoot_complexRoot.norm'_eq_one (NeZero.ne e))).symm`. Then remove the `-Cyclotomic.star_complexRoot` erase at CyclicThree.lean:331.",
+   "issue": "`star_complexRoot` (`@[simp]`, line 473) and `star_complexRoot_eq_pow` (line 479) are two rewrite rules for the same LHS `starRingEnd \u2102 (complexRoot e)`, so they fight: the only external consumer must erase the simp form, `simp [-Cyclotomic.star_complexRoot, Cyclotomic.star_complexRoot_eq_pow]` (CyclicThree.lean:331). `star_complexRoot`'s body is one application of Mathlib's `Complex.inv_eq_conj` (mathlib/Mathlib/Analysis/Complex/Basic.lean:363).",
+   "line": "472"
+  },
+  {
+   "evidence": "`grep -n 'geom_sum_eq_zero' mathlib/Mathlib/RingTheory/RootsOfUnity/PrimitiveRoots.lean` \u2192 line 444: `theorem geom_sum_eq_zero [IsDomain R] {\u03b6 : R} (h\u03b6 : IsPrimitiveRoot \u03b6 k) (hk : 1 < k) : \u2211 i \u2208 range k, \u03b6 ^ i = 0`; \u2102 is a domain and `isPrimitiveRoot_complexRoot` supplies `h\u03b6`.",
+   "file": "TauCeti/RingTheory/Cyclotomic/Basic.lean",
+   "fix": "Derive it from the located lemma \u2014 `simpa [Finset.sum_range_succ, add_comm, add_left_comm] using (isPrimitiveRoot_complexRoot (e := 3)).geom_sum_eq_zero (by norm_num)` \u2014 or drop the `e = 3`-only declaration from this general file and use `IsPrimitiveRoot.geom_sum_eq_zero` at its single use site (CyclicThree.lean:335).",
+   "issue": "`complexRoot_three_sq_add_self_add_one_eq_zero` is the `k = 3` instance of Mathlib's `IsPrimitiveRoot.geom_sum_eq_zero` (mathlib/Mathlib/RingTheory/RootsOfUnity/PrimitiveRoots.lean:444, `\u2211 i \u2208 range k, \u03b6 ^ i = 0` for `1 < k` over a domain), but is re-derived through `isRoot_cyclotomic` and `Polynomial.cyclotomic_three` instead.",
+   "line": "487"
+  }
+ ],
+ "head_sha": "1c8e6d704b6941d16e443734b943d8bc64387f15",
+ "merge_base_sha": "5dd6ed42bb7add68c0fa6f3f371c0fc2df8dfa88",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 4530,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "82c6eea5cdeeb4959ab0d7ffeb2baaf8e35ec7fb683beb5d35a17fc49c432ab5",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T063120Z-4530-reuse-58de5d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T06:31:20Z",
+ "submitted_by": "kim-em",
+ "summary": "The new C\u2083 worked example genuinely reuses (and correctly generalizes) the existing class-data, search, lift, and specification APIs. Three added declarations are redundant: two example-level restatements of general simp lemmas added in the same PR with no consumers, and a competing conjugation rewrite pair whose only use site has to erase one of the two.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/Cyclotomic/CyclicThree.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RingTheory/Cyclotomic/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/Rational/CyclicTwo.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/Prime.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/IntegerChecker.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/ClassData/Cyclic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/RingTheory/RootsOfUnity/PrimitiveRoots.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/Cyclic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Dixon/Lift.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/CharacterTable/Specification.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 25,
+  "trace_truncated": false
+ },
+ "transcript_blob": "f31b6c7116e5c8098b2f1832c4496f060e83a7c35d46d5aea65e8a884357b011",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 144758,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 144758,
+  "cache_read_input_tokens": 1408758,
+  "inference_geo": "not_available",
+  "input_tokens": 31,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 13472,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 13472,
+    "cache_read_input_tokens": 134086,
+    "input_tokens": 2,
+    "output_tokens": 4663,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 27137,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
