@@ -1,0 +1,278 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.4123665,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 329.0,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 106950,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 106950,
+    "cache_read_input_tokens": 1216421,
+    "inference_geo": "not_available",
+    "input_tokens": 37,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2384,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2384,
+      "cache_read_input_tokens": 107366,
+      "input_tokens": 2,
+      "output_tokens": 4705,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 28927,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dcad6b0a28c852d0f064470c43371e102670cde6",
+ "cost_usd": 2.412367,
+ "dedupe_key": "TauCetiProject/TauCeti|5115|336b1e58323d899aae471e104d5a091e70587ce1|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "2dc87a3311e072c488f9f85f8cd1712ffcf1590e936c538d3c4e3a3254db7ba4",
+ "diff_sha256": "2dc87a3311e072c488f9f85f8cd1712ffcf1590e936c538d3c4e3a3254db7ba4",
+ "duration_s": 329.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep: `mathlib/Mathlib/Algebra/Polynomial/AlgebraMap.lean:475:theorem coe_aeval_eq_eval (r : R) : (aeval r : R[X] \u2192 R) = eval r := rfl`. No `Polynomial.aeval_eq_eval` exists in Mathlib, so this adds a second name for the same rfl-fact.",
+   "file": "TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "fix": "Delete the declaration (and the PR-description bullet). Its only use, the calc step at line ~244 `(Polynomial.aeval_eq_eval (v j) q).symm`, becomes `(congrFun (Polynomial.coe_aeval_eq_eval (v j)) q).symm`, or just `rfl`/`simp` since the Mathlib lemma is `rfl`.",
+   "issue": "`Polynomial.aeval_eq_eval` is not \"previously missing\": Mathlib has `Polynomial.coe_aeval_eq_eval (r : R) : (aeval r : R[X] \u2192 R) = eval r` (`Mathlib/Algebra/Polynomial/AlgebraMap.lean:475`, `@[simp]`, proof `rfl`), which directly replaces it.",
+   "line": "84"
+  },
+  {
+   "evidence": "Line 162 `rw [aeval_eq_eval]` elaborates before line 167, so it resolves via `open _root_.MvPolynomial` to Mathlib's lemma; the file therefore uses the library lemma and the duplicate of it.",
+   "file": "TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "fix": "Delete lines 165-169. Line 267 `rw [..., \u2190 aeval_eq_eval, ...]` already refers to the Mathlib lemma once the private one is gone; line 282 `filter_upwards with c using aeval_eq_eval c (Q i)` becomes `filter_upwards with c using congrFun (MvPolynomial.aeval_eq_eval c) (Q i)` (or `rfl`).",
+   "issue": "The private `aeval_eq_eval (t : Fin n \u2192 \ud835\udd5c) (p) : MvPolynomial.aeval t p = eval t p` duplicates Mathlib's `MvPolynomial.aeval_eq_eval` (`Mathlib/Algebra/MvPolynomial/Eval.lean:606`, `@[simp]`, `rfl`) \u2014 which this same file already uses at line 162, where the private copy is not yet in scope.",
+   "line": "167"
+  },
+  {
+   "evidence": "`SymmetricPower.lean:159-164` is `coeff_toMonic ... := by rw [coe_toMonic]; simpa [hcard] using (s : Multiset R).prod_X_sub_C_coeff hk'` \u2014 the same proof as lines 131-138 here.",
+   "file": "TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "fix": "Prove it as `by rw [\u2190 Sym.toMonic_ofFn, Sym.coeff_toMonic _ i.2.le]; simp` (the multiset bridge `(ofFn f : Multiset \ud835\udd5c) = univ.val.map f` is `simp` from `Sym.coe_ofFn` and `Fin.univ_val_map`, as already done at `TauCeti/Data/Sym/Family.lean:62-63`), or drop it and derive `multiset_esymm_succ_eq_chart` directly from `Sym.coeffEquiv_apply` plus `Nat.sub_sub_self`.",
+   "issue": "`prod_X_sub_C_coeff'` re-proves `TauCeti.Sym.coeff_toMonic` (`TauCeti/RingTheory/Polynomial/SymmetricPower.lean:159`) with the identical `Multiset.prod_X_sub_C_coeff` + card argument; combined with `Sym.toMonic_ofFn` (:138) it is that lemma at `ofFn f`. Its consumer `multiset_esymm_succ_eq_chart` (line 181) likewise bypasses the `@[simp]` `Sym.coeffEquiv_apply` (:304), which states exactly the signed-esymm form of a chart coordinate.",
+   "line": "128"
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Analysis/Analytic/Polynomial.lean:90-92`; the file is already imported at line 11 of the diff.",
+   "file": "TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "fix": "Replace lines 277-282 by `refine AnalyticAt.congr (f := fun c i => MvPolynomial.eval c (Q i)) (AnalyticAt.pi fun i => AnalyticOnNhd.eval_mvPolynomial (Q i) c\u2080 (Set.mem_univ _)) ?_`. All side conditions hold: `CompleteSpace \ud835\udd5c` from `RCLike`, `T2Space`/`FiniteDimensional \ud835\udd5c (Fin n \u2192 \ud835\udd5c)` are instances.",
+   "issue": "The analyticity scaffolding (`hcoord` projections + `AnalyticAt.aeval_mvPolynomial` + a `congr` to convert `aeval` to `eval`) re-derives Mathlib's `AnalyticOnNhd.eval_mvPolynomial [Fintype \u03c3] (p : MvPolynomial \u03c3 \ud835\udd5c) : AnalyticOnNhd \ud835\udd5c (eval \u00b7 p) Set.univ`.",
+   "line": "277"
+  },
+  {
+   "evidence": "`mathlib/Mathlib/Algebra/MvPolynomial/Monad.lean:68 def bind\u2081 (f : \u03c3 \u2192 MvPolynomial \u03c4 R) := aeval f`, with `aeval_bind\u2081`, `rename_bind\u2081`, `bind\u2081_rename` at :255, :209, :224.",
+   "file": "TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "fix": "Define `substVar q := bind\u2081 fun i => Polynomial.aeval (X i) q`. Then `aeval_substVar` follows from `MvPolynomial.aeval_bind\u2081` (Monad.lean:255) plus `Polynomial.aeval_algHom_apply`, and `IsSymmetric.substVar` from `rename_bind\u2081` (:209) and `bind\u2081_rename` (:224): `rename e (bind\u2081 g p) = bind\u2081 (fun i => rename e (g i)) p = bind\u2081 (g \u2218 e) p = bind\u2081 g (rename e p) = bind\u2081 g p`, dropping the `have h : ... .comp ... = ... .comp ...` block.",
+   "issue": "`MvPolynomial.substVar q` is `MvPolynomial.bind\u2081 (fun i => Polynomial.aeval (X i) q)` \u2014 a specialization of the existing combinator, defined instead through raw `aeval`, so none of the `bind\u2081` API applies. In particular `IsSymmetric.substVar` (line 102) hand-rolls the `rename`/substitution commutation with `algHom_ext`.",
+   "line": "78"
+  }
+ ],
+ "head_sha": "336b1e58323d899aae471e104d5a091e70587ce1",
+ "merge_base_sha": "bc19b89b95c687b4d95676d415e2f4f55d1197ca",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5115,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "f90431ab4ae02a2d327e139da93c13821742b6e9a698eea80813eed097792662",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T061923Z-5115-reuse-bc7157",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T06:19:23Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new declarations are directly replaced by existing Mathlib lemmas (`Polynomial.coe_aeval_eq_eval`, `MvPolynomial.aeval_eq_eval` \u2014 the latter already used elsewhere in the same file), and the Vieta helper re-proves `TauCeti.Sym.coeff_toMonic`. The final analyticity step and the `substVar` definition also bypass located Mathlib API (`AnalyticOnNhd.eval_mvPolynomial`, `bind\u2081`).",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MvPolynomial/Eval.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Polynomial/AlgebraMap.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/RingTheory/MvPolynomial/Symmetric/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RingTheory/Polynomial/SymmetricPower.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RingTheory/Polynomial/SymmetricPower.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SymmetricPower.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SimpleRoots/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Analytic/Polynomial.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Analytic/Polynomial.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SimpleRoots/Family.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Analytic/Polynomial.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Polynomial/SimpleRoots/Colliding.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Data/Sym/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Data/Fintype",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/MvPolynomial",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 27,
+  "trace_truncated": false
+ },
+ "transcript_blob": "06b453f2fa0db96acf20c8419bf2a8e8f15edc3cb9a96a8df781193cdb0d6552",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 106950,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 106950,
+  "cache_read_input_tokens": 1216421,
+  "inference_geo": "not_available",
+  "input_tokens": 37,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2384,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2384,
+    "cache_read_input_tokens": 107366,
+    "input_tokens": 2,
+    "output_tokens": 4705,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 28927,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
