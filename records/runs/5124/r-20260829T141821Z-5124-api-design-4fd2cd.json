@@ -1,0 +1,243 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8640715,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 250.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87140,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87140,
+    "cache_read_input_tokens": 1018615,
+    "inference_geo": "not_available",
+    "input_tokens": 33,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2566,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2566,
+      "cache_read_input_tokens": 87374,
+      "input_tokens": 2,
+      "output_tokens": 2179,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18800,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c2d2b53d2f8127371ccb4f4fb181dc3ed85ba9de",
+ "cost_usd": 1.864072,
+ "dedupe_key": "TauCetiProject/TauCeti|5124|6ca5762d9a2d69544d31df7db31e68e155f3b144|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a98706647e797d9202a377d824cf7b75226ed522afccb56a96b1bb4fa44f397c",
+ "diff_sha256": "a98706647e797d9202a377d824cf7b75226ed522afccb56a96b1bb4fa44f397c",
+ "duration_s": 250.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Three call sites already have to invoke it by hand: FieldPoints.lean:116 `simpa only [TauCeti.toGL_transvection_eq_transvectionUnit]`, Sl2/Kostant/Points.lean:135 and :152 `rw [toGL_transvection_eq_transvectionUnit hij]`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Add `@[simp]`; the LHS `toGL (SpecialLinearGroup.transvection hij c)` cannot loop since `transvectionUnit`'s body is unexposed.",
+   "issue": "`toGL_transvection_eq_transvectionUnit` is the fold-direction bridge from Mathlib's `SpecialLinearGroup.transvection` into the canonical `transvectionUnit` API, but carries no `@[simp]`, while every other characteristic lemma in the same section (`coe_transvectionUnit`, `transvectionUnit_zero/_add/_inv`, `det_transvectionUnit`, `map_transvectionUnit`) is `@[simp]`.",
+   "line": "131"
+  },
+  {
+   "evidence": "`grep -n diag2n` in this file yields only line 610, inside the proof of `closure_range_toSpecialLinearGroup_eq_top_of_field`. Downstream `Connected.lean` gets the Diagonal API via its own `import ...SpecialLinear.DiagonalPath` (Connected.lean:12, DiagonalPath.lean:9), so nothing depends on the re-export.",
+   "file": "TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Transvection.lean",
+   "fix": "Make it a plain `import` with the file's usual explanatory comment (cf. the annotated non-public imports in GeneralLinearGroup/Transvection.lean:14-16).",
+   "issue": "`public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Diagonal` re-exports the whole `diag2nUnit`/`diag2n` API to every consumer of this module, although `diag2n_decompose` is used only inside a proof; no public statement in the file mentions `diag2n`.",
+   "line": "10"
+  },
+  {
+   "evidence": "FieldPoints.lean:141-159 gives three field lemmas; lines 163-176 give only two integer lemmas; the docstring at lines 27-36 lists five names, not including `mem_points_int_iff_det_eq_one`.",
+   "file": "TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/FieldPoints.lean",
+   "fix": "Add the integer `toGL_mem_points` counterpart (one line from `points_int_eq_range_toGL`) and list `mem_points_int_iff_det_eq_one` in `## Main results`.",
+   "issue": "The file develops the field and integer cases in parallel but the integer side is incomplete: it has `points_int_eq_range_toGL` and `mem_points_int_iff_det_eq_one` with no counterpart to `toGL_mem_points` (line 149). The module docstring's `## Main results` list also omits `mem_points_int_iff_det_eq_one`.",
+   "line": "165"
+  }
+ ],
+ "head_sha": "6ca5762d9a2d69544d31df7db31e68e155f3b144",
+ "merge_base_sha": "792eebff1f66b1f844b15c12d88a3c3ac6d6e55d",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5124,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "3697dbaad03b93fb8cd00a20121ba02b202144528883837abfe8c3603cd69d78",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260829T141821Z-5124-api-design-4fd2cd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-29T14:18:21Z",
+ "submitted_by": "kim-em",
+ "summary": "The generation surface is well chosen and the private/public split in FieldPoints.lean is right, but the new bridge lemma lacks the `@[simp]` its siblings all carry, a proof-only dependency is imported publicly, and the integer half of FieldPoints.lean stops one lemma short of the field half.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/FieldPoints.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Diagonal.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/DeterminantOne.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Topology/Algebra/Group/Matrix.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/Matrix/SpecialLinearGroup.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Transvection.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/SpecialLinear/Connected.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/SpecialLinearGroup/Transvection.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/Transvection/Generation.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": false,
+   "target": "<not-found>",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/ReductiveGroups/README.md",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Sl2/Kostant/Points.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 23,
+  "trace_truncated": false
+ },
+ "transcript_blob": "b405531d9527a4cccaff6894431ba8c0262d3c4db8182165f73ea6ea15463c54",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87140,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87140,
+  "cache_read_input_tokens": 1018615,
+  "inference_geo": "not_available",
+  "input_tokens": 33,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2566,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2566,
+    "cache_read_input_tokens": 87374,
+    "input_tokens": 2,
+    "output_tokens": 2179,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18800,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
