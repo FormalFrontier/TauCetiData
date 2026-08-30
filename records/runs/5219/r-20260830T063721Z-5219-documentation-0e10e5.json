@@ -1,0 +1,218 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6341735,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 260.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 79192,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 79192,
+    "cache_read_input_tokens": 671295,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5758,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5758,
+      "cache_read_input_tokens": 76234,
+      "input_tokens": 2,
+      "output_tokens": 4120,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19933,
+    "output_tokens_details": {
+     "thinking_tokens": 15087
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "cost_usd": 1.634173,
+ "dedupe_key": "TauCetiProject/TauCeti|5219|fd6a8bb15778499bf0926f500cea3ff30158cfa9|documentation|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f43d1043e4eb0fc009f06947d10a38818af66b8f90b86d88b11299a09eae17f7",
+ "diff_sha256": "f43d1043e4eb0fc009f06947d10a38818af66b8f90b86d88b11299a09eae17f7",
+ "duration_s": 260.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 163-182 define `plainFrobenius`/`typeAGraphFrobenius` as `private`; the only exported equations are `steinberg_ofA`/`steinberg_ofTwistedA` (lines 196-206) whose RHS are the local defs. `grep -n \"SlStd.twistedFrobenius\" TypeA.lean` hits only the proof of `steinberg_simpleRootSubgroup`, no statement.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Add public equation lemmas `frobenius rank q h = SlStd.frobenius ...` and `twistedFrobenius rank q h = SlStd.twistedFrobenius ...` (both `rfl`) and cite them here, or reword the paragraph to say only that the branch is *defined* as that composite. Also list `TypeALieIndex.frobenius` and `TypeALieIndex.twistedFrobenius` in `## Main declarations`, where they are currently missing.",
+   "issue": "The module docstring says `steinberg_ofTwistedA` \"identifies this file's branch with that map\" (i.e. `SlStd.twistedFrobenius`, so that `SlStd.twistedFrobenius_comp_self` and `graphAutomorphismPoints_comp_frobenius` apply). It does not: its RHS is the file's own `TypeALieIndex.twistedFrobenius` (line 205), whose body goes through the *private* `typeAGraphFrobenius` (line 167); no public lemma relates either to `SlStd.twistedFrobenius`. Same for `steinberg_ofA` / `frobenius` / private `plainFrobenius` (line 163) vs `SlStd.frobenius`.",
+   "line": 42
+  },
+  {
+   "evidence": "roadmap/TauCetiRoadmap/CFSGStatement/README.md:318-325 (\"This zero-based offset is the one thing an implementor is most likely to get wrong\"); CFSG/GraphTwisted.lean:127-138 documents `diagramPerm_A`, `diagramPerm_B`, etc.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Give each a one-line docstring stating the convention (identity on `A_r`, reversal `i \u21a6 i.rev` of the Bourbaki numbering on `\u00b2A_r`).",
+   "issue": "`diagramPerm_ofA` and `diagramPerm_ofTwistedA` (lines 140-152) carry no docstring, although they are the results recording the zero-based Bourbaki convention (`\u03b3 i = i.rev` for `\u00b2A_r`) that roadmap L1 singles out as the most error-prone point; the sibling lemmas in `CFSG/GraphTwisted.lean` are each documented.",
+   "line": 140
+  }
+ ],
+ "head_sha": "fd6a8bb15778499bf0926f500cea3ff30158cfa9",
+ "merge_base_sha": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5219,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "72c562597ae0e37fb7789b596978b5c7785bb38c1cc7a8c0d8a2932891e2915b",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "documentation",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T063721Z-5219-documentation-0e10e5",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T06:37:21Z",
+ "submitted_by": "kim-em",
+ "summary": "Most docstrings are accurate, but the module docstring claims an identification of the twisted branch with `SlStd.twistedFrobenius` that the file's public API does not provide, and the two convention-fixing `diagramPerm_of*` lemmas are undocumented.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/FixedPointCandidate.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/TwistedFrobenius.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/Frobenius.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Closure.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": ".",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/README.md",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/README.md",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/RootDatum.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 18,
+  "trace_truncated": false
+ },
+ "transcript_blob": "ccf1c0c52d6533178e86a7df17bac7aa570ec190177a0e8c7bd4fc422db44692",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 79192,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 79192,
+  "cache_read_input_tokens": 671295,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5758,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5758,
+    "cache_read_input_tokens": 76234,
+    "input_tokens": 2,
+    "output_tokens": 4120,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19933,
+  "output_tokens_details": {
+   "thinking_tokens": 15087
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

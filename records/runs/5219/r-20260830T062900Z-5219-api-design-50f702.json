@@ -1,0 +1,246 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.1429635,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 279.4,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 104113,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 104113,
+    "cache_read_input_tokens": 1144711,
+    "inference_geo": "not_available",
+    "input_tokens": 36,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 391,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 391,
+      "cache_read_input_tokens": 106522,
+      "input_tokens": 2,
+      "output_tokens": 4584,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20828,
+    "output_tokens_details": {
+     "thinking_tokens": 15557
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "cost_usd": 2.142964,
+ "dedupe_key": "TauCetiProject/TauCeti|5219|fd6a8bb15778499bf0926f500cea3ff30158cfa9|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "f43d1043e4eb0fc009f06947d10a38818af66b8f90b86d88b11299a09eae17f7",
+ "diff_sha256": "f43d1043e4eb0fc009f06947d10a38818af66b8f90b86d88b11299a09eae17f7",
+ "duration_s": 279.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TypeA.lean:163-182 (`private noncomputable def plainFrobenius`, `typeAGraphFrobenius`; `frobenius`/`twistedFrobenius` defined from them); TypeA.lean:225,236 unfold them in-module via `frobenius.eq_def, plainFrobenius.eq_def`, which is unavailable to importers; TwistedFrobenius.lean:172 `twistedFrobenius_comp_self`, :205 `map_subtype_fixedSubgroup_twistedFrobenius_le`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Delete the four wrapper defs and define `steinberg` directly by `SlStd.frobenius rank q.p q.exponent _` / `SlStd.twistedFrobenius rank q.p q.exponent _`, restating `steinberg_ofA`/`steinberg_ofTwistedA` against those; or keep the wrappers and add `@[simp] frobenius_def`/`twistedFrobenius_def` proved `:= (rfl)`. Also state the L1 order relation at index level (`(ofTwistedA ..).steinberg.comp (ofTwistedA ..).steinberg = SlStd.frobenius rank q.p (2 * q.exponent) _`) from `SlStd.twistedFrobenius_comp_self`.",
+   "issue": "`frobenius` and `twistedFrobenius` are public non-exposed `def`s whose bodies go through the *private* `plainFrobenius`/`typeAGraphFrobenius`, and no lemma states `frobenius rank q h = SlStd.frobenius rank q.p q.exponent _` or `twistedFrobenius rank q h = SlStd.twistedFrobenius rank q.p q.exponent _`. Since bodies are unexposed across modules (cf. the `@[expose]` on `LieTypeIndex.dynkinType`, Index.lean:224) and the private helpers are not importable, `steinberg_ofA`/`steinberg_ofTwistedA` terminate in dead ends: `SlStd.twistedFrobenius_comp_self`, `SlStd.graphAutomorphismPoints_comp_frobenius`, `SlStd.frobenius_weightTorusPoints`, `SlStd.map_subtype_fixedSubgroup_frobenius_eq` and `SlStd.map_subtype_fixedSubgroup_twistedFrobenius_le` are all unreachable from `d.steinberg`. The docstring at lines 40-43 asserts the opposite (\"`steinberg_ofTwistedA` identifies this file's branch with that map\").",
+   "line": 163
+  },
+  {
+   "evidence": "TypeA.lean:159-161 definition; TypeA.lean:226,237 `simp only [simpleRootSubgroup]` inside the proof; Basic.lean:529 `rootSubgroupPoints`, :550 `coe_rootSubgroupPoints` \u2014 the repo's own convention of pairing every carrier `def` with a `coe_`/`_def` restatement.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Add `@[simp] theorem simpleRootSubgroup_def (d : TypeALieIndex) (i : Fin d.1.rank) : d.simpleRootSubgroup i = SlStd.rootSubgroupPoints d.1.rank (.inl i) d.1.Closure := (rfl)` (and/or a `coe_simpleRootSubgroup` matching `SlStd.coe_rootSubgroupPoints`).",
+   "issue": "`simpleRootSubgroup` is a non-exposed `def` with no characteristic lemma. Nothing states `d.simpleRootSubgroup i = SlStd.rootSubgroupPoints d.1.rank (.inl i) d.1.Closure`, so the whole upstream root-subgroup API (`SlStd.coe_rootSubgroupPoints`, the generation results in `StandardCarrier/Generation.lean`, `weightTorus_conj_rootSubgroup`, `graphAutomorphismPoints_rootSubgroupPoints`) is unreachable through it; `steinberg_simpleRootSubgroup` is the only fact a consumer has, and even the file itself can only prove that by unfolding (`simp only [simpleRootSubgroup]`).",
+   "line": 159
+  },
+  {
+   "evidence": "TypeA.lean:108-116 (the two introductions); TypeA.lean:186-194 and 217-244 show the fifteen-constructor split that any consumer must otherwise reproduce.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Add an eliminator, e.g. `theorem exists_eq (d : TypeALieIndex) : (\u2203 rank q h, d = ofA rank q h) \u2228 (\u2203 rank q h, d = ofTwistedA rank q h)`, or an `@[elab_as_elim]` `casesOn'` recursor covering the two branches.",
+   "issue": "`ofA`/`ofTwistedA` are the introduction forms but there is no matching elimination, so every consumer holding an abstract `d : TypeALieIndex` must redo the fifteen-branch subtype case split with thirteen `contradiction` branches \u2014 exactly the boilerplate `steinberg_simpleRootSubgroup` performs at lines 217-244, and which the eventual `ValidLieTypeIndex` dispatcher and all downstream work will repeat.",
+   "line": 109
+  }
+ ],
+ "head_sha": "fd6a8bb15778499bf0926f500cea3ff30158cfa9",
+ "merge_base_sha": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5219,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "798d584907c88e3d80ea4dfa03548e7980f0010b19ac042c6dfe4751841872ed",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T062900Z-5219-api-design-50f702",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T06:29:00Z",
+ "submitted_by": "kim-em",
+ "summary": "The Steinberg maps and the simple-root subgroup are exported as non-exposed `def`s built through private helpers, with no `_def` lemma identifying them with `SlStd.frobenius`, `SlStd.twistedFrobenius`, or `SlStd.rootSubgroupPoints`, so no downstream consumer can reach any of the upstream API \u2014 including the L1 relations the file's own docstring claims it makes available.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/TwistedFrobenius.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/FixedPointCandidate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Closure.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/README.md",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/Suggested.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 23,
+  "trace_truncated": false
+ },
+ "transcript_blob": "e51232df5ce65555438fad6f866a7caa3bb15cb3572b33a3ab62882920512728",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 104113,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 104113,
+  "cache_read_input_tokens": 1144711,
+  "inference_geo": "not_available",
+  "input_tokens": 36,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 391,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 391,
+    "cache_read_input_tokens": 106522,
+    "input_tokens": 2,
+    "output_tokens": 4584,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20828,
+  "output_tokens_details": {
+   "thinking_tokens": 15557
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
