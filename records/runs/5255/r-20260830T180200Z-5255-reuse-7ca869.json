@@ -1,0 +1,240 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6520454999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 195.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87353,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87353,
+    "cache_read_input_tokens": 730107,
+    "inference_geo": "not_available",
+    "input_tokens": 27,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3323,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3323,
+      "cache_read_input_tokens": 86830,
+      "input_tokens": 2,
+      "output_tokens": 3359,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 16228,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f06481311c16d2b8d9f559d46bd9539f7c6db158",
+ "cost_usd": 1.652045,
+ "dedupe_key": "TauCetiProject/TauCeti|5255|9a89d701b1f7b7711d3dc32b2d36aecdd87a6a66|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a1913990d675a6127f5e96dcb30474796e05747dcb9e89bbdfefac1edc63bdc9",
+ "diff_sha256": "a1913990d675a6127f5e96dcb30474796e05747dcb9e89bbdfefac1edc63bdc9",
+ "duration_s": 195.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Side-by-side of the two files: identical `let pulled`/`let sourcePulled`/`hcancel` blocks, identical `rw [..., Iso.trans_hom, eqToIso.hom, \u2190 Category.assoc, ..., mkQuotient_comp_eqToHom, mkQuotient_comp_quotientIsoOfIso_hom]` scripts, identical `hom_ext` script; only the identifier prefix differs.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean",
+   "fix": "Factor the shared part once, e.g. in TauCeti/Algebra/AlgebraicGroup/Radical/Basic.lean: a lemma `comapOfSurjective_eq_of_isLeast {C : \u2200 H, HopfIdeal k H \u2192 Prop} (hcomap : \u2200 {H K} (e : H \u2245 K) {I}, C K I \u2192 C H (I.comapOfSurjective (toBialgHom e.hom) _)) (hIH : C H IH) (hIK : C K IK) (hleH : \u2200 J, C H J \u2192 IH \u2264 J) (hleK : \u2200 J, C K J \u2192 IK \u2264 J) (e : H \u2245 K) : IK.comapOfSurjective (toBialgHom e.hom) _ = IH`, plus the induced iso and its refl/trans/symm laws stated for a least-candidate ideal. Instantiate for both radicals and delete the unipotent copies (no compatibility layer needed). The project already uses exactly this idiom: `HopfIdeal.exists_maximal_finrank_quotientLie` (TauCeti/Algebra/AlgebraicGroup/HopfIdeal/Cotangent.lean:402) is generic over the candidate predicate and serves both radicals, and `geometricNormalSubgroupFreeCommHopfAlgProperty` (Radical/Basic.lean:56) factors the reductive/semisimple pair.",
+   "issue": "The whole file duplicates TauCeti/Algebra/AlgebraicGroup/Unipotent/Radical/Isomorphism.lean modulo `unipotent`\u2192`solvable`: `comapOfSurjective_solvableRadicalDefiningIdeal` (94) vs `comapOfSurjective_unipotentRadicalDefiningIdeal` (88), `solvableRadicalIsoOfIso` (122) vs `unipotentRadicalIsoOfIso` (116), the two comp lemmas (130, 140) vs (124, 135), `solvableRadical_hom_ext` (149) vs `unipotentRadical_hom_ext` (144), and `_refl`/`_trans`/`_symm` (163, 172, 189) vs (158, 167, 184) \u2014 same proof scripts token for token, even the module docstring. Nothing in these proofs uses unipotence or solvability; they use only (i) the candidate predicate is stable under comap along an iso and (ii) the defining ideal is the least candidate.",
+   "line": 94
+  },
+  {
+   "evidence": "Quotient/Basic.lean:335 `eqToIso (congrArg (quotient H) hI.symm) \u226a\u226b quotientIsoOfIso e I` and Quotient/Basic.lean:343-345 `rw [quotientIsoOfComapEq, Iso.trans_hom, eqToIso.hom, \u2190 Category.assoc, mkQuotient_comp_eqToHom, mkQuotient_comp_quotientIsoOfIso_hom]` \u2014 identical to lines 122-134 of the new file.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean",
+   "fix": "Generalize `CommHopfAlgCat.quotientIsoOfComapEq` (currently only `e : H \u2245 H`) to `e : H \u2245 K` with hypothesis `J.comapOfSurjective e.hom.hom _ = I`, add the `FiniteTypeCommHopfAlgCat` version next to `FiniteTypeCommHopfAlgCat.quotientIsoOfIso` (Quotient/Basic.lean:612), and define `solvableRadicalIsoOfIso e := quotientIsoOfComapEq e (comapOfSurjective_solvableRadicalDefiningIdeal e)`; the two comp lemmas at 130/140 then follow from the generic `mkQuotient_comp_quotientIsoOfComapEq_hom/_inv`.",
+   "issue": "`solvableRadicalIsoOfIso` re-assembles `eqToIso (congrArg (quotient H) h.symm) \u226a\u226b quotientIsoOfIso e I` and re-proves its quotient-map compatibility (130) by hand. This exact assembly plus proof already exists five times in the repo: `CommHopfAlgCat.quotientIsoOfComapEq` / `mkQuotient_comp_quotientIsoOfComapEq_hom` (HopfIdeal/Quotient/Basic.lean:332,340-345), `centerCoordinateIso` (Center/Isomorphism.lean:83), `quotientBaseChangeIsoOfMapEq` (HopfIdeal/BaseChange.lean:316,342-345), and `unipotentRadicalIsoOfIso` (Unipotent/Radical/Isomorphism.lean:116,127-131).",
+   "line": 122
+  },
+  {
+   "evidence": "Comap.lean:251 `theorem comapOfSurjective_id (I : HopfIdeal R H) : I.comapOfSurjective (BialgHom.id R H) _ = I`; Comap.lean:260 `comapOfSurjective_comapOfSurjective ... = I.comapOfSurjective (g.comp f) _`; Quotient/Basic.lean:317-319 is the same `congrArg (fun f => f.hom x) e.hom_inv_id` cancellation.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean",
+   "fix": "Replace with `HopfIdeal.comapOfSurjective_le_comapOfSurjective_iff` (TauCeti/Algebra/HopfAlgebra/HopfIdeal/Comap.lean:137) to push `hle` through `comapOfSurjective`, then `HopfIdeal.comapOfSurjective_comapOfSurjective` (Comap.lean:260) with `toBialgHom_comp`/`e.hom_inv_id` and `HopfIdeal.comapOfSurjective_id` (Comap.lean:251) to finish. Alternatively generalize the existing `HopfIdeal.comapOfSurjective_eq_of_hom_le_of_inv_le` (HopfIdeal/Quotient/Basic.lean:308-319), which is this same cancellation for `e : H \u2245 H`, to `e : H \u2245 K` and use it here, in Center/Isomorphism.lean:71-77 and in the unipotent copy.",
+   "issue": "The element chase (`intro x hx` \u2026 `hcancel` \u2026 `rw [hcancel] at hx''`) re-derives located Hopf-ideal comap lemmas: comap monotonicity, the composition law, and the identity law.",
+   "line": 103
+  },
+  {
+   "evidence": "Same `ConcreteCategory.epi_of_surjective _ (mkQuotient_surjective \u2026)` local instance at Center/Isomorphism.lean:129-131 and :140-142, HopfIdeal/Quotient/Categorical.lean:78, Unipotent/Radical/Isomorphism.lean:151-152.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean",
+   "fix": "Register `instance : Epi (FiniteTypeCommHopfAlgCat.mkQuotient H I)` (and the `CommHopfAlgCat` version) once in HopfIdeal/Quotient/Basic.lean from `CommHopfAlgCat.mkQuotient_surjective` (Quotient/Basic.lean:143) and `ConcreteCategory.epi_of_surjective`, then use `cancel_epi` after `solvableRadicalCoordinateMap_def`; drop both radical-specific ext lemmas and the ad-hoc local instances.",
+   "issue": "`solvableRadical_hom_ext` restates `unipotentRadical_hom_ext` (Unipotent/Radical/Isomorphism.lean:144-153) with no solvable-specific content, and locally re-derives the epi-ness of a quotient morphism for the fourth time in the repo.",
+   "line": 149
+  }
+ ],
+ "head_sha": "9a89d701b1f7b7711d3dc32b2d36aecdd87a6a66",
+ "merge_base_sha": "09ec8ff091da3fe5fd6b14e63d48007ff7ab2a53",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5255,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "d84eda9af0b5c3534175edd0e70d7699e9210719ddef6e57f089c9129ccce6d1",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "22bac7a3cca905a08d25ff766f8421cbe0bac922",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T180200Z-5255-reuse-7ca869",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T18:02:00Z",
+ "submitted_by": "kim-em",
+ "summary": "TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean is a near-verbatim rename-clone of TauCeti/Algebra/AlgebraicGroup/Unipotent/Radical/Isomorphism.lean (docstring included); every declaration after `comapOfIso` is generic in the candidate predicate and should be proved once. Several proof steps also re-derive located lemmas in HopfIdeal/Comap.lean and HopfIdeal/Quotient/Basic.lean.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Unipotent/Radical/Isomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Construction.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Radical/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Unipotent/Radical/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Center/Isomorphism.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/HopfIdeal/Quotient/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/HopfIdeal/Quotient/Categorical.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/HopfIdeal/BaseChange.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/HopfAlgebra/HopfIdeal/Comap.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/Solvable/Radical/Isomorphism.lean",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 21,
+  "trace_truncated": false
+ },
+ "transcript_blob": "f73fe7b60aaa4e62ef926630dca9b7e1c29f3d1fcff81ee7d7b33ad256954e3e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87353,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87353,
+  "cache_read_input_tokens": 730107,
+  "inference_geo": "not_available",
+  "input_tokens": 27,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3323,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3323,
+    "cache_read_input_tokens": 86830,
+    "input_tokens": 2,
+    "output_tokens": 3359,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 16228,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
