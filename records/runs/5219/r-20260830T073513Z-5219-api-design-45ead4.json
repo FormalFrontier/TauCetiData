@@ -1,0 +1,205 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.8331885,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 287.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 93833,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 93833,
+    "cache_read_input_tokens": 661641,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3758,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3758,
+      "cache_read_input_tokens": 92875,
+      "input_tokens": 2,
+      "output_tokens": 5552,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22052,
+    "output_tokens_details": {
+     "thinking_tokens": 17928
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "cost_usd": 1.833189,
+ "dedupe_key": "TauCetiProject/TauCeti|5219|d552c911de396ef88f215ec97a7e65f275bff427|api-design|claude-opus-5|ce88b39773d791a9|production|2",
+ "diff_blob": "96b3a5078fdd94f8f4cbecc16359500588991d618d2e1bb0cdef196735afc6cb",
+ "diff_sha256": "96b3a5078fdd94f8f4cbecc16359500588991d618d2e1bb0cdef196735afc6cb",
+ "duration_s": 287.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "TypeA.lean:125,135,147 (three `@[simp]`s); TypeA.lean:98-102 records that `simpleRootSubgroup_def` is kept out of simp for precisely this innermost-first reason; upstream precedent: `SlStd.twistedFrobenius_apply` (TwistedFrobenius.lean:125) is the definitional unfolding and carries no `@[simp]`, while the pinned `twistedFrobenius_rootSubgroupPoints` (TwistedFrobenius.lean:141-142) and `frobenius_rootSubgroupPoints` (Frobenius.lean:145-146) are the simp lemmas.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "fix": "Drop `@[simp]` from `steinberg_ofA` and `steinberg_ofTwistedA`; they are the definitional branch selectors, used via `rw` to reach the upstream API, and `steinberg_simpleRootSubgroup` stays the simp normal form. (The alternative \u2014 keeping them simp and also making `simpleRootSubgroup_def` simp so everything normalizes to `SlStd.*` \u2014 contradicts the stated design of `simpleRootSubgroup_def`.)",
+   "issue": "`@[simp] steinberg_ofA` (line 125) and `@[simp] steinberg_ofTwistedA` (line 135) block `@[simp] steinberg_simpleRootSubgroup` (line 147) at concrete indices. simp rewrites subterms before the enclosing term, so in `(ofA r q h).steinberg ((ofA r q h).simpleRootSubgroup i u)` the inner `(ofA r q h).steinberg` is rewritten to `SlStd.frobenius ...` first; the outer term then no longer matches `steinberg_simpleRootSubgroup`, and `SlStd.frobenius_rootSubgroupPoints` cannot fire either because its argument is `simpleRootSubgroup` (a plain `def`, not reducible) rather than `SlStd.rootSubgroupPoints`, and `simpleRootSubgroup_def` is deliberately not simp. The result is a term stuck between this file's names and the upstream ones.",
+   "line": "125"
+  },
+  {
+   "evidence": "Index.lean:224-236 (`abbrev IsTypeA`, `isTypeA_iff := Iff.rfl`, `DecidablePred` by `cases d <;> infer_instance`) versus Index.lean:205-217 (`def UsesHalfFrobenius`, `usesHalfFrobenius_iff`, `DecidablePred` via `rw [usesHalfFrobenius_iff]`); GraphTwisted.lean:131 uses `by simp [usesHalfFrobenius_iff]` for the same kind of obligation.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "fix": "Make `IsTypeA` a `def` like `UsesHalfFrobenius`, keep `isTypeA_iff`, and discharge the obligations in `ofA`/`ofTwistedA` with `(LieTypeIndex.isTypeA_iff _).mpr trivial`, matching how `GraphTwisted.lean` discharges the `UsesHalfFrobenius` side conditions.",
+   "issue": "`IsTypeA` is declared `abbrev`, so its body is reducible and exported, while `InStandardRange` (:127), `IsDuplicateRepresentative` (:157), `Valid` (:179) and `UsesHalfFrobenius` (:205) are all `def` plus an `_iff` characterization. The exposure buys nothing: `isTypeA_iff` (:229) already characterizes the predicate, and as an `abbrev` that `@[simp]` lemma rewrites between two reducibly identical sides.",
+   "line": "224"
+  }
+ ],
+ "head_sha": "d552c911de396ef88f215ec97a7e65f275bff427",
+ "merge_base_sha": "d76d1086e875c9ff4c0c5a18b617725edda1ea59",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5219,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "e51cdcaf10f8cde89825a893d3e3605d52b0768d5ee036f3fd3886c46028de93",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T073513Z-5219-api-design-45ead4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T07:35:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The characteristic API is now complete and reachable, but `@[simp]` on the two branch equations `steinberg_ofA`/`steinberg_ofTwistedA` defeats the file's own pinned simp lemma at exactly the concrete indices consumers write, leaving simp stuck in a mixed normal form. `LieTypeIndex.IsTypeA` also exposes its body as an `abbrev` where every sibling predicate is a `def` with an `_iff` characterization.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/TypeA.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/SpecialLinear/StandardCarrier",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Glob"
+  },
+  {
+   "ok": false,
+   "target": "<not-found>",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/FixedPointCandidate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 15,
+  "trace_truncated": false
+ },
+ "transcript_blob": "3ae86004cb59e00616a5d341a9ee53d69a1219d4ad50c9b782324d35bcccc72e",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 93833,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 93833,
+  "cache_read_input_tokens": 661641,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3758,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3758,
+    "cache_read_input_tokens": 92875,
+    "input_tokens": 2,
+    "output_tokens": 5552,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22052,
+  "output_tokens_details": {
+   "thinking_tokens": 17928
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
