@@ -1,0 +1,174 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4363934999999999,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 206.3,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 81116,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 81116,
+    "cache_read_input_tokens": 393459,
+    "inference_geo": "not_available",
+    "input_tokens": 13,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2909,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2909,
+      "cache_read_input_tokens": 81007,
+      "input_tokens": 2,
+      "output_tokens": 3085,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 15989,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "540aa115df46c79e58e9fac6c2210fcd503a8bf1",
+ "cost_usd": 1.436393,
+ "dedupe_key": "TauCetiProject/TauCeti|5206|164a1fe9a9baada51065e562332490381a1d0119|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "1974dd042e7195415c25340ecc2e707d0a506b605bce4b79f8145a63f45e1bed",
+ "diff_sha256": "1974dd042e7195415c25340ecc2e707d0a506b605bce4b79f8145a63f45e1bed",
+ "duration_s": 206.3,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib's neighbours spell the product out: `Mathlib/LinearAlgebra/CliffordAlgebra/Basic.lean:283` `\u03b9_mul_\u03b9_add_swap_of_isOrtho`, :288 `\u03b9_mul_\u03b9_comm_of_isOrtho`; the adjacent local lemma is `\u03b9_mul_\u03b9_eq_bivector_add` (Bivector.lean:88).",
+   "file": "TauCeti/LinearAlgebra/CliffordAlgebra/Bivector.lean",
+   "fix": "Rename to `bivector_eq_\u03b9_mul_\u03b9_of_isOrtho`, and update its three uses in `Polarization/TypeB/RootGenerators.lean` (`..._mem_integralSpinActionSubring` proofs).",
+   "issue": "`bivector_of_isOrtho` states `bivector Q a b = \u03b9 Q a * \u03b9 Q b`, but the name mentions only `bivector` (the definition's own name), so it reads as constructing a bivector from orthogonality rather than as an equality with the plain Clifford product.",
+   "line": "102"
+  },
+  {
+   "evidence": "Repo precedent for exactly this shape: `TauCeti/Analysis/InnerProductSpace/L2/Product.lean:232` `inner_L2prodMul_eq_zero_of_forall_basis`, `L2/Pi.lean:233` `inner_L2piMul_eq_zero_of_forall_basis`.",
+   "file": "TauCeti/RepresentationTheory/Spin/IntegralLattice.lean",
+   "fix": "Rename to `mem_integralSpinActionSubring_of_forall_basis`, updating the two call sites in `Polarization/TypeB/RootGenerators.lean` (short and long coroot integrality) and the module docstring entry.",
+   "issue": "`mem_integralSpinActionSubring_of_basis`: the hypothesis is `\u2200 s, spinAction Q P c (b.ExteriorAlgebra s) \u2208 integralLattice b`, not the existence of a basis, so `_of_basis` misdescribes it (Mathlib's `_of_basis`, e.g. `Module.Finite.of_basis`, means \"given a basis\").",
+   "line": "152"
+  }
+ ],
+ "head_sha": "164a1fe9a9baada51065e562332490381a1d0119",
+ "merge_base_sha": "baf1acb112c27581d18c08ea3cdd67cb6a2bdbf7",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5206,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "435e703f04bb68bd8364b65f5857832d26f3f4871694023eee88bedd47b17c1a",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T044041Z-5206-naming-09d2ba",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T04:40:41Z",
+ "submitted_by": "kim-em",
+ "summary": "Two introduced names fail to describe their statements: `bivector_of_isOrtho` names only the definition on its LHS rather than the equality it proves, and `mem_integralSpinActionSubring_of_basis` advertises a basis hypothesis instead of the per-basis-vector condition it actually takes. Everything else follows existing local precedent, and no notation is added.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/CliffordAlgebra/Bivector.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Spin/IntegralLattice.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Orthogonal/TypeB/RootGenerators.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Spin/Polarization/TypeB/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/Spin",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/ExteriorAlgebra/Contraction.lean",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 10,
+  "trace_truncated": false
+ },
+ "transcript_blob": "25910a700d5ecd9cf7723108fc9c4a3e1e6e6d9b189b6eeb812cf8b629bdbd25",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 81116,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 81116,
+  "cache_read_input_tokens": 393459,
+  "inference_geo": "not_available",
+  "input_tokens": 13,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2909,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2909,
+    "cache_read_input_tokens": 81007,
+    "input_tokens": 2,
+    "output_tokens": 3085,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 15989,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
