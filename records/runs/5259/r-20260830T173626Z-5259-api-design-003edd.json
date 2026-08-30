@@ -1,0 +1,197 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.3532764999999998,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 264.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 66355,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 66355,
+    "cache_read_input_tokens": 276179,
+    "inference_geo": "not_available",
+    "input_tokens": 15,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 3516,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 3516,
+      "cache_read_input_tokens": 65639,
+      "input_tokens": 2,
+      "output_tokens": 14555,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21784,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fa7da4ac291d24273e047980fc886535a7081ea4",
+ "cost_usd": 1.353276,
+ "dedupe_key": "TauCetiProject/TauCeti|5259|80a709610d99ce507ab063716ac4caf049f3552e|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "d2208561f27c6cbc0f1da1016acaaa065d867e8d388dec047c6dc14b790276fc",
+ "diff_sha256": "d2208561f27c6cbc0f1da1016acaaa065d867e8d388dec047c6dc14b790276fc",
+ "duration_s": 264.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 130 and 174 need `rotate.eq_def` / `reverse.eq_def` to prove even `rotate_apply`; that handle exists only inside the file, since the module is `module` + `public section` with no `@[expose]` (contrast `@[expose, simps] def toPerm` at Geometry/Diffeomorphism/Group.lean:137). `coe_compDiffeomorph`/`coe_transDiffeomorph` at SmoothEmbedding/Diffeomorph.lean:184,235.",
+   "file": "TauCeti/KnotTheory/SmoothCircle.lean",
+   "fix": "Add `rotate_def`, `reverse_def`, and the `coe_rotate`/`coe_reverse` companions (the sibling file gives a `coe_` for every operation), plus the bridge `MulOpposite.op (circleRotationHom a) \u2022 f = a \u2022 f` linking the new `MulAction Circle` to the existing opposite-group reparametrization action.",
+   "issue": "`rotate` and `reverse` have no `_def` lemma stating them as `f.compDiffeomorph (circleRotationHom a)` / `f.compDiffeomorph circleReflection`, and no `coe_rotate`/`coe_reverse`. Bodies are (correctly) unexposed, so a consumer cannot reuse the general reparametrization API (`compDiffeomorph_compDiffeomorph`, `unop_smul_def`, `transDiffeomorph_compDiffeomorph`, `instMulActionMulOppositeDiff`) on a rotation except by re-deriving it through `SmoothEmbedding.ext`.",
+   "line": 122
+  },
+  {
+   "evidence": "`@[simp] theorem smul_def [IsManifold J n N] (e : Diff J N n) (f : SmoothEmbedding I J n M N) : e \u2022 f = f.transDiffeomorph e := rfl` \u2014 TauCeti/Geometry/Manifold/SmoothEmbedding/Diffeomorph.lean:289-291.",
+   "file": "TauCeti/KnotTheory/SmoothCircle.lean",
+   "fix": "State it in one convention: `theorem reverse_transDiffeomorph (e) (f) : (f.transDiffeomorph e).reverse = f.reverse.transDiffeomorph e`.",
+   "issue": "`reverse_smul` is `@[simp]` with LHS `reverse (SmoothEmbedding.transDiffeomorph f e)` and RHS `e \u2022 f.reverse`, but `SmoothEmbedding.smul_def` is itself `@[simp]` and rewrites `e \u2022 g` to `g.transDiffeomorph e`; the RHS is therefore not in simp normal form, and the name announces a `\u2022` the LHS does not contain.",
+   "line": 210
+  },
+  {
+   "evidence": "`@[simp] theorem inv_apply (f) (x) : f\u207b\u00b9 x = f.symm x` at Geometry/Diffeomorphism/Group.lean:120-121; `inv_def` at :97 is not simp. Repo precedent for the companion lemma: `conjDiffeomorph_symm_apply`, Geometry/Lie/Adjoint/Conjugation.lean:74.",
+   "file": "TauCeti/KnotTheory/SmoothCircle.lean",
+   "fix": "Add `@[simp] circleReflection_symm_apply : circleReflection.symm x = x\u207b\u00b9` and `@[simp] circleRotationHom_symm_apply : (circleRotationHom a).symm x = a\u207b\u00b9 * x`.",
+   "issue": "`circleReflection` and `circleRotationHom a` are bundled diffeomorphisms with no `_symm_apply` lemma, so `circleReflection.symm x` and `(circleRotationHom a).symm x` are stuck for `simp`: the simp-normal form of `f\u207b\u00b9 x` is `f.symm x` (`Diffeomorph.inv_apply`), and only the non-simp `Diffeomorph.inv_def` detour recovers the value.",
+   "line": 75
+  }
+ ],
+ "head_sha": "80a709610d99ce507ab063716ac4caf049f3552e",
+ "merge_base_sha": "75cb0ced48e5f51850d189a20005fb53dfc6e7f7",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5259,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "6419c6e6cf3a6c7c0b1aa1e069f8a760357d7dfcc333bbcbafecd436131f7e23",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "22bac7a3cca905a08d25ff766f8421cbe0bac922",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T173626Z-5259-api-design-003edd",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T17:36:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is minimal and correctly abbrev-based, but the two new operations lack the `_def` (and `coe_`) restatements that connect them to the general `compDiffeomorph` API whose bodies are not exposed, `reverse_smul` mixes `\u2022` and `transDiffeomorph` so its RHS is not simp-normal, and the two exported diffeomorphisms have no `_symm_apply` lemmas.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry/Manifold/SmoothEmbedding/Diffeomorph.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry/Manifold/SmoothEmbedding/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/KnotTheory/SmoothCircle.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/GeometricTopology/README.md",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry/Diffeomorphism/Group.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry/Lie/Adjoint/Conjugation.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Geometry",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 14,
+  "trace_truncated": false
+ },
+ "transcript_blob": "46c9b4fdfa12a1567e6520be032bd7fe5de8bbbb4e284b9cfebebc995ef98d48",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 66355,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 66355,
+  "cache_read_input_tokens": 276179,
+  "inference_geo": "not_available",
+  "input_tokens": 15,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 3516,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 3516,
+    "cache_read_input_tokens": 65639,
+    "input_tokens": 2,
+    "output_tokens": 14555,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21784,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
