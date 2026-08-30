@@ -1,0 +1,187 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2726115,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 133.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 76038,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 76038,
+    "cache_read_input_tokens": 463773,
+    "inference_geo": "not_available",
+    "input_tokens": 17,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1625,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1625,
+      "cache_read_input_tokens": 77213,
+      "input_tokens": 2,
+      "output_tokens": 3674,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 10528,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fa38bc2f394d65bf94d8ac339770c9a9b6b00dad",
+ "cost_usd": 1.272612,
+ "dedupe_key": "TauCetiProject/TauCeti|5213|64ac6730e22adfe00aa261a8e536f48eaa3e03fd|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "20c825bfe4e5c8a75b9d5ee2927c75acb773eba930d94dda915e301e8ef984f2",
+ "diff_sha256": "20c825bfe4e5c8a75b9d5ee2927c75acb773eba930d94dda915e301e8ef984f2",
+ "duration_s": 133.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 217 `\u2211 j \u2208 (weightString M h\u03b1 \u03c7).erase 0`; in the same file family `sum_weightString_eq_sum_of_subset` (String.lean:206) and `sum_finrank_genWeightSpace_weightString_le` (String.lean:184) both use `weightString` in the name for sums over the *full* string, and String.lean:46-52 documents `erase 0` as the distinct `j \u2265 1` index set.",
+   "file": "TauCeti/Algebra/Lie/Weights/Trace.lean",
+   "fix": "Rename to `trace_raiseLowerEnd_eq_sum_weightString_erase_zero` (or `..._erase`).",
+   "issue": "`trace_raiseLowerEnd_eq_sum_weightString` sums over `(weightString M h\u03b1 \u03c7).erase 0`, not over `weightString M h\u03b1 \u03c7`; the two differ by the `j = 0` term `finrank (genWeightSpace M \u03c7) \u2022 \u03c7 z`, which is generally nonzero, so the name advertises the wrong index set.",
+   "line": 213
+  },
+  {
+   "evidence": "Statement at lines 120-122 ends `= toEnd K H (genWeightSpace M (\u03b1 + \u03c7)) z`; the naming convention names a theorem from its conclusion, and Mathlib spells such trace/action computations out, e.g. `trace_toEnd_genWeightSpaceChain_eq_zero` (mathlib/Mathlib/Algebra/Lie/Weights/Chain.lean:177).",
+   "file": "TauCeti/Algebra/Lie/Weights/Trace.lean",
+   "fix": "Append the RHS: `rootVectorMap_comp_rootVectorMap_sub_raiseLowerEnd_eq_toEnd`.",
+   "issue": "`rootVectorMap_comp_rootVectorMap_sub_raiseLowerEnd` spells out the whole LHS but omits the conclusion, which is an equality with `toEnd K H (genWeightSpace M (\u03b1 + \u03c7)) z`; the name reads as if it were a definition of the difference rather than its evaluation.",
+   "line": 118
+  }
+ ],
+ "head_sha": "64ac6730e22adfe00aa261a8e536f48eaa3e03fd",
+ "merge_base_sha": "12f181a126dcb79e10bb1d339422b9b7e6e0285e",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5213,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fe7d5c56f76de19d396b204cbcea0b122c90b55f7698d5268ea50dfbef5c111e",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T082113Z-5213-naming-4dc12a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T08:21:13Z",
+ "submitted_by": "kim-em",
+ "summary": "Two names do not describe their conclusions: the weightString closed form sums over `(weightString \u2026).erase 0` but is named as a sum over the full string, contradicting the adjacent `sum_weightString_*` naming, and the Leibniz lemma names only its left-hand side. Everything else (coe/apply lemmas, `_eq_sum_Ico`, namespace, no new notation) is conventional.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/Trace.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/String.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Submodule/LinearMap.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Sl2/WeightString.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Weights/Exact.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 13,
+  "trace_truncated": false
+ },
+ "transcript_blob": "bd61f27aad3a38fb5c9bb065d3a8dca60861e75dfa6a9207a38c78e47dc3f861",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 76038,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 76038,
+  "cache_read_input_tokens": 463773,
+  "inference_geo": "not_available",
+  "input_tokens": 17,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1625,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1625,
+    "cache_read_input_tokens": 77213,
+    "input_tokens": 2,
+    "output_tokens": 3674,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 10528,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
