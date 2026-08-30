@@ -1,0 +1,219 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.2479715,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 223.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 59384,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 59384,
+    "cache_read_input_tokens": 393729,
+    "inference_geo": "not_available",
+    "input_tokens": 21,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 5778,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 5778,
+      "cache_read_input_tokens": 56406,
+      "input_tokens": 2,
+      "output_tokens": 3496,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 18025,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0f6cca23c5d5bf2a24e74847a134d2166ee62b92",
+ "cost_usd": 1.247972,
+ "dedupe_key": "TauCetiProject/TauCeti|5227|3f125c12ad21dbca4d08b1cc90e14e068f8c8561|reuse|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "a48775a8000706652c56112b0a5ce76de3f895feff41ff7a93d5d33f6ffed6d6",
+ "diff_sha256": "a48775a8000706652c56112b0a5ce76de3f895feff41ff7a93d5d33f6ffed6d6",
+ "duration_s": 223.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/GroupTheory/Index.lean:813 `instance finiteIndex_ker {G'} [Group G'] (f : G \u2192* G') [Finite f.range] : f.ker.FiniteIndex`; mathlib/Mathlib/Data/Finite/Prod.lean:63 `instance Equiv.finite_right [Finite \u03b2] : Finite (\u03b1 \u2243 \u03b2)`; mathlib/Mathlib/Data/Fintype/EquivFin.lean:195 `instance Subtype.finite`. The PR's own proof body is `Subgroup.finiteIndex_ker (nonzeroJointWeightAction N \u03c1)`, i.e. the instance applied with everything synthesized.",
+   "file": "TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal/Finite.lean",
+   "fix": "Delete the declaration; downstream code needing `(nonzeroJointWeightAction N \u03c1).ker.FiniteIndex` gets it by `inferInstance` from `Subgroup.finiteIndex_ker`.",
+   "issue": "`finiteIndex_ker_nonzeroJointWeightAction` adds nothing over Mathlib's instance `Subgroup.finiteIndex_ker`: the goal is syntactically `f.ker.FiniteIndex`, so typeclass search finds it automatically (the `[Finite f.range]` argument is discharged by `Equiv.finite_right` + `Subtype.finite` from `finite_nonzeroJointWeights` above). It is also a `theorem`, so it is not even registered for instance search.",
+   "line": "79"
+  },
+  {
+   "evidence": "mathlib/Mathlib/Algebra/Module/Submodule/Invariant.lean:48 `theorem mem_invtSubmodule_iff_map_le : p \u2208 f.invtSubmodule \u2194 p.map f \u2264 p` and :52 `mem_invtSubmodule_iff_mapsTo : p \u2208 f.invtSubmodule \u2194 Set.MapsTo f p p := Iff.rfl`.",
+   "file": "TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal/Basic.lean",
+   "fix": "Drop the lemma and let consumers write `(Module.End.mem_invtSubmodule_iff_map_le (\u03c1 g)).mp (map_iInf_eigenspace_unitHom_eq_self_of_nonzeroJointWeightAction_eq N \u03c1 g \u03c7 h\u03c7).le`; if a `MapsTo` form is kept for `Submodule.inf_iInf_eigenspace_of_forall_mapsTo`, take the pointwise hypothesis `h\u03c7 : nonzeroJointWeightAction N \u03c1 g \u03c7 = \u03c7` and prove it with that one-liner instead of the manual plumbing.",
+   "issue": "`mapsTo_iInf_eigenspace_unitHom_of_nonzeroJointWeightAction_eq` is the immediately preceding `map_iInf_eigenspace_unitHom_eq_self_of_nonzeroJointWeightAction_eq` transported across `Set.MapsTo f \u2191p \u2191p \u2194 p.map f \u2264 p`, with an artificially stronger `\u2200 g` hypothesis (only `h\u03c7 g` is used), and its 6-line proof re-derives that transport by hand (`Submodule.mem_map_of_mem` + `rwa`).",
+   "line": "174"
+  }
+ ],
+ "head_sha": "3f125c12ad21dbca4d08b1cc90e14e068f8c8561",
+ "merge_base_sha": "0f6cca23c5d5bf2a24e74847a134d2166ee62b92",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5227,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a24a7d4c660b1e7d7163726b8ac69304821bd254fb628fcfc545b675348d6b6f",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T075452Z-5227-reuse-1bcb97",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T07:54:52Z",
+ "submitted_by": "kim-em",
+ "summary": "`finiteIndex_ker_nonzeroJointWeightAction` is Mathlib's `Subgroup.finiteIndex_ker` instance restated at one hom, and instance search already produces it verbatim; `mapsTo_iInf_eigenspace_unitHom_of_nonzeroJointWeightAction_eq` restates the preceding lemma through a Mathlib iff it re-derives by hand. The finiteness and finrank bound themselves are new and reuse the independence API correctly.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Normal/Finite.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/NumberTheory/ModularForms/CharacterDecomp.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace/JointEigenvector/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Logic/Equiv/Defs.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Coalgebra/Comodule/MonoidAlgebra/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/AlgebraicGroup/DiagonalizableGroup/Weight.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Submodule/Map.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Eigenspace",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Algebra/Module/Submodule/Invariant.lean",
+   "tool": "Read"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 19,
+  "trace_truncated": false
+ },
+ "transcript_blob": "1475dad23978d3e19e1c7d64ab134a82a9d5d93f2e6e692654e759cd0bc367d6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 59384,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 59384,
+  "cache_read_input_tokens": 393729,
+  "inference_geo": "not_available",
+  "input_tokens": 21,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 5778,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 5778,
+    "cache_read_input_tokens": 56406,
+    "input_tokens": 2,
+    "output_tokens": 3496,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 18025,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "block"
+}
