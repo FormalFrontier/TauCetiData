@@ -1,0 +1,214 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.4619205000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 229.8,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 78319,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 78319,
+    "cache_read_input_tokens": 448621,
+    "inference_geo": "not_available",
+    "input_tokens": 17,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 617,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 617,
+      "cache_read_input_tokens": 80502,
+      "input_tokens": 2,
+      "output_tokens": 4011,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 17752,
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8b44860b96b570abba5c538fe34c245ed61160d3",
+ "cost_usd": 1.461921,
+ "dedupe_key": "TauCetiProject/TauCeti|5187|c7681ae63dcfd2043ab66f7a8f3f3740e2678ffc|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "9b2b69a0786ba4c2d6b092571e5965f4161d8ef307621faecb7260fa1804e59e",
+ "diff_sha256": "9b2b69a0786ba4c2d6b092571e5965f4161d8ef307621faecb7260fa1804e59e",
+ "duration_s": 229.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Transvection.lean:340-342 and :350-352 both write `* ((transvectionWeylElement hij)\u207b\u00b9)\u207b\u00b9`; the form exists only to fit the `let right := (transvectionWeylElement ...)\u207b\u00b9` abbreviation in Weyl.lean:113-114,145-146.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "State them as `(transvectionWeylElement hij)\u207b\u00b9 * transvectionUnit hik c * transvectionWeylElement hij = transvectionUnit hjk c` (resp. `hki`/`hkj`), and insert `inv_inv` where `Symplectic/Weyl.lean:124,156` rewrites with them.",
+   "issue": "`transvectionWeylElement_inv_conj_transvectionUnit_left` and `..._right` (line 348) state the conjugator as `((transvectionWeylElement hij)\u207b\u00b9)\u207b\u00b9`. `inv_inv` is `@[simp]`, so the LHS is not in normal form: a consumer writing the natural `w\u207b\u00b9 * x * w`, or any goal after `simp`, will not match these lemmas.",
+   "line": 338
+  },
+  {
+   "evidence": "Transvection.lean:268-334 cover only `x_{jk}` and `x_{kj}` with `k \u2209 {i,j}`. In the `SL\u2082` block the word is `!![0,1;-1,0]`, and `!![0,1;-1,0] * !![1,c;0,1] * !![0,-1;1,0] = !![1,0;-c,1]`, i.e. `x_{ji}(-c)`.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Add `transvectionWeylElement hij * transvectionUnit hij c * (transvectionWeylElement hij)\u207b\u00b9 = transvectionUnit hij.symm (-c)` and the `hij.symm` counterpart.",
+   "issue": "`transvectionWeylElement` is exposed as \"the Weyl representative of the transposition exchanging `i` and `j`\", but every conjugation lemma requires a third index (`hjk`/`hik`, `hkj`/`hki`). The case that characterizes it as a reflection \u2014 its action on the root subgroups it is built from \u2014 is absent, so a consumer conjugating `x_{ij}(c)` must unfold the three-factor word.",
+   "line": 251
+  },
+  {
+   "evidence": "Weyl.lean:102-162 prove transport only for `positiveLongRootTransvectionUnit`/`negativeLongRootTransvectionUnit`; `differenceShortRootUnit` (Symplectic/Basic.lean:687) is in scope via the import but never conjugated.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Weyl.lean",
+   "fix": "Add `differenceShortRootWeylElement hij * differenceShortRootUnit hij c * (differenceShortRootWeylElement hij)\u207b\u00b9 = differenceShortRootUnit hij.symm (-c)`, derived from the GL lemma requested above.",
+   "issue": "Same gap at the symplectic level: `differenceShortRootWeylElement` is documented as the reflection in `e_i-e_j`, yet no lemma gives its action on `differenceShortRootUnit` (nor on the sum-short-root units already defined in `Symplectic/Basic.lean`), so the reflection property of the element is unusable without unfolding.",
+   "line": 58
+  },
+  {
+   "evidence": "Repo precedent for exactly this shape: `@[simp] theorem weylElement_conj_torusHom` at TauCeti/RepresentationTheory/SU2/Weyl/Basic.lean:139-142 (`weylElement * torusHom z * weylElement\u207b\u00b9 = torusHom z\u207b\u00b9`).",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Weyl.lean",
+   "fix": "Mark both `@[simp]`. Do not do the same for the four GL lemmas: there `hik`/`hki` occurs only in the RHS and would be left as an undischargeable side goal.",
+   "issue": "`differenceShortRootWeylElement_conj_positiveLongRootTransvectionUnit` and `..._negativeLongRootTransvectionUnit` (line 134) carry no `@[simp]`, although every argument is determined by the LHS and the rule is strictly simplifying (three factors to one) and cannot loop.",
+   "line": 102
+  },
+  {
+   "evidence": "Transvection.lean:405-412 contains only `map_transvectionUnit`; grep for `map_transvectionWeylElement` in `code/TauCeti` returns nothing.",
+   "file": "TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "fix": "Add `@[simp] theorem map_transvectionWeylElement (f : A \u2192+* B) (hij : i \u2260 j) : Matrix.GeneralLinearGroup.map f (transvectionWeylElement hij) = transvectionWeylElement hij`, proved from `map_transvectionUnit`.",
+   "issue": "The `Map` section gets no naturality lemma for the new `transvectionWeylElement`, while the PR adds one for the symplectic Weyl element (`map_differenceShortRootWeylElement`, Weyl.lean:166-171). Base change along a ring map is part of the advertised interface here, so the GL-level element is left out of it.",
+   "line": 401
+  }
+ ],
+ "head_sha": "c7681ae63dcfd2043ab66f7a8f3f3740e2678ffc",
+ "merge_base_sha": "8b44860b96b570abba5c538fe34c245ed61160d3",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5187,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a719c708bb112796b1c44d76b0ca0786634b84d6d71e2f6c0c926dca69c78bfc",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T020218Z-5187-api-design-3ee9ca",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T02:02:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The new Weyl-element surface is minimal and shim-free, but two public lemmas are stated in a non-normal double-inverse form, the defining reflection case (action on the root subgroup that names the element) is missing at both the GL and symplectic level, and the two symplectic transport lemmas carry no simp annotation despite the repo's own precedent.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Weyl.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Transvection.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/ReductiveGroups/README.md",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/RepresentationTheory/SU2/Weyl/Basic.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/ChevalleyRelations.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/Matrix/GeneralLinearGroup/Symplectic/ChevalleyRelations.lean",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 14,
+  "trace_truncated": false
+ },
+ "transcript_blob": "ef5d72fbac734469e97a9cc58ddfa5e5a8a6c1fdd78cea6b6ab1b7e14d2782a6",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 78319,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 78319,
+  "cache_read_input_tokens": 448621,
+  "inference_geo": "not_available",
+  "input_tokens": 17,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 617,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 617,
+    "cache_read_input_tokens": 80502,
+    "input_tokens": 2,
+    "output_tokens": 4011,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 17752,
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
