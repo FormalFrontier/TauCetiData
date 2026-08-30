@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.442373,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 57.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 205056,
+    "input_tokens": 260239,
+    "output_tokens": 2131,
+    "reasoning_output_tokens": 600
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ff17f3de24f683654d6a82d0f509597eea966323",
+ "cost_estimated": true,
+ "cost_usd": 0.442373,
+ "dedupe_key": "TauCetiProject/TauCeti|5191|729a562172fed7242dbd5f498c4a14b63e7be14c|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "50035f939f1fed396dd805458edf8ec78402e5fa69d849763daeca91530fd95b",
+ "diff_sha256": "50035f939f1fed396dd805458edf8ec78402e5fa69d849763daeca91530fd95b",
+ "duration_s": 57.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/Algebra/AlgebraicGroup/Hopf/Map.lean:136-155` defines `AlgHom.mapDomainMulEquiv` and its forward application lemma; `GeneralLinear/Dynamic/Weight/Levi/Action.lean:65-67` already uses it with `CommHopfAlgCat.ofIso` for precisely this transport pattern.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/GeckLattice/BaseChange.lean",
+   "fix": "Delete both private declarations and use `AlgHom.mapDomainMulEquiv (A := B) (CommHopfAlgCat.ofIso e.symm)`; use `AlgHom.mapDomainMulEquiv_apply` for evaluation.",
+   "issue": "`pointsMulEquivOfIso` directly duplicates `AlgHom.mapDomainMulEquiv` for a Hopf-algebra isomorphism.",
+   "line": 75
+  },
+  {
+   "evidence": "`TauCeti/Algebra/AlgebraicGroup/GeneralLinear/Coordinate/BaseChange.lean:390-409` proves the transported generic-matrix-coordinate formula using `coordinateHopfAlgebraBaseChangeIso_inv_X` and `baseChangeMap_apply_tmul`, exactly the intermediate calculation repeated at lines 219-231.",
+   "file": "TauCeti/LinearAlgebra/RootSystem/SimplyConnectedRootDatum/GeckLattice/BaseChange.lean",
+   "fix": "Apply `GeneralLinear.coordinateHopfAlgebraBaseChangeMap_X` to the integral quotient map and `(geckBaseChangeCoordinateIso ht A).symm`, then rewrite with `mkQuotient_comp_geckBaseChangeCoordinateIso_hom`; remove the duplicated calculation.",
+   "issue": "The private coordinate lemma manually repeats the generic base-change evaluation packaged by `GeneralLinear.coordinateHopfAlgebraBaseChangeMap_X`.",
+   "line": 203
+  }
+ ],
+ "head_sha": "729a562172fed7242dbd5f498c4a14b63e7be14c",
+ "merge_base_sha": "8b44860b96b570abba5c538fe34c245ed61160d3",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5191,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9570f1d6e09aa4cdac28a60ada86d14452e31adc157ef9055ce70d24ab213df5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T025316Z-5191-reuse-6f9783",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T02:53:16Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR duplicates an existing generic point-transport equivalence and re-derives an existing generic base-change coordinate calculation.",
+ "transcript_blob": "c40fc4f62ec49f68cf1572529878bcc5dcc5adc6be1fa9b24ac46d6a3f0a053c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 205056,
+  "input_tokens": 260239,
+  "output_tokens": 2131,
+  "reasoning_output_tokens": 600
+ },
+ "verdict": "block"
+}
