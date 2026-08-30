@@ -1,0 +1,237 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.0374175,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 277.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 107771,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 107771,
+    "cache_read_input_tokens": 862661,
+    "inference_geo": "not_available",
+    "input_tokens": 28,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 4278,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 4278,
+      "cache_read_input_tokens": 106293,
+      "input_tokens": 2,
+      "output_tokens": 2470,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20813,
+    "output_tokens_details": {
+     "thinking_tokens": 16137
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0f6cca23c5d5bf2a24e74847a134d2166ee62b92",
+ "cost_usd": 2.037418,
+ "dedupe_key": "TauCetiProject/TauCeti|5223|9cb60d75ee93a03e88a419a3119555dc9a82dc15|api-design|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "437d380959acd9bc65d350169fdbbef9f250fa381d8bc70edffca6c7217dde53",
+ "diff_sha256": "437d380959acd9bc65d350169fdbbef9f250fa381d8bc70edffca6c7217dde53",
+ "duration_s": 277.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Index.lean:130`: `| .C rank q => 3 \u2264 rank \u2227 q.p \u2260 2`; grep for `characteristic_ne_two` / `Odd` over `code/TauCeti` returns no such lemma for any Lie index.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "fix": "Add `theorem characteristic_ne_two (d : TypeCLieIndex) : d.1.characteristic \u2260 2` (or `Odd d.1.characteristic`) next to `three_le_rank`, proved the same way from `(inStandardRange_iff _).mp ... |>.2`.",
+   "issue": "Only half of the type-C standard range is exposed. `three_le_rank` is proved, but the odd-characteristic half of `InStandardRange` for `.C` (`q.p \u2260 2`) has no lemma, although both the module docstring (line 18) and the `TypeCLieIndex` docstring (line 85) advertise it (\"its characteristic is odd\"), and it is the condition that excludes the `C_r(2^e) = B_r(2^e)` overlap.",
+   "line": 98
+  },
+  {
+   "evidence": "Lines 98-108, 126-132, 136-142 each open with `obtain \u27e8\u27e8d, _\u27e9, hC\u27e9 := d; change d.IsTypeC at hC; cases d <;> try contradiction`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "fix": "Expose an elimination lemma, e.g. `theorem exists_eq_ofC (d : TypeCLieIndex) : \u2203 r q h, d = ofC r q h` (or `\u2203 r q, d.1.1 = .C r q`), and use it for the three in-file proofs. Also add the `isTypeC_iff` characterization that `Index.lean` gives every other selector (`inStandardRange_iff`, `usesHalfFrobenius_iff`, `isDuplicateRepresentative_iff`).",
+   "issue": "`ofC` is the introduction form but there is no elimination principle for `TypeCLieIndex`, so every consumer that must see the underlying `.C rank q` has to repeat the subtype-destructuring dance. The file itself repeats it three times (`three_le_rank` lines 99-103, `toGraphTwistedIndex` lines 127-132, `diagramPerm_eq_one` lines 137-140), each with a `change d.IsTypeC at hC` workaround.",
+   "line": 93
+  },
+  {
+   "evidence": "`StandardCarrier/RootDatum.lean:78-82` states the Bourbaki identification at `(C (n + 1)).simplyConnectedRootDatum`; the new file never relates `d.1.dynkinType` to `DynkinType.C (d.carrierParameter + 1)`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "fix": "Add `@[simp] theorem dynkinType_eq (d : TypeCLieIndex) : d.1.dynkinType = .C d.1.rank` (hence `.C (d.carrierParameter + 1)`), which is what lets `SpStd.rootGeneratorWeight_inl_eq_root_simpleIndex` be applied at a CFSG index.",
+   "issue": "The reindexing is only justified numerically (`carrierParameter + 1 = d.1.rank`); nothing exposes that the index's Dynkin type is the carrier's type, so a consumer cannot connect `simpleRootSubgroup i` to the pinned datum without redoing the constructor case split.",
+   "line": 115
+  },
+  {
+   "evidence": "TypeC.lean:167-170 docstring: \"because `steinberg` is transparent, `TauCeti.SpStd.coe_frobenius_apply` already supplies the canonical simp normal form in terms of the characteristic and field exponent\"; Index.lean:472 `fieldOrder_eq_characteristic_pow` carries no attribute.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "fix": "Make `steinberg` a `def` (keeping `AmbientGroup` reducible) so the CFSG-level lemmas own the normal form, and mark `coe_steinberg_apply` `@[simp]`; restate any SpStd Frobenius lemma a consumer needs. If transparency is deliberate instead, drop `coe_steinberg_apply` and state the pinned equations in the `characteristic ^ fieldExponent` spelling \u2014 one spelling, not two.",
+   "issue": "`steinberg` is a reducible `abbrev`, so `SpStd.coe_frobenius_apply` (`@[simp]`, Frobenius.lean:147) fires through it and normalizes coefficients to `... ^ d.1.characteristic ^ d.1.fieldExponent`, while `steinberg_simpleRootSubgroup` (`@[simp]`) produces the `d.1.fieldOrder` spelling and no simp lemma reconciles the two (`fieldOrder_eq_characteristic_pow` is not `@[simp]`). `coe_steinberg_apply` is consequently unreachable by `simp`, as its own docstring concedes.",
+   "line": 164
+  },
+  {
+   "evidence": "Line 194: `simp only [diagramPerm_eq_one, Equiv.Perm.coe_one, id_eq]` is the first proof step, normalizing away the RHS's own `diagramPerm` application.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "fix": "State the simp lemma with `d.simpleRootSubgroup i (...)` on the right; if the uniform `\u03b3 \u2218 Frob_q` shape is wanted for the L1 table, keep it as a separate non-simp restatement.",
+   "issue": "`steinberg_simpleRootSubgroup` is `@[simp]` but its RHS is not simp-normal: it contains `d.toGraphTwistedIndex.diagramPerm i`, which the file's own `@[simp] diagramPerm_eq_one` (line 135) immediately rewrites to `i` \u2014 the proof's first step is exactly that rewrite.",
+   "line": 188
+  }
+ ],
+ "head_sha": "9cb60d75ee93a03e88a419a3119555dc9a82dc15",
+ "merge_base_sha": "0f6cca23c5d5bf2a24e74847a134d2166ee62b92",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5223,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "35b359794cb0782f51875702e15d789fc2c018811fe1f6759f1a7e0f5f7a2db0",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "232908c4415c14791946d9de0c2b84480fb2d96d",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T101001Z-5223-api-design-c0f327",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T10:10:01Z",
+ "submitted_by": "kim-em",
+ "summary": "The type-C surface is missing the elimination/characteristic lemmas its own docstrings advertise (odd characteristic, destructuring a type-C index, the Dynkin-type bridge to the carrier), and the `steinberg` abbrev leaves two competing spellings of `q` with the CFSG-level `coe_steinberg_apply` unreachable by `simp`.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/TypeC.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Symplectic/StandardCarrier/Frobenius.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/GraphTwisted.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/FixedPointCandidate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Closure.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/README.md",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/CFSGStatement/README.md",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Symplectic",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Symplectic/StandardCarrier/RootDatum.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/DynkinType.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Algebra/Lie/Symplectic/StandardCarrier/PointsFunctor.lean",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 18,
+  "trace_truncated": false
+ },
+ "transcript_blob": "3a155f52e9df16d3f02d11f74d9e6fbff248c5948c2699e584505ea2ba5384cb",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 107771,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 107771,
+  "cache_read_input_tokens": 862661,
+  "inference_geo": "not_available",
+  "input_tokens": 28,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 4278,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 4278,
+    "cache_read_input_tokens": 106293,
+    "input_tokens": 2,
+    "output_tokens": 2470,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20813,
+  "output_tokens_details": {
+   "thinking_tokens": 16137
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

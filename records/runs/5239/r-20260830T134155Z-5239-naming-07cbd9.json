@@ -1,0 +1,225 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.9181935,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 278.7,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 95816,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 95816,
+    "cache_read_input_tokens": 769449,
+    "inference_geo": "not_available",
+    "input_tokens": 24,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 1489,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 1489,
+      "cache_read_input_tokens": 97127,
+      "input_tokens": 2,
+      "output_tokens": 4432,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 22188,
+    "output_tokens_details": {
+     "thinking_tokens": 17123
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "13d7eeb29b169e95c232df1a7d8e6ba6cabd4f8c",
+ "cost_usd": 1.918194,
+ "dedupe_key": "TauCetiProject/TauCeti|5239|6b8c256a50ba3a8fcb85dfc5bdcce4b082b11d97|naming|claude-opus-5|ce88b39773d791a9|production|1",
+ "diff_blob": "02730efa148f6919d922662fd641931e0462421bc732734b09a30acc0c94ad5a",
+ "diff_sha256": "02730efa148f6919d922662fd641931e0462421bc732734b09a30acc0c94ad5a",
+ "duration_s": 278.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "grep `_pow_twistOrder`: GraphTwisted.lean:314-315 `d.diagramPerm ^ d.twistOrder = 1`; RootDatumAutomorphism.lean:85 `d.datumGraphAut ^ d.twistOrder = 1`; Steinberg.lean:232-233 `d.datumSteinberg ^ d.twistOrder = RootPairingIsogeny.smulId _ (d.1.1.fieldOrderPNat ^ d.twistOrder)`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Datum/Steinberg.lean",
+   "fix": "Rename to `datumSteinberg_pow_twistOrder_eq_smulId` and `datumSteinberg_pow_twistOrder_eq_smulId_of_not_usesHalfFrobenius`, matching the PR's own `exists_pow_datumSteinberg_eq_smulId`, which does name its right-hand side.",
+   "issue": "`datumSteinberg_pow_twistOrder` states `... ^ twistOrder = smulId _ (q ^ e)`, but in this same namespace the `_pow_twistOrder` shape already means \"= 1\": `GraphTwistedIndex.diagramPerm_pow_twistOrder : d.diagramPerm ^ d.twistOrder = 1` (GraphTwisted.lean:314) and `GraphTwistedIndex.datumGraphAut_pow_twistOrder : d.datumGraphAut ^ d.twistOrder = 1` (RootDatumAutomorphism.lean:85). The name therefore advertises the wrong conclusion. Same defect at Assembly.lean:130, `datumSteinberg_pow_twistOrder_of_not_usesHalfFrobenius`.",
+   "line": "231"
+  },
+  {
+   "evidence": "Datum/Frobenius.lean:74-77 `datumFrobenius := RootPairingIsogeny.smulId _ d.1.fieldOrderPNat`; Index.lean:497-498 `fieldOrderPNat d := d.fieldOrder.toPNat d.fieldOrder_pos`; Mathlib `Data/PNat/Defs.lean:53-54` `toPNat n h := \u27e8n, h\u27e9`; Index.lean:549 `abbrev fieldOrder (d : ValidLieTypeIndex) := d.1.fieldOrder`.",
+   "file": "TauCeti/GroupTheory/SpecificGroups/CFSG/Datum/Assembly.lean",
+   "fix": "State `d.datumSteinberg ^ 2 = d.datumFrobenius` and rename to `datumSteinberg_pow_two_eq_datumFrobenius_of_usesHalfFrobenius`.",
+   "issue": "`datumSteinberg_pow_two_of_usesHalfFrobenius` names no conclusion, and its right-hand side `RootPairingIsogeny.smulId _ \u27e8d.fieldOrder, d.fieldOrder_pos\u27e9` is exactly `d.datumFrobenius` \u2014 the docstring even says \"is a Frobenius\" \u2014 while the canonical name is used in the neighbouring lemma at line 124.",
+   "line": "139"
+  }
+ ],
+ "head_sha": "6b8c256a50ba3a8fcb85dfc5bdcce4b082b11d97",
+ "merge_base_sha": "13d7eeb29b169e95c232df1a7d8e6ba6cabd4f8c",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5239,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "64e4f2c7046a59856c6b19eba9b3d120d15b874d450b3515bfa3084b848652d4",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "22bac7a3cca905a08d25ff766f8421cbe0bac922",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260830T134155Z-5239-naming-07cbd9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-30T13:41:55Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new lemmas reuse the namespace's established `_pow_<order>` name shape, which in `GraphTwistedIndex` already means \"= 1\", for conclusions that are scalings; and the half-Frobenius square lemma neither names nor uses the canonical `datumFrobenius` it in fact equals. Everything else (ofEquivHom family, commute_smulId, twistOrder_pos, the branch equations) is conventional.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/Isogeny/Power.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Datum/Steinberg.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": ".",
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Datum/Assembly.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/HalfFrobenius.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/LinearAlgebra/RootSystem/Isogeny/Basic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/RootSystem/Hom.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Index.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/GroupTheory/SpecificGroups/CFSG/Datum/Frobenius.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 19,
+  "trace_truncated": false
+ },
+ "transcript_blob": "62e772b23e5f4f613a99ea0dd6719fc9d8008d7bd91584b566e0bbb40f109546",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 95816,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 95816,
+  "cache_read_input_tokens": 769449,
+  "inference_geo": "not_available",
+  "input_tokens": 24,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 1489,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 1489,
+    "cache_read_input_tokens": 97127,
+    "input_tokens": 2,
+    "output_tokens": 4432,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 22188,
+  "output_tokens_details": {
+   "thinking_tokens": 17123
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
