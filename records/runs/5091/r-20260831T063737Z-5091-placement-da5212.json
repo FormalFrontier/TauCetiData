@@ -1,0 +1,76 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.435067,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 59.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 240384,
+    "input_tokens": 295007,
+    "output_tokens": 1392,
+    "reasoning_output_tokens": 368
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c4594881213baee2dac88d4c5385b115f7257e18",
+ "cost_estimated": true,
+ "cost_usd": 0.435067,
+ "dedupe_key": "TauCetiProject/TauCeti|5091|f4ce3706779b4e0b6d8ed816c51660b463449ed1|placement|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "ae2340cf6e8808c095fc0995b61183845edd71cbba502c6ce4785ab9f30ec8ae",
+ "diff_prompt_sha256": "bdd74ff0f0da0fd2957f038ce61c60e19f20dbdeeebd8ff6f15ad4852a1b3d14",
+ "diff_prompt_truncated": true,
+ "diff_sha256": "ae2340cf6e8808c095fc0995b61183845edd71cbba502c6ce4785ab9f30ec8ae",
+ "duration_s": 59.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only new use is `MulAut.conj` at lines 310\u2013312; no declaration from `TauCeti/GroupTheory/Commutator.lean` is referenced.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Hopf/Conjugation.lean",
+   "fix": "Replace it with a non-public import of the specific Mathlib module providing `MulAut.conj`.",
+   "issue": "The new public import of `TauCeti.GroupTheory.Commutator` is used only to access Mathlib's `MulAut.conj` API, but publicly exports TauCeti's unrelated generator/commutator results.",
+   "line": 10
+  },
+  {
+   "evidence": "The import's only new use is the local proof `hconj` via `MulAut.conj` around lines 593\u2013599; none of TauCeti's commutator declarations is used.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Dynamic/Parabolic.lean",
+   "fix": "Use a non-public import of the specific Mathlib module containing the conjugation homomorphism.",
+   "issue": "The new public import of `TauCeti.GroupTheory.Commutator` is likewise a proof-only dependency for `MulAut.conj` and unnecessarily enlarges this module's exported API.",
+   "line": 10
+  }
+ ],
+ "head_sha": "f4ce3706779b4e0b6d8ed816c51660b463449ed1",
+ "merge_base_sha": "c4594881213baee2dac88d4c5385b115f7257e18",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5091,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "2f66c667f2f810221506af1673e63c81c6dd19897aa321bc2f784c8bb9d8cbb7",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "placement",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e774be4c67efe5a3722863f99f91f314beb9fa51",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260831T063737Z-5091-placement-da5212",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-08-31T06:37:37Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proof-only dependencies are exposed through an unrelated TauCeti module\u2019s public API.",
+ "transcript_blob": "c245866e0b9890319faa3d49b2bdb46981b88dffcaa3449815b750089aa47f79",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 240384,
+  "input_tokens": 295007,
+  "output_tokens": 1392,
+  "reasoning_output_tokens": 368
+ },
+ "verdict": "request_changes"
+}
