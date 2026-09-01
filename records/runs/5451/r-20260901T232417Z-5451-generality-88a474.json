@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.24283,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 48.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 96000,
+    "input_tokens": 124580,
+    "output_tokens": 1731,
+    "reasoning_output_tokens": 740
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5b603c69ce30e44bc3ef9dee0cb3f95c2e0f67bb",
+ "cost_estimated": true,
+ "cost_usd": 0.24283,
+ "dedupe_key": "TauCetiProject/TauCeti|5451|b98f6b5a0f1f504f30c1f1f0af1db7d6d73abee6|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "4b70ab4bf6afa1e74d0f82bea303917c4b40d79aaa8cf5adae56f18033aa64c9",
+ "diff_sha256": "4b70ab4bf6afa1e74d0f82bea303917c4b40d79aaa8cf5adae56f18033aa64c9",
+ "duration_s": 48.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib defines `AlgHom.IsArithFrobAt` for an arbitrary ideal (`Mathlib/RingTheory/Frobenius.lean:54`). Here primality is only installed at lines 61/107 and never consumed, while `p` and `LiesOver` are used only at lines 62\u201383/108\u2013110 to recover equality of contractions already implied by the `\ud835\udcde K`-algebra equivalence.",
+   "file": "TauCeti/NumberTheory/NumberField/FrobeniusTransport.lean",
+   "fix": "State both for any ideal `Q`, and prove directly that mapping by the induced algebra equivalence preserves `Q.under (\ud835\udcde K)`.",
+   "issue": "Both `isArithFrobAt_map_ringOfIntegersAlgEquiv` and its `_iff` version unnecessarily require `p`, `[Q.IsPrime]`, and `[Q.LiesOver p]`.",
+   "line": 53
+  },
+  {
+   "evidence": "The forward transport theorem at lines 36\u201349 needs only `[Q.IsPrime]`; in the iff proof, the sole uses of `p`/`LiesOver` are the unused local instance at line 142 and arguments needed only by the over-specialized Frobenius theorem.",
+   "file": "TauCeti/NumberTheory/NumberField/FrobeniusTransport.lean",
+   "fix": "Remove `p` and `[Q.LiesOver p]`, retaining only `(Q) [Q.IsPrime]`.",
+   "issue": "`isUnramifiedAt_map_ringOfIntegersAlgEquiv_iff` unnecessarily takes `p` and `[Q.LiesOver p]`; neither belongs to unramifiedness transport.",
+   "line": 133
+  }
+ ],
+ "head_sha": "b98f6b5a0f1f504f30c1f1f0af1db7d6d73abee6",
+ "merge_base_sha": "c507c1497cdb84f10f612b4dc77390f90af546ae",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5451,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "c9c8126f51bea2778eb847eadf7c6faf1e83c181ad4e4cdbecb2728eb672fc90",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e774be4c67efe5a3722863f99f91f314beb9fa51",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260901T232417Z-5451-generality-88a474",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-01T23:24:17Z",
+ "submitted_by": "kim-em",
+ "summary": "The transport statements impose unnecessary prime/fibre assumptions, preventing use at their natural level.",
+ "transcript_blob": "a561ade2dca0b0ba6c63ddddd6902f231288656ec66183bfe26534ae46414703",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 96000,
+  "input_tokens": 124580,
+  "output_tokens": 1731,
+  "reasoning_output_tokens": 740
+ },
+ "verdict": "request_changes"
+}
