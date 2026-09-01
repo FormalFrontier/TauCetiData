@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.416118,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 67.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 176896,
+    "input_tokens": 230790,
+    "output_tokens": 1940,
+    "reasoning_output_tokens": 483
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ee3acb79ebf4f0d14c07a3c19cf6081120d8e623",
+ "cost_estimated": true,
+ "cost_usd": 0.416118,
+ "dedupe_key": "TauCetiProject/TauCeti|5390|9fc31927c6814b31ad8b3d339c1e372815231ee5|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "4a93b7c437e5b7478368a71275c71d1df20b529852026728de79dfd545bb634d",
+ "diff_sha256": "4a93b7c437e5b7478368a71275c71d1df20b529852026728de79dfd545bb634d",
+ "duration_s": 67.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`PowerClassGroup G 2` is definitionally `ElementaryTwoQuotient G`; `powerClass_mul/one/div/inv/pow/prod/surjective/eq_iff` specialize to `elementaryTwoQuotientMk_mul/one/div/inv/pow/prod/surjective/eq_iff` in `TauCeti/Algebra/Group/ElementaryTwoQuotient/Basic.lean:107\u2013190`. `rg` finds the new additive declarations only within `PowerClassGroup.lean`, whereas `Kummer.lean:287\u2013301` uses the multiplicative quotient.",
+   "file": "TauCeti/Algebra/Group/PowerClassGroup.lean",
+   "fix": "Remove the unused `ModN` branch (`PowerClassGroup`, its equivalence, and class lemmas) and retain the roadmap\u2019s canonical multiplicative quotient API; if an additive model later gains genuine consumers, factor the existing elementary-two API through a shared general construction rather than exposing parallel names.",
+   "issue": "`PowerClassGroup`, `powerClassAdd`, `powerClass`, and lines 119\u2013186 duplicate the existing `ElementaryTwoQuotient` class API when `n = 2`, while no code outside this file uses this additive model; the Kummer consumer uses `powerClassQuotient` and `powerClassHom`.",
+   "line": 48
+  },
+  {
+   "evidence": "The definitions at lines 96\u2013106 have exactly those Mathlib bodies, and `rg powerClassQuotientLift code/TauCeti` returns no consumers outside their own declarations.",
+   "file": "TauCeti/Algebra/Group/PowerClassGroup.lean",
+   "fix": "Delete both declarations and use `QuotientGroup.lift`/`QuotientGroup.lift_mk'` directly, as `kummerClassMap` already does.",
+   "issue": "`powerClassQuotientLift` and `powerClassQuotientLift_mk` are unused thin restatements of Mathlib\u2019s `QuotientGroup.lift` and `QuotientGroup.lift_mk'`.",
+   "line": 96
+  }
+ ],
+ "head_sha": "9fc31927c6814b31ad8b3d339c1e372815231ee5",
+ "merge_base_sha": "86a332fc57c7958e78389ba063fb08c2182af045",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5390,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "0f985526949bbcdb13832a4b8ca417d8a1ec46e875ad2133dceaafb158910a77",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e774be4c67efe5a3722863f99f91f314beb9fa51",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260901T233036Z-5390-reuse-d352b8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-01T23:30:36Z",
+ "submitted_by": "kim-em",
+ "summary": "The new file adds an unused additive parallel API and a thin quotient-lift wrapper instead of limiting the contribution to the canonical multiplicative power-class quotient required by Kummer theory.",
+ "transcript_blob": "55d48963231f90c63eab3fb6d40023163208be058e5697e285c896e748cf47a6",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 176896,
+  "input_tokens": 230790,
+  "output_tokens": 1940,
+  "reasoning_output_tokens": 483
+ },
+ "verdict": "request_changes"
+}
