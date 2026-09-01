@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.153542,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 39.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 67584,
+    "input_tokens": 83548,
+    "output_tokens": 1331,
+    "reasoning_output_tokens": 405
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c507c1497cdb84f10f612b4dc77390f90af546ae",
+ "cost_estimated": true,
+ "cost_usd": 0.153542,
+ "dedupe_key": "TauCetiProject/TauCeti|5450|c22e115b94e6d017c07c382f28839a950bd86b46|api-design|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "fd541d1ef9fb840ccb65c57c3e501c43d038fae5b427b8d9f76938c9ab85e984",
+ "diff_sha256": "fd541d1ef9fb840ccb65c57c3e501c43d038fae5b427b8d9f76938c9ab85e984",
+ "duration_s": 39.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 139\u2013148 provide `commonRefinement_fst` and `commonRefinement_snd`; the implementation at lines 133\u2013135 therefore need not be unfoldable.",
+   "file": "TauCeti/Algebra/Category/ModuleCat/Sheaf/Invertible/Restriction.lean",
+   "fix": "Remove `@[expose]` and add any further projection/cover lemmas consumers need.",
+   "issue": "`commonRefinement` is marked `@[expose]` even though its projections already have public simp lemmas, unnecessarily making downstream proofs depend on its body.",
+   "line": 130
+  },
+  {
+   "evidence": "The only new API lemmas are `commonRefinement_fst`, `commonRefinement_snd`, and `commonRefinement_I` at lines 139\u2013155, all parameterized by a supplied `r`; no lemma mentions `(t.commonRefinementOf s)`, and no `commonRefinement_X` lemma exists.",
+   "file": "TauCeti/Algebra/Category/ModuleCat/Sheaf/Invertible/Restriction.lean",
+   "fix": "Add simp projection lemmas for `commonRefinementOf` and characteristic lemmas exposing the shared index and covering family for both constructions, with the necessary transports made explicit.",
+   "issue": "Opaque `commonRefinementOf` has no projection, index, or covering-object lemmas, so consumers cannot characterize its atlases or use the promised common cover without unfolding an unavailable body; even supplied `commonRefinement` only states equality of `I`, not its `X` families.",
+   "line": 159
+  }
+ ],
+ "head_sha": "c22e115b94e6d017c07c382f28839a950bd86b46",
+ "merge_base_sha": "c507c1497cdb84f10f612b4dc77390f90af546ae",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5450,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7d4618163a194839203f725441e1d26e36cb42be8f0e64f8f88644a3e04c7f5a",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "e774be4c67efe5a3722863f99f91f314beb9fa51",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260901T210434Z-5450-api-design-e8ffa4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-01T21:04:34Z",
+ "submitted_by": "kim-em",
+ "summary": "The new refinement operations expose an implementation body while leaving the canonical construction and shared-cover property without a usable characteristic API.",
+ "transcript_blob": "2cf1ead9159e4bb8a6b8a10728157f5e891cae17314e855232d30fb84db55a99",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 67584,
+  "input_tokens": 83548,
+  "output_tokens": 1331,
+  "reasoning_output_tokens": 405
+ },
+ "verdict": "request_changes"
+}
