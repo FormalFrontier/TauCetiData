@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.24365,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 60.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 102400,
+    "input_tokens": 130186,
+    "output_tokens": 1784,
+    "reasoning_output_tokens": 894
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "f8a564d7d3c12df3d2e50111c6396f742e8fd2f2",
+ "cost_estimated": true,
+ "cost_usd": 0.24365,
+ "dedupe_key": "TauCetiProject/TauCeti|4096|2b0cce3b2239e341ba9f1cf1f2a52151c8225a68|generality|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "ef40e6ac67b5ab6c941900ee83bb93dd52d8c041473027e11e856d21b2005b78",
+ "diff_sha256": "ef40e6ac67b5ab6c941900ee83bb93dd52d8c041473027e11e856d21b2005b78",
+ "duration_s": 60.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 39 and 44 impose global hypotheses/conclusions, while `RegularReparametrization.lean:111-127` exists solely to extend interval speed through `projIcc` before applying the lemma at line 132.",
+   "file": "TauCeti/Analysis/Calculus/IntervalIntegralInverse.lean",
+   "fix": "State the theorem using `ContinuousOn v (Icc a b)` and `\u2200 t \u2208 Icc a b, 0 < v t`, construct any needed extension internally, and drop the global `invFun`/`StrictMono` conclusions in favor of interval inverse properties.",
+   "issue": "The interval inverse API requires `Continuous v` and positivity on all of `\u211d`, although every advertised result concerns `[a,b]`; its sole caller consequently manufactures a clamped global extension at lines 111\u2013127.",
+   "line": 39
+  },
+  {
+   "evidence": "The signatures occur at lines 86 and 215; `hgamma : ContMDiffOn ... (Icc a b)` is immediately adjacent, and Mathlib's `ContMDiffOn.contMDiffAt`/`MDifferentiableOn.mdifferentiableAt` APIs recover actual differentiability wherever the set is a neighborhood.",
+   "file": "TauCeti/Geometry/Manifold/Riemannian/RegularReparametrization.lean",
+   "fix": "Replace `hmdiff` in both public theorems by `MDiffAt gamma a \u2227 MDiffAt gamma b` (or equivalent endpoint hypotheses) and derive the interior cases from `hgamma` using that `Icc a b` is a neighborhood of points in `Ioo a b`.",
+   "issue": "`hmdiff : \u2200 t \u2208 Icc a b, MDiffAt gamma t` is stronger than needed in both this theorem and the duplicate signature at line 215: `hgamma` already yields `MDiffAt` at every interior point, so only endpoint differentiability is additional data.",
+   "line": 86
+  }
+ ],
+ "head_sha": "2b0cce3b2239e341ba9f1cf1f2a52151c8225a68",
+ "merge_base_sha": "f8a564d7d3c12df3d2e50111c6396f742e8fd2f2",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4096,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ded1aff1231a30d6c93bad461beaa9b1fe8f2995cbebe4b515f452cb4dbfc180",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "74f120a7eaff1e26d3940a218183650dc589d41f",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260902T105550Z-4096-generality-3f0e2a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-02T10:55:50Z",
+ "submitted_by": "kim-em",
+ "summary": "The inverse lemma and both reparametrization theorems impose unnecessarily global or pointwise assumptions instead of the natural compact-interval hypotheses.",
+ "transcript_blob": "cbbe527aca670df0c0ef0dbaf304a72220da8c8e87daaca8e13d251f4b371b7f",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 102400,
+  "input_tokens": 130186,
+  "output_tokens": 1784,
+  "reasoning_output_tokens": 894
+ },
+ "verdict": "request_changes"
+}
