@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.435086,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 87.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 223232,
+    "input_tokens": 273964,
+    "output_tokens": 2327,
+    "reasoning_output_tokens": 886
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "b1867588d5795244d44f61cb1ed8e60a33a34b1f",
+ "cost_estimated": true,
+ "cost_usd": 0.435086,
+ "dedupe_key": "TauCetiProject/TauCeti|4781|269bd70f0706217a35127915312a69a4b1bb253e|reuse|gpt-5.6-sol|ce88b39773d791a9|production|1",
+ "diff_blob": "69bcc176f022c0c702b01b5b5eff452ee831a353c734bcd4179e7728003fe056",
+ "diff_sha256": "69bcc176f022c0c702b01b5b5eff452ee831a353c734bcd4179e7728003fe056",
+ "duration_s": 87.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/KnotTheory/Grid/Rectangle/Count.lean:136` states `theorem card_le_two (s : Finset (GridRectangleBetween x y)) : s.card \u2264 2`; the new theorem has no consumers in the repository.",
+   "file": "TauCeti/KnotTheory/Grid/SimplyBlocked.lean",
+   "fix": "Delete this declaration and use `GridRectangleBetween.card_le_two (G.simplyBlockedRectangles i x y)` at consumers.",
+   "issue": "`card_simplyBlockedRectangles_le_two` is directly replaced by the generic `GridRectangleBetween.card_le_two`, which applies to every finite rectangle subcollection.",
+   "line": 181
+  },
+  {
+   "evidence": "`Mathlib/Data/Finsupp/Single.lean:421` provides `Finsupp.mapRange_single`; `simplyBlockedSpecialization` is exactly `Finsupp.mapRange.linearMap` at lines 64\u201373.",
+   "file": "TauCeti/KnotTheory/Grid/SimplyBlocked.lean",
+   "fix": "Delete it; unfold `simplyBlockedSpecialization` and use `Finsupp.mapRange_single` (or `simp [simplyBlockedSpecialization]`) at line 315.",
+   "issue": "`simplyBlockedSpecialization_single` is a specialization-only wrapper for Mathlib's `Finsupp.mapRange_single`.",
+   "line": 88
+  },
+  {
+   "evidence": "Its entire proof is `rw [G.killCompl_OMonomial_eq_monomial_of_notMem R hi]; simp`, and `rg` finds no use outside its declaration.",
+   "file": "TauCeti/KnotTheory/Grid/SimplyBlocked.lean",
+   "fix": "Delete it; where needed, rewrite with `killCompl_OMonomial_eq_monomial_of_notMem` and discharge nonzeroness with `simp`.",
+   "issue": "`killCompl_OMonomial_ne_zero_of_notMem` merely bundles the preceding equality with the standard nonzero-monomial simp result and has no consumer.",
+   "line": 149
+  }
+ ],
+ "head_sha": "269bd70f0706217a35127915312a69a4b1bb253e",
+ "merge_base_sha": "b1867588d5795244d44f61cb1ed8e60a33a34b1f",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 4781,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "61a11c73d2b6ff496e7e68e29381b73821c518aca91956b7f4e00e1de8ac1ad8",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "74f120a7eaff1e26d3940a218183650dc589d41f",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260902T155245Z-4781-reuse-4af65b",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-02T15:52:45Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR adds one theorem directly covered by an existing TauCeti theorem and two unnecessary derived wrappers around existing API.",
+ "transcript_blob": "38db4dafdc45cb7638d56a738d19507d253d9601be86384e8cb2b5d5d5c8fb37",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 223232,
+  "input_tokens": 273964,
+  "output_tokens": 2327,
+  "reasoning_output_tokens": 886
+ },
+ "verdict": "block"
+}
