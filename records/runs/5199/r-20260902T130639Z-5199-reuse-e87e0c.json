@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.365326,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 58.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 175232,
+    "input_tokens": 221624,
+    "output_tokens": 1525,
+    "reasoning_output_tokens": 469
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "ada5d8823f54b4f04dbc3d86be3f869cbaab821d",
+ "cost_estimated": true,
+ "cost_usd": 0.365326,
+ "dedupe_key": "TauCetiProject/TauCeti|5199|dd5e3a55989fdf8f18cac8c600c914afc4b69640|reuse|gpt-5.6-sol|ce88b39773d791a9|production|2",
+ "diff_blob": "7b9e0f90cca4cbe7c5dedbb5f32eeb85320488c64a304350ac7eb9fc24b75dcc",
+ "diff_sha256": "7b9e0f90cca4cbe7c5dedbb5f32eeb85320488c64a304350ac7eb9fc24b75dcc",
+ "duration_s": 58.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Both definitions case-split on `Sum _ Unit`, returning the same root coordinate map in the left branch and `GeneralLinear.weightTorusCoordinateMap wt` in the right branch.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/RootSubgroup/Scheme/ToralClosure/Subsystem.lean",
+   "fix": "Generalize the shared generator family over an index type `J`, a map `J \u2192 I`, and pointwise nilpotence, then instantiate it with `J = I`/`id` and `J = S`/`Subtype.val`.",
+   "issue": "`kostantTorusSubsystemGeneratorMap` duplicates `kostantToralGeneratorCodomain`/`kostantToralGeneratorMap` from `ToralClosure/Basic.lean:79-93`, changing only the root index to a subtype.",
+   "line": "86"
+  },
+  {
+   "evidence": "Both proofs independently construct `hff`, translate root and torus hypotheses using `map_preimage` and cancellation of `eqToHom`, invoke coordinate hom-ext, and conclude via `Quiver.Hom.unop_inj`.",
+   "file": "TauCeti/Algebra/Lie/UniversalEnveloping/Kostant/RootSubgroup/Scheme/ToralClosure/Subsystem.lean",
+   "fix": "Extract a generic scheme-level hom-ext lemma that transports coordinate-family extensionality through `hopfSpec`, then use it for both toral and subsystem carriers.",
+   "issue": "`kostantTorusSubsystemGroupScheme_hom_ext` repeats the fully-faithful `hopfSpec` transport proof of `kostantToralGroupScheme_hom_ext` at `ToralClosure/Rigidity.lean:147-193` nearly verbatim.",
+   "line": "695"
+  }
+ ],
+ "head_sha": "dd5e3a55989fdf8f18cac8c600c914afc4b69640",
+ "merge_base_sha": "6cf8e1b75fcfdde2cdcf18064d1cd4be8807b97a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5199,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "f64cac1aa1cfca3952ecaddca7bdcd97043dcdb3dd0827c4d040b5458563e1c5",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "74f120a7eaff1e26d3940a218183650dc589d41f",
+ "rubrics_version": "ce88b39773d791a9",
+ "run_id": "r-20260902T130639Z-5199-reuse-e87e0c",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-02T13:06:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The subsystem API is new, but two substantial implementation blocks duplicate the existing toral construction instead of factoring shared machinery.",
+ "transcript_blob": "98bcf58aa5cdfc1ab614cb60198da5269e59039cbc2e8f1677e6acbea1058e40",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 175232,
+  "input_tokens": 221624,
+  "output_tokens": 1525,
+  "reasoning_output_tokens": 469
+ },
+ "verdict": "request_changes"
+}
