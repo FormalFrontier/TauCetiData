@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.323357,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 54.2,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 148224,
+    "input_tokens": 187231,
+    "output_tokens": 1807,
+    "reasoning_output_tokens": 650
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "5737d72ead8d59f3c52eaaf886951e54461a29fd",
+ "cost_estimated": true,
+ "cost_usd": 0.323357,
+ "dedupe_key": "TauCetiProject/TauCeti|5152|901cc0911c1c9dc19e50e1e68c85492d66d524d8|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|5",
+ "diff_blob": "6c8bbce65bae4ec8984bedfbda04d04dfee4134728655e74b86f34e28657efaa",
+ "diff_sha256": "6c8bbce65bae4ec8984bedfbda04d04dfee4134728655e74b86f34e28657efaa",
+ "duration_s": 54.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`rg` finds the same `IntegrableOn (fun _ => 1) (Ioi a)`/`integrableOn_const_iff`/`Real.volume_Ioi` proof shape at all three locations, while the new helper is currently consumed only by `Weibull/Transforms.lean:249`.",
+   "file": "TauCeti/MeasureTheory/Integral/Bochner/Basic.lean",
+   "fix": "Replace both blocks with `not_integrable_of_eventually_one_le_atTop` (adding the shared module import where necessary), passing their existing `hbound`/`hev` and weighted-integrand integrability hypotheses.",
+   "issue": "The new tail non-integrability helper leaves identical constant-on-`Ioi` contradiction blocks in `Cauchy.lean:223-229` and `LogNormal.lean:411-418`.",
+   "line": 70
+  },
+  {
+   "evidence": "`TauCeti/Probability/Distributions/Exponential.lean:243-245` proves `integrableExpSet id (expMeasure r) = Iio r`; the current proof instead expands `integrableExpSet` and uses the lower-level iff.",
+   "file": "TauCeti/Probability/Distributions/Weibull/Transforms.lean",
+   "fix": "Rewrite by `weibullMeasure_one_eq_expMeasure hlam` and apply `integrableExpSet_id_expMeasure (inv_pos.mpr hlam)` directly.",
+   "issue": "`integrableExpSet_id_weibullMeasure_one` re-derives the exponential-law domain pointwise although `integrableExpSet_id_expMeasure` already states the set equality.",
+   "line": 278
+  }
+ ],
+ "head_sha": "901cc0911c1c9dc19e50e1e68c85492d66d524d8",
+ "merge_base_sha": "5737d72ead8d59f3c52eaaf886951e54461a29fd",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5152,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "1f9ac786e5384c1708288293e57d771d5809d93bc9b2181c072f1a4edb581c72",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 5,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260903T132149Z-5152-reuse-17251f",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-03T13:21:49Z",
+ "submitted_by": "kim-em",
+ "summary": "Two proof blocks still duplicate located reusable results.",
+ "transcript_blob": "6cac22807e1e0f7d4e970d65cfa0299fc3ccd5ef874f51c42c6f691f6bc88bb4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 148224,
+  "input_tokens": 187231,
+  "output_tokens": 1807,
+  "reasoning_output_tokens": 650
+ },
+ "verdict": "request_changes"
+}
