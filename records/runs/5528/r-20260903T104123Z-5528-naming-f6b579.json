@@ -1,0 +1,88 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.343516,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 70.8,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 166272,
+    "input_tokens": 201782,
+    "output_tokens": 2761,
+    "reasoning_output_tokens": 1196
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "d097280aa39f96d6908bcec0640d0a80145b16d0",
+ "cost_estimated": true,
+ "cost_usd": 0.343516,
+ "dedupe_key": "TauCetiProject/TauCeti|5528|b2bc3cd5c3e7e104606f37929764ecd4fb4053ae|naming|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "295c8113e4c13fd70e657d5f3854b62b1e8e27f286f27ce23bc359acfeb8692c",
+ "diff_sha256": "295c8113e4c13fd70e657d5f3854b62b1e8e27f286f27ce23bc359acfeb8692c",
+ "duration_s": 70.8,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The declarations occur at lines 64, 68, 71, 88, 95, 105, 121, 129, 142, 148, 152, and 166; their explicit arguments are absent or begin with `x : M`, unlike receiver declarations such as `mul_def (f : M \u2243\u2098\u2026)`.",
+   "file": "TauCeti/Geometry/Diffeomorphism/Group.lean",
+   "fix": "Keep these declarations under `TauCeti.Diffeomorph`; move only declarations whose first explicit argument is a `Diffeomorph` into the root namespace.",
+   "issue": "`instOne`, `instMul`, `instInv`, `instGroup`, `one_def`, `coe_one`, `one_apply`, `toEquiv_one`, `toPerm`, `toPerm_injective`, `toHomeomorphHom`, and `toHomeomorphHom_injective` have no first explicit `Diffeomorph` argument but now occupy Mathlib\u2019s root namespace.",
+   "line": 64
+  },
+  {
+   "evidence": "Lines 50, 62, 68, 72, and 77 show no explicit `Diffeomorph` receiver; the last declaration instead begins with `G : Subgroup \u2026`.",
+   "file": "TauCeti/Geometry/Diffeomorphism/Action.lean",
+   "fix": "Retain these declarations in `TauCeti.Diffeomorph`; `smul_def (f : M \u2243\u2098\u2026)` may remain in root `Diffeomorph`.",
+   "issue": "`applyMulAction`, `toPermHom_eq_toPerm`, `applyFaithfulSMul`, `applyContinuousConstSMul`, and `applySubgroupContinuousConstSMul` are not receiver declarations on a `Diffeomorph`, so moving them to root `Diffeomorph` is misplaced.",
+   "line": 50
+  },
+  {
+   "evidence": "For example, line 69 is `fixingSubgroup (s : Set M)`, line 79 begins explicitly with `hf`, line 111 with `s`, line 134 with `s`, and line 145 with `s`; none satisfies the rubric\u2019s first-explicit-argument rule.",
+   "file": "TauCeti/Geometry/Diffeomorphism/FixingSubgroup.lean",
+   "fix": "Keep the declarations from `fixingSubgroup` through `toRelativeHomeomorphHom_apply` under `TauCeti.Diffeomorph`, or redesign individual APIs with a genuine first explicit `Diffeomorph` receiver where appropriate.",
+   "issue": "The root `Diffeomorph` block is not a dot-notation extension: its declarations begin with a set, a membership proof, or no explicit receiver rather than a `Diffeomorph`.",
+   "line": 69
+  },
+  {
+   "evidence": "Line 113 declares `diffCongr_refl` with only implicit parameters, whereas adjacent line 121 explicitly starts with a diffeomorphism `e`.",
+   "file": "TauCeti/Geometry/Diffeomorphism/Congr.lean",
+   "fix": "Leave `diffCongr_refl` under `TauCeti.Diffeomorph` while retaining receiver-based declarations such as `diffCongr_trans (e : \u2026)` in root `Diffeomorph`.",
+   "issue": "`diffCongr_refl` has no explicit `Diffeomorph` receiver, unlike the other conjugation declarations moved to the root namespace.",
+   "line": 113
+  }
+ ],
+ "head_sha": "b2bc3cd5c3e7e104606f37929764ecd4fb4053ae",
+ "merge_base_sha": "d097280aa39f96d6908bcec0640d0a80145b16d0",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5528,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "df24f4bf7417a8a7f7e495e84a58ad713f156b3ffd8d4e7edecea0339ca1ca86",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260903T104123Z-5528-naming-f6b579",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-03T10:41:23Z",
+ "submitted_by": "kim-em",
+ "summary": "Several declarations were moved into Mathlib\u2019s root `Diffeomorph` namespace despite lacking a first explicit `Diffeomorph` argument, so they are not dot-notation extensions under the namespace rule.",
+ "transcript_blob": "0aa6fd25a511d2c19ea9d8f0bf982af512cbdfea9cf73b41a31514fb1bd87dc9",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 166272,
+  "input_tokens": 201782,
+  "output_tokens": 2761,
+  "reasoning_output_tokens": 1196
+ },
+ "verdict": "request_changes"
+}
