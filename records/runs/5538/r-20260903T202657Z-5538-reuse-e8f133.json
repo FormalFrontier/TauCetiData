@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.325289,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 51.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 156928,
+    "input_tokens": 194359,
+    "output_tokens": 1989,
+    "reasoning_output_tokens": 734
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0400cbfebd4bd57dfc7469852ef5e0218c54388e",
+ "cost_estimated": true,
+ "cost_usd": 0.325289,
+ "dedupe_key": "TauCetiProject/TauCeti|5538|3e3c9b3da651fa7a081c57b2ece28b47d10465be|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "b30a08421d051c3dc3ca2067624b2e23039a6d3ab267ad8bd4372432cfffaabd",
+ "diff_sha256": "b30a08421d051c3dc3ca2067624b2e23039a6d3ab267ad8bd4372432cfffaabd",
+ "duration_s": 51.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Mathlib/NumberTheory/RamificationInertia/Unramified.lean:152` proves the same index-one conclusion for any prime above an unramified ideal; `hur` is definitionally `IsUnramifiedIn`, and the PR wrapper itself reduces the conclusion via `Ideal.ramificationIdx_eq_one_iff.mpr (hur _)`.",
+   "file": "TauCeti/NumberTheory/RamificationInertia/NumberField.lean",
+   "fix": "Delete the wrapper and at its use site apply `Algebra.IsUnramifiedIn.ramificationIdx_eq_one (R := \u2124) hur (\ud835\udd13 := \ud835\udd14.under (\ud835\udcde K)) inferInstance`.",
+   "issue": "`ramificationIdx_under_eq_one` directly specializes the existing `Algebra.IsUnramifiedIn.ramificationIdx_eq_one`.",
+   "line": "53"
+  },
+  {
+   "evidence": "`Mathlib/FieldTheory/Galois/Basic.lean:109` gives `Nat.card Gal(F/K) = finrank K F`, and `Mathlib/NumberTheory/Cyclotomic/PrimitiveRoots.lean:180` gives `finrank K F = n.totient`; grep finds no consumer of either new declaration beyond `card_aut_eq_sub_one` calling the first.",
+   "file": "TauCeti/NumberTheory/Cyclotomic/Irreducible.lean",
+   "fix": "Delete both declarations; consumers can use `(IsGalois.card_aut_eq_finrank K F).trans (IsCyclotomicExtension.finrank F hirr)`, followed by `Nat.totient_prime hq` in the prime case.",
+   "issue": "`card_aut_eq_totient` and its line-121 prime specialization are unused thin cardinality wrappers around existing results.",
+   "line": "112"
+  }
+ ],
+ "head_sha": "3e3c9b3da651fa7a081c57b2ece28b47d10465be",
+ "merge_base_sha": "0400cbfebd4bd57dfc7469852ef5e0218c54388e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5538,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "ddd1cc0680cebae0cafe6fff6ce616b4a550503f7a589172530dbd4dc4543abb",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260903T202657Z-5538-reuse-e8f133",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-03T20:26:57Z",
+ "submitted_by": "kim-em",
+ "summary": "One declaration directly restates an existing Mathlib theorem, and two automorphism-count declarations are unused thin composites of existing APIs.",
+ "transcript_blob": "035762f421a0ce44141466e3b590397fba8536f73dce150dbca90d4dcac75411",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 156928,
+  "input_tokens": 194359,
+  "output_tokens": 1989,
+  "reasoning_output_tokens": 734
+ },
+ "verdict": "block"
+}
