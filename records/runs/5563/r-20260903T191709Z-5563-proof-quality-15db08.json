@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.205005,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 47.5,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 106240,
+    "input_tokens": 127023,
+    "output_tokens": 1599,
+    "reasoning_output_tokens": 478
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "0400cbfebd4bd57dfc7469852ef5e0218c54388e",
+ "cost_estimated": true,
+ "cost_usd": 0.205005,
+ "dedupe_key": "TauCetiProject/TauCeti|5563|69987256740454e5f3e490a09a742b33ab48600f|proof-quality|gpt-5.6-sol|d0700ff994e59c9f|production|2",
+ "diff_blob": "a335721a766cdd8ea1c2891bd567ad3cc7b05221d4cc7345076b1f722ca07c96",
+ "diff_sha256": "a335721a766cdd8ea1c2891bd567ad3cc7b05221d4cc7345076b1f722ca07c96",
+ "duration_s": 47.5,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 95: `simpa [x', y', eLeft, pointEquivClosedPoint]`; Mathlib marks `pointEquivClosedPoint` with `@[simps]`, providing an API intended to avoid unfolding it.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Smooth/AlgebraicallyClosed.lean",
+   "fix": "Use the generated simp/projection lemmas for `pointEquivClosedPoint` and an explicit lemma relating `(Over.forget _).mapIso e` to `e.hom.left`, avoiding definition unfolding.",
+   "issue": "`heLeft` is proved by unfolding `pointEquivClosedPoint`, `eLeft`, and both local points in a broad `simpa`, so this bridge depends on non-obvious implementation details.",
+   "line": 95
+  },
+  {
+   "evidence": "Line 101 uses an undocumented `show ... from ...`, exactly across the `eLeft := (Over.forget _).mapIso e` wrapper.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Smooth/AlgebraicallyClosed.lean",
+   "fix": "State and prove a named equality using an explicit `mapIso`/forgetful-functor lemma, or document why no such lemma can express the bridge.",
+   "issue": "The `show eLeft.hom \u226b f = f from e.hom.w` rewrite silently relies on definitional equality between the mapped isomorphism and the underlying over-morphism.",
+   "line": 101
+  },
+  {
+   "evidence": "Lines 113\u2013116 use `change IsReduced (Spec (CommRingCat.of H))`; `TauCeti/AlgebraicGeometry/AffineGroupScheme/HopfSpec.lean` provides the explicit lemma `hopfSpec_obj_X_left`.",
+   "file": "TauCeti/Algebra/AlgebraicGroup/Smooth/AlgebraicallyClosed.lean",
+   "fix": "Rewrite explicitly with `hopfSpec_obj_X_left k H`, then apply `affine_isReduced_iff`, instead of relying on `change`.",
+   "issue": "The `change` silently identifies the Hopf spectrum's underlying scheme with an ordinary spectrum by definitional equality.",
+   "line": 115
+  }
+ ],
+ "head_sha": "69987256740454e5f3e490a09a742b33ab48600f",
+ "merge_base_sha": "0400cbfebd4bd57dfc7469852ef5e0218c54388e",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5563,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "8594d530c2cdc34bce56e25f76de5deb725c0a6455f26b779e31ebafd74389d6",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260903T191709Z-5563-proof-quality-15db08",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-03T19:17:09Z",
+ "submitted_by": "kim-em",
+ "summary": "The proofs contain undocumented definitional-equality manipulation and one unfolding-heavy bridge that is coupled to implementation details.",
+ "transcript_blob": "3f0b9064e9da287a2b30921d9b94813ededdcfc09052cc7652cfb4350ee7eb59",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 106240,
+  "input_tokens": 127023,
+  "output_tokens": 1599,
+  "reasoning_output_tokens": 478
+ },
+ "verdict": "request_changes"
+}
