@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.158091,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 36.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 61312,
+    "input_tokens": 78435,
+    "output_tokens": 1394,
+    "reasoning_output_tokens": 614
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "021406f270a15a91ecf63a7aafa0de393cfe80c8",
+ "cost_estimated": true,
+ "cost_usd": 0.158091,
+ "dedupe_key": "TauCetiProject/TauCeti|5679|26b0fa5e71a829f72f208fac1f21f69c45e9acf5|generality|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "7b976fbe37ed6ad7802da345f00a43bd6f2196805c5fd8ee3a6f8300d8062ae4",
+ "diff_sha256": "7b976fbe37ed6ad7802da345f00a43bd6f2196805c5fd8ee3a6f8300d8062ae4",
+ "duration_s": 36.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Line 58 applies `Complex.one_div_one_sub_cpow_hasFPowerSeriesOnBall_zero`, whose declaration in `Mathlib/Analysis/Analytic/Binomial.lean:153` takes `a : \u2102`; the real restriction is used only for the coefficient cast.",
+   "file": "TauCeti/Analysis/Analytic/Binomial.lean",
+   "fix": "State it for `{r z : \u2102}` with coefficients `Ring.multichoose r n`; obtain the real-coefficient form at the transform call site via `Ring.map_multichoose`.",
+   "issue": "The complex multichoose-series theorem unnecessarily restricts the exponent to `r : \u211d`, although its underlying Mathlib power series accepts an arbitrary complex exponent.",
+   "line": 51
+  },
+  {
+   "evidence": "Lines 310, 319, and 343 prove the zero-shape MGF, CGF, and characteristic-function formulas; when `0 < p \u2227 p \u2264 1`, their values agree with the displayed general formulas because any positive base has real/complex power zero equal to one.",
+   "file": "TauCeti/Probability/Distributions/NegativeBinomial/Transforms.lean",
+   "fix": "Change these three public signatures to `(hr : 0 \u2264 r)` and split on `hr.eq_or_lt`, deriving the zero branch from the corresponding zero-shape theorem.",
+   "issue": "The MGF, CGF, and characteristic-function theorems at lines 76, 91, and 217 require `0 < r`, even though the same formulas hold for `r = 0` under the existing valid-parameter assumptions.",
+   "line": 76
+  }
+ ],
+ "head_sha": "26b0fa5e71a829f72f208fac1f21f69c45e9acf5",
+ "merge_base_sha": "ba8d4ea39471e2133e62d578970880074a3bd688",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5679,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "fe3aec85884ab817cb4155ce51b640417a0dd2fc721617bb6f59750a73506c5d",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T225347Z-5679-generality-69dde8",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T22:53:47Z",
+ "submitted_by": "kim-em",
+ "summary": "Several new statements are restricted below their natural level despite nearby results making the generalizations immediate.",
+ "transcript_blob": "632742c1337d50cee6353d813bf631e9d90757d80d522592a2ce4446f9baabd7",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 61312,
+  "input_tokens": 78435,
+  "output_tokens": 1394,
+  "reasoning_output_tokens": 614
+ },
+ "verdict": "request_changes"
+}
