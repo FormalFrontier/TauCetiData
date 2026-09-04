@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.389576,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.4,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 130432,
+    "input_tokens": 185284,
+    "output_tokens": 1670,
+    "reasoning_output_tokens": 460
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "287d2dec0f5a57f673a3e51777a9ff366ca24021",
+ "cost_estimated": true,
+ "cost_usd": 0.389576,
+ "dedupe_key": "TauCetiProject/TauCeti|5451|7d3a316308bc77316ed5866071696d951d3ce891|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|10",
+ "diff_blob": "6bd3339cfd60a954e72c09fc1248a9295d1bb51cc4b53c8c3ba4fd069feea80b",
+ "diff_sha256": "6bd3339cfd60a954e72c09fc1248a9295d1bb51cc4b53c8c3ba4fd069feea80b",
+ "duration_s": 49.4,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`TauCeti/NumberTheory/NumberField/Frobenius/Basic.lean:109` already declares `AlgEquiv.isArithFrobAt_autCongr` with the same conjugated automorphism and corresponding transported ideal.",
+   "file": "TauCeti/NumberTheory/NumberField/Frobenius/Transport.lean",
+   "fix": "Delete both new number-field transport declarations and use `AlgEquiv.isArithFrobAt_autCongr`, rewriting ideals with `Ideal.map_comap_of_equiv`/`Ideal.map_of_equiv`; derive an iff only at its consumer if needed.",
+   "issue": "The forward transport theorem directly duplicates `AlgEquiv.isArithFrobAt_autCongr`; its mapped ideal equals the existing theorem\u2019s `Q.comap (mapAlgEquiv e).symm` by `Ideal.map_comap_of_equiv`. The iff at line 79 is then obtained by applying that theorem to `e` and `e.symm`.",
+   "line": 64
+  },
+  {
+   "evidence": "`TauCeti/RingTheory/Unramified/AlgEquiv.lean:34` already transports `Algebra.IsUnramifiedAt` across any algebra equivalence to an arbitrary prime identified with the corresponding comap.",
+   "file": "TauCeti/RingTheory/Frobenius/Transport.lean",
+   "fix": "Use `e.symm.isUnramifiedAt_of_eq_comap` with `Ideal.map_comap_of_equiv` for the forward direction, and apply it for `e` and `e.symm` at callers needing an iff.",
+   "issue": "`Algebra.IsUnramifiedAt.mapAlgEquiv` duplicates the more general existing `AlgEquiv.isUnramifiedAt_of_eq_comap`; line 76 merely applies the same transport in both directions.",
+   "line": 65
+  }
+ ],
+ "head_sha": "7d3a316308bc77316ed5866071696d951d3ce891",
+ "merge_base_sha": "287d2dec0f5a57f673a3e51777a9ff366ca24021",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5451,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "0f1badc73cf9b9fe38502599a13997f1677b5cee2f94da9465a3ac0716b5ecfd",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 10,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T091040Z-5451-reuse-8e1307",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T09:10:40Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR duplicates existing TauCeti transport APIs for both arithmetic Frobenius and unramifiedness.",
+ "transcript_blob": "9e31802e0d11f8615f2c574972a3df781b3d67dc6542c0638c1132f3a746f6f0",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 130432,
+  "input_tokens": 185284,
+  "output_tokens": 1670,
+  "reasoning_output_tokens": 460
+ },
+ "verdict": "block"
+}
