@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.249157,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 55.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 120064,
+    "input_tokens": 145241,
+    "output_tokens": 2108,
+    "reasoning_output_tokens": 993
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "3be25b326e9f2b511bcbc6c343c2578be1016404",
+ "cost_estimated": true,
+ "cost_usd": 0.249157,
+ "dedupe_key": "TauCetiProject/TauCeti|5665|7bfa44346e2e8adbd933846337a761f71308effb|api-design|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "aabc89cf79ed76dc5f53178d01eba058c54a23718128e3c4f38035b7149a32a4",
+ "diff_sha256": "aabc89cf79ed76dc5f53178d01eba058c54a23718128e3c4f38035b7149a32a4",
+ "duration_s": 55.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only preservation declarations are `IsGradedEulerAdmissible.shiftTarget` at line 102 and `.shiftSource` at line 194, while `gradedExtEuler_shiftTarget_inverse` and `gradedExtEuler_shiftSource_inverse` independently demand `h'` at lines 140 and 232.",
+   "file": "TauCeti/Algebra/Homology/EulerCharacteristic/ExtEuler/Graded/Shift.lean",
+   "fix": "Add inverse-target and inverse-source admissibility transport lemmas (including the component finiteness/boundedness lemmas as appropriate), then let the inverse Euler identities consume those derived witnesses; the same gap occurs at line 231.",
+   "issue": "Both inverse-shift Euler theorems require callers to supply admissibility of the inverse-shifted pair, but the module exposes preservation only for the forward shift; this leaves the inverse identities unusable from the advertised input alone.",
+   "line": "139"
+  },
+  {
+   "evidence": "`extAddEquivOfEquivalence_apply` is provided at lines 93\u201398, and the parallel existing APIs `extAddEquivOfIso_apply` and `extLinearEquivOfIso_apply` occur in `Ext/Basic.lean` at lines 69 and 83; only the new linear refinement lacks the corresponding lemma.",
+   "file": "TauCeti/Algebra/Homology/Ext/Equivalence.lean",
+   "fix": "Add `@[simp] theorem extLinearEquivOfEquivalence_apply ... : extLinearEquivOfEquivalence R e X Y n \u03b1 = \u03b1.mapExactFunctor e.functor := rfl`.",
+   "issue": "`extLinearEquivOfEquivalence` has no public `@[simp]` application theorem, so consumers cannot reduce its action through the API without unfolding the definition.",
+   "line": "101"
+  }
+ ],
+ "head_sha": "7bfa44346e2e8adbd933846337a761f71308effb",
+ "merge_base_sha": "9c359b2948255ad063a54e9c4864a27642c6a4ae",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5665,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "9dbca095c1fe6cfefc166c0f98859dbd5fb50acb18fbd0afbbc04f7dc5bc3f6e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T185726Z-5665-api-design-a8e4a6",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T18:57:26Z",
+ "submitted_by": "kim-em",
+ "summary": "The public shift API omits inverse-shift admissibility, and the new linear Ext equivalence lacks its characteristic simplification lemma.",
+ "transcript_blob": "092f59e4a13819a9c3932375003bd4b218b690b3b37e9d7420cfe362f3417247",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 120064,
+  "input_tokens": 145241,
+  "output_tokens": 2108,
+  "reasoning_output_tokens": 993
+ },
+ "verdict": "request_changes"
+}
