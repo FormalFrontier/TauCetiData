@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.395325,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 46.9,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 158080,
+    "input_tokens": 211335,
+    "output_tokens": 1667,
+    "reasoning_output_tokens": 549
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "423ed12995fd829a9e86867c2bf1e78f4bbb421b",
+ "cost_estimated": true,
+ "cost_usd": 0.395325,
+ "dedupe_key": "TauCetiProject/TauCeti|5626|f1ca22a4d71eb61a8821cad9af50282dd5645ef3|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "b845f970911659ce702271814538c794b922231e83820c17b1afa56ac268eb80",
+ "diff_sha256": "b845f970911659ce702271814538c794b922231e83820c17b1afa56ac268eb80",
+ "duration_s": 46.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib provides `Basis.span_eq` at `LinearAlgebra/Basis/Basic.lean:72` and `Submodule.map_span`; Mathlib's analogous lattice proof uses exactly this route at `Algebra/Module/ZLattice/Basic.lean:634-638` (`ofZLatticeBasis_span`).",
+   "file": "TauCeti/Geometry/Toric/Algebraic/Lattice.lean",
+   "fix": "Rewrite the range as the map of `\u22a4`, replace `\u22a4` using `(Module.Free.chooseBasis \u2124 N).span_eq`, and use `Submodule.map_span`, `Set.range_comp`, and `realBasis_apply`.",
+   "issue": "`range_eq_span_realBasis` manually performs two `Submodule.span_induction`s to prove the image of a basis-generated module is the span of the mapped basis.",
+   "line": 127
+  },
+  {
+   "evidence": "`TensorProduct.ext'` is defined at `LinearAlgebra/TensorProduct/Basic.lean:133`; `span_tmul_eq_top` is already used to avoid induction in `TensorProduct/Defs.lean:423`, and `LinearMap.baseChange_tmul` is the existing pure-tensor computation used by this file at line 207.",
+   "file": "TauCeti/Geometry/Toric/Algebraic/Lattice.lean",
+   "fix": "Use `TensorProduct.span_tmul_eq_top` with `Submodule.map_span` for the span result, and `TensorProduct.ext'` followed by the existing `LinearMap.baseChange_tmul` simp lemma for `map_equiv`.",
+   "issue": "The tensor inductions in `span_range_eq_top` and `map_equiv` (again at line 202) rederive the standard fact that maps out of a tensor product are determined by pure tensors.",
+   "line": 100
+  }
+ ],
+ "head_sha": "f1ca22a4d71eb61a8821cad9af50282dd5645ef3",
+ "merge_base_sha": "ad39075656c1ff7f45dc7d078a8e7346f3bf053a",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5626,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "98cd26ae795cc00242508e9864c5df984e7086ff338885245dfda48a20838624",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T094645Z-5626-reuse-6dc7c4",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T09:46:45Z",
+ "submitted_by": "kim-em",
+ "summary": "Several proofs reimplement standard span and tensor-product plumbing instead of using the existing Mathlib API.",
+ "transcript_blob": "796367f23d0c3af05d3cad63a993d693a1dc0f27acb7e1f86e79ba3483a98691",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 158080,
+  "input_tokens": 211335,
+  "output_tokens": 1667,
+  "reasoning_output_tokens": 549
+ },
+ "verdict": "request_changes"
+}
