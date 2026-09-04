@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.45285,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 71.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 331520,
+    "input_tokens": 376026,
+    "output_tokens": 2152,
+    "reasoning_output_tokens": 599
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "fe2d41b7432ddaa81fc839e9ee9661caf5d75501",
+ "cost_estimated": true,
+ "cost_usd": 0.45285,
+ "dedupe_key": "TauCetiProject/TauCeti|5152|2d5ce51a74729b9df07339a2afe60d5465262ab2|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|6",
+ "diff_blob": "63883091e793d40311cfefd40264e171ef360739eccf92346dcb165ef561f4d1",
+ "diff_sha256": "63883091e793d40311cfefd40264e171ef360739eccf92346dcb165ef561f4d1",
+ "duration_s": 71.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Mathlib defines `exponentialPDFReal r := gammaPDFReal 1 r`, both PDFs via `ENNReal.ofReal`, and `expMeasure r := gammaMeasure 1 r` (`Mathlib/Probability/Distributions/Exponential.lean:31-39,96`); `TauCeti/Probability/Distributions/PDFInstances.lean:146` already records `exponentialPDF r = gammaPDF 1 r := rfl`.",
+   "file": "TauCeti/Probability/Distributions/Weibull/Basic.lean",
+   "fix": "Delete both lemmas; change the zero-density proof to `gammaPDF 1 lam\u207b\u00b9 = 0` (the exponential density is definitionally equal), then rewrite directly with `expMeasure` and `gammaMeasure`, or expose one shared canonical equation if multiple modules need it.",
+   "issue": "`gammaPDF_one_eq_exponentialPDF` re-proves the definitional equality `gammaPDF 1 r = exponentialPDF r`, duplicating `PDFInstances.lean`\u2019s `exponentialPDF_def`; the dependent `expMeasure_eq_withDensity_exponentialPDF` is redundant scaffolding.",
+   "line": "467"
+  }
+ ],
+ "head_sha": "2d5ce51a74729b9df07339a2afe60d5465262ab2",
+ "merge_base_sha": "fe2d41b7432ddaa81fc839e9ee9661caf5d75501",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5152,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "reactivation",
+ "prompt_sha256": "2b65381f4c51fa71826aed7d1c74e3926a63a01d9f6aa3b2ed11908659f68aec",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 6,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T081925Z-5152-reuse-9fac86",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T08:19:25Z",
+ "submitted_by": "kim-em",
+ "summary": "One private proof block unnecessarily re-derives a definitional identity already used elsewhere in TauCeti.",
+ "transcript_blob": "ce2ecbdcd8a08914b9c7cf204e5988626c21d129e5109f223fa3f56109f6141b",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 331520,
+  "input_tokens": 376026,
+  "output_tokens": 2152,
+  "reasoning_output_tokens": 599
+ },
+ "verdict": "request_changes"
+}
