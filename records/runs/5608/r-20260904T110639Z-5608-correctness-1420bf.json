@@ -1,0 +1,67 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.311009,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 53.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 142208,
+    "input_tokens": 178585,
+    "output_tokens": 1934,
+    "reasoning_output_tokens": 967
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "dd65f2badd9a7c910127d4db4f1badd1218ac85d",
+ "cost_estimated": true,
+ "cost_usd": 0.311009,
+ "dedupe_key": "TauCetiProject/TauCeti|5608|18e03c20d5afd6f9e30e43f93bbfb202622046e0|correctness|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "2d8b80ae0bbab20264a53dc6b1470908761cc9a9961716c788af5f63c054b230",
+ "diff_sha256": "2d8b80ae0bbab20264a53dc6b1470908761cc9a9961716c788af5f63c054b230",
+ "duration_s": 53.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Residue.lean:121 defines `normResidue` under only fields/algebra, while Mathlib `RingTheory/Norm/Defs.lean:76` proves `Algebra.norm_eq_one_of_not_module_finite`; the needed guarantee exists only as `Place.finiteDimensional_residueField (hF : IsFunctionField k F)` at Degree.lean:203. Eval.lean:183 calls its product \u201ctextbook\u201d with only `IsUnitAtSupport`, which supplies no finiteness.",
+   "file": "TauCeti/FieldTheory/FunctionField/Place/Residue.lean",
+   "fix": "Require `Module.Finite k P.ResidueField` in the local meaningful API, or parameterize the canonical divisor evaluation by `hF : IsFunctionField k F` and use `P.finiteDimensional_residueField hF`; keep any unconstrained raw construction distinctly named and outside the claimed classical interface.",
+   "issue": "`normResidue` has no residue-finiteness or `IsFunctionField` argument, and consequently `normResidueOrOne` (line 136), `Divisor.evalHom` (Eval.lean:112), and `Divisor.eval` (Eval.lean:117) expose purported divisor evaluation where every non-finite residue extension is silently evaluated as `1`. Admissibility only asserts order zero, so it does not exclude this junk regime.",
+   "line": "121"
+  }
+ ],
+ "head_sha": "18e03c20d5afd6f9e30e43f93bbfb202622046e0",
+ "merge_base_sha": "4d33cf0a22059d5849f7eee8c9de446af82cb91c",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5608,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "29175509b644e76a2829f2f86afc2ec00a0a6f5c0bd771bc0af1bf28cd5cd1ab",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "correctness",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T110639Z-5608-correctness-1420bf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T11:06:39Z",
+ "submitted_by": "kim-em",
+ "summary": "The exported evaluation remains semantically unconstrained and can silently replace genuine residue norms by the junk value `1` outside function fields.",
+ "transcript_blob": "30072b26b4d156a0a689769c362bcc89c2daed90ed298e17f9e52551a95420c2",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 142208,
+  "input_tokens": 178585,
+  "output_tokens": 1934,
+  "reasoning_output_tokens": 967
+ },
+ "verdict": "block"
+}
