@@ -1,0 +1,88 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.243687,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 60.0,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 128384,
+    "input_tokens": 150939,
+    "output_tokens": 2224,
+    "reasoning_output_tokens": 717
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "8963608ea7fbe796947880d995250e63a8e0c789",
+ "cost_estimated": true,
+ "cost_usd": 0.243687,
+ "dedupe_key": "TauCetiProject/TauCeti|5634|b92022c19973bd035ee8f8d0bcab034a6dd64ac5|api-design|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "d178b6cc26caeb0280b54208294d67f383db420c9545859e90ee22f7f01e2788",
+ "diff_sha256": "d178b6cc26caeb0280b54208294d67f383db420c9545859e90ee22f7f01e2788",
+ "duration_s": 60.0,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`Restriction.lean:243-290` explicitly exposes these two properties for `restrictionRingHom`; grep finds only continuity and the single `divBy` evaluation for the new wrapper.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/LaurentPresentation.lean",
+   "fix": "Add a `@[simp]` composition lemma with `toCompletionLoc` and a corresponding extensional/uniqueness lemma specialized to `restrictionRingHomInsert`.",
+   "issue": "`restrictionRingHomInsert` lacks the specialized compatibility and uniqueness lemmas that characterize a restriction map, forcing consumers to unfold this wrapper to use `restrictionRingHom_comp_toCompletionLoc` or `eq_restrictionRingHom`.",
+   "line": 81
+  },
+  {
+   "evidence": "The only use at lines 201-206 proves kernel containment by `rw [laurentRelationIdeal, Ideal.span_le, ...]`; grep finds no other lemma characterizing this ideal.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/LaurentPresentation.lean",
+   "fix": "Expose a `laurentRelationIdeal_def` restatement and a suitably named `@[simp]` lemma for the defining equality in its quotient.",
+   "issue": "`laurentRelationIdeal` has no public defining or quotient-relation lemma, so clients must unfold its body merely to establish the defining equation `mk (weightedC (t/s)) = mk (weightedX 0)`.",
+   "line": 59
+  },
+  {
+   "evidence": "The theorem rewrites `restrictionRingHomInsert ... (divBy t s)` to the corresponding target `divBy`, matching the normal-form direction used in the presentation proof.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/LaurentPresentation.lean",
+   "fix": "Add `@[simp]` to the theorem.",
+   "issue": "`restrictionRingHomInsert_coe_divBy` is a canonical map-evaluation normal form but is not tagged `@[simp]`.",
+   "line": 111
+  },
+  {
+   "evidence": "Repository grep finds `restrictionRingHomInsert_toCompletionLocDiv` only in this docstring; the actual theorem is declared at line 111.",
+   "file": "TauCeti/RingTheory/Huber/LocalizationTopology/LaurentPresentation.lean",
+   "fix": "Replace it with the actual fully qualified name `TauCeti.Huber.PairOfDefinition.restrictionRingHomInsert_coe_divBy`.",
+   "issue": "The main theorem\u2019s API documentation cites nonexistent `TauCeti.Huber.restrictionRingHomInsert_toCompletionLocDiv`, misleading users about the supporting declaration and its namespace.",
+   "line": 159
+  }
+ ],
+ "head_sha": "b92022c19973bd035ee8f8d0bcab034a6dd64ac5",
+ "merge_base_sha": "8963608ea7fbe796947880d995250e63a8e0c789",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5634,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "7b9cb894436db95efc4330035066f0a0bed02d45b97829e4e62f3bc32fba7d73",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T092818Z-5634-api-design-50cd1a",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T09:28:18Z",
+ "submitted_by": "kim-em",
+ "summary": "The new definitions lack parts of their characteristic public API, and the main theorem\u2019s documentation names a nonexistent declaration.",
+ "transcript_blob": "c8b90dc97707251622ff9b0bfeb4463d3fa4202d9e8beb3d977de24017142dc7",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 128384,
+  "input_tokens": 150939,
+  "output_tokens": 2224,
+  "reasoning_output_tokens": 717
+ },
+ "verdict": "request_changes"
+}
