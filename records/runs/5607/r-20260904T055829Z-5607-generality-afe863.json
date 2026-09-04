@@ -1,0 +1,74 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.528516,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 82.6,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 426112,
+    "input_tokens": 471774,
+    "output_tokens": 2905,
+    "reasoning_output_tokens": 1156
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "4d33cf0a22059d5849f7eee8c9de446af82cb91c",
+ "cost_estimated": true,
+ "cost_usd": 0.528516,
+ "dedupe_key": "TauCetiProject/TauCeti|5607|179168ab296d63ae5463f775fd6df1e44bb19059|generality|gpt-5.6-sol|d0700ff994e59c9f|production|1",
+ "diff_blob": "f37935a470ec7dbfca3df54f1ffc2f49a24d978f08f7551777f01f65e049c4c7",
+ "diff_sha256": "f37935a470ec7dbfca3df54f1ffc2f49a24d978f08f7551777f01f65e049c4c7",
+ "duration_s": 82.6,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "The only use is `filter_upwards [hs.mem_nhds hx]`; the derivative estimate is purely local at `x`.",
+   "file": "TauCeti/Analysis/Calculus/InverseFunctionTheorem.lean",
+   "fix": "Replace `hs : IsOpen s` and `hx : x \u2208 s` with `hs : s \u2208 \ud835\udcdd x`; callers can supply `open_source.mem_nhds hx`.",
+   "issue": "`ApproximatesLinearOn.norm_sub_le_of_hasFDerivAt` assumes all of `IsOpen s` and `x \u2208 s`, although the proof uses them only to obtain `s \u2208 \ud835\udcdd x`.",
+   "line": 68
+  },
+  {
+   "evidence": "For `n = 0`, the conclusion is continuity at/on the open target, supplied by `OpenPartialHomeomorph.symm`; the nearby implicit inverse theorem at `ImplicitFunctionTheorem.lean:140` already states its `ContDiffAt K n` conclusion without `n \u2260 0` when derivative data are available.",
+   "file": "TauCeti/Analysis/Calculus/InverseFunctionTheorem.lean",
+   "fix": "Remove `hn`; handle `n = 0` using continuity of the inverse partial homeomorphism, and retain the derivative argument for positive order.",
+   "issue": "Both `contDiffAt_toOpenPartialHomeomorph_symm` (line 155) and `contDiffOn_toOpenPartialHomeomorph_symm` (line 171) require `n \u2260 0`, unnecessarily excluding the natural `C^0` inverse statement.",
+   "line": 155
+  }
+ ],
+ "head_sha": "179168ab296d63ae5463f775fd6df1e44bb19059",
+ "merge_base_sha": "f0a54e05b078a19b916f5826a020b2392dc1fc79",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5607,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a4cbd09a9d287465a87e6977ff2663cbae45388d4d5601012c5de5eac47f7433",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "generality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260904T055829Z-5607-generality-afe863",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-04T05:58:29Z",
+ "submitted_by": "kim-em",
+ "summary": "Two new calculus APIs impose stronger local or differentiability-order hypotheses than their conclusions require.",
+ "transcript_blob": "55562c82379efb57fdda377853ee132bde5aefe49f9e73f128d4cde8003fb62c",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 426112,
+  "input_tokens": 471774,
+  "output_tokens": 2905,
+  "reasoning_output_tokens": 1156
+ },
+ "verdict": "request_changes"
+}
