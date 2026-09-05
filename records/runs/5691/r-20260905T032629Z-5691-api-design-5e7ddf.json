@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.322608,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 49.7,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 142976,
+    "input_tokens": 183450,
+    "output_tokens": 1625,
+    "reasoning_output_tokens": 497
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "79cffcb88c3deb813c99d09a7f0f5479b1adc78b",
+ "cost_estimated": true,
+ "cost_usd": 0.322608,
+ "dedupe_key": "TauCetiProject/TauCeti|5691|51d661d0bf1157abd63ffd50f7de5159f5527b7c|api-design|gpt-5.6-sol|d0700ff994e59c9f|production|2",
+ "diff_blob": "9f805691e9942f0efa12b9cf025b5285f7c9f26976b3b4815e85373211e0c9d1",
+ "diff_sha256": "9f805691e9942f0efa12b9cf025b5285f7c9f26976b3b4815e85373211e0c9d1",
+ "duration_s": 49.7,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 148\u2013149 state the exact criterion for every `q : \u2115`, and lines 232\u2013235 compute every finite natural moment; analogous general results are public and simp-normalized in `InverseGamma.lean:336,346` and `Weibull/Basic.lean:566`.",
+   "file": "TauCeti/Probability/Distributions/FisherSnedecor/Moments.lean",
+   "fix": "Export `integrable_pow_fisherSnedecorMeasure_iff` and `integral_pow_fisherSnedecorMeasure`, with `@[simp]` as appropriate.",
+   "issue": "The general natural-power integrability criterion and moment formula at line 232 are private, although they are reusable distribution-level results and subsume the exported first and second moments.",
+   "line": 148
+  },
+  {
+   "evidence": "The identity criterion has `@[simp]` at line 182; the parallel Student-t and Pareto square criteria have it at `StudentT/Moments.lean:392` and `Pareto.lean:170`.",
+   "file": "TauCeti/Probability/Distributions/FisherSnedecor/Moments.lean",
+   "fix": "Add `@[simp]` to this iff theorem.",
+   "issue": "`integrable_sq_fisherSnedecorMeasure_iff` lacks `@[simp]`, unlike the parallel identity criterion and established square-integrability APIs.",
+   "line": 193
+  },
+  {
+   "evidence": "The kernel behaves as `x^(a-1)` near zero and `x^(-b-1)` at infinity, so `a > 0` and `b > 0` are the complete conditions; moreover the reverse implication `0 < b` already makes `0 < a + b` automatic.",
+   "file": "TauCeti/Analysis/SpecialFunctions/Beta.lean",
+   "fix": "Strengthen the theorem to assume only `0 < a`, proving the nonpositive-total cases separately in the non-integrability direction.",
+   "issue": "The public sharp integrability criterion requires the extraneous hypothesis `0 < a + b`; for `0 < a`, integrability is governed exactly by `0 < b`, so the API cannot characterize valid inputs such as `a = 1, b = -2`.",
+   "line": 299
+  }
+ ],
+ "head_sha": "51d661d0bf1157abd63ffd50f7de5159f5527b7c",
+ "merge_base_sha": "79cffcb88c3deb813c99d09a7f0f5479b1adc78b",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5691,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "4ac9d5c51f6b97c4e1874786e1f3a7da62119798f80c3a9286eeb24acbdb640e",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260905T032629Z-5691-api-design-5e7ddf",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-05T03:26:29Z",
+ "submitted_by": "kim-em",
+ "summary": "The moment API hides its reusable general results, and two characteristic integrability interfaces are incomplete or unnecessarily restrictive.",
+ "transcript_blob": "9898b6a0b02557926082209da86b75077b13c7b649d943c4ad8525bf3b17a3aa",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 142976,
+  "input_tokens": 183450,
+  "output_tokens": 1625,
+  "reasoning_output_tokens": 497
+ },
+ "verdict": "request_changes"
+}
