@@ -1,0 +1,81 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_estimated": true,
+   "cost_usd": 0.347514,
+   "model": "gpt-5.6-sol",
+   "returncode": 0,
+   "secs": 56.1,
+   "usage": {
+    "cache_write_input_tokens": 0,
+    "cached_input_tokens": 207488,
+    "input_tokens": 244212,
+    "output_tokens": 2005,
+    "reasoning_output_tokens": 607
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "c2fa854d2c6df19b206e357bb6c4f3e3f599ecd6",
+ "cost_estimated": true,
+ "cost_usd": 0.347514,
+ "dedupe_key": "TauCetiProject/TauCeti|5689|e55b31047f336cde4ed00156057b6f5a47471782|reuse|gpt-5.6-sol|d0700ff994e59c9f|production|2",
+ "diff_blob": "fd622711492ad019ed86bce53c111b9945bc248f4adc390f4fc85808c180fce2",
+ "diff_sha256": "fd622711492ad019ed86bce53c111b9945bc248f4adc390f4fc85808c180fce2",
+ "duration_s": 56.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Lines 111\u2013115 define `IsLatticeRational` with `@[expose]` and immediately restate the identical proposition as `isLatticeRational_iff := Iff.rfl`.",
+   "file": "TauCeti/Geometry/Toric/Algebraic/Cone.lean",
+   "fix": "Delete `isLatticeRational_iff`; unfold or change `IsLatticeRational` directly where its defining proposition is needed.",
+   "issue": "`isLatticeRational_iff` is exactly `Iff.rfl` for the already `@[expose]`d `IsLatticeRational`, creating a duplicate public unfolding API.",
+   "line": 114
+  },
+  {
+   "evidence": "The complete proof at line 88 is `Submodule.map_span _ t`; grep locates that theorem in `Mathlib/LinearAlgebra/Span/Basic.lean:73`.",
+   "file": "TauCeti/Geometry/Toric/Algebraic/Cone.lean",
+   "fix": "Delete `map_hull` and use `Submodule.map_span` directly at lines 240, 293, and 300.",
+   "issue": "Private `map_hull` merely renames the existing theorem `Submodule.map_span`.",
+   "line": 86
+  },
+  {
+   "evidence": "Lines 291\u2013313 separately establish the two inclusions and decompose every pair; `Mathlib/LinearAlgebra/Prod.lean:446` states `span R (inl R _ _ '' s \u222a inr R _ _ '' t) = (span R s).prod (span R t)`.",
+   "file": "TauCeti/Geometry/Toric/Algebraic/Cone.lean",
+   "fix": "Rewrite the generator image as `LinearMap.inl _ _ _ '' (i '' s) \u222a LinearMap.inr _ _ _ '' (i' '' t)` and close the cone equality with `LinearMap.span_inl_union_inr`, retaining only the finite-set image calculation.",
+   "issue": "`IsLatticeRational.prod` manually proves the product-span decomposition already supplied by `LinearMap.span_inl_union_inr`.",
+   "line": 283
+  }
+ ],
+ "head_sha": "e55b31047f336cde4ed00156057b6f5a47471782",
+ "merge_base_sha": "c2fa854d2c6df19b206e357bb6c4f3e3f599ecd6",
+ "mode": "commit",
+ "model": "gpt-5.6-sol",
+ "pr": 5689,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "e5c7a67bb2c26a4b59f623e86c03abbe4d81917c23731ac18fcbd226ab0c858b",
+ "provider": "codex",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 2,
+ "rubric": "reuse",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260905T014023Z-5689-reuse-d12dd1",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-05T01:40:23Z",
+ "submitted_by": "kim-em",
+ "summary": "The PR introduces a redundant public unfolding theorem and re-derives existing Mathlib span/map identities in private scaffolding.",
+ "transcript_blob": "6ad96b644d255dacf62128bab1af429cac4f96183e825b84e20ddf80b997adf4",
+ "usage": {
+  "cache_write_input_tokens": 0,
+  "cached_input_tokens": 207488,
+  "input_tokens": 244212,
+  "output_tokens": 2005,
+  "reasoning_output_tokens": 607
+ },
+ "verdict": "request_changes"
+}
