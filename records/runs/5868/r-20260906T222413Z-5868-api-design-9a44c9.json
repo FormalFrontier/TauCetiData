@@ -1,0 +1,254 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 2.050533,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 283.9,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 97009,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 97009,
+    "cache_read_input_tokens": 1033648,
+    "inference_geo": "not_available",
+    "input_tokens": 34,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2576,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2576,
+      "cache_read_input_tokens": 97233,
+      "input_tokens": 2,
+      "output_tokens": 1707,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 21932,
+    "output_tokens_details": {
+     "thinking_tokens": 16593
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "341c0db419f94a4a1bfcb2e7e11862d4afcec4ac",
+ "cost_usd": 2.050533,
+ "dedupe_key": "TauCetiProject/TauCeti|5868|d9b8f76190dcdb3d0927b7b290f7fd2db9528904|api-design|claude-opus-5|d0700ff994e59c9f|production|1",
+ "diff_blob": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "diff_sha256": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "duration_s": 283.9,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "Proofs are literally `rw [cgf, mgf_inner_toEuclideanLin_multivariateGaussian_sqrt S h\u0398 ht]`; the repo's own precedent `TauCeti/Probability/Distributions/ChiSquared.lean:325` delivers `cgf id (chiSquaredMeasure k) t = -(k / 2) * Real.log (1 - 2 * t)`, not `Real.log ((1 - 2 * t) ^ (-(k/2)))`.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "fix": "State `cgf ... = -1/2 * Real.log ((1 - (2 * t) \u2022 ...).det)`, proved by `rw [cgf, mgf_..., Real.log_rpow ht.det_pos]` (`Real.log_rpow` at Mathlib/Analysis/SpecialFunctions/Pow/Real.lean:494, `Matrix.PosDef.det_pos` at Mathlib/Analysis/Matrix/PosDef.lean:85; for the `\u0398 * S` version the determinant is equal to the sandwich one by `PosSemidef.det_one_sub_smul_sqrt_mul_mul_sqrt`, hence also positive).",
+   "issue": "`cgf_inner_toEuclideanLin_multivariateGaussian_sqrt` (line 231) and `cgf_inner_toEuclideanLin_multivariateGaussian` (line 251) state the cgf as `Real.log (det ... ^ (-1/2 : \u211d))`. Since `cgf X \u03bc t = log (mgf X \u03bc t)` by definition (Mathlib/Probability/Moments/Basic.lean:125), these add nothing over the mgf lemmas: the log of the rpow is left unevaluated, so every consumer must redo the positivity argument to get a closed form.",
+   "line": 231
+  },
+  {
+   "evidence": "grep for `@[simp]` in the diff returns nothing; the four ChiSquared/Gaussian precedents above all carry it, including ones with side hypotheses discharged by the simp discharger.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "fix": "Mark the closed-pattern characteristic lemmas `@[simp]`: `mem_integrableExpSet_mul_sq_gaussianReal_iff` (line 72) and `mem_integrableExpSet_sum_mul_sq_pi_gaussianReal_iff` (line 115), which are hypothesis-free iffs, and the corresponding `mgf_mul_sq_gaussianReal` (line 85) / `mgf_sum_mul_sq_pi_gaussianReal` (line 136) as `mgf_id_chiSquaredMeasure` is. Leave the `Matrix.IsHermitian` pencil lemmas unannotated \u2014 their right-hand sides mention `hB.eigenvalues`, which is not determined by the left-hand side.",
+   "issue": "No new declaration in this PR carries `@[simp]`, although the immediately preceding results of the same family do: `integrableExpSet_id_chiSquaredMeasure` (ChiSquared.lean:302), `mgf_id_chiSquaredMeasure` (:310), `cgf_id_chiSquaredMeasure` (:324), `gaussianReal_map_sq` (Gaussian/ChiSquared.lean:50), `covMatrix_multivariateGaussian` (Multivariate.lean:45).",
+   "line": 72
+  }
+ ],
+ "head_sha": "d9b8f76190dcdb3d0927b7b290f7fd2db9528904",
+ "merge_base_sha": "c3b07afd4615cac9954bf046a8288974c0a5d87b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5868,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "854bbc5f17ffc40ff4860c2b920d10436c73229cc9d6c983545bc6e6432be56c",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "api-design",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260906T222413Z-5868-api-design-9a44c9",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-06T22:24:13Z",
+ "submitted_by": "kim-em",
+ "summary": "The surface is otherwise minimal and correctly public (no private general infrastructure, no compatibility artifacts, no exposed bodies), but the two cgf lemmas stop at `Real.log (det ^ (-1/2))`, which is just `cgf = log mgf` unfolded, and none of the new characteristic lemmas carries the `@[simp]` annotation its direct precedents in `ChiSquared.lean` carry.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Spectrum.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Sqrt.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/Multivariate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Distributions/Gaussian/Multivariate.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": ".",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Distributions/Gaussian/Multivariate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/ChiSquared.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "tool": "Glob"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/PosSemidef.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/CStarAlgebra/Matrix.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix/Order.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix/HermitianFunctionalCalculus.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/ChiSquared.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/StandardDistributions/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/LinearAlgebra/Matrix",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix/PosDef.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Moments/MGFAnalytic.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Moments",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 25,
+  "trace_truncated": false
+ },
+ "transcript_blob": "5e9b86aa1415810c1d17780c8633b2461416e92fc0489416c51e37e9134689b4",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 97009,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 97009,
+  "cache_read_input_tokens": 1033648,
+  "inference_geo": "not_available",
+  "input_tokens": 34,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2576,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2576,
+    "cache_read_input_tokens": 97233,
+    "input_tokens": 2,
+    "output_tokens": 1707,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 21932,
+  "output_tokens_details": {
+   "thinking_tokens": 16593
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

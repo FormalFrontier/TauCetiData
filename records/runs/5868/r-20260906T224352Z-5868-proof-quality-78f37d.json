@@ -1,0 +1,232 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6410045000000002,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 234.2,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 84800,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 84800,
+    "cache_read_input_tokens": 580825,
+    "inference_geo": "not_available",
+    "input_tokens": 22,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 6379,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 6379,
+      "cache_read_input_tokens": 81221,
+      "input_tokens": 2,
+      "output_tokens": 5485,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 19511,
+    "output_tokens_details": {
+     "thinking_tokens": 14139
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "341c0db419f94a4a1bfcb2e7e11862d4afcec4ac",
+ "cost_usd": 1.641005,
+ "dedupe_key": "TauCetiProject/TauCeti|5868|d9b8f76190dcdb3d0927b7b290f7fd2db9528904|proof-quality|claude-opus-5|d0700ff994e59c9f|production|1",
+ "diff_blob": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "diff_sha256": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "duration_s": 234.2,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "`mathlib/Mathlib/Analysis/Matrix/Order.lean:359`: `instance instIsometricContinuousFunctionalCalculus [DecidableEq n]` \u2014 `CFC.sqrt S` for `S : Matrix \u03b9 \u03b9 \ud835\udd5c` depends on that instance, and `isHermitian_sqrt_mul_mul_sqrt` is the only declaration in Sqrt.lean without a `[DecidableEq \u03b9]` binder.",
+   "file": "TauCeti/Analysis/Matrix/Sqrt.lean",
+   "fix": "Drop `open scoped Classical in` and add `[DecidableEq \u03b9]` to the binder list, matching `inner_toEuclideanLin_toEuclideanLin` and `PosSemidef.det_one_sub_smul_sqrt_mul_mul_sqrt`.",
+   "issue": "`open scoped Classical in` supplies the `DecidableEq \u03b9` that `CFC.sqrt` needs, so the statement of `isHermitian_sqrt_mul_mul_sqrt` contains `Classical.propDecidable`-derived instances; every consumer (QuadraticForm.lean:198, 215) has a real `[DecidableEq \u03b9]` in scope, so the rewrites there succeed only through instance defeq, unlike the sibling lemmas in the same file.",
+   "line": 55
+  },
+  {
+   "evidence": "QuadraticForm.lean:205-206 and 219-220 are character-for-character identical `simp only` invocations.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "fix": "Add a lemma in `TauCeti/Analysis/Matrix/Sqrt.lean` stating `\u27eatoEuclideanCLM (\ud835\udd5c := \u211d) (CFC.sqrt S) x, \u0398.toEuclideanLin (toEuclideanCLM (\ud835\udd5c := \u211d) (CFC.sqrt S) x)\u27eb = \u27eax, (CFC.sqrt S * \u0398 * CFC.sqrt S).toEuclideanLin x\u27eb` and rewrite with it in both proofs.",
+   "issue": "The four-line block converting the pushed-forward statistic (`\u2190 ContinuousLinearMap.coe_coe`, `coe_toEuclideanCLM_eq_toEuclideanLin`, `inner_toEuclideanLin_toEuclideanLin`, plus the conjTranspose rewrite) is duplicated verbatim at lines 205-206 and 219-220; the same reasoning is re-derived rather than named.",
+   "line": 205
+  },
+  {
+   "evidence": "`Mathlib/Analysis/Matrix/Order.lean:62` `protected alias \u27e8LE.le.posSemidef, PosSemidef.nonneg\u27e9 := nonneg_iff_posSemidef`; the same projection chain appears at Sqrt.lean:60, QuadraticForm.lean:206 and QuadraticForm.lean:220.",
+   "file": "TauCeti/Analysis/Matrix/Sqrt.lean",
+   "fix": "State it once in Sqrt.lean (e.g. `Matrix.isHermitian_sqrt : (CFC.sqrt S).IsHermitian`, proved from `(CFC.sqrt_nonneg S).posSemidef.1`) and use it at all three sites.",
+   "issue": "The reusable fact `(CFC.sqrt S)\u1d34 = CFC.sqrt S` is spelled inline as the term `(Matrix.LE.le.posSemidef (CFC.sqrt_nonneg S)).1.eq` in three places: Sqrt.lean:60 and QuadraticForm.lean:206, 220.",
+   "line": 60
+  }
+ ],
+ "head_sha": "d9b8f76190dcdb3d0927b7b290f7fd2db9528904",
+ "merge_base_sha": "c3b07afd4615cac9954bf046a8288974c0a5d87b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5868,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "a6b4c2a3efbc4a7f3aaee14c0aeb4d9c4eac4ea976477ec099a6e91ae150be19",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "proof-quality",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260906T224352Z-5868-proof-quality-78f37d",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-06T22:43:52Z",
+ "submitted_by": "kim-em",
+ "summary": "Proofs are mostly short and automation-friendly, but a reusable fact (`(CFC.sqrt S)\u1d34 = CFC.sqrt S`) and a whole transport step are re-derived inline in three places, and `isHermitian_sqrt_mul_mul_sqrt` bakes `Classical.propDecidable` into its statement so consumers match it only through instance defeq.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Spectrum.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Sqrt.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Distributions/Gaussian/Multivariate.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix/Order.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Moments",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability/Moments/IntegrableExpMul.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix/Order.lean",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 19,
+  "trace_truncated": false
+ },
+ "transcript_blob": "2f0cbd451f309da3dd0e3032cc3858b2acdb1b0e6accc5ddc416940066519e34",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 84800,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 84800,
+  "cache_read_input_tokens": 580825,
+  "inference_geo": "not_available",
+  "input_tokens": 22,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 6379,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 6379,
+    "cache_read_input_tokens": 81221,
+    "input_tokens": 2,
+    "output_tokens": 5485,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 19511,
+  "output_tokens_details": {
+   "thinking_tokens": 14139
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}

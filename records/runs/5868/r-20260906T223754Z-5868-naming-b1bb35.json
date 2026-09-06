@@ -1,0 +1,222 @@
+{
+ "arm": "production",
+ "attempts": [
+  {
+   "cost_usd": 1.6964755,
+   "model": "claude-opus-5",
+   "returncode": 0,
+   "secs": 243.1,
+   "usage": {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 87568,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 87568,
+    "cache_read_input_tokens": 559735,
+    "inference_geo": "not_available",
+    "input_tokens": 20,
+    "iterations": [
+     {
+      "cache_creation": {
+       "ephemeral_1h_input_tokens": 2606,
+       "ephemeral_5m_input_tokens": 0
+      },
+      "cache_creation_input_tokens": 2606,
+      "cache_read_input_tokens": 87762,
+      "input_tokens": 2,
+      "output_tokens": 6004,
+      "type": "message"
+     }
+    ],
+    "output_tokens": 20734,
+    "output_tokens_details": {
+     "thinking_tokens": 16878
+    },
+    "server_tool_use": {
+     "web_fetch_requests": 0,
+     "web_search_requests": 0
+    },
+    "service_tier": "standard",
+    "speed": "standard"
+   }
+  }
+ ],
+ "auth": "subscription",
+ "base_ref_oid": "341c0db419f94a4a1bfcb2e7e11862d4afcec4ac",
+ "cost_usd": 1.696476,
+ "dedupe_key": "TauCetiProject/TauCeti|5868|d9b8f76190dcdb3d0927b7b290f7fd2db9528904|naming|claude-opus-5|d0700ff994e59c9f|production|1",
+ "diff_blob": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "diff_sha256": "153f5bf59b9eae7b014b4688105d31b0320dc73ee93d1e76d3034a47b59102ad",
+ "duration_s": 243.1,
+ "fidelity": "exact",
+ "findings": [
+  {
+   "evidence": "mathlib/Mathlib/LinearAlgebra/Matrix/SchurComplement: `det_one_sub_mul_comm : (1 - A * B).det = (1 - B * A).det`; contrast this PR's own `mgf_sum_mul_sq_pi_gaussianReal_eq_prod`, which does name its right-hand side.",
+   "file": "TauCeti/Analysis/Matrix/Sqrt.lean",
+   "fix": "Name the transfer, e.g. `det_one_sub_smul_sqrt_mul_mul_sqrt_eq_det_one_sub_smul_mul`, following `Matrix.det_one_sub_mul_comm`, which encodes the relation between the two sides in its name.",
+   "issue": "`Matrix.PosSemidef.det_one_sub_smul_sqrt_mul_mul_sqrt` names only the left-hand side, but the statement equates two determinants of the same shape (`det (1 - c \u2022 (\u221aS * \u0398 * \u221aS)) = det (1 - c \u2022 (\u0398 * S))`); the name promises a determinant evaluation and gives no hint of the target.",
+   "line": 65
+  },
+  {
+   "evidence": "mathlib/Mathlib/Analysis/Matrix/Spectrum.lean:144 states the same shape as `IsHermitian.spectral_theorem`, i.e. Mathlib either names the diagonal or uses a descriptive axiomatic name; the bare `_eq_conjStarAlgAut` does neither.",
+   "file": "TauCeti/Analysis/Matrix/Spectrum.lean",
+   "fix": "Rename to `one_sub_smul_eq_conjStarAlgAut_diagonal` (or use an axiomatic-description name as Mathlib does for the analogue).",
+   "issue": "`one_sub_smul_eq_conjStarAlgAut` omits `diagonal`, which is the entire content: the conclusion is `1 - c \u2022 B = conjStarAlgAut \u211d _ hB.eigenvectorUnitary (diagonal fun j => 1 - c * hB.eigenvalues j)`, not merely that the pencil is some conjugate.",
+   "line": 61
+  },
+  {
+   "evidence": "mathlib/Mathlib/Probability/Distributions/Gaussian/Multivariate.lean:144 `stdGaussian_eq_map_pi_orthonormalBasis (b) : stdGaussian E = (Measure.pi fun _ \u21a6 gaussianReal 0 1).map (fun x \u21a6 \u2211 i, x i \u2022 b i)` \u2014 `pi` is the mapped measure, `orthonormalBasis` the map.",
+   "file": "TauCeti/Probability/Distributions/Gaussian/Multivariate.lean",
+   "fix": "Rename to `multivariateGaussian_zero_eq_map_stdGaussian_sqrt`.",
+   "issue": "`multivariateGaussian_zero_eq_map_sqrt` drops the source measure; in the `X_eq_map_<measure>_<map>` pattern the slot after `map` is the measure, so the name reads as a map of `sqrt` rather than of `stdGaussian`.",
+   "line": 55
+  }
+ ],
+ "head_sha": "d9b8f76190dcdb3d0927b7b290f7fd2db9528904",
+ "merge_base_sha": "c3b07afd4615cac9954bf046a8288974c0a5d87b",
+ "mode": "commit",
+ "model": "claude-opus-5",
+ "pr": 5868,
+ "prices_sha": "387b989081a1",
+ "prompt_policy": "fresh",
+ "prompt_sha256": "da602aa22105c9ba29a5d24cb8caac3360cd02711891eb08111f5bc5e77e6149",
+ "provider": "claude",
+ "repo": "TauCetiProject/TauCeti",
+ "round": 1,
+ "rubric": "naming",
+ "rubrics_repo": "TauCetiProject/TauCetiReview",
+ "rubrics_sha": "afb424eda89e8ac96d9eb69f6a88972055a4cd1b",
+ "rubrics_version": "d0700ff994e59c9f",
+ "run_id": "r-20260906T223754Z-5868-naming-b1bb35",
+ "schema": "tauceti.run/v1",
+ "source": "live",
+ "started_at": "2026-09-06T22:37:54Z",
+ "submitted_by": "kim-em",
+ "summary": "Namespaces, terminology and the roadmap-reserved theorem names are right, and no notation is introduced. Three names stop short of the informative half of their equality, so they read as evaluations when they are transfers.",
+ "tool_trace": [
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/StandardDistributions/Suggested.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "roadmap/TauCetiRoadmap/StandardDistributions/README.md",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Analysis/Matrix",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/ChiSquared.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Probability/Distributions/Gaussian/QuadraticForm.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "mathlib/Mathlib/Probability",
+   "tool": "Grep"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Spectrum.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "code/TauCeti/Analysis/Matrix/Sqrt.lean",
+   "tool": "Read"
+  },
+  {
+   "ok": true,
+   "target": "mathlib",
+   "tool": "Grep"
+  }
+ ],
+ "tool_trace_meta": {
+  "total_calls": 17,
+  "trace_truncated": false
+ },
+ "transcript_blob": "43e32c1b1bc4c4b8ea06c314bc79468913846a931fbd15828f7c951d077fc904",
+ "usage": {
+  "cache_creation": {
+   "ephemeral_1h_input_tokens": 87568,
+   "ephemeral_5m_input_tokens": 0
+  },
+  "cache_creation_input_tokens": 87568,
+  "cache_read_input_tokens": 559735,
+  "inference_geo": "not_available",
+  "input_tokens": 20,
+  "iterations": [
+   {
+    "cache_creation": {
+     "ephemeral_1h_input_tokens": 2606,
+     "ephemeral_5m_input_tokens": 0
+    },
+    "cache_creation_input_tokens": 2606,
+    "cache_read_input_tokens": 87762,
+    "input_tokens": 2,
+    "output_tokens": 6004,
+    "type": "message"
+   }
+  ],
+  "output_tokens": 20734,
+  "output_tokens_details": {
+   "thinking_tokens": 16878
+  },
+  "server_tool_use": {
+   "web_fetch_requests": 0,
+   "web_search_requests": 0
+  },
+  "service_tier": "standard",
+  "speed": "standard"
+ },
+ "verdict": "request_changes"
+}
